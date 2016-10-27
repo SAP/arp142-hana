@@ -62,7 +62,6 @@ function lib_func_get_linux_distrib() {
 ##########################################################
 
 # $1 - os-release file
-# function not ready yet, adjust for non-SLES still required
 function __linux_distrib_os_release() {
 
 	local _ostmp
@@ -73,11 +72,11 @@ function __linux_distrib_os_release() {
 
 		debug "${FUNCNAME[0]}:${1}:${line}"
 
-		#Enterprise?
-		_ostmp=$(echo "${line}" | awk '/SUSE Linux Enterprise/ {match($0, /([0-9]+)/); print substr($0,RSTART,RLENGTH) }')
+		#NAME=""
+		_ostmp=$(echo "${line}" | awk '/^NAME=/ {match($0, /".*"/); print substr($0,RSTART+1,RLENGTH-2)}')
 		_osname=${_osname:=$_ostmp}
 
-		#match 12.1 | 12.0.1
+		#match 12.1 | 12.0.1 | 7.0
 		_ostmp=$(echo "${line}" | awk '/^VERSION_ID=/ {match($0, /([0-9]+)(\.([0-9]+))+/); print substr($0,RSTART,RLENGTH) }')
 		_osvers=${_osvers:=$_ostmp}
 
@@ -85,11 +84,23 @@ function __linux_distrib_os_release() {
 
 	_os_version="${_osvers}"
 
-	if [ -n "${_osname}" ] ; then
-		_os_name='Linux SLES'
-	else
-		_os_name='Linux Suse unknown'
-	fi
+	case ${_osname} in
+		"SLES")
+				os_name='Linux SLES'
+				;;
+
+		"Red Hat Enterprise Linux Server")
+				os_name='Linux RHEL'
+				;;
+
+		"Oracle Linux Server")
+				os_name='Linux OLS'
+				;;
+
+		*)
+			os_name='Linux UNKNOWN'
+			;;
+	esac
 }
 
 # $1 - suse-release file
@@ -123,7 +134,7 @@ function __linux_distrib_suse_release() {
 	if [ -n "${_osname}" ] ; then
 		_os_name='Linux SLES'
 	else
-		_os_name='Linux Suse unknown'
+		_os_name='Linux Suse UNKNOWN'
 	fi
 }
 
@@ -154,7 +165,7 @@ function __linux_distrib_oracle_release() {
 	if [ -n "${_olname}" ] ; then
 		_os_name='Linux OLS'
 	else
-		_os_name='Linux Oracle unknown'
+		_os_name='Linux Oracle UNKNOWN'
 	fi
 }
 
@@ -184,6 +195,6 @@ function __linux_distrib_redhat_release() {
 	if [ -n "${_rhname}" ] ; then
 		_os_name='Linux RHEL'
 	else
-		_os_name='Linux Redhat unknown'
+		_os_name='Linux Redhat UNKNOWN'
 	fi
 }
