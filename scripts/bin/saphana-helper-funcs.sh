@@ -85,7 +85,7 @@ function __linux_distrib_os_release() {
 	_os_version="${_osvers}"
 
 	case ${_osname} in
-		"SLES")
+		"SLES"*)
 				os_name='Linux SLES'
 				;;
 
