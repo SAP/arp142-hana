@@ -4,7 +4,7 @@ umask 022
 #------------------------------------------------------------------
 # SAP HANA ...
 #------------------------------------------------------------------
-# (C) Copyright SAP 2016
+# (C) Copyright SAP 2017
 #
 # Library Functions
 # Script name: "saphana-helper-funcs.sh"
@@ -14,10 +14,10 @@ umask 022
 #PROGDATE="YYYY-XXX-ZZ"
 
 ##################################################
-# Global functions - to be used in other scripts #
+# Global functions - to be used in other scripts
 ##################################################
 function debug() {
-	[ "${DEBUG}" = TRUE ] && echo "DEBUG:<$1>" >&2
+	[ "${DEBUG}" = TRUE ] && echo "[DEBUG] $1" >&2
 }
 
 
@@ -62,7 +62,7 @@ function lib_func_get_linux_distrib() {
 
 
 ##########################################################
-# Non-global functions - not to be used in other scripts #
+# Non-global functions - not to be used in other scripts
 ##########################################################
 
 # $1 - os-release file
