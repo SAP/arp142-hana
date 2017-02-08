@@ -23,12 +23,16 @@ function debug() {
 
 function lib_func_get_linux_distrib() {
 
-	local osfile='/etc/os-release'
-	local susefile='/etc/SuSE-release'
-	local redhatfile='/etc/redhat-release'
-	local oraclefile='/etc/oracle-release'
+	#a local variable declared in a function is also visible to functions called by the parent function.
+	local -r osfile='/etc/os-release'
+	local -r susefile='/etc/SuSE-release'
+	local -r redhatfile='/etc/redhat-release'
+	local -r oraclefile='/etc/oracle-release'
 
-	debug "${FUNCNAME[*]}"
+	local _os_name
+	local _os_version
+
+	debug "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
 	if [ -f ${osfile} ] ; then
 		#newer releases contain this file
@@ -45,14 +49,14 @@ function lib_func_get_linux_distrib() {
 		__linux_distrib_redhat_release "${redhatfile}"
 
 	else
-		OS_NAME='Linux UNKNOWN'
+		_os_name='Linux UNKNOWN'
 	fi
 
 	OS_NAME="${_os_name}"
 	OS_VERSION="${_os_version}"
 	OS_LEVEL=$(uname -r)
 
-	debug "${FUNCNAME[0]}: ${OS_NAME} ; ${OS_VERSION} ; ${OS_LEVEL}"
+	debug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # ${OS_NAME} ; ${OS_VERSION} ; ${OS_LEVEL}"
 
 }
 
@@ -70,7 +74,7 @@ function __linux_distrib_os_release() {
 
 	while read -r line; do
 
-		debug "${FUNCNAME[0]}:${1}:${line}"
+		debug "<${FUNCNAME[0]}> # ${1}:${line}"
 
 		#NAME=""
 		_ostmp=$(echo "${line}" | awk '/^NAME=/ {match($0, /".*"/); print substr($0,RSTART+1,RLENGTH-2)}')
@@ -86,19 +90,19 @@ function __linux_distrib_os_release() {
 
 	case ${_osname} in
 		"SLES"*)
-				os_name='Linux SLES'
+				_os_name='Linux SLES'
 				;;
 
 		"Red Hat Enterprise Linux Server")
-				os_name='Linux RHEL'
+				_os_name='Linux RHEL'
 				;;
 
 		"Oracle Linux Server")
-				os_name='Linux OLS'
+				_os_name='Linux OLS'
 				;;
 
 		*)
-			os_name='Linux UNKNOWN'
+			_os_name='Linux UNKNOWN'
 			;;
 	esac
 }
@@ -113,7 +117,7 @@ function __linux_distrib_suse_release() {
 
 	while read -r line; do
 
-		debug "${FUNCNAME[0]}:${1}:${line}"
+		debug "<${FUNCNAME[0]}> # ${1}:${line}"
 
 		#Enterprise?
 		_ostmp=$(echo "${line}" | awk '/^SUSE Linux Enterprise/ {match($0, /([0-9]+)/); print substr($0,RSTART,RLENGTH) }')
@@ -148,7 +152,7 @@ function __linux_distrib_oracle_release() {
 	#oracle is based on RedHat - redhatfile also exist, but check oracle first
 	while read -r line; do
 
-		debug "${FUNCNAME[0]}:${1}:${line}"
+		debug "<${FUNCNAME[0]}> # ${1}:${line}"
 
 		#Server within string - match any number
 		_oltmp=$(echo "${line}" | awk '/^Oracle Linux Server/ {match($0, /([0-9]+)/); print substr($0,RSTART,RLENGTH) }')
@@ -178,7 +182,7 @@ function __linux_distrib_redhat_release() {
 
 	while read -r line; do
 
-		debug "${FUNCNAME[0]}:${1}:${line}"
+		debug "<${FUNCNAME[0]}> # ${1}:${line}"
 
 		#Enterprise within string - match any number
 		_rhtmp=$(echo "${line}" | awk '/^Red Hat Enterprise Linux/ {match($0, /([0-9]+)/); print substr($0,RSTART,RLENGTH) }')
