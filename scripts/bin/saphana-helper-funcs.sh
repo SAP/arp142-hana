@@ -60,6 +60,20 @@ function lib_func_get_linux_distrib() {
 
 }
 
+# Returns 1 on Virtualization, Bare-Metal=0.
+# Takes no argument.
+function lib_func_is_bare_metal() {
+
+	local -i _retval=0
+
+	if [[ ${lib_platf_virtualized} -eq 0 ]] ;
+	then
+		_retval=1
+	fi
+
+	debug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # ${_retval}"
+	return ${_retval}
+}
 
 ##########################################################
 # Non-global functions - not to be used in other scripts
@@ -201,4 +215,24 @@ function __linux_distrib_redhat_release() {
 	else
 		_os_name='Linux Redhat UNKNOWN'
 	fi
+
 }
+
+
+##########################################################
+# get System details
+##########################################################
+
+# ToDo:	Power platform does not provide 'dmidecode'
+
+# Platform - "x3950 X6 -[6241ZB5]-", "ProLiant DL785 G6", "VMware Virtual Platform"
+LIB_PLATF_NAME=$(dmidecode -s system-product-name)
+declare -rx LIB_PLATF_NAME
+
+# BIOS vendor of the HW: "LENOVO","HP","IBM Corp.","Phoenix Technologies LTD"
+LIB_PLATF_BIOS=$(dmidecode -s bios-vendor | sed -e '/^\s*#/d')
+declare -rx LIB_PLATF_BIOS
+
+# ToDo:	verify for AMD processors
+lib_platf_virtualized=$(grep -q '^flags.*hypervisor' /proc/cpuinfo; echo $?)
+declare -r -i lib_platf_virtualized
