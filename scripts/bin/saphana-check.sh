@@ -38,10 +38,9 @@ D_PRETEND=FALSE					#pretend execution of cmds
 #============================================================
 # Check handling
 #============================================================
-function generate_checklist
-{
+generate_checklist() {
 	local checkfile
-	for checkfile in ./lib/check/*.check
+	for checkfile in ../lib/check/*.check
 	do
 		local checkname
 		checkname=check_$(basename "${checkfile}" .check)
@@ -65,7 +64,6 @@ OS_NAME=""
 OS_VERSION=""
 OS_LEVEL=""
 
-# A list of checks is a ... checklist
 CHECKLIST=""
 
 #============================================================

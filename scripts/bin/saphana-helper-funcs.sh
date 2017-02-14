@@ -16,12 +16,12 @@ umask 022
 ##################################################
 # Global functions - to be used in other scripts
 ##################################################
-function debug() {
+debug() {
 	[ "${DEBUG}" = TRUE ] && echo "[DEBUG] $1" >&2
 }
 
 
-function lib_func_get_linux_distrib() {
+lib_func_get_linux_distrib() {
 
 	#a local variable declared in a function is also visible to functions called by the parent function.
 	local -r osfile='/etc/os-release'
@@ -62,7 +62,7 @@ function lib_func_get_linux_distrib() {
 
 # Returns 1 on Virtualization, Bare-Metal=0.
 # Takes no argument.
-function lib_func_is_bare_metal() {
+lib_func_is_bare_metal() {
 
 	local -i _retval=0
 
@@ -80,7 +80,7 @@ function lib_func_is_bare_metal() {
 ##########################################################
 
 # $1 - os-release file
-function __linux_distrib_os_release() {
+__linux_distrib_os_release() {
 
 	local _ostmp
 	local _osname
@@ -122,7 +122,7 @@ function __linux_distrib_os_release() {
 }
 
 # $1 - suse-release file
-function __linux_distrib_suse_release() {
+__linux_distrib_suse_release() {
 
 	local _ostmp
 	local _osname
@@ -157,7 +157,7 @@ function __linux_distrib_suse_release() {
 }
 
 # $1 - oracle-release file
-function __linux_distrib_oracle_release() {
+__linux_distrib_oracle_release() {
 
 	local _oltmp
 	local _olname
@@ -188,7 +188,7 @@ function __linux_distrib_oracle_release() {
 }
 
 # $1 - redhat-release file
-function __linux_distrib_redhat_release() {
+__linux_distrib_redhat_release() {
 
 	local _rhtmp
 	local _rhname
