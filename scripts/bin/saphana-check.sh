@@ -24,12 +24,9 @@ LC_ALL=POSIX
 export LC_ALL
 
 #Import Libraries
-#source ./saphana-logger.sh
+source ./saphana-logger.sh
 source ./saphana-helper-funcs.sh
 
-#flag defaults
-D_DEBUG=TRUE					#debug
-D_PRETEND=FALSE					#pretend execution of cmds
 
 #============================================================
 # utility stuff
@@ -39,6 +36,9 @@ D_PRETEND=FALSE					#pretend execution of cmds
 # Check handling
 #============================================================
 generate_checklist() {
+
+	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
 	local checkfile
 	for checkfile in ../lib/check/*.check
 	do
@@ -58,7 +58,6 @@ generate_checklist() {
 # GLOBAL variables
 #============================================================
 #set flags to defaults
-DEBUG=${D_DEBUG}
 
 OS_NAME=""
 OS_VERSION=""
@@ -73,7 +72,7 @@ main() {
 
 	lib_func_get_linux_distrib
 
-	printf "%s\t%s\t%s"	"${OS_NAME}" "${OS_VERSION}" "${OS_LEVEL}"
+	logTrace "${OS_NAME} ${OS_VERSION} ${OS_LEVEL}"
 	printf "\n\n"
 	printf "\n\n"
 

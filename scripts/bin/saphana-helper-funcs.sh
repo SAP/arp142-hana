@@ -16,11 +16,6 @@ umask 022
 ##################################################
 # Global functions - to be used in other scripts
 ##################################################
-debug() {
-	[ "${DEBUG}" = TRUE ] && echo "[DEBUG] $1" >&2
-}
-
-
 lib_func_get_linux_distrib() {
 
 	#a local variable declared in a function is also visible to functions called by the parent function.
@@ -32,7 +27,7 @@ lib_func_get_linux_distrib() {
 	local _os_name
 	local _os_version
 
-	debug "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
 	if [ -f ${osfile} ] ; then
 		#newer releases contain this file
@@ -56,7 +51,7 @@ lib_func_get_linux_distrib() {
 	OS_VERSION="${_os_version}"
 	OS_LEVEL=$(uname -r)
 
-	debug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # ${OS_NAME} ; ${OS_VERSION} ; ${OS_LEVEL}"
+	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # ${OS_NAME} ; ${OS_VERSION} ; ${OS_LEVEL}"
 
 }
 
@@ -71,7 +66,7 @@ lib_func_is_bare_metal() {
 		_retval=1
 	fi
 
-	debug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # ${_retval}"
+	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
 	return ${_retval}
 }
 
@@ -88,7 +83,7 @@ __linux_distrib_os_release() {
 
 	while read -r line; do
 
-		debug "<${FUNCNAME[0]}> # ${1}:${line}"
+		logTrace "<${FUNCNAME[0]}> # ${1}:${line}"
 
 		#NAME=""
 		_ostmp=$(echo "${line}" | awk '/^NAME=/ {match($0, /".*"/); print substr($0,RSTART+1,RLENGTH-2)}')
@@ -131,7 +126,7 @@ __linux_distrib_suse_release() {
 
 	while read -r line; do
 
-		debug "<${FUNCNAME[0]}> # ${1}:${line}"
+		logTrace "<${FUNCNAME[0]}> # ${1}:${line}"
 
 		#Enterprise?
 		_ostmp=$(echo "${line}" | awk '/^SUSE Linux Enterprise/ {match($0, /([0-9]+)/); print substr($0,RSTART,RLENGTH) }')
@@ -166,7 +161,7 @@ __linux_distrib_oracle_release() {
 	#oracle is based on RedHat - redhatfile also exist, but check oracle first
 	while read -r line; do
 
-		debug "<${FUNCNAME[0]}> # ${1}:${line}"
+		logTrace "<${FUNCNAME[0]}> # ${1}:${line}"
 
 		#Server within string - match any number
 		_oltmp=$(echo "${line}" | awk '/^Oracle Linux Server/ {match($0, /([0-9]+)/); print substr($0,RSTART,RLENGTH) }')
@@ -196,7 +191,7 @@ __linux_distrib_redhat_release() {
 
 	while read -r line; do
 
-		debug "<${FUNCNAME[0]}> # ${1}:${line}"
+		logTrace "<${FUNCNAME[0]}> # ${1}:${line}"
 
 		#Enterprise within string - match any number
 		_rhtmp=$(echo "${line}" | awk '/^Red Hat Enterprise Linux/ {match($0, /([0-9]+)/); print substr($0,RSTART,RLENGTH) }')
