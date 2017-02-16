@@ -55,15 +55,27 @@ lib_func_get_linux_distrib() {
 
 }
 
+lib_func_is_sles() {
+
+	local -i _retval=0
+
+	if [[ "${OS_NAME}" != 'Linux SLES' ]]; then
+		_retval=1
+	fi
+
+	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+	return ${_retval}
+}
+
 # Returns 1 on Virtualization, Bare-Metal=0.
 # Takes no argument.
 lib_func_is_bare_metal() {
 
-	local -i _retval=0
+	local -i _retval=1
 
 	if [[ ${lib_platf_virtualized} -eq 0 ]] ;
 	then
-		_retval=1
+		_retval=0
 	fi
 
 	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
@@ -213,21 +225,36 @@ __linux_distrib_redhat_release() {
 
 }
 
+#============================================================
+# LIB MAIN - initialization
+#============================================================
+_lib_helper_main() {
+
+	# get System details
+
+
+	# ToDo:	Power platform does not provide 'dmidecode'
+	
+	# Platform - "x3950 X6 -[6241ZB5]-", "ProLiant DL785 G6", "VMware Virtual Platform"
+	LIB_PLATF_NAME=$(dmidecode -s system-product-name)
+	declare -rx LIB_PLATF_NAME
+
+	# BIOS vendor of the HW: "LENOVO","HP","IBM Corp.","Phoenix Technologies LTD"
+	LIB_PLATF_BIOS=$(dmidecode -s bios-vendor | sed -e '/^\s*#/d')
+	declare -rx LIB_PLATF_BIOS
+
+	# ToDo:	verify for AMD processors
+	lib_platf_virtualized=$(grep -q '^flags.*hypervisor' /proc/cpuinfo)
+	declare -ri lib_platf_virtualized
+
+}
 
 ##########################################################
-# get System details
-##########################################################
+#GLOBAL
+declare -x LIB_PLATF_NAME
+declare -x LIB_PLATF_BIOS
 
-# ToDo:	Power platform does not provide 'dmidecode'
+#LIB local
+declare -i lib_platf_virtualized
 
-# Platform - "x3950 X6 -[6241ZB5]-", "ProLiant DL785 G6", "VMware Virtual Platform"
-LIB_PLATF_NAME=$(dmidecode -s system-product-name)
-declare -rx LIB_PLATF_NAME
-
-# BIOS vendor of the HW: "LENOVO","HP","IBM Corp.","Phoenix Technologies LTD"
-LIB_PLATF_BIOS=$(dmidecode -s bios-vendor | sed -e '/^\s*#/d')
-declare -rx LIB_PLATF_BIOS
-
-# ToDo:	verify for AMD processors
-lib_platf_virtualized=$(grep -q '^flags.*hypervisor' /proc/cpuinfo; echo $?)
-declare -r -i lib_platf_virtualized
+_lib_logger_main

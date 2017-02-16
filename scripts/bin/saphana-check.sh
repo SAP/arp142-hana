@@ -54,10 +54,29 @@ generate_checklist() {
 	done
 }
 
+run_checklist() {
+
+	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    for check in ${CHECKLIST}
+    do
+        # printCheckHeader "Checking " $check
+        # if ! isCheckBlacklisted $check ; then
+            ${check}
+        # else
+        #     logCheckSkipped "Skipping blacklisted check $check."
+        # fi
+        # printCheckHeader $line
+    done
+
+}
+
 #============================================================
 # GLOBAL variables
 #============================================================
 #set flags to defaults
+
+declare -i VERBOSE=6 # #notify/silent=0 (always), critical=1, error=2, warn=3 (default), info=4, debug=5, trace=6
 
 OS_NAME=""
 OS_VERSION=""
@@ -73,7 +92,18 @@ main() {
 	lib_func_get_linux_distrib
 
 	logTrace "${OS_NAME} ${OS_VERSION} ${OS_LEVEL}"
-	printf "\n\n"
+
+	if lib_func_is_bare_metal
+	then
+		logTrace 'Running on Bare-Metal'
+	else
+		logTrace 'Running Virtualized'
+	fi
+
+	printf "\n"
+
+	generate_checklist
+	run_checklist
 	printf "\n\n"
 
 	exit 0
