@@ -55,6 +55,7 @@ lib_func_get_linux_distrib() {
 
 }
 
+# Returns 0 on SLES, 1 on other
 lib_func_is_sles() {
 
 	local -i _retval=0
@@ -69,17 +70,16 @@ lib_func_is_sles() {
 	return ${_retval}
 }
 
-# Returns 1 on Virtualization, Bare-Metal=0.
-# Takes no argument.
+# Returns 1 on Virtualization, 0 on Bare-Metal
 lib_func_is_bare_metal() {
 
-	local -i _retval=1
+	local -i _retval=0
 
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
 	if [[ ${lib_platf_virtualized} -eq 0 ]] ;
 	then
-		_retval=0
+		_retval=1
 	fi
 
 	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
@@ -234,23 +234,23 @@ __linux_distrib_redhat_release() {
 #============================================================
 _lib_helper_main() {
 
-	# get System details
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
+	# get System details
 
 	# ToDo:	Power platform does not provide 'dmidecode'
-	
+
 	# Platform - "x3950 X6 -[6241ZB5]-", "ProLiant DL785 G6", "VMware Virtual Platform"
 	LIB_PLATF_NAME=$(dmidecode -s system-product-name)
-	declare -rx LIB_PLATF_NAME
+	readonly LIB_PLATF_NAME
 
 	# BIOS vendor of the HW: "LENOVO","HP","IBM Corp.","Phoenix Technologies LTD"
 	LIB_PLATF_BIOS=$(dmidecode -s bios-vendor | sed -e '/^\s*#/d')
-	declare -rx LIB_PLATF_BIOS
+	readonly LIB_PLATF_BIOS
 
 	# ToDo:	verify for AMD processors
-	lib_platf_virtualized=$(grep -q '^flags.*hypervisor' /proc/cpuinfo)
-	declare -ri lib_platf_virtualized
+	lib_platf_virtualized=$(grep -q '^flags.*hypervisor' /proc/cpuinfo;echo $?)
+	readonly lib_platf_virtualized
 
 }
 
@@ -262,4 +262,4 @@ declare -x LIB_PLATF_BIOS
 #LIB local
 declare -i lib_platf_virtualized
 
-_lib_logger_main
+_lib_helper_main
