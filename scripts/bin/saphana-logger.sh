@@ -86,7 +86,10 @@ logCheckSkipped() {
 #============================================================
 _lib_logger_main() {
 
-	COLUMNS=80
+	COLUMNS=80 # required before 1st logger usage
+
+	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
     if [[ -t 1 && -n "$TERM" && "$TERM" != "dumb" ]]; then
         COLUMNS=$(tput cols)
     fi

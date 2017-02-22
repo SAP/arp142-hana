@@ -23,6 +23,15 @@ PROGDATE="YYYY-XXX-ZZ"
 LC_ALL=POSIX
 export LC_ALL
 
+
+declare -i VERBOSE=6 # #notify/silent=0 (always), critical=1, error=2, warn=3 (default), info=4, debug=5, trace=6
+
+OS_NAME=""
+OS_VERSION=""
+OS_LEVEL=""
+
+CHECKLIST=""
+
 #Import Libraries
 source ./saphana-logger.sh
 source ./saphana-helper-funcs.sh
@@ -37,7 +46,7 @@ source ./saphana-helper-funcs.sh
 #============================================================
 generate_checklist() {
 
-	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
 	local checkfile
 	for checkfile in ../lib/check/*.check
@@ -56,7 +65,7 @@ generate_checklist() {
 
 run_checklist() {
 
-	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
     for check in ${CHECKLIST}
     do
@@ -71,27 +80,18 @@ run_checklist() {
 
 }
 
-#============================================================
-# GLOBAL variables
-#============================================================
-#set flags to defaults
 
-declare -i VERBOSE=6 # #notify/silent=0 (always), critical=1, error=2, warn=3 (default), info=4, debug=5, trace=6
-
-OS_NAME=""
-OS_VERSION=""
-OS_LEVEL=""
-
-CHECKLIST=""
 
 #============================================================
 # main
 #============================================================
 main() {
 
+	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+	
 	lib_func_get_linux_distrib
 
-	logTrace "${OS_NAME} ${OS_VERSION} ${OS_LEVEL}"
+	logDebug "${OS_NAME} ${OS_VERSION} ${OS_LEVEL}"
 
 	if lib_func_is_bare_metal
 	then

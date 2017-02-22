@@ -58,6 +58,8 @@ lib_func_get_linux_distrib() {
 lib_func_is_sles() {
 
 	local -i _retval=0
+	
+	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
 	if [[ "${OS_NAME}" != 'Linux SLES' ]]; then
 		_retval=1
@@ -72,6 +74,8 @@ lib_func_is_sles() {
 lib_func_is_bare_metal() {
 
 	local -i _retval=1
+
+	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
 	if [[ ${lib_platf_virtualized} -eq 0 ]] ;
 	then
@@ -231,6 +235,7 @@ __linux_distrib_redhat_release() {
 _lib_helper_main() {
 
 	# get System details
+	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
 
 	# ToDo:	Power platform does not provide 'dmidecode'
