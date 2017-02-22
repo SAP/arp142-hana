@@ -1,0 +1,26 @@
+check_220_numa_balancing() {
+
+	local -i _retval=2
+
+	if [[ ! -e  '/proc/sys/kernel/numa_balancing' ]]; then
+
+		#e.g. PowerLinux, XEN
+		logCheckSkipped 'AutoNUMA not configurable (SAP Note #2205917), skipping test ' "${FUNCNAME[0]}"
+		_retval=0
+
+	else
+
+		if [[ $(cat /proc/sys/kernel/numa_balancing) -eq 0 ]]; then
+			logCheckOk 'AutoNUMA is disabled (SAP Note #2205917)'
+			_retval=0
+		else
+			logCheckError 'AutoNUMA is not disabled (SAP Note #2205917)'
+			_retval=2
+		fi
+
+	fi
+
+	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+	return ${_retval}
+
+}

@@ -1,4 +1,4 @@
-check_120_ulimit_package() {
+check_020_ulimit_package() {
 	local -i _retval=2
 
 	#ToDo: should not be skipped for RHEL, verify for PowerLinux as well       
