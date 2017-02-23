@@ -97,6 +97,8 @@ __linux_distrib_os_release() {
 	local _osname
 	local _osvers
 
+	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
 	while read -r line; do
 
 		logTrace "<${FUNCNAME[0]}> # ${1}:${line}"
@@ -140,6 +142,8 @@ __linux_distrib_suse_release() {
 	local _osvers
 	local _susepatchl
 
+	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
 	while read -r line; do
 
 		logTrace "<${FUNCNAME[0]}> # ${1}:${line}"
@@ -174,6 +178,8 @@ __linux_distrib_oracle_release() {
 	local _olname
 	local _olversion
 
+	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
 	#oracle is based on RedHat - redhatfile also exist, but check oracle first
 	while read -r line; do
 
@@ -204,6 +210,8 @@ __linux_distrib_redhat_release() {
 	local _rhtmp
 	local _rhname
 	local _rhversion
+
+	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
 	while read -r line; do
 

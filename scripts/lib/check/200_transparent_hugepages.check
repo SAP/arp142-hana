@@ -1,5 +1,7 @@
 check_200_transparent_hugepages() {
 
+	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
 	local -i _retval=2
 
 	if [[ ! -e  '/sys/kernel/mm/transparent_hugepage/enabled' ]]; then
@@ -19,4 +21,5 @@ check_200_transparent_hugepages() {
 
 	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
 	return ${_retval}
+
 }
