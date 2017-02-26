@@ -86,6 +86,61 @@ lib_func_is_bare_metal() {
 	return ${_retval}
 }
 
+# Compares two version strings
+# Two version strings as parameters.
+# Echos & returns 0 if equal, 1 if first is higher, 2 if second is higher
+# - no external utilities - factor 10x faster than original (tr,grep are quite expansive)
+lib_func_compare_versions() {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+	local -i _retval=0
+    
+    #${1//\-/\.} - Variable Substitution (faster then tr,sed or grep) - replace - by .
+	#required for 2.11.3-17.95.2
+    local -r version1=${1//\-/\.}
+    local -r version2=${2//\-/\.}
+
+    if [[ "${version1}" == "${version2}" ]]; then
+        _retval=0
+    else
+
+        local IFS=.
+        local -i i 
+        local ver1=(${version1}) 
+        local ver2=(${version2})
+
+        # fill empty fields in ver1 with zeros
+        for ((i=${#ver1[@]}; i<${#ver2[@]}; i++))
+        do
+            ver1[i]=0
+        done
+        
+        for ((i=0; i<${#ver1[@]}; i++))
+        do
+            if [[ -z ${ver2[i]} ]]
+            then
+                # fill empty fields in ver2 with zeros
+                ver2[i]=0
+            fi
+            if ((10#${ver1[i]} > 10#${ver2[i]}))
+            then
+                _retval=1
+                break
+            fi
+            if ((10#${ver1[i]} < 10#${ver2[i]}))
+            then
+                _retval=2
+                break
+            fi
+        done
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+	return ${_retval}
+}
+
 ##########################################################
 # Non-global functions - not to be used in other scripts
 ##########################################################
