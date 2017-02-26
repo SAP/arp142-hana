@@ -1,0 +1,49 @@
+check_025_glibc_version_sles() {
+
+	#SLES11.2/3/4	- #2263929
+	#Security advise SCN-2016-257 https://listserv.sap.corp/pipermail/cert.linux.suse/2016/000959.html
+
+	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+	local -i _retval=2
+
+	# MODIFICATION SECTION>>
+	local -r _badversion='2.11.3'
+	local -r _goodfullversion='2.11.3-17.95.2'
+	local -r _sapnote='#2263929'
+	# MODIFICATION SECTION<<
+
+	#ToDo: should not be skipped for RHEL, verify for PowerLinux as well       
+	if ! lib_func_is_sles ; then
+
+		logCheckSkipped 'Linux distribution is not SLES, skipping test '"${FUNCNAME[0]}"
+		_retval=0
+
+	else
+
+		local -r _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" glibc)
+		local -r _version=${_fullversion%%-*} 
+
+		if [[ "${_version}" == "${_badversion}" ]]; then
+
+			lib_func_compare_versions "${_fullversion}" "${_goodfullversion}"
+
+			if [[ $? -ne 2 ]]; then
+				logCheckOk "GLIBC version (${_fullversion}) seems to be ok (SAP Note ${_sapnote})"
+				_retval=0
+			else
+				logCheckError "GLIBC must be updated to version ${_goodfullversion} or higher (SAP Note ${_sapnote}, found ${_fullversion})"
+				_retval=2
+			fi
+
+		else
+			logCheckInfo "Probably non-buggy glibc version <> 2.11.3 (found: ${_fullversion})"
+			_retval=0
+		fi
+
+	fi
+
+	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+	return ${_retval}
+
+}
