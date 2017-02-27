@@ -1,0 +1,52 @@
+check_130_cpu_governor() {
+
+	#1890444 - Slow HANA system due to CPU power save mode
+
+	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+	local -i _retval=2
+
+	# MODIFICATION SECTION>>
+	local -r _sapnote='1890444'
+	# MODIFICATION SECTION<<
+
+	if ! lib_func_is_bare_metal ; then
+
+		logCheckSkipped 'Running virtualized. Skipping test ' "${FUNCNAME[0]}"
+		_retval=0
+
+	else
+
+		#unique value within array
+		local -r IFS=$'\n'
+		local -ar govs=($(cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor | sort -u))
+
+		case ${#govs[@]} in								#array length
+
+			0)		
+						logCheckWarning "CPU governors are not set.(SAP Note ${_sapnote})"
+						_retval=1
+				;;
+
+			1)		
+						if [[ "${govs[0]}" != 'performance' ]];then
+							logCheckWarning "CPU governor is not set to performance (SAP Note ${_sapnote})"
+							_retval=1
+						else
+							logCheckOk "All CPU governors are set to performance (SAP Note ${_sapnote})"
+							_retval=0
+						fi
+
+				;;
+
+			*)		logCheckWarning "Not all CPU governors are set to performance (SAP Note ${_sapnote})"
+						_retval=1
+				;;
+		esac
+
+	fi
+
+	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+	return ${_retval}
+
+}
