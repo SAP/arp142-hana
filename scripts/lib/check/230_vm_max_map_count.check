@@ -1,0 +1,39 @@
+check_230_vm_max_map_count() {
+
+	#1980196 - Setting /proc/sys/vm/max_map_count on HANA systems
+
+	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+	local -i _retval=2
+
+	# MODIFICATION SECTION>>
+	local -r _sapnote='#1980196'
+	# MODIFICATION SECTION<<
+
+	# LIMIT ( 1.000.000 + (32768 * RAM in GB) <= 2.147.483.647)
+	local -ir _set_mmcount=$(( 1000000 + (32768 * LIB_PLATF_RAM_MB / 1024) ))
+	local -ir _maximum_mmcount=2147483647
+
+	# https://www.gnu.org/software/bash/manual/html_node/Shell-Arithmetic.html#Shell-Arithmetic
+	local -i _limit_mmcount=$(( _set_mmcount > _maximum_mmcount ? _maximum_mmcount : _set_mmcount ))
+
+	local -ir _curr_mmcount=$(cat /proc/sys/vm/max_map_count)
+
+	logCheckInfo "Parameter vm.max_map_count set to ${_curr_mmcount}"
+
+	if [[ ${_curr_mmcount} -lt ${_limit_mmcount} ]]; then
+
+		logCheckError "Parameter vm.max_map_count must be increased to ${_limit_mmcount} (SAP Note ${_sapnote})"
+		_retval=2
+
+	else
+
+		logCheckOk "Parameter vm.max_map_count set as recommended (SAP Note ${_sapnote})"
+		_retval=0
+
+	fi
+
+	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+	return ${_retval}
+
+}

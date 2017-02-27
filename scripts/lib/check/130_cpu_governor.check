@@ -7,7 +7,7 @@ check_130_cpu_governor() {
 	local -i _retval=2
 
 	# MODIFICATION SECTION>>
-	local -r _sapnote='1890444'
+	local -r _sapnote='#1890444'
 	# MODIFICATION SECTION<<
 
 	if ! lib_func_is_bare_metal ; then
