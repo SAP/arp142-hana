@@ -72,6 +72,7 @@ run_checklist() {
         # printCheckHeader "Checking " $check
         # if ! isCheckBlacklisted $check ; then
             ${check}
+			printf "\n"
         # else
         #     logCheckSkipped "Skipping blacklisted check $check."
         # fi

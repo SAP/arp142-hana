@@ -74,6 +74,12 @@ logCheckOk() {
 	fi
 }
 
+logCheckInfo() {
+	if [[ ${VERBOSE} -ge 4 ]]; then
+		print_folded  "[INFO]     "	"$@"
+	fi
+}
+
 logCheckSkipped() {
 	if [[ ${VERBOSE} -ge 4 ]]; then
 		print_folded  "[SKIPPED]  "	"$@"
