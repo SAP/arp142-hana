@@ -311,6 +311,11 @@ _lib_helper_main() {
 	LIB_PLATF_BIOS=$(dmidecode -s bios-vendor | sed -e '/^\s*#/d')
 	readonly LIB_PLATF_BIOS
 
+	# Installed RAM - meminfo not 100% correct 
+	#$(cat /proc/meminfo | awk '/^MemTotal:/ {match($0, /[0-9]+/); print substr($0,RSTART,RLENGTH) }')
+	LIB_PLATF_RAM_MB=$(printf "( %s  0)\n" "$(dmidecode -t memory | sed -e '/^\s*#/d' | grep "^\W*Size:.*B" | awk '{ if ($3=="GB") { x=$2*1024; print x } else print $2 }' | tr '\n' '+' )" | bc)
+	readonly LIB_PLATF_RAM_MB
+
 	# ToDo:	verify for AMD processors
 	lib_platf_virtualized=$(grep -q '^flags.*hypervisor' /proc/cpuinfo;echo $?)
 	readonly lib_platf_virtualized
@@ -318,9 +323,10 @@ _lib_helper_main() {
 }
 
 ##########################################################
-#GLOBAL
+#GLOBAL -x --> exported
 declare -x LIB_PLATF_NAME
 declare -x LIB_PLATF_BIOS
+declare -xi LIB_PLATF_RAM_MB
 
 #LIB local
 declare -i lib_platf_virtualized
