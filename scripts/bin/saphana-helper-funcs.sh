@@ -95,21 +95,26 @@ lib_func_compare_versions() {
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
 	local -i _retval=0
-    
+    local version1=$(lib_func_trim $1)
+	local version2=$(lib_func_trim $2)
+
     #${1//\-/\.} - Variable Substitution (faster then tr,sed or grep) - replace - by .
-	#required for 2.11.3-17.95.2
-    local -r version1=${1//\-/\.}
-    local -r version2=${2//\-/\.}
+	#required for 2.11.3-17.95.2 --> 2.11.3.17.95.2
+    version1=${version1//\-/\.}
+    version2=${version2//\-/\.}
+
+	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # compare <${version1}> to <${version2}>"
 
     if [[ "${version1}" == "${version2}" ]]; then
         _retval=0
     else
 
+		#to_array, split by .
         local IFS=.
-        local -i i 
-        local ver1=(${version1}) 
+        local ver1=(${version1})
         local ver2=(${version2})
 
+        local -i i 
         # fill empty fields in ver1 with zeros
         for ((i=${#ver1[@]}; i<${#ver2[@]}; i++))
         do
@@ -141,6 +146,14 @@ lib_func_compare_versions() {
 	return ${_retval}
 }
 
+lib_func_trim() {
+    local var="$*"
+    # remove leading whitespace characters
+    var="${var#"${var%%[![:space:]]*}"}"
+    # remove trailing whitespace characters
+    var="${var%"${var##*[![:space:]]}"}"   
+    printf "%s" "$var"
+}
 ##########################################################
 # Non-global functions - not to be used in other scripts
 ##########################################################
