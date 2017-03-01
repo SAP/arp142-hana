@@ -4,20 +4,28 @@ check_220_numa_balancing() {
 
 	local -i _retval=99
 
-	if [[ ! -e  '/proc/sys/kernel/numa_balancing' ]]; then
+	# MODIFICATION SECTION>>
+	local -r _sapnote='#2205917'
+	# MODIFICATION SECTION<<
+
+	if [[ ! -e '/proc/sys/kernel/numa_balancing' ]]; then
 
 		#e.g. PowerLinux, XEN
-		logCheckSkipped 'AutoNUMA not configurable (SAP Note #2205917), skipping test ' "${FUNCNAME[0]}"
+		logCheckSkipped "AutoNUMA not configurable (SAP Note ${_sapnote}), skipping test " "${FUNCNAME[0]}"
 		_retval=0
 
 	else
 
 		if [[ $(cat /proc/sys/kernel/numa_balancing) -eq 0 ]]; then
-			logCheckOk 'AutoNUMA is disabled (SAP Note #2205917)'
+
+			logCheckOk "AutoNUMA is disabled (SAP Note ${_sapnote})"
 			_retval=0
+
 		else
-			logCheckError 'AutoNUMA is not disabled (SAP Note #2205917)'
+
+			logCheckError "AutoNUMA is not disabled (SAP Note ${_sapnote})"
 			_retval=2
+
 		fi
 
 	fi

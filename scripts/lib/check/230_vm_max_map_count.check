@@ -1,13 +1,11 @@
 check_230_vm_max_map_count() {
 
-	#1980196 - Setting /proc/sys/vm/max_map_count on HANA systems
-
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
 	local -i _retval=99
 
 	# MODIFICATION SECTION>>
-	local -r _sapnote='#1980196'
+	local -r _sapnote='#1980196'		#Setting /proc/sys/vm/max_map_count on HANA systems
 	# MODIFICATION SECTION<<
 
 	# LIMIT ( 1.000.000 + (32768 * RAM in GB) <= 2.147.483.647)
