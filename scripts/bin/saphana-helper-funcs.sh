@@ -70,6 +70,21 @@ lib_func_is_sles() {
 	return ${_retval}
 }
 
+# Returns 0 on RHEL, 1 on other
+lib_func_is_rhel() {
+
+	local -i _retval=0
+	
+	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+	if [[ "${OS_NAME}" != 'Linux RHEL' ]]; then
+		_retval=1
+	fi
+
+	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+	return ${_retval}
+}
+
 # Returns 1 on Virtualization, 0 on Bare-Metal
 lib_func_is_bare_metal() {
 
