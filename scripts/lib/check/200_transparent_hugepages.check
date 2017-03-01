@@ -2,7 +2,7 @@ check_200_transparent_hugepages() {
 
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	local -i _retval=2
+	local -i _retval=99
 
 	if [[ ! -e  '/sys/kernel/mm/transparent_hugepage/enabled' ]]; then
 		#e.g. PowerLinux, XEN

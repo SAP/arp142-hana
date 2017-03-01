@@ -1,0 +1,83 @@
+check_002_os_kernel_rhel() {
+
+	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+	local -i _retval=99
+
+	# MODIFICATION SECTION>>
+	# array	'goodkernelversion'	'sap note'
+	local -ar _kernel65=( '2.6.32-431.29.2' '#2013638' )
+	local -ar _kernel66=( '2.6.32-504.16.2' '#2136965' )
+	local -ar _kernel67=( '2.6.32-573' '#2247020' )		#not known, take release kernel, all should be fine
+	local -ar _kernel72=( '3.10.0-327' '#2292690' ) 		#dito
+	#local -ar _kernel73=( '3.10.0-514' '#xxxxxxx' ) 		#dito
+	# MODIFICATION SECTION<<
+
+	if  ! lib_func_is_rhel ;	then
+
+		logCheckSkipped 'Linux distribution is not RHEL, skipping test '"${FUNCNAME[0]}"
+		_retval=0
+
+	else
+
+		local _goodversion
+		local _sapnote
+
+		case "${OS_VERSION}" in
+
+			6.4 )
+					logCheckError 'Upgrade to RHEL for SAP Applications yy zz (SAP Note #xxxxxxx)'
+					_retval=2
+				;;
+
+			6.5)	
+					_goodversion="${_kernel65[0]}"
+					_sapnote="${_kernel65[1]}"
+				;;
+
+			6.6)	
+					_goodversion="${_kernel66[0]}"
+					_sapnote="${_kernel66[1]}"
+				;;
+
+			6.7)	
+					_goodversion="${_kernel67[0]}"
+					_sapnote="${_kernel67[1]}"
+				;;
+
+			7.2)
+					_goodversion="${_kernel72[0]}"
+					_sapnote="${_kernel72[1]}"
+				;;
+
+			*)
+					logCheckWarning "CHECK does not support RHEL release."
+					_retval=1
+				;;
+		esac
+
+		if [[ ${_retval} -eq 99 ]]; then
+
+			local kernelversion=${OS_LEVEL}
+
+			#ToDO: normalized kernel version should be provided by helper function
+			kernelversion=${kernelversion/.el[6-7]*/}		# Remove trailing ".el6.x86_64"
+			#2.6.32-504.16.2.el6.x86_64
+
+			lib_func_compare_versions "${kernelversion}" "${_goodversion}"
+			if [[ $? -eq 2 ]]; then
+				logCheckError "Upgrade to kernel version ${_goodversion} or higher. (SAP Note ${_sapnote}) - current ${OS_LEVEL}"
+				_retval=2
+			else
+				logCheckOk "Kernel version is at required level. (SAP Note ${_sapnote}) - current ${OS_LEVEL}"
+				_retval=0
+			fi
+
+		fi
+
+	fi
+
+	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+	return ${_retval}
+
+}

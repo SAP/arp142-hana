@@ -5,7 +5,7 @@ check_025_glibc_version_sles() {
 
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	local -i _retval=2
+	local -i _retval=99
 
 	# MODIFICATION SECTION>>
 	local -r _badversion='2.11.3'

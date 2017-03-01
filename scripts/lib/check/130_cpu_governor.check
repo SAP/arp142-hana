@@ -4,7 +4,7 @@ check_130_cpu_governor() {
 
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	local -i _retval=2
+	local -i _retval=99
 
 	# MODIFICATION SECTION>>
 	local -r _sapnote='#1890444'

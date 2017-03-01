@@ -2,19 +2,24 @@ check_001_os_kernel_sles() {
 
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	local -i _retval=2
+	local -i _retval=99
 
 	# MODIFICATION SECTION>>
 	# array	'goodkernelversion'	'sap note'
-	local -a _kernel113=( '3.0.101-0.47.71' '#1954788' )
-	local -a _kernel114=( '3.0.101-68.1' '#2240716' )
-	local -a _kernel114power=( '3.0.101-88.1' '#2240716' )
-	local -a _kernel120=( '3.12.51-52.31.1' '#2205917' )
-	local -a _kernel121=( '3.12.51-60.20' '#2205917' )
-	local -a _kernel121power=( '3.12.67-60.64.18' '#2205917' )
+	local -ar _kernel113=( '3.0.101-0.47.71' '#1954788' )
+	local -ar _kernel114=( '3.0.101-68.1' '#2240716' )
+	local -ar _kernel114power=( '3.0.101-88.1' '#2240716' )
+	local -ar _kernel120=( '3.12.51-52.31.1' '#2205917' )
+	local -ar _kernel121=( '3.12.51-60.20' '#2205917' )
+	local -ar _kernel121power=( '3.12.67-60.64.18' '#2205917' )
 	# MODIFICATION SECTION<<
 
-	if  lib_func_is_sles ;	then
+	if  ! lib_func_is_sles ;	then
+
+		logCheckSkipped 'Linux distribution is not SLES, skipping test '"${FUNCNAME[0]}"
+		_retval=0
+
+	else
 
 		local _goodversion
 		local _sapnote
@@ -44,12 +49,12 @@ check_001_os_kernel_sles() {
 					_sapnote="${_kernel121[1]}"
 				;;
 			*)
-					logCheckWarning "Unknown SLES release."
+					logCheckWarning "CHECK does not support SLES release."
 					_retval=1
 				;;
 		esac
 
-		if [[ ${_retval} -ne 1 ]]; then
+		if [[ ${_retval} -eq 99 ]]; then
 
 			local kernelversion=${OS_LEVEL}
 
