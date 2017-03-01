@@ -15,8 +15,8 @@ logger() {
 		local logLevel="$2"
 		shift 2
 		
-		local -r  datestring=$(date +'%Y-%m-%d %H:%M:%S')
-		#local -ir prefix_length=$((20+4))	#len("2017-02-15 00:04:32")+1 && len("[C]")+1
+		local -r  datestring=$(date +'%H:%M:%S.%3N')
+		#local -ir prefix_length=$((13+4))	#len("00:04:32.001")+1 && len("[C]")+1
 
 		# Expand escaped characters, wrap at COLUMNS chars, indent wrapped lines
 		printf "%s\t%s\n" "${datestring} ${logLevel}" "$*" | fold -w ${COLUMNS} | sed '2~1s/^/                               /' #>&3
@@ -30,8 +30,8 @@ print_folded() {
 
 	if [[ -t 1 ]]; then #FD1 = stdout
 
-		local -r  datestring=$(date +'%Y-%m-%d %H:%M:%S')
-		local -ir prefix_length=$((20+4))	#len("2017-02-15 00:04:32")+1 && len("[C]")+1
+		local -r  datestring=$(date +'%H:%M:%S.%3N')
+		local -ir prefix_length=$((13+4))	#len("00:04:32.001")+1 && len("[C]")+1
 
 		local -ir status_len=11	
 		local line

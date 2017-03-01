@@ -71,8 +71,8 @@ run_checklist() {
     do
         # printCheckHeader "Checking " $check
         # if ! isCheckBlacklisted $check ; then
-            ${check}
 			printf "\n"
+            ${check}
         # else
         #     logCheckSkipped "Skipping blacklisted check $check."
         # fi
@@ -91,14 +91,15 @@ main() {
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 	
 	lib_func_get_linux_distrib
+	logInfo "${OS_NAME} ${OS_VERSION} ${OS_LEVEL}"
 
-	logDebug "${OS_NAME} ${OS_VERSION} ${OS_LEVEL}"
+	logInfo "Memory: ${LIB_PLATF_RAM_MB} MB"
 
 	if lib_func_is_bare_metal
 	then
-		logTrace 'Running on Bare-Metal'
+		logInfo 'Running on Bare-Metal'
 	else
-		logTrace 'Running Virtualized'
+		logInfo 'Running Virtualized'
 	fi
 
 	printf "\n"
