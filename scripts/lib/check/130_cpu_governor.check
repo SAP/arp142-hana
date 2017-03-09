@@ -1,13 +1,11 @@
 check_130_cpu_governor() {
 
-	#1890444 - Slow HANA system due to CPU power save mode
-
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
 	local -i _retval=99
 
 	# MODIFICATION SECTION>>
-	local -r _sapnote='#1890444'
+	local -r _sapnote='#1890444'		# Slow HANA system due to CPU power save mode
 	# MODIFICATION SECTION<<
 
 	if ! lib_func_is_bare_metal ; then

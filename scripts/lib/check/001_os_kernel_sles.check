@@ -58,13 +58,11 @@ check_001_os_kernel_sles() {
 
 			local kernelversion=${OS_LEVEL}
 
-			#ToDO: normalized kernel version should be provided by helper function
-			kernelversion=${kernelversion/PTF-default/1}
-			kernelversion=${kernelversion/default/1}
-			kernelversion=${kernelversion/bigsmp/1}
-			#3.0.101-0.47.71.7930.0.PTF-default
-			#3.0.101-0.47-bigsmp
-			#3.0.101-0.47.71-default
+			#ToDO: normalized kernel version should be provided by helper function - RegEx
+			kernelversion=${kernelversion/PTF-default/1}	#3.0.101-0.47.71.7930.0.PTF-default
+			kernelversion=${kernelversion/default/1}		#3.0.101-0.47.71-default
+			kernelversion=${kernelversion/bigsmp/1}			#3.0.101-0.47-bigsmp
+			kernelversion=${kernelversion/bigmem/1}			#3.0.101-88-bigmem
 
 			lib_func_compare_versions "${kernelversion}" "${_goodversion}"
 			if [[ $? -eq 2 ]]; then
