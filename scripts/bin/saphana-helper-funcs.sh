@@ -59,7 +59,7 @@ lib_func_get_linux_distrib() {
 lib_func_is_sles() {
 
 	local -i _retval=0
-	
+
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
 	if [[ "${OS_NAME}" != 'Linux SLES' ]]; then
@@ -74,7 +74,7 @@ lib_func_is_sles() {
 lib_func_is_rhel() {
 
 	local -i _retval=0
-	
+
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
 	if [[ "${OS_NAME}" != 'Linux RHEL' ]]; then
@@ -94,6 +94,21 @@ lib_func_is_bare_metal() {
 
 	if [[ ${lib_platf_virtualized} -eq 0 ]] ;
 	then
+		_retval=1
+	fi
+
+	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+	return ${_retval}
+}
+
+# Returns 0 on Power, 1 on other
+lib_func_is_ibmpower() {
+
+	local -i _retval=1
+
+	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+	if [[ "${LIB_PLATF_ARCHITECTURE}" == 'ppc64' ]]; then
 		_retval=1
 	fi
 
@@ -129,13 +144,13 @@ lib_func_compare_versions() {
         local ver1=(${version1})
         local ver2=(${version2})
 
-        local -i i 
+        local -i i
         # fill empty fields in ver1 with zeros
         for ((i=${#ver1[@]}; i<${#ver2[@]}; i++))
         do
             ver1[i]=0
         done
-        
+
         for ((i=0; i<${#ver1[@]}; i++))
         do
             if [[ -z ${ver2[i]} ]]
@@ -161,12 +176,25 @@ lib_func_compare_versions() {
 	return ${_retval}
 }
 
-lib_func_trim() {
+
+lib_func_trim_left() {
     local var="$*"
     # remove leading whitespace characters
     var="${var#"${var%%[![:space:]]*}"}"
+    printf "%s" "$var"
+}
+
+lib_func_trim_right() {
+    local var="$*"
     # remove trailing whitespace characters
-    var="${var%"${var##*[![:space:]]}"}"   
+    var="${var%"${var##*[![:space:]]}"}"
+    printf "%s" "$var"
+}
+
+lib_func_trim() {
+    local var="$*"
+    var=$(lib_func_trim_left ${var})
+    var=$(lib_func_trim_right ${var})
     printf "%s" "$var"
 }
 ##########################################################
@@ -320,6 +348,40 @@ __linux_distrib_redhat_release() {
 
 }
 
+__get_platform_cpu_details() {
+
+	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+	# get System details
+	local -r IFS=$'\n'
+	local -ar platform=($(lscpu))
+
+	for ((i=0; i < ${#platform[@]}; ++i)); do
+
+		logTrace "<${FUNCNAME[0]}> # ${platform[$i]}>"
+
+		case ${platform[$i]} in
+
+		"Architecture:"*)
+							LIB_PLATF_ARCHITECTURE=$(lib_func_trim_left ${platform[$i]/Architecture:})
+							readonly LIB_PLATF_ARCHITECTURE
+		;;
+		"Byte Order:"*)
+							LIB_PLATF_BYTEORDER=$(lib_func_trim_left ${platform[$i]/Byte Order:})
+							readonly LIB_PLATF_BYTEORDER
+							break
+		;;
+		# Model also exists on Intel --> e.g. 63
+		# "Model:"*)			#on Power only	<Model:	IBM,9119-MHE>
+		# 					LIB_PLATF_NAME=$(lib_func_trim_left ${platform[$i]/Model:})
+		# 					readonly LIB_PLATF_NAME
+		#;;
+		esac
+
+	done
+
+}
+
 #============================================================
 # LIB MAIN - initialization
 #============================================================
@@ -327,19 +389,21 @@ _lib_helper_main() {
 
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	# get System details
+	__get_platform_cpu_details
 
 	# ToDo:	Power platform does not provide 'dmidecode'
 
 	# Platform - "x3950 X6 -[6241ZB5]-", "ProLiant DL785 G6", "VMware Virtual Platform"
-	LIB_PLATF_NAME=$(dmidecode -s system-product-name)
-	readonly LIB_PLATF_NAME
+	if [[ ! -n ${LIB_PLATF_NAME} ]]; then
+		LIB_PLATF_NAME=$(dmidecode -s system-product-name)
+		readonly LIB_PLATF_NAME
+	fi
 
-	# BIOS vendor of the HW: "LENOVO","HP","IBM Corp.","Phoenix Technologies LTD"
-	LIB_PLATF_BIOS=$(dmidecode -s bios-vendor | sed -e '/^\s*#/d')
-	readonly LIB_PLATF_BIOS
+	# # BIOS vendor of the HW: "LENOVO","HP","IBM Corp.","Phoenix Technologies LTD"
+	# LIB_PLATF_BIOS=$(dmidecode -s bios-vendor | sed -e '/^\s*#/d')
+	# readonly LIB_PLATF_BIOS
 
-	# Installed RAM - meminfo not 100% correct 
+	# Installed RAM - meminfo not 100% correct
 	#$(cat /proc/meminfo | awk '/^MemTotal:/ {match($0, /[0-9]+/); print substr($0,RSTART,RLENGTH) }')
 	LIB_PLATF_RAM_MB=$(printf "( %s  0)\n" "$(dmidecode -t memory | sed -e '/^\s*#/d' | grep "^\W*Size:.*B" | awk '{ if ($3=="GB") { x=$2*1024; print x } else print $2 }' | tr '\n' '+' )" | bc)
 	readonly LIB_PLATF_RAM_MB
@@ -353,8 +417,11 @@ _lib_helper_main() {
 ##########################################################
 #GLOBAL -x --> exported
 declare -x LIB_PLATF_NAME
-declare -x LIB_PLATF_BIOS
+# declare -x LIB_PLATF_BIOS
 declare -xi LIB_PLATF_RAM_MB
+
+declare -x LIB_PLATF_ARCHITECTURE
+declare -x LIB_PLATF_BYTEORDER
 
 #LIB local
 declare -i lib_platf_virtualized
