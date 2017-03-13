@@ -1,3 +1,5 @@
+#!/bin/bash
+umask 022
 
 exec 3>&2 # logging stream (file descriptor 3) defaults to STDERR
 
@@ -16,10 +18,17 @@ logger() {
 		shift 2
 		
 		local -r  datestring=$(date +'%H:%M:%S.%3N')
-		#local -ir prefix_length=$((13+4))	#len("00:04:32.001")+1 && len("[C]")+1
+		local -ir prefix_length=$((13+10))	#len("00:04:32.001")+1 && len("[WARNING]")+1
+		local -ri content_width=$((COLUMNS-prefix_length-1))
 
 		# Expand escaped characters, wrap at COLUMNS chars, indent wrapped lines
-		printf "%s\t%s\n" "${datestring} ${logLevel}" "$*" | fold -w ${COLUMNS} | sed '2~1s/^/                               /' #>&3
+		#printf "%-24s %s\n" "${datestring} ${logLevel}" "$*" | fold -w ${COLUMNS} | sed '2~1s/^/                        /' #>&3
+		if [[ -t 1 ]]; then #FD1 = stdout
+		local line
+			printf "%s\n" "$*" | fold -w ${content_width} | ( read -r line ; printf "%-${prefix_length}s %s\n" "${datestring} ${logLevel}" "${line}" ; while read -r line ; do printf "%-${prefix_length}s %s\n" " " "${line}" ; done )
+		else
+			printf "%-${prefix_length}s %s\n" "${datestring} ${logLevel}" "$*"
+		fi
 	fi
 }
 
@@ -28,16 +37,15 @@ print_folded() {
 	local status="$1"
 	shift 1
 
+	local -r  datestring=$(date +'%H:%M:%S.%3N')
+	local -ir prefix_length=$((13+10))	#len("00:04:32.001")+1 && len("[WARNING]")+1
+	local -ri content_width=$((COLUMNS-prefix_length-1))
+
 	if [[ -t 1 ]]; then #FD1 = stdout
-
-		local -r  datestring=$(date +'%H:%M:%S.%3N')
-		local -ir prefix_length=$((13+4))	#len("00:04:32.001")+1 && len("[C]")+1
-
-		local -ir status_len=11	
 		local line
-		echo -e "$*" | fold -w ${COLUMNS} | ( read -r line ; echo "${datestring} ${status} ${line}" ; while read -r line ; do printf "%${prefix_length}s " ' ' ; echo -e "$line" ; done )
+		printf "%s\n" "$*" | fold -w ${content_width} | ( read -r line ; printf "%-${prefix_length}s %s\n" "${datestring} ${status}" "${line}" ; while read -r line ; do printf "%-${prefix_length}s %s\n" " " "${line}" ; done )
 	else
-		echo "$status" "$*"
+		printf "%-${prefix_length}s %s\n" "${datestring} ${status}" "$*"
 	fi
 }
 
@@ -47,42 +55,40 @@ use_colored_output() {
 }
 
 logCheckError() {
-	#ToDo: count_error
 	if use_colored_output; then
-		print_folded "${warn}[ERROR]${norm}    "	"$@"
+		print_folded "${warn}[ERROR]${norm}"	"$@"
 	else
-		print_folded  "[ERROR]    "	"$@"
+		print_folded  "[ERROR]"	"$@"
 	fi
 }
 
 logCheckWarning() {
-	#ToDo: count_warning
 	if use_colored_output; then
-		print_folded "${attn}${blb}[WARNING]${norm}  "	"$@"
+		print_folded "${attn}${blb}[WARNING]${norm}"	"$@"
 	else
-		print_folded "[WARNING]  "	"$@"
+		print_folded "[WARNING]"	"$@"
 	fi
 }
 
 logCheckOk() {
 	if [[ ${VERBOSE} -ge 4 ]]; then
 		if use_colored_output; then
-			print_folded "${done}[OK]${norm}       "	"$@"
+			print_folded "${done}[OK]${norm}"	"$@"
 		else
-			print_folded "[OK]       "	"$@"
+			print_folded "[OK]"	"$@"
 		fi
 	fi
 }
 
 logCheckInfo() {
 	if [[ ${VERBOSE} -ge 4 ]]; then
-		print_folded  "[INFO]     "	"$@"
+		print_folded  "[INFO]"	"$@"
 	fi
 }
 
 logCheckSkipped() {
 	if [[ ${VERBOSE} -ge 4 ]]; then
-		print_folded  "[SKIPPED]  "	"$@"
+		print_folded  "[SKIPPED]"	"$@"
 	fi
 }
 
@@ -96,11 +102,14 @@ _lib_logger_main() {
 
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-    if [[ -t 1 && -n "$TERM" && "$TERM" != "dumb" ]]; then
-        COLUMNS=$(tput cols)
+	# ToDo: -t 1 stdout? 
+	#  if [[ -t 1 && -n "$TERM" && "$TERM" != "dumb" ]]; then
+    if [[ -n "$TERM" && "$TERM" != "dumb" ]]; then
+        COLUMNS=$(tput cols)		
     fi
 
 }
 
+# ToDo: declare -ix ?? - logging should also work for pipes (grep or less)
 declare -i COLUMNS
 _lib_logger_main
