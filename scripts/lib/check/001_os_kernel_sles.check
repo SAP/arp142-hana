@@ -24,35 +24,59 @@ check_001_os_kernel_sles() {
 		local _goodversion
 		local _sapnote
 
-		case "${OS_VERSION}" in
+		if lib_func_is_ibmpower ; then
 
-			11.1 | 11.2 )
-				logCheckError 'Upgrade to SLES for SAP Applications 11 SP4 (SAP Note #1557506)'
-				_retval=2
-				;;
-
-			11.3)	_goodversion="${_kernel113[0]}"
-					_sapnote="${_kernel113[1]}"
-				;;
+			case "${OS_VERSION}" in
 
 			11.4)
-					_goodversion="${_kernel114[0]}"
-					_sapnote="${_kernel114[1]}"
-				;;
-
-			12.0*)	_goodversion="${_kernel120[0]}"
-					_sapnote="${_kernel120[1]}"
+					_goodversion="${_kernel114power[0]}"
+					_sapnote="${_kernel114power[1]}"
 				;;
 
 			12.1*)
-					_goodversion="${_kernel121[0]}"
-					_sapnote="${_kernel121[1]}"
+					_goodversion="${_kernel121power[0]}"
+					_sapnote="${_kernel121power[1]}"
 				;;
+
 			*)
-					logCheckWarning "CHECK does not support SLES release."
+					logCheckWarning "CHECK does not support SLESonPower release."
 					_retval=1
 				;;
-		esac
+			esac
+
+		else
+
+			case "${OS_VERSION}" in
+
+				11.1 | 11.2 )
+					logCheckError 'Upgrade to SLES for SAP Applications 11 SP4 (SAP Note #1557506)'
+					_retval=2
+					;;
+
+				11.3)	_goodversion="${_kernel113[0]}"
+						_sapnote="${_kernel113[1]}"
+					;;
+
+				11.4)
+						_goodversion="${_kernel114[0]}"
+						_sapnote="${_kernel114[1]}"
+					;;
+
+				12.0*)	_goodversion="${_kernel120[0]}"
+						_sapnote="${_kernel120[1]}"
+					;;
+
+				12.1*)
+						_goodversion="${_kernel121[0]}"
+						_sapnote="${_kernel121[1]}"
+					;;
+				*)
+						logCheckWarning "CHECK does not support SLES release."
+						_retval=1
+					;;
+			esac
+
+		fi
 
 		if [[ ${_retval} -eq 99 ]]; then
 
@@ -63,6 +87,7 @@ check_001_os_kernel_sles() {
 			kernelversion=${kernelversion/default/1}		#3.0.101-0.47.71-default
 			kernelversion=${kernelversion/bigsmp/1}			#3.0.101-0.47-bigsmp
 			kernelversion=${kernelversion/bigmem/1}			#3.0.101-88-bigmem
+			kernelversion=${kernelversion/ppc64/1}			#3.0.101-71-ppc64
 
 			lib_func_compare_versions "${kernelversion}" "${_goodversion}"
 			if [[ $? -eq 2 ]]; then
