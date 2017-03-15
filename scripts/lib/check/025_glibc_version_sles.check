@@ -16,8 +16,8 @@ check_025_glibc_version_sles() {
 	#ToDo: should not be skipped for RHEL, verify for PowerLinux as well       
 	if ! lib_func_is_sles ; then
 
-		logCheckSkipped 'Linux distribution is not SLES, skipping test '"${FUNCNAME[0]}"
-		_retval=0
+		logCheckSkipped 'Linux distribution is not SLES, skipping test' "${FUNCNAME[0]}"
+		_retval=3
 
 	else
 

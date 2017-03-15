@@ -17,16 +17,16 @@ test_CompareVersions () {
 	esac
 	if [[ $op != $3 ]]
 	then
-		echo "FAIL: Expected '$3', Actual '$op', Arg1 '$1', Arg2 '$2'"
+		printf "FAIL: Expected '%s', Actual '%s', Arg1 '%s', Arg2 '%s'\n"	"$3" "$op" "$1" "$2"
 	else
-		echo "Pass: '$1 $op $2'"
+		printf "Pass: '%s %s %s'\n"	"$1" "$op" "$2"
 	fi
 }
 
 # Run tests
 # argument table format:
 # testarg1   testarg2     expected_relationship
-echo "The following tests should pass"
+printf 'The following tests should pass\n'
 while read -r test
 do
 	test_CompareVersions $test
@@ -55,5 +55,5 @@ done << EOF
 2.11.3-17.95.2  2.19-38.2       <
 EOF
 
-echo "The following test should fail (test the tester)"
+printf 'The following test should fail (test the tester)\n'
 test_CompareVersions 1 1 '>'

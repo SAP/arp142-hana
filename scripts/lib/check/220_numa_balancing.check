@@ -11,8 +11,8 @@ check_220_numa_balancing() {
 	if [[ ! -e '/proc/sys/kernel/numa_balancing' ]]; then
 
 		#e.g. PowerLinux, XEN
-		logCheckSkipped "AutoNUMA not configurable (SAP Note ${_sapnote}), skipping test " "${FUNCNAME[0]}"
-		_retval=0
+		logCheckSkipped "AutoNUMA not configurable (SAP Note ${_sapnote}), skipping test" "${FUNCNAME[0]}"
+		_retval=3
 
 	else
 

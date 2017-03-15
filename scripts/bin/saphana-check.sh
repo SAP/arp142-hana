@@ -15,7 +15,7 @@ PROGDATE="YYYY-XXX-ZZ"
 
 # # Make sure only root can run our script
 # if [ "$(id -u)" -ne 0 ]; then
-#    echo "This script must be run as root" 1>&2
+#    printf "This script must be run as root\n" 1>&2
 #    exit 1
 # fi
 
@@ -55,7 +55,7 @@ generate_checklist() {
 		checkname=check_$(basename "${checkfile}" .check)
 		#safetycheck=$(lib_func_check_check_security $checkfile)
 		if [ $? -ne 0 ]; then
-			echo "Skipping check ${checkname}. Reason: ${safetycheck}"
+			printf "Skipping check %s. Reason: %s\n"	"${checkname}"	${safetycheck}
 			continue;
 		fi
 		CHECKLIST="${CHECKLIST} ${checkname}"
@@ -73,6 +73,7 @@ run_checklist() {
         # if ! isCheckBlacklisted $check ; then
 			printf "\n"
             ${check}
+			#ToDo: count_error, count_warning - removed from logger
         # else
         #     logCheckSkipped "Skipping blacklisted check $check."
         # fi
@@ -91,16 +92,25 @@ main() {
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 	
 	lib_func_get_linux_distrib
-	logInfo "${OS_NAME} ${OS_VERSION} ${OS_LEVEL}"
+	logNotify "${OS_NAME} ${OS_VERSION} ${OS_LEVEL}"
 
-	logInfo "Memory: ${LIB_PLATF_RAM_MB} MB"
-
+	logNotify "Architecture: ${LIB_PLATF_ARCHITECTURE}"
+	logNotify "Byte Order: ${LIB_PLATF_BYTEORDER}"
+	
+	logNotify "Memory: ${LIB_PLATF_RAM_MB} MB"
+	
 	if lib_func_is_bare_metal
 	then
-		logInfo 'Running on Bare-Metal'
+		logNotify 'Running on Bare-Metal'
 	else
-		logInfo 'Running Virtualized'
+		logNotify 'Running Virtualized'
 	fi
+
+	if lib_func_is_ibmpower
+	then
+		logNotify 'Running on IBM Power'
+	fi
+	
 
 	printf "\n"
 

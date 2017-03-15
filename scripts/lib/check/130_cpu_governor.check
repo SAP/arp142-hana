@@ -10,8 +10,8 @@ check_130_cpu_governor() {
 
 	if ! lib_func_is_bare_metal ; then
 
-		logCheckSkipped 'Running virtualized. Skipping test ' "${FUNCNAME[0]}"
-		_retval=0
+		logCheckSkipped 'Running virtualized. Skipping test' "${FUNCNAME[0]}"
+		_retval=3
 
 	else
 
