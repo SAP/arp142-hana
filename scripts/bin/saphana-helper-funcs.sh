@@ -58,12 +58,12 @@ lib_func_get_linux_distrib() {
 # Returns 0 on SLES, 1 on other
 lib_func_is_sles() {
 
-	local -i _retval=0
+	local -i _retval=1
 
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	if [[ "${OS_NAME}" != 'Linux SLES' ]]; then
-		_retval=1
+	if [[ "${OS_NAME}" == 'Linux SLES' ]]; then
+		_retval=0
 	fi
 
 	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
@@ -73,12 +73,12 @@ lib_func_is_sles() {
 # Returns 0 on RHEL, 1 on other
 lib_func_is_rhel() {
 
-	local -i _retval=0
+	local -i _retval=1
 
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	if [[ "${OS_NAME}" != 'Linux RHEL' ]]; then
-		_retval=1
+	if [[ "${OS_NAME}" == 'Linux RHEL' ]]; then
+		_retval=0
 	fi
 
 	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
@@ -88,13 +88,13 @@ lib_func_is_rhel() {
 # Returns 1 on Virtualization, 0 on Bare-Metal
 lib_func_is_bare_metal() {
 
-	local -i _retval=0
+	local -i _retval=1
 
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	if [[ ${lib_platf_virtualized} -eq 0 ]] ;
+	if [[ ${lib_platf_virtualized} -ne 0 ]] ;
 	then
-		_retval=1
+		_retval=0
 	fi
 
 	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
@@ -109,7 +109,7 @@ lib_func_is_ibmpower() {
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
 	if [[ "${LIB_PLATF_ARCHITECTURE}" == 'ppc64' ]]; then
-		_retval=1
+		_retval=0
 	fi
 
 	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
