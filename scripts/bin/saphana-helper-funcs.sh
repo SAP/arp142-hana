@@ -10,6 +10,10 @@ umask 022
 # Script name: "saphana-helper-funcs.sh"
 #------------------------------------------------------------------
 
+# return if saphana-helper-funcs already loaded
+[[ -n "${HANA_HELPER_VERSION:-}" ]] && return 0
+
+HANA_HELPER_VERSION='0.0.1'
 #PROGVERSION="x.y-<dev>"
 #PROGDATE="YYYY-XXX-ZZ"
 
@@ -125,8 +129,8 @@ lib_func_compare_versions() {
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
 	local -i _retval=0
-    local version1=$(lib_func_trim $1)
-	local version2=$(lib_func_trim $2)
+    local version1=$(lib_func_trim "$1")
+	local version2=$(lib_func_trim "$2")
 
     #${1//\-/\.} - Variable Substitution (faster then tr,sed or grep) - replace - by .
 	#required for 2.11.3-17.95.2 --> 2.11.3.17.95.2
@@ -193,8 +197,8 @@ lib_func_trim_right() {
 
 lib_func_trim() {
     local var="$*"
-    var=$(lib_func_trim_left ${var})
-    var=$(lib_func_trim_right ${var})
+    var=$(lib_func_trim_left "${var}")
+    var=$(lib_func_trim_right "${var}")
     printf "%s" "$var"
 }
 ##########################################################
@@ -363,11 +367,11 @@ __get_platform_cpu_details() {
 		case ${platform[$i]} in
 
 		"Architecture:"*)
-							LIB_PLATF_ARCHITECTURE=$(lib_func_trim_left ${platform[$i]/Architecture:})
+							LIB_PLATF_ARCHITECTURE=$(lib_func_trim_left "${platform[$i]/Architecture:}")
 							readonly LIB_PLATF_ARCHITECTURE
 		;;
 		"Byte Order:"*)
-							LIB_PLATF_BYTEORDER=$(lib_func_trim_left ${platform[$i]/Byte Order:})
+							LIB_PLATF_BYTEORDER=$(lib_func_trim_left "${platform[$i]/Byte Order:}")
 							readonly LIB_PLATF_BYTEORDER
 							break
 		;;
