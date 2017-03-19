@@ -1,7 +1,20 @@
 #!/bin/bash
 umask 022
 
-exec 3>&2 # logging stream (file descriptor 3) defaults to STDERR
+#------------------------------------------------------------------
+# SAP HANA Logger
+#------------------------------------------------------------------
+# (C) Copyright SAP 2017
+#
+# Library Functions
+# Script name: "saphana-logger.sh"
+#------------------------------------------------------------------
+# return if saphana-logger already loaded
+[[ -n "${HANA_LOGGER_VERSION:-}" ]] && return 0
+
+HANA_LOGGER_VERSION='0.0.1'
+
+#exec 3>&2 # logging stream (file descriptor 3) defaults to STDERR
 
 logNotify() {		logger 0 "[N]"	"$1"; } # Always prints
 logCritical() {		logger 1 "[C]"	"$1"; }
@@ -12,7 +25,7 @@ logDebug() {		logger 5 "[D]"	"$1"; }
 logTrace() {		logger 6 "[T]"	"$1"; }
 
 logger() {
-	if [[ ${VERBOSE} -ge "$1" ]]; then
+	if [[ ${LOG_VERBOSE_LVL} -ge "$1" ]]; then
 
 		local logLevel="$2"
 		shift 2
@@ -31,7 +44,6 @@ logger() {
 		fi
 	fi
 }
-
 
 print_folded() {
 	local status="$1"
@@ -71,7 +83,7 @@ logCheckWarning() {
 }
 
 logCheckOk() {
-	if [[ ${VERBOSE} -ge 4 ]]; then
+	if [[ ${LOG_VERBOSE_LVL} -ge 4 ]]; then
 		if use_colored_output; then
 			print_folded "${done}[OK]${norm}"	"$@"
 		else
@@ -81,13 +93,13 @@ logCheckOk() {
 }
 
 logCheckInfo() {
-	if [[ ${VERBOSE} -ge 4 ]]; then
+	if [[ ${LOG_VERBOSE_LVL} -ge 4 ]]; then
 		print_folded  "[INFO]"	"$@"
 	fi
 }
 
 logCheckSkipped() {
-	if [[ ${VERBOSE} -ge 4 ]]; then
+	if [[ ${LOG_VERBOSE_LVL} -ge 4 ]]; then
 		print_folded  "[SKIPPED]"	"$@"
 	fi
 }
@@ -109,6 +121,9 @@ _lib_logger_main() {
     fi
 
 }
+
+# Variables to be used by other 
+declare -i LOG_VERBOSE_LVL=3 # #notify/silent=0 (always), critical=1, error=2, warn=3 (default), info=4, debug=5, trace=6
 
 # ToDo: declare -ix ?? - logging should also work for pipes (grep or less)
 declare -i COLUMNS
