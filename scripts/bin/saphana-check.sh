@@ -23,23 +23,45 @@ PROGDATE="YYYY-XXX-ZZ"
 LC_ALL=POSIX
 export LC_ALL
 
-
-declare -i VERBOSE=6 # #notify/silent=0 (always), critical=1, error=2, warn=3 (default), info=4, debug=5, trace=6
-
-OS_NAME=""
-OS_VERSION=""
-OS_LEVEL=""
-
-CHECKLIST=""
-
 #Import Libraries
 source ./saphana-logger.sh
 source ./saphana-helper-funcs.sh
+source ./shflags
+
+# configure shflags - define flags
+#DEFINE_string	'checks'	''		'<\"check1 check2 ...\">  A space-separated list of checks that will be performed.'	'c'
+#DEFINE_string	'checkset'	''		'<Checkset>  A textfile containing the various checks to perform.'	'C'
+DEFINE_integer	'loglevel'	3		'notify/silent=0 (always), critical=1, error=2, warn=3, info=4, debug=5, trace=6'	'l'
+DEFINE_boolean	'debug'		false	'enable debug mode (set loglevel=5)' 'd'
+DEFINE_boolean	'trace'		false	'enable trace mode (set loglevel=6)' 't'
+FLAGS_HELP="USAGE: $0 [flags]"
+
+
+OS_NAME=''
+OS_VERSION=''
+OS_LEVEL=''
+
+CHECKLIST=''
 
 
 #============================================================
 # utility stuff
 #============================================================
+evaluate_cmdline_options() {
+
+	if [[ ${FLAGS_loglevel} -lt 7 ]]; then
+		LOG_VERBOSE_LVL=${FLAGS_loglevel} 
+	fi
+
+	if [[ ${FLAGS_debug} -eq ${FLAGS_TRUE} ]]; then
+		LOG_VERBOSE_LVL=5
+	fi
+	if [[ ${FLAGS_trace} -eq ${FLAGS_TRUE} ]]; then
+		LOG_VERBOSE_LVL=6
+	fi
+
+	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # LOG_VERBOSE_LVL=${LOG_VERBOSE_LVL}"
+}
 
 #============================================================
 # Check handling
@@ -89,6 +111,8 @@ run_checklist() {
 #============================================================
 main() {
 
+	evaluate_cmdline_options
+
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 	
 	lib_func_get_linux_distrib
@@ -120,5 +144,9 @@ main() {
 
 	exit 0
 }
+
+# parse the command-line - shflags
+FLAGS "$@" || exit 1
+eval set -- "${FLAGS_ARGV}"
 
 main "$@"
