@@ -13,6 +13,12 @@ umask 022
 PROGVERSION="x.y-<dev>"
 PROGDATE="YYYY-XXX-ZZ"
 
+
+die() {
+  [ $# -gt 0 ] && echo "error: $@" >&2
+  exit 1
+}
+
 # # Make sure only root can run our script
 # if [ "$(id -u)" -ne 0 ]; then
 #    printf "This script must be run as root\n" 1>&2
@@ -24,9 +30,9 @@ LC_ALL=POSIX
 export LC_ALL
 
 #Import Libraries
-source ./saphana-logger.sh
-source ./saphana-helper-funcs.sh
-source ./shflags
+source ./saphana-logger || die 'unable to load saphana-logger library'
+source ./saphana-helper-funcs || die 'unable to load saphana-helper-funcs library'
+source ./shflags || die 'unable to load shflags library'
 
 # configure shflags - define flags
 #DEFINE_string	'checks'	''		'<\"check1 check2 ...\">  A space-separated list of checks that will be performed.'	'c'

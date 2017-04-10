@@ -25,22 +25,28 @@ logDebug() {		logger 5 "[D]"	"$1"; }
 logTrace() {		logger 6 "[T]"	"$1"; }
 
 logger() {
+	
+	local loglevel=$1
+	shift 1
+
 	if [[ ${LOG_VERBOSE_LVL} -ge "$1" ]]; then
 
-		local logLevel="$2"
-		shift 2
+		local logleveltag="$2"
+		shift 1
 		
 		local -r  datestring=$(date +'%H:%M:%S.%3N')
 		local -ir prefix_length=$((13+10))	#len("00:04:32.001")+1 && len("[WARNING]")+1
 		local -ri content_width=$((COLUMNS-prefix_length-1))
 
 		# Expand escaped characters, wrap at COLUMNS chars, indent wrapped lines
-		#printf "%-24s %s\n" "${datestring} ${logLevel}" "$*" | fold -w ${COLUMNS} | sed '2~1s/^/                        /' #>&3
+		#printf "%-24s %s\n" "${datestring} ${logleveltag}" "$*" | fold -w ${COLUMNS} | sed '2~1s/^/                        /' #>&3
 		if [[ -t 1 ]]; then #FD1 = stdout
 		local line
-			printf "%s\n" "$*" | fold -w ${content_width} | ( read -r line ; printf "%-${prefix_length}s %s\n" "${datestring} ${logLevel}" "${line}" ; while read -r line ; do printf "%-${prefix_length}s %s\n" " " "${line}" ; done )
+			printf "%s\n" "$*" | fold -w ${content_width} | ( read -r line ; printf "%-${prefix_length}s %s\n" "${datestring} ${logleveltag
+}" "${line}" ; while read -r line ; do printf "%-${prefix_length}s %s\n" " " "${line}" ; done )
 		else
-			printf "%-${prefix_length}s %s\n" "${datestring} ${logLevel}" "$*"
+			printf "%-${prefix_length}s %s\n" "${datestring} ${logleveltag
+}" "$*"
 		fi
 	fi
 }

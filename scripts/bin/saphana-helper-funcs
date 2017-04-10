@@ -205,8 +205,10 @@ lib_func_trim() {
 # Non-global functions - not to be used in other scripts
 ##########################################################
 
-# $1 - os-release file
 __linux_distrib_os_release() {
+
+	local _os_release_file="$1"
+	shift 1
 
 	local _ostmp
 	local _osname
@@ -216,7 +218,7 @@ __linux_distrib_os_release() {
 
 	while read -r line; do
 
-		logTrace "<${FUNCNAME[0]}> # ${1}:${line}"
+		logTrace "<${FUNCNAME[0]}> # ${_os_release_file}:${line}"
 
 		#NAME=""
 		_ostmp=$(echo "${line}" | awk '/^NAME=/ {match($0, /".*"/); print substr($0,RSTART+1,RLENGTH-2)}')
@@ -226,7 +228,7 @@ __linux_distrib_os_release() {
 		_ostmp=$(echo "${line}" | awk '/^VERSION_ID=/ {match($0, /([0-9]+)(\.([0-9]+))+/); print substr($0,RSTART,RLENGTH) }')
 		_osvers=${_osvers:=$_ostmp}
 
-	done < "${1}"
+	done < "${_os_release_file}"
 
 	_os_version="${_osvers}"
 
@@ -249,8 +251,10 @@ __linux_distrib_os_release() {
 	esac
 }
 
-# $1 - suse-release file
 __linux_distrib_suse_release() {
+
+	local _suse_release_file="$1"
+	shift 1
 
 	local _ostmp
 	local _osname
@@ -261,7 +265,7 @@ __linux_distrib_suse_release() {
 
 	while read -r line; do
 
-		logTrace "<${FUNCNAME[0]}> # ${1}:${line}"
+		logTrace "<${FUNCNAME[0]}> # ${_suse_release_file}:${line}"
 
 		#Enterprise?
 		_ostmp=$(echo "${line}" | awk '/^SUSE Linux Enterprise/ {match($0, /([0-9]+)/); print substr($0,RSTART,RLENGTH) }')
@@ -275,7 +279,7 @@ __linux_distrib_suse_release() {
 		_ostmp=$(echo "${line}" | awk '/^PATCHLEVEL = / {match($0, /([0-9]+)/); print substr($0,RSTART,RLENGTH) }')
 		_susepatchl=${_susepatchl:=$_ostmp}
 
-	done < "${1}"
+	done < 1"${_suse_release_file}"
 
 	_os_version="${_osvers}.${_susepatchl}"
 
@@ -286,8 +290,10 @@ __linux_distrib_suse_release() {
 	fi
 }
 
-# $1 - oracle-release file
 __linux_distrib_oracle_release() {
+
+	local _oracle_release_file="$1"
+	shift 1
 
 	local _oltmp
 	local _olname
@@ -298,7 +304,7 @@ __linux_distrib_oracle_release() {
 	#oracle is based on RedHat - redhatfile also exist, but check oracle first
 	while read -r line; do
 
-		logTrace "<${FUNCNAME[0]}> # ${1}:${line}"
+		logTrace "<${FUNCNAME[0]}> # ${_oracle_release_file}:${line}"
 
 		#Server within string - match any number
 		_oltmp=$(echo "${line}" | awk '/^Oracle Linux Server/ {match($0, /([0-9]+)/); print substr($0,RSTART,RLENGTH) }')
@@ -308,7 +314,7 @@ __linux_distrib_oracle_release() {
 		_oltmp=$(echo "${line}" | awk '/^Oracle Linux/ {match($0, /([0-9]+)\.([0-9]+)/); print substr($0,RSTART,RLENGTH) }')
 		_olversion=${_olversion:=$_oltmp}
 
-	done < "${1}"
+	done < "${_oracle_release_file}"
 
 	_os_version=${_olversion}
 
@@ -319,8 +325,10 @@ __linux_distrib_oracle_release() {
 	fi
 }
 
-# $1 - redhat-release file
 __linux_distrib_redhat_release() {
+
+	local _redhat_release_file="$1"
+	shift 1
 
 	local _rhtmp
 	local _rhname
@@ -330,7 +338,7 @@ __linux_distrib_redhat_release() {
 
 	while read -r line; do
 
-		logTrace "<${FUNCNAME[0]}> # ${1}:${line}"
+		logTrace "<${FUNCNAME[0]}> # ${_redhat_release_file}:${line}"
 
 		#Enterprise within string - match any number
 		_rhtmp=$(echo "${line}" | awk '/^Red Hat Enterprise Linux/ {match($0, /([0-9]+)/); print substr($0,RSTART,RLENGTH) }')
@@ -340,7 +348,7 @@ __linux_distrib_redhat_release() {
 		_rhtmp=$(echo "${line}" | awk '/^Red Hat/ {match($0, /([0-9]+)\.([0-9]+)/); print substr($0,RSTART,RLENGTH) }')
 		_rhversion=${_rhversion:=$_rhtmp}
 
-	done < "${1}"
+	done < "${_redhat_release_file}"
 
 	_os_version=${_rhversion}
 
@@ -386,6 +394,22 @@ __get_platform_cpu_details() {
 
 }
 
+__get_platform_mem_details() {
+
+	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+	# Installed RAM - /proc/meminfo not 100% correct
+	#$(cat /proc/meminfo | awk '/^MemTotal:/ {match($0, /[0-9]+/); print substr($0,RSTART,RLENGTH) }')
+
+	#dmidecode only for INTEL
+	#LIB_PLATF_RAM_MB=$(printf "( %s  0)\n" "$(dmidecode -t memory | sed -e '/^\s*#/d' | grep "^\W*Size:.*B" | awk '{ if ($3=="GB") { x=$2*1024; print x } else print $2 }' | tr '\n' '+' )" | bc)
+	
+	#works for INTEL, IBM Power
+	LIB_PLATF_RAM_MB=$(printf "( %s  0)\n" "$(numactl -H | grep "size:.*B" | awk '{ if ($5=="GB") { x=$4*1024; print x } else print $4 }' | tr '\n' '+' )" | bc)
+	readonly LIB_PLATF_RAM_MB
+
+}
+
 #============================================================
 # LIB MAIN - initialization
 #============================================================
@@ -407,10 +431,7 @@ _lib_helper_main() {
 	# LIB_PLATF_BIOS=$(dmidecode -s bios-vendor | sed -e '/^\s*#/d')
 	# readonly LIB_PLATF_BIOS
 
-	# Installed RAM - meminfo not 100% correct
-	#$(cat /proc/meminfo | awk '/^MemTotal:/ {match($0, /[0-9]+/); print substr($0,RSTART,RLENGTH) }')
-	LIB_PLATF_RAM_MB=$(printf "( %s  0)\n" "$(dmidecode -t memory | sed -e '/^\s*#/d' | grep "^\W*Size:.*B" | awk '{ if ($3=="GB") { x=$2*1024; print x } else print $2 }' | tr '\n' '+' )" | bc)
-	readonly LIB_PLATF_RAM_MB
+	__get_platform_mem_details
 
 	# ToDo:	verify for AMD processors
 	lib_platf_virtualized=$(grep -q '^flags.*hypervisor' /proc/cpuinfo;echo $?)
