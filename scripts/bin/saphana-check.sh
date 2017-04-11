@@ -1,5 +1,6 @@
 #!/bin/bash
 umask 022
+set -u 		# treat unset variables as an error
 
 #------------------------------------------------------------------
 # SAP HANA ...
@@ -55,16 +56,11 @@ CHECKLIST=''
 #============================================================
 evaluate_cmdline_options() {
 
-	if [[ ${FLAGS_loglevel} -lt 7 ]]; then
-		LOG_VERBOSE_LVL=${FLAGS_loglevel} 
-	fi
+	[[ ${FLAGS_loglevel} -lt 7 ]] && LOG_VERBOSE_LVL=${FLAGS_loglevel} 
 
-	if [[ ${FLAGS_debug} -eq ${FLAGS_TRUE} ]]; then
-		LOG_VERBOSE_LVL=5
-	fi
-	if [[ ${FLAGS_trace} -eq ${FLAGS_TRUE} ]]; then
-		LOG_VERBOSE_LVL=6
-	fi
+	[[ ${FLAGS_debug} -eq ${FLAGS_TRUE} ]] && LOG_VERBOSE_LVL=5
+
+	[[ ${FLAGS_trace} -eq ${FLAGS_TRUE} ]] && LOG_VERBOSE_LVL=6
 
 	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # LOG_VERBOSE_LVL=${LOG_VERBOSE_LVL}"
 }
