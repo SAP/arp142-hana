@@ -8,11 +8,13 @@ check_025_glibc_version_sles() {
 	local -i _retval=99
 
 	# MODIFICATION SECTION>>
-	local -r _badversion='2.11.3'
-	local -r _goodfullversion='2.11.3-17.95.2'
-	local -r _sapnote='#2263929'
+	local -ar _kernel114=( '2.11.3-17.95.2' '#2263929' )
+	local -ar _kernel122=( '2.22-51.6' '#2205917' )
 	# MODIFICATION SECTION<<
 
+	local _goodversion
+	local _sapnote
+	
 	#ToDo: should not be skipped for RHEL, verify for PowerLinux as well       
 	if ! lib_func_is_sles ; then
 
@@ -21,25 +23,40 @@ check_025_glibc_version_sles() {
 
 	else
 
+		case "${OS_VERSION}" in
+
+			11.* | 12.0* | 12.1* )
+
+					_goodversion="${_kernel114[0]}"
+					_sapnote="${_kernel114[1]}"
+				;;
+
+			12.2*)
+					_goodversion="${_kernel122[0]}"
+					_sapnote="${_kernel122[1]}"
+				;;
+			*)
+					logCheckWarning "CHECK does not support SLES release."
+					_retval=1
+				;;
+		esac
+
+	fi
+
+	if [[ ${_retval} -eq 99 ]]; then
+	
 		local -r _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" glibc)
-		local -r _version=${_fullversion%%-*} 
+		#local -r _version=${_fullversion%%-*} 
 
-		if [[ "${_version}" == "${_badversion}" ]]; then
-
-			lib_func_compare_versions "${_fullversion}" "${_goodfullversion}"
+			lib_func_compare_versions "${_fullversion}" "${_goodversion}"
 
 			if [[ $? -ne 2 ]]; then
 				logCheckOk "GLIBC version (${_fullversion}) seems to be ok (SAP Note ${_sapnote})"
 				_retval=0
 			else
-				logCheckError "GLIBC must be updated to version ${_goodfullversion} or higher (SAP Note ${_sapnote}, found ${_fullversion})"
+				logCheckError "GLIBC must be updated to version ${_goodversion} or higher (SAP Note ${_sapnote}, found ${_fullversion})"
 				_retval=2
 			fi
-
-		else
-			logCheckInfo "Probably non-buggy glibc version <> 2.11.3 (found: ${_fullversion})"
-			_retval=0
-		fi
 
 	fi
 

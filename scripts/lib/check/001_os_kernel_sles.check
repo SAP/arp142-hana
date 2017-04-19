@@ -11,6 +11,7 @@ check_001_os_kernel_sles() {
 	local -ar _kernel114power=( '3.0.101-88.1' '#2240716' )
 	local -ar _kernel120=( '3.12.51-52.31.1' '#2205917' )
 	local -ar _kernel121=( '3.12.51-60.20' '#2205917' )
+	local -ar _kernel122=( '4.4.21-69.1' '#2205917' )
 	local -ar _kernel121power=( '3.12.67-60.64.18' '#2205917' )
 	# MODIFICATION SECTION<<
 
@@ -27,6 +28,11 @@ check_001_os_kernel_sles() {
 		if lib_func_is_ibmpower ; then
 
 			case "${OS_VERSION}" in
+
+			11.3)
+				logCheckError 'Upgrade to SLES for SAP Applications 11 SP4 (SAP Note #1557506)'
+				_retval=2
+				;;
 
 			11.4)
 					_goodversion="${_kernel114power[0]}"
@@ -70,6 +76,12 @@ check_001_os_kernel_sles() {
 						_goodversion="${_kernel121[0]}"
 						_sapnote="${_kernel121[1]}"
 					;;
+
+				12.2*)
+						_goodversion="${_kernel122[0]}"
+						_sapnote="${_kernel122[1]}"
+					;;
+
 				*)
 						logCheckWarning "CHECK does not support SLES release."
 						_retval=1
