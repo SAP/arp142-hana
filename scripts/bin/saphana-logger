@@ -29,9 +29,9 @@ logger() {
 	local loglevel=$1
 	shift 1
 
-	if [[ ${LOG_VERBOSE_LVL} -ge "$1" ]]; then
+	if [[ ${LOG_VERBOSE_LVL} -ge ${loglevel} ]]; then
 
-		local logleveltag="$2"
+		local logleveltag="$1"
 		shift 1
 		
 		local -r  datestring=$(date +'%H:%M:%S.%3N')
@@ -42,11 +42,9 @@ logger() {
 		#printf "%-24s %s\n" "${datestring} ${logleveltag}" "$*" | fold -w ${COLUMNS} | sed '2~1s/^/                        /' #>&3
 		if [[ -t 1 ]]; then #FD1 = stdout
 		local line
-			printf "%s\n" "$*" | fold -w ${content_width} | ( read -r line ; printf "%-${prefix_length}s %s\n" "${datestring} ${logleveltag
-}" "${line}" ; while read -r line ; do printf "%-${prefix_length}s %s\n" " " "${line}" ; done )
+			printf "%s\n" "$*" | fold -w ${content_width} | ( read -r line ; printf "%-${prefix_length}s %s\n" "${datestring} ${logleveltag}" "${line}" ; while read -r line ; do printf "%-${prefix_length}s %s\n" " " "${line}" ; done )
 		else
-			printf "%-${prefix_length}s %s\n" "${datestring} ${logleveltag
-}" "$*"
+			printf "%-${prefix_length}s %s\n" "${datestring} ${logleveltag}" "$*"
 		fi
 	fi
 }

@@ -278,7 +278,7 @@ __linux_distrib_suse_release() {
 		_ostmp=$(echo "${line}" | awk '/^PATCHLEVEL = / {match($0, /([0-9]+)/); print substr($0,RSTART,RLENGTH) }')
 		_susepatchl=${_susepatchl:=$_ostmp}
 
-	done < 1"${_suse_release_file}"
+	done < "${_suse_release_file}"
 
 	_os_version="${_osvers}.${_susepatchl}"
 
@@ -365,7 +365,7 @@ __get_platform_cpu_details() {
 
 	# get System details
 	local -r IFS=$'\n'
-	local -ar platform=($(lscpu))
+	local -ar platform=( "$(lscpu)" )
 
 	for ((i=0; i < ${#platform[@]}; ++i)); do
 
