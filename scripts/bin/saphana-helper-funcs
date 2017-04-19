@@ -365,7 +365,7 @@ __get_platform_cpu_details() {
 
 	# get System details
 	local -r IFS=$'\n'
-	local -ar platform=( "$(lscpu)" )
+	local -ar platform=($(lscpu))
 
 	for ((i=0; i < ${#platform[@]}; ++i)); do
 

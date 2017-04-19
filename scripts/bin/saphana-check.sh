@@ -30,12 +30,9 @@ die() {
 LC_ALL=POSIX
 export LC_ALL
 
-#Import Libraries
-source ./saphana-logger || die 'unable to load saphana-logger library'
-source ./saphana-helper-funcs || die 'unable to load saphana-helper-funcs library'
+# configure shflags - define flags
 source ./shflags || die 'unable to load shflags library'
 
-# configure shflags - define flags
 #DEFINE_string	'checks'	''		'<\"check1 check2 ...\">  A space-separated list of checks that will be performed.'	'c'
 #DEFINE_string	'checkset'	''		'<Checkset>  A textfile containing the various checks to perform.'	'C'
 DEFINE_integer	'loglevel'	3		'notify/silent=0 (always), critical=1, error=2, warn=3, info=4, debug=5, trace=6'	'l'
@@ -113,8 +110,6 @@ run_checklist() {
 #============================================================
 main() {
 
-	evaluate_cmdline_options
-
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 	
 	lib_func_get_linux_distrib
@@ -147,8 +142,16 @@ main() {
 	exit 0
 }
 
+#Import logger
+source ./saphana-logger || die 'unable to load saphana-logger library'
+
 # parse the command-line - shflags
 FLAGS "$@" || exit 1
 eval set -- "${FLAGS_ARGV}"
+evaluate_cmdline_options
 
+#Import remaining Libraries - logging is now active
+source ./saphana-helper-funcs || die 'unable to load saphana-helper-funcs library'
+
+# call main
 main "$@"
