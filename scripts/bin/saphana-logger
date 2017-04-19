@@ -7,7 +7,7 @@ umask 022
 # (C) Copyright SAP 2017
 #
 # Library Functions
-# Script name: "saphana-logger.sh"
+# Script name: "saphana-logger"
 #------------------------------------------------------------------
 # return if saphana-logger already loaded
 [[ -n "${HANA_LOGGER_VERSION:-}" ]] && return 0
@@ -16,11 +16,11 @@ HANA_LOGGER_VERSION='0.0.1'
 
 #exec 3>&2 # logging stream (file descriptor 3) defaults to STDERR
 
+# notify/silent=0 (always), error=1, warn=2, info=3, CHK_verbose=4, debug=5, trace=6
 logNotify() {		logger 0 "[N]"	"$1"; } # Always prints
-logCritical() {		logger 1 "[C]"	"$1"; }
-logError() {		logger 2 "[E]"	"$1"; }
-logWarn() {			logger 3 "[W]"	"$1"; }
-logInfo() {			logger 4 "[I]"	"$1"; }
+logError() {		logger 1 "[E]"	"$1"; }
+logWarn() {			logger 2 "[W]"	"$1"; }
+logInfo() {			logger 3 "[I]"	"$1"; }
 logDebug() {		logger 5 "[D]"	"$1"; }
 logTrace() {		logger 6 "[T]"	"$1"; }
 
@@ -35,13 +35,13 @@ logger() {
 		shift 1
 		
 		local -r  datestring=$(date +'%H:%M:%S.%3N')
-		local -ir prefix_length=$((13+10))	#len("00:04:32.001")+1 && len("[WARNING]")+1
+		local -ir prefix_length=$((13+12))	#len("00:04:32.001")+1 && len("[C] <ERROR>")+1
 		local -ri content_width=$((COLUMNS-prefix_length-1))
 
 		# Expand escaped characters, wrap at COLUMNS chars, indent wrapped lines
 		#printf "%-24s %s\n" "${datestring} ${logleveltag}" "$*" | fold -w ${COLUMNS} | sed '2~1s/^/                        /' #>&3
 		if [[ -t 1 ]]; then #FD1 = stdout
-		local line
+			local line
 			printf "%s\n" "$*" | fold -w ${content_width} | ( read -r line ; printf "%-${prefix_length}s %s\n" "${datestring} ${logleveltag}" "${line}" ; while read -r line ; do printf "%-${prefix_length}s %s\n" " " "${line}" ; done )
 		else
 			printf "%-${prefix_length}s %s\n" "${datestring} ${logleveltag}" "$*"
@@ -49,21 +49,6 @@ logger() {
 	fi
 }
 
-print_folded() {
-	local status="$1"
-	shift 1
-
-	local -r  datestring=$(date +'%H:%M:%S.%3N')
-	local -ir prefix_length=$((13+10))	#len("00:04:32.001")+1 && len("[WARNING]")+1
-	local -ri content_width=$((COLUMNS-prefix_length-1))
-
-	if [[ -t 1 ]]; then #FD1 = stdout
-		local line
-		printf "%s\n" "$*" | fold -w ${content_width} | ( read -r line ; printf "%-${prefix_length}s %s\n" "${datestring} ${status}" "${line}" ; while read -r line ; do printf "%-${prefix_length}s %s\n" " " "${line}" ; done )
-	else
-		printf "%-${prefix_length}s %s\n" "${datestring} ${status}" "$*"
-	fi
-}
 
 #ToDo: remove/revise use_colored_output stuff
 use_colored_output() {
@@ -71,40 +56,47 @@ use_colored_output() {
 }
 
 logCheckError() {
+
 	if use_colored_output; then
-		print_folded "${warn}[ERROR]${norm}"	"$@"
+		logger 1 "[C]" "${warn}<ERROR>${norm}"	"$@"
 	else
-		print_folded  "[ERROR]"	"$@"
+		logger 1 "[C] <ERROR>" "$@"
 	fi
 }
 
 logCheckWarning() {
+
 	if use_colored_output; then
-		print_folded "${attn}${blb}[WARNING]${norm}"	"$@"
+		logger 2 "[C]" "${attn}${blb}<WARN>${norm}"	"$@"
 	else
-		print_folded "[WARNING]"	"$@"
+		logger 2 "[C] <WARN>" "$@"
 	fi
 }
 
 logCheckOk() {
-	if [[ ${LOG_VERBOSE_LVL} -ge 4 ]]; then
-		if use_colored_output; then
-			print_folded "${done}[OK]${norm}"	"$@"
-		else
-			print_folded "[OK]"	"$@"
-		fi
+
+	if use_colored_output; then
+		print_folded "${done}<OK>${norm}"	"$@"
+	else
+		logger 3 "[C] <OK>" "$@"
 	fi
 }
 
 logCheckInfo() {
-	if [[ ${LOG_VERBOSE_LVL} -ge 4 ]]; then
-		print_folded  "[INFO]"	"$@"
+
+	if use_colored_output; then
+		print_folded "${done}<INFO>${norm}"	"$@"
+	else
+		logger 4 "[C] <INFO>" "$@"
 	fi
 }
 
 logCheckSkipped() {
-	if [[ ${LOG_VERBOSE_LVL} -ge 4 ]]; then
-		print_folded  "[SKIPPED]"	"$@"
+
+	if use_colored_output; then
+		print_folded "${done}<SKIP>${norm}"	"$@"
+	else
+		logger 4 "[C] <SKIP>" "$@"
 	fi
 }
 
