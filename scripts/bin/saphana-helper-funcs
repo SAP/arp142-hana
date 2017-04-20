@@ -421,7 +421,7 @@ _lib_helper_main() {
 	# ToDo:	Power platform does not provide 'dmidecode'
 
 	# Platform - "x3950 X6 -[6241ZB5]-", "ProLiant DL785 G6", "VMware Virtual Platform"
-	if [[ ! -n ${LIB_PLATF_NAME} ]]; then
+	if [[ ! -n ${LIB_PLATF_NAME:-} ]]; then
 		LIB_PLATF_NAME=$(dmidecode -s system-product-name)
 		readonly LIB_PLATF_NAME
 	fi
