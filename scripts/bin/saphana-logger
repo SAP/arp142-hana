@@ -35,7 +35,7 @@ logger() {
 		shift 1
 		
 		local -r  datestring=$(date +'%H:%M:%S.%3N')
-		local -ir prefix_length=$((13+12))	#len("00:04:32.001")+1 && len("[C] <ERROR>")+1
+		local -ir prefix_length=$((13+11))	#len("00:04:32.001")+1 && len("[C] <ERROR>")
 		local -ri content_width=$((COLUMNS-prefix_length-1))
 
 		# Expand escaped characters, wrap at COLUMNS chars, indent wrapped lines
@@ -118,8 +118,8 @@ _lib_logger_main() {
 
 }
 
-# Variables to be used by other 
-declare -i LOG_VERBOSE_LVL=3 # #notify/silent=0 (always), critical=1, error=2, warn=3 (default), info=4, debug=5, trace=6
+# Variables to be used by other
+declare -i LOG_VERBOSE_LVL=3 #notify/silent=0 (always), error=1, warn=2, info=3, CHK_verbose=4, debug=5, trace=6
 
 # ToDo: declare -ix ?? - logging should also work for pipes (grep or less)
 declare -i COLUMNS
