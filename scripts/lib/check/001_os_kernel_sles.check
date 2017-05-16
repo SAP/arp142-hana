@@ -7,10 +7,10 @@ check_001_os_kernel_sles() {
 	# MODIFICATION SECTION>>
 	# array	'goodkernelversion'	'sap note'
 	local -ar _kernel113=( '3.0.101-0.47.71' '#1954788' )
-	local -ar _kernel114=( '3.0.101-68.1' '#2240716' )
+	local -ar _kernel114=( '3.0.101-88.1' '#2240716' )
 	local -ar _kernel114power=( '3.0.101-88.1' '#2240716' )
-	local -ar _kernel120=( '3.12.51-52.31.1' '#2205917' )
-	local -ar _kernel121=( '3.12.51-60.20' '#2205917' )
+	local -ar _kernel120=( '3.12.61-52.72.1' '#2205917' )
+	local -ar _kernel121=( '3.12.61-52.72.1' '#2205917' )
 	local -ar _kernel122=( '4.4.21-69.1' '#2205917' )
 	local -ar _kernel121power=( '3.12.67-60.64.18' '#2205917' )
 	# MODIFICATION SECTION<<
@@ -45,8 +45,8 @@ check_001_os_kernel_sles() {
 				;;
 
 			*)
-					logCheckWarning "CHECK does not support SLESonPower release."
-					_retval=1
+					logCheckError 'Current SLESonPower release is not supported (SAP Note #1557506)'
+					_retval=2
 				;;
 			esac
 

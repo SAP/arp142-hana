@@ -22,7 +22,7 @@ check_130_cpu_governor() {
 
 		#unique value within array
 		local -r IFS=$'\n'
-		local -ar govs=($(cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor | sort -u))
+		local -ar govs=($( (cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor | sort -u) 2>/dev/null) )
 
 		case ${#govs[@]} in								#array length
 
