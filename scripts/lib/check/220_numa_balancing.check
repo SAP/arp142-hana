@@ -16,7 +16,7 @@ check_220_numa_balancing() {
 
 	else
 
-		if [[ $(cat /proc/sys/kernel/numa_balancing) -eq 0 ]]; then
+		if [[ $(</proc/sys/kernel/numa_balancing) -eq 0 ]]; then
 
 			logCheckOk "AutoNUMA is disabled (SAP Note ${_sapnote})"
 			_retval=0

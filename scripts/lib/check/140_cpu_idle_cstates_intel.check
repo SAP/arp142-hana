@@ -1,0 +1,101 @@
+check_140_cpu_idle_cstates_intel() {
+
+	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+	local -i _retval=99
+
+	# MODIFICATION SECTION>>
+	local -r _sapnote_sl11_rh6='#2240716'		# 2240716 - SAP HANA DB: Recommended OS settings for SLES 11
+	local -r _sapnote_sl12_rh7='#2205917'		# 2205917 - SAP HANA DB: Recommended OS settings for SLES 12
+	# MODIFICATION SECTION<<
+
+	if ! lib_func_is_bare_metal ; then
+
+		logCheckSkipped 'Running virtualized.' "${FUNCNAME[0]}"
+		_retval=3
+
+	elif lib_func_is_ibmpower ; then
+
+		logCheckSkipped 'Running on IBM Power.' "${FUNCNAME[0]}"
+		_retval=3
+
+	else
+
+		local -r current_driver="$(</sys/devices/system/cpu/cpuidle/current_driver)"
+
+		case "${OS_VERSION}" in
+
+				11.* | 6.* )
+							case ${current_driver} in
+
+								'acpi_idle')
+										logCheckOk "Recommended CPU idle driver active.(SAP Note ${_sapnote_sl11_rh6}) - (is: acpi_idle, should be: acpi_idle)"
+								;;
+
+								'intel_idle')
+										logCheckError "Wrong CPU idle driver active.(SAP Note ${_sapnote_sl11_rh6}) - (is: intel_idle, should be: acpi_idle)"
+										_retval=2
+								;;
+							esac
+				;;
+
+				12.* | 7.* )
+							case ${current_driver} in
+
+								'intel_idle')
+										logCheckOk "Recommended CPU idle driver active.(SAP Note ${_sapnote_sl11_rh6}) - (is: intel_idle, should be: intel_idle)"
+								;;
+
+								'acpi_idle')
+										logCheckInfo "intel_idle CPU idle driver should be used instead.(SAP Note ${_sapnote_sl12_rh7}) - (is: acpi_idle, should be: intel_idle)"
+								;;
+							esac
+				;;
+		esac
+
+	fi
+
+
+	# valid cpuidle driver used - check individual settings
+	if [[ ${_retval} -eq 99 ]]; then
+
+		case ${current_driver} in
+
+			'acpi_idle')	#check max_cstate value =0
+
+					local -i _acpi_mcstate
+
+					if ! _acpi_mcstate=$(grep 'ACPI: processor limited to max C-state' /var/log/boot.msg | grep -E -o '[0-9]+$'); then
+						logCheckWarning 'CPU idle driver -acpi_idle- max_cstate could not be determined - (is: unknown, should be: 0)'
+						_retval=1
+					else
+						if [[ ${_acpi_mcstate} -gt 0 ]]; then
+							logCheckError "CPU idle driver <acpi_idle> max_cstate set to high (SAP Note ${_sapnote_sl11_rh6}) - (is: ${_acpi_mcstate}, should be: 0)"
+							_retval=2
+						else
+							logCheckOk "CPU idle driver max_cstate setting ok.(SAP Note ${_sapnote_sl11_rh6}) - (is: ${_acpi_mcstate}, should be: 0)"
+							_retval=0
+						fi
+					fi
+			;;
+
+			'intel_idle')	#check max_cstate value <=1
+
+					local -ri _intel_mcstate=$(</sys/module/intel_idle/parameters/max_cstate)
+					if [[ ${_intel_mcstate} -gt 1 ]]; then
+						logCheckError "CPU idle driver <intel_idle> max_cstate set to high (SAP Note ${_sapnote_sl12_rh7}) - (is: ${_intel_mcstate}, should be: 1)"
+						_retval=2
+					else
+						logCheckOk "CPU idle driver max_cstate setting ok.(SAP Note ${_sapnote_sl12_rh7}) - (is: ${_intel_mcstate}, should be: 1)"
+						_retval=0
+					fi
+			;;
+
+		esac
+
+	fi
+
+	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+	return ${_retval}
+
+}

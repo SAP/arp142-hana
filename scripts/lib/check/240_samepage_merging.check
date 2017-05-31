@@ -15,7 +15,7 @@ check_240_samepage_merging() {
 
 	else
 
-		if [[ $(cat /sys/kernel/mm/ksm/run) -eq 0 ]]; then
+		if [[ $(< /sys/kernel/mm/ksm/run) -eq 0 ]]; then
 
 			logCheckOk "KSM (kernel samepage merging) is disabled (SAP Note ${_sapnote})"
 			_retval=0
