@@ -21,45 +21,50 @@ check_140_cpu_idle_cstates_intel() {
 
 	else
 
-		local -r current_driver="$(</sys/devices/system/cpu/cpuidle/current_driver)"
+		local -r _current_driver="$(</sys/devices/system/cpu/cpuidle/current_driver)"
+		
+		if [[ ${_current_driver} != 'none' ]]; then
 
-		case "${OS_VERSION}" in
+			case "${OS_VERSION}" in
 
-				11.* | 6.* )
-							case ${current_driver} in
+					11.* | 6.* )
+								case ${_current_driver} in
 
-								'acpi_idle')
-										logCheckOk "Recommended CPU idle driver active.(SAP Note ${_sapnote_sl11_rh6}) - (is: acpi_idle, should be: acpi_idle)"
-								;;
+									'acpi_idle')
+											logCheckOk "Recommended CPU idle driver active.(SAP Note ${_sapnote_sl11_rh6}) - (is: acpi_idle, should be: acpi_idle)"
+									;;
 
-								'intel_idle')
-										logCheckError "Wrong CPU idle driver active.(SAP Note ${_sapnote_sl11_rh6}) - (is: intel_idle, should be: acpi_idle)"
-										_retval=2
-								;;
-							esac
-				;;
+									'intel_idle')
+											logCheckError "Wrong CPU idle driver active.(SAP Note ${_sapnote_sl11_rh6}) - (is: intel_idle, should be: acpi_idle)"
+											_retval=2
+									;;
+								esac
+					;;
 
-				12.* | 7.* )
-							case ${current_driver} in
+					12.* | 7.* )
+								case ${_current_driver} in
 
-								'intel_idle')
-										logCheckOk "Recommended CPU idle driver active.(SAP Note ${_sapnote_sl11_rh6}) - (is: intel_idle, should be: intel_idle)"
-								;;
+									'intel_idle')
+											logCheckOk "Recommended CPU idle driver active.(SAP Note ${_sapnote_sl11_rh6}) - (is: intel_idle, should be: intel_idle)"
+									;;
 
-								'acpi_idle')
-										logCheckInfo "intel_idle CPU idle driver should be used instead.(SAP Note ${_sapnote_sl12_rh7}) - (is: acpi_idle, should be: intel_idle)"
-								;;
-							esac
-				;;
-		esac
+									'acpi_idle')
+											logCheckInfo "intel_idle CPU idle driver should be used instead.(SAP Note ${_sapnote_sl12_rh7}) - (is: acpi_idle, should be: intel_idle)"
+									;;
+								esac
+					;;
+			esac
+		
+		fi
 
 	fi
 
 
 	# valid cpuidle driver used - check individual settings
+	# no cpuidle driver used because of BIOS settings (disabled c-states)
 	if [[ ${_retval} -eq 99 ]]; then
 
-		case ${current_driver} in
+		case ${_current_driver} in
 
 			'acpi_idle')	#check max_cstate value =0
 
@@ -89,6 +94,19 @@ check_140_cpu_idle_cstates_intel() {
 						logCheckOk "CPU idle driver max_cstate setting ok.(SAP Note ${_sapnote_sl12_rh7}) - (is: ${_intel_mcstate}, should be: 1)"
 						_retval=0
 					fi
+			;;
+
+			'none')	#no cpuidle driver used because of BIOS settings (disabled c-states)
+					# impacts TurboMode, BIOS cannot be seen by OS, recommendations changes cannot be easily applied
+
+					logCheckWarning 'CPU idle driver not active - check BIOS settings for disabled c-states'
+					logCheckWarning "Disabled c-states impact CPU TurboMode features (SAP Note ${_sapnote_sl11_rh6} or ${_sapnote_sl12_rh7})"
+					_retval=1
+			;;
+
+			*)		#unknown setting
+					logCheckError "CPU idle driver settings unknown (SAP Note ${_sapnote_sl11_rh6} or ${_sapnote_sl12_rh7})"
+					_retval=2
 			;;
 
 		esac
