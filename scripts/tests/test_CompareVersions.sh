@@ -4,8 +4,8 @@
 #http://stackoverflow.com/questions/4023830/how-compare-two-strings-in-dot-separated-version-format-in-bash
 
 #Import Libraries
-source ../bin/saphana-logger.sh
-source ../bin/saphana-helper-funcs.sh
+source ../bin/saphana-logger
+source ../bin/saphana-helper-funcs
 
 
 test_CompareVersions () {
