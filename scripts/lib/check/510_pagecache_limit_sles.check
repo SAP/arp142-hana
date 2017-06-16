@@ -1,0 +1,61 @@
+check_510_pagecache_limit_sles() {
+
+	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+	local -i _retval=99
+
+	# MODIFICATION SECTION>>
+	local -r _sapnote='#1557506'
+	# MODIFICATION SECTION<<
+
+	if  ! lib_func_is_sles ;	then
+
+		logCheckSkipped 'Linux distribution is not SLES, skipping test' "${FUNCNAME[0]}"
+		_retval=3
+
+    else
+
+		# <= 128 GB:    4096	(=recommended limit) (262144 MB)
+		# >= 256 GB:    2% of RAM_GB * 1024 MB
+		local -ir calc_pg_limit=$(( LIB_PLATF_RAM_MB * 2 / 100 ))
+
+		# https://www.gnu.org/software/bash/manual/html_node/Shell-Arithmetic.html#Shell-Arithmetic
+		local -ir set_pg_limit=$(( LIB_PLATF_RAM_MB > 262144 ? calc_pg_limit : 4096 ))
+		local -ri pgcache_limit_mb=$(sysctl -n vm.pagecache_limit_mb)
+
+        if [[ ${pgcache_limit_mb} -eq 0 ]]; then
+
+            logCheckWarning "pagecache_limit_mb is not set (SAP Note ${_sapnote})"
+            _retval=1
+
+		elif [[ ${pgcache_limit_mb} -lt ${set_pg_limit} ]]; then
+		    
+			logCheckError "pagecache_limit_mb is set to low (SAP Note ${_sapnote}) (is: ${pgcache_limit_mb}, should be: ${set_pg_limit})"
+            _retval=2
+
+		elif [[ ${pgcache_limit_mb} -gt ${set_pg_limit} ]]; then
+		    
+			logCheckError "pagecache_limit_mb is set to high (SAP Note ${_sapnote}) (is: ${pgcache_limit_mb}, should be: ${set_pg_limit})"
+            _retval=2
+
+        else
+
+			logCheckInfo "pagecache_limit_mb is set to ${pgcache_limit_mb}"
+            _retval=0
+
+        fi
+
+	fi #sles
+
+	#pgcache_ignore_dirty
+	if [[ ${_retval} -ne 1 ]]; then
+
+        local -ri pgcache_ignore_dirty=$(sysctl -n vm.pagecache_limit_ignore_dirty)
+		logCheckInfo "pagecache_limit_ignore_dirty depends on HANA Data+Log filesystem (is: ${pgcache_ignore_dirty}, should be: 0 for local FS, 1 for NFS)"
+
+	fi
+
+	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+	return ${_retval}
+
+}
