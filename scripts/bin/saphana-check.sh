@@ -77,13 +77,19 @@ generate_checklist() {
 	do
 		local checkname
 		checkname=check_$(basename "${checkfile}" .check)
-		#safetycheck=$(lib_func_check_check_security $checkfile)
-		if [ $? -ne 0 ]; then
-			printf "Skipping check %s. Reason: %s\n"	"${checkname}"	${safetycheck}
+
+		local safetycheck
+		if ! safetycheck=$(lib_func_check_check_security "$checkfile") ; then
+			printf "Skipping check %s. Reason: %s\n"	"${checkname}"	"${safetycheck}"
 			continue;
 		fi
-		CHECKLIST="${CHECKLIST} ${checkname}"
-		source "${checkfile}"
+
+		
+		if ! source "${checkfile}" ; then
+			logCheckSkipped "Skipping check ${checkname}, could not load check file ${checkfile}"
+		else
+			CHECKLIST="${CHECKLIST} ${checkname}"
+		fi
 	done
 }
 

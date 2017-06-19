@@ -19,6 +19,25 @@ HANA_HELPER_VERSION='0.0.1-<dev>'
 ##################################################
 # Global functions - to be used in other scripts
 ##################################################
+lib_func_check_check_security() {
+    
+	local fullpath=$1
+
+	local -i fileownerid
+	fileownerid=$(stat -c %u "${fullpath}")
+	if [[ "${fileownerid}" -ne 0 ]]; then
+		printf "Check %s is not owned by root.\n"	"${fullpath}"
+		return 1
+	fi
+
+	local fileperm
+	fileperm=$(stat -c %A "${fullpath}")
+	if [[ "${fileperm}" != ?r???-??-? ]]; then
+		printf "Check %s is world writable.\n"	"${fullpath}"
+		return 1
+	fi
+}
+
 lib_func_get_linux_distrib() {
 
 	#a local variable declared in a function is also visible to functions called by the parent function.
