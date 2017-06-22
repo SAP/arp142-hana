@@ -1,0 +1,11 @@
+001_os_kernel_sles
+020_ulimit_package
+025_glibc_version_sles
+130_cpu_governor
+140_cpu_idle_cstates_intel
+200_transparent_hugepages
+220_numa_balancing
+230_vm_max_map_count
+240_samepage_merging
+300_net_parameter
+510_pagecache_limit_sles

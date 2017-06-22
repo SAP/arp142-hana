@@ -36,6 +36,8 @@ source ./shflags || die 'unable to load shflags library'
 #DEFINE_string	'checks'	''		'<\"check1 check2 ...\">  A space-separated list of checks that will be performed.'	'c'
 #DEFINE_string	'checkset'	''		'<Checkset>  A textfile containing the various checks to perform.'	'C'
 DEFINE_integer	'loglevel'	3		'notify/silent=0 (always), error=1, warn=2, info=3, debug=5, trace=6'	'l'
+DEFINE_string	'checks'	''		'<\"check1 check2 ...\">  A space-separated list of checks that will be performed.'	'c'
+DEFINE_string	'checkset'	''		'<Checkset>  A textfile containing the various checks to perform.'	'C'
 DEFINE_boolean	'verbose'	false	'enable chk_verbose mode (set loglevel=4)' 'v'
 DEFINE_boolean	'debug'		false	'enable debug mode (set loglevel=5)' 'd'
 DEFINE_boolean	'trace'		false	'enable trace mode (set loglevel=6)' 't'
@@ -47,6 +49,7 @@ OS_VERSION=''
 OS_LEVEL=''
 
 CHECKLIST=''
+declare -a CHECKFILELIST=()
 
 
 #============================================================
@@ -68,17 +71,64 @@ evaluate_cmdline_options() {
 #============================================================
 # Check handling
 #============================================================
+generate_checkfilelist_checks() {
+
+	local checklist="$1"
+	shift 1
+
+	local check
+	
+    for check in ${checklist}
+    do
+        if [[ -f "../lib/check/${check}.check" ]]; then
+
+            CHECKFILELIST+=("../lib/check/${check}.check")
+        fi
+    done
+}
+
+generate_checkfilelist_checkset() {
+
+    local checksetfile="../lib/checkset/${FLAGS_checkset}.checkset"
+	local checkset
+
+	if [[ ! -f "${checksetfile}" ]]; then
+        logError "${checksetfile} does not exist."
+		exit 1
+	fi
+
+	if ! checkset=$(<"${checksetfile}") ; then
+		logError "Could not load checkset file ${checksetfile}"
+		exit 1
+	fi
+
+    generate_checkfilelist_checks "${checkset}"
+}
+
 generate_checklist() {
 
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	local checkfile
-	for checkfile in ../lib/check/*.check
-	do
-		local checkname
-		checkname=check_$(basename "${checkfile}" .check)
+    # generate checklist
+    if [[ "${FLAGS_checks}" != "" || "${FLAGS_checkset}" != "" ]]; then
+        
+		[[ "${FLAGS_checks}" != "" ]] && generate_checkfilelist_checks "${FLAGS_checks}"
 
-		local safetycheck
+		[[ "${FLAGS_checkset}" != "" ]] && generate_checkfilelist_checkset
+
+    else
+        CHECKFILELIST=$(ls -1 ../lib/check/*.check)
+    fi
+
+	local checkfile
+	local checkname
+	local safetycheck
+
+	for checkfile in ${CHECKFILELIST[*]}
+	do
+		
+		checkname=check_$(basename "${checkfile}" .check)
+		
 		if ! safetycheck=$(lib_func_check_check_security "$checkfile") ; then
 			printf "Skipping check %s. Reason: %s\n"	"${checkname}"	"${safetycheck}"
 			continue;
