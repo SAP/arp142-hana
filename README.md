@@ -22,6 +22,16 @@
 ``` 
   ./saphana-check.sh -c "001_os_kernel_sles 020_ulimit_package"
 ```
+> checks are located within subfolder lib/check - specify without file extention .check
+
+
+#### -c    (execute checkset) 
+
+``` 
+  ./saphana-check.sh -C SLESonX64only
+```
+> checksets are located within subfolder lib/checkset - specify without file extention .checkset
+
 
 #### -h    (usage)
 ```
