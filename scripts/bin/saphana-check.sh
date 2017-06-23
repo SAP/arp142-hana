@@ -54,7 +54,7 @@ OS_NAME=''
 OS_VERSION=''
 OS_LEVEL=''
 
-CHECKLIST=''
+declare -a CHECKLIST=()
 declare -a CHECKFILELIST=()
 
 
@@ -144,7 +144,7 @@ generate_checklist() {
 		if ! source "${checkfile}" ; then
 			logCheckSkipped "Skipping check ${checkname}, could not load check file ${checkfile}"
 		else
-			CHECKLIST="${CHECKLIST} ${checkname}"
+			CHECKLIST+=("${checkname}")
 		fi
 	done
 }
@@ -153,7 +153,7 @@ run_checklist() {
 
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-    for check in ${CHECKLIST}
+    for check in ${CHECKLIST[*]}
     do
         # printCheckHeader "Checking " $check
         # if ! isCheckBlacklisted $check ; then
