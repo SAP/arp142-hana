@@ -30,8 +30,11 @@ die() {
 LC_ALL=POSIX
 export LC_ALL
 
+PROGRAM_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+readonly PROGRAM_DIR
+
 # configure shflags - define flags
-source ./shflags || die 'unable to load shflags library'
+source "${PROGRAM_DIR}/shflags" || die 'unable to load shflags library'
 
 #DEFINE_string	'checks'	''		'<\"check1 check2 ...\">  A space-separated list of checks that will be performed.'	'c'
 #DEFINE_string	'checkset'	''		'<Checkset>  A textfile containing the various checks to perform.'	'C'
@@ -43,6 +46,9 @@ DEFINE_boolean	'debug'		false	'enable debug mode (set loglevel=5)' 'd'
 DEFINE_boolean	'trace'		false	'enable trace mode (set loglevel=6)' 't'
 FLAGS_HELP="USAGE: $0 [flags]"
 
+
+PROGRAM_LIBDIR="$( cd "${PROGRAM_DIR}/../lib" && pwd )"
+readonly PROGRAM_LIBDIR
 
 OS_NAME=''
 OS_VERSION=''
@@ -80,16 +86,16 @@ generate_checkfilelist_checks() {
 	
     for check in ${checklist}
     do
-        if [[ -f "../lib/check/${check}.check" ]]; then
+        if [[ -f "${PROGRAM_LIBDIR}/check/${check}.check" ]]; then
 
-            CHECKFILELIST+=("../lib/check/${check}.check")
+            CHECKFILELIST+=("${PROGRAM_LIBDIR}/check/${check}.check")
         fi
     done
 }
 
 generate_checkfilelist_checkset() {
 
-    local checksetfile="../lib/checkset/${FLAGS_checkset}.checkset"
+    local checksetfile="${PROGRAM_LIBDIR}/checkset/${FLAGS_checkset}.checkset"
 	local checkset
 
 	if [[ ! -f "${checksetfile}" ]]; then
@@ -117,7 +123,7 @@ generate_checklist() {
 		[[ "${FLAGS_checkset}" != "" ]] && generate_checkfilelist_checkset
 
     else
-        CHECKFILELIST=$(ls -1 ../lib/check/*.check)
+        CHECKFILELIST=$(ls -1 ${PROGRAM_LIBDIR}/check/*.check)
     fi
 
 	local checkfile
@@ -202,7 +208,7 @@ main() {
 }
 
 #Import logger
-source ./saphana-logger || die 'unable to load saphana-logger library'
+source "${PROGRAM_DIR}/saphana-logger" || die 'unable to load saphana-logger library'
 
 # parse the command-line - shflags
 FLAGS "$@" || exit 1
@@ -210,7 +216,7 @@ eval set -- "${FLAGS_ARGV}"
 evaluate_cmdline_options
 
 #Import remaining Libraries - logging is now active
-source ./saphana-helper-funcs || die 'unable to load saphana-helper-funcs library'
+source "${PROGRAM_DIR}/saphana-helper-funcs" || die 'unable to load saphana-helper-funcs library'
 
 # call main
 main "$@"
