@@ -10,7 +10,7 @@ check_240_samepage_merging() {
 
 	if [[ ! -e '/sys/kernel/mm/ksm/run' ]]; then
 
-		logCheckSkipped "KSM (kernel samepage merging) not configurable (SAP Note ${_sapnote}), skipping test" "${FUNCNAME[0]}"
+		logCheckSkipped "KSM (kernel samepage merging) not configurable (SAP Note ${_sapnote}). Skipping check" "<${FUNCNAME[0]}>"
 		_retval=3
 
 	else

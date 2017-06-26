@@ -17,7 +17,7 @@ check_001_os_kernel_sles() {
 
 	if  ! lib_func_is_sles ;	then
 
-		logCheckSkipped 'Linux distribution is not SLES, skipping test' "${FUNCNAME[0]}"
+		logCheckSkipped 'Linux distribution is not SLES. Skipping check' "<${FUNCNAME[0]}>"
 		_retval=3
 
 	else

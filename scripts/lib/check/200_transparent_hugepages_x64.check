@@ -1,4 +1,4 @@
-check_200_transparent_hugepages() {
+check_200_transparent_hugepages_x64() {
 
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
@@ -10,7 +10,7 @@ check_200_transparent_hugepages() {
 
 	if [[ ! -e  '/sys/kernel/mm/transparent_hugepage/enabled' ]]; then
 		#e.g. PowerLinux, XEN
-		logCheckSkipped "Transparent Hugepages not configurable (SAP Note ${_sapnote}), skipping test" "${FUNCNAME[0]}"
+		logCheckSkipped "Transparent Hugepages not configurable (SAP Note ${_sapnote}). Skipping check" "<${FUNCNAME[0]}>"
 		_retval=3
 	else
 

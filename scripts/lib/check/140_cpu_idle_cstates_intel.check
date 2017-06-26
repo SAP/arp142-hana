@@ -11,12 +11,12 @@ check_140_cpu_idle_cstates_intel() {
 
 	if ! lib_func_is_bare_metal ; then
 
-		logCheckSkipped 'Running virtualized.' "${FUNCNAME[0]}"
+		logCheckSkipped 'Running virtualized. Skipping check' "<${FUNCNAME[0]}>"
 		_retval=3
 
 	elif lib_func_is_ibmpower ; then
 
-		logCheckSkipped 'Running on IBM Power.' "${FUNCNAME[0]}"
+		logCheckSkipped 'Running on IBM Power. Skipping check' "<${FUNCNAME[0]}>"
 		_retval=3
 
 	else

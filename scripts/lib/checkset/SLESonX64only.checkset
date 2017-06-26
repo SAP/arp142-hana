@@ -1,9 +1,10 @@
 001_os_kernel_sles
 020_ulimit_package
 025_glibc_version_sles
-130_cpu_governor
+030_os_clocksource_x64
+130_cpu_governor_x64
 140_cpu_idle_cstates_intel
-200_transparent_hugepages
+200_transparent_hugepages_x64
 220_numa_balancing
 230_vm_max_map_count
 240_samepage_merging

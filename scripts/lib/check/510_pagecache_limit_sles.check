@@ -10,7 +10,7 @@ check_510_pagecache_limit_sles() {
 
 	if  ! lib_func_is_sles ;	then
 
-		logCheckSkipped 'Linux distribution is not SLES, skipping test' "${FUNCNAME[0]}"
+		logCheckSkipped 'Linux distribution is not SLES. Skipping check' "<${FUNCNAME[0]}>"
 		_retval=3
 
     else
@@ -25,7 +25,7 @@ check_510_pagecache_limit_sles() {
 
         if [[ ${pgcache_limit_mb} -eq 0 ]]; then
 
-            logCheckWarning "vm.pagecache_limit_mb is not set (SAP Note ${_sapnote})"
+            logCheckWarning "vm.pagecache_limit_mb is not set (SAP Note ${_sapnote}) (could be limited to: ${set_pg_limit})"
             _retval=1
 
 		elif [[ ${pgcache_limit_mb} -lt ${set_pg_limit} ]]; then

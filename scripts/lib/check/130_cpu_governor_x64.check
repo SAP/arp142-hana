@@ -1,4 +1,4 @@
-check_130_cpu_governor() {
+check_130_cpu_governor_x64() {
 
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
@@ -10,12 +10,12 @@ check_130_cpu_governor() {
 
 	if ! lib_func_is_bare_metal ; then
 
-		logCheckSkipped 'Running virtualized. Skipping test' "${FUNCNAME[0]}"
+		logCheckSkipped 'Running virtualized. Skipping check' "<${FUNCNAME[0]}>"
 		_retval=3
 
 	elif lib_func_is_ibmpower ; then
 
-		logCheckSkipped 'Running on IBM Power. Skipping test' "${FUNCNAME[0]}"
+		logCheckSkipped 'Running on IBM Power. Skipping check' "<${FUNCNAME[0]}>"
 		_retval=3
 
 	else

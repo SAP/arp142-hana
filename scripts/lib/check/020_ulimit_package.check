@@ -14,7 +14,7 @@ check_020_ulimit_package() {
 	#ToDo: verify for SLESonPower       
 	if ! lib_func_is_sles ; then
 
-		logCheckSkipped 'Linux distribution is not SLES, skipping test' "${FUNCNAME[0]}"
+		logCheckSkipped 'Linux distribution is not SLES. Skipping check' "<${FUNCNAME[0]}>"
 		_retval=3
 
 	else
