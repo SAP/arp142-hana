@@ -66,10 +66,10 @@ check_002_os_kernel_rhel() {
 
 			lib_func_compare_versions "${kernelversion}" "${_goodversion}"
 			if [[ $? -eq 2 ]]; then
-				logCheckError "Upgrade to kernel version ${_goodversion} or higher. (SAP Note ${_sapnote}) - current ${OS_LEVEL}"
+				logCheckError "Linux kernel must be upgraded. (SAP Note ${_sapnote}) (is: ${OS_LEVEL}, should be: >=${_goodversion})"
 				_retval=2
 			else
-				logCheckOk "Kernel version is at required level. (SAP Note ${_sapnote}) - current ${OS_LEVEL}"
+				logCheckOk "Linux kernel version is at required level. (SAP Note ${_sapnote}) (is: ${OS_LEVEL})"
 				_retval=0
 			fi
 

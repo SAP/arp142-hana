@@ -17,16 +17,14 @@ check_230_vm_max_map_count() {
 
 	local -ir _curr_mmcount=$(</proc/sys/vm/max_map_count)
 
-	logCheckInfo "Parameter vm.max_map_count set to ${_curr_mmcount}"
-
 	if [[ ${_curr_mmcount} -lt ${_limit_mmcount} ]]; then
 
-		logCheckError "Parameter vm.max_map_count must be increased to ${_limit_mmcount} (SAP Note ${_sapnote})"
+		logCheckError "Parameter vm.max_map_count must be increased (SAP Note ${_sapnote}) (is: ${_curr_mmcount}, should be: ${_limit_mmcount})"
 		_retval=2
 
 	else
 
-		logCheckOk "Parameter vm.max_map_count set as recommended (SAP Note ${_sapnote})"
+		logCheckOk "Parameter vm.max_map_count set as recommended (SAP Note ${_sapnote}) (is: ${_curr_mmcount})"
 		_retval=0
 
 	fi

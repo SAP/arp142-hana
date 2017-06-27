@@ -51,10 +51,10 @@ check_025_glibc_version_sles() {
 			lib_func_compare_versions "${_fullversion}" "${_goodversion}"
 
 			if [[ $? -ne 2 ]]; then
-				logCheckOk "GLIBC version (${_fullversion}) seems to be ok (SAP Note ${_sapnote})"
+				logCheckOk "GLIBC version seems to be ok (SAP Note ${_sapnote}) (is: ${_fullversion})"
 				_retval=0
 			else
-				logCheckError "GLIBC must be updated to version ${_goodversion} or higher (SAP Note ${_sapnote}, found ${_fullversion})"
+				logCheckError "GLIBC must be updated (SAP Note ${_sapnote}) (is: ${_fullversion}, should be: >=${_goodversion})"
 				_retval=2
 			fi
 

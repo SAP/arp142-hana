@@ -33,7 +33,7 @@ check_130_cpu_governor_x64() {
 
 			1)		
 						if [[ "${govs[0]}" != 'performance' ]];then
-							logCheckWarning "CPU governor is not set to performance (SAP Note ${_sapnote})"
+							logCheckWarning "CPU governor is not set to performance (SAP Note ${_sapnote}) (is: ${govs[0]})"
 							_retval=1
 						else
 							logCheckOk "All CPU governors are set to performance (SAP Note ${_sapnote})"
