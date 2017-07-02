@@ -5,7 +5,7 @@ check_220_numa_balancing() {
 	local -i _retval=99
 
 	# MODIFICATION SECTION>>
-	local -r _sapnote='#2205917'
+	local -r _sapnote='#2205917'	#SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
 	# MODIFICATION SECTION<<
 
 	if [[ ! -e '/proc/sys/kernel/numa_balancing' ]]; then

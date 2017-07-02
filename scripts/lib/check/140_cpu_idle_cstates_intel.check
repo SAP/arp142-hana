@@ -31,7 +31,7 @@ check_140_cpu_idle_cstates_intel() {
 								case ${_current_driver} in
 
 									'acpi_idle')
-											logCheckOk "Recommended CPU idle driver active (SAP Note ${_sapnote_sl11_rh6}) (is: acpi_idle, should be: acpi_idle)"
+											logCheckOk "Recommended CPU idle driver active (SAP Note ${_sapnote_sl11_rh6}) (is: acpi_idle)"
 									;;
 
 									'intel_idle')
@@ -45,7 +45,7 @@ check_140_cpu_idle_cstates_intel() {
 								case ${_current_driver} in
 
 									'intel_idle')
-											logCheckOk "Recommended CPU idle driver active (SAP Note ${_sapnote_sl11_rh6}) (is: intel_idle, should be: intel_idle)"
+											logCheckOk "Recommended CPU idle driver active (SAP Note ${_sapnote_sl11_rh6}) (is: intel_idle)"
 									;;
 
 									'acpi_idle')
@@ -78,7 +78,7 @@ check_140_cpu_idle_cstates_intel() {
 							logCheckError "CPU idle driver <acpi_idle> max_cstate set to high (SAP Note ${_sapnote_sl11_rh6}) (is: ${_acpi_mcstate}, should be: 0)"
 							_retval=2
 						else
-							logCheckOk "CPU idle driver max_cstate setting ok (SAP Note ${_sapnote_sl11_rh6}) (is: ${_acpi_mcstate}, should be: 0)"
+							logCheckOk "CPU idle driver max_cstate setting ok (SAP Note ${_sapnote_sl11_rh6}) (is: ${_acpi_mcstate})"
 							_retval=0
 						fi
 					fi
@@ -91,7 +91,7 @@ check_140_cpu_idle_cstates_intel() {
 						logCheckError "CPU idle driver <intel_idle> max_cstate set to high (SAP Note ${_sapnote_sl12_rh7}) (is: ${_intel_mcstate}, should be: 1)"
 						_retval=2
 					else
-						logCheckOk "CPU idle driver max_cstate setting ok (SAP Note ${_sapnote_sl12_rh7}) (is: ${_intel_mcstate}, should be: 1)"
+						logCheckOk "CPU idle driver max_cstate setting ok (SAP Note ${_sapnote_sl12_rh7}) (is: ${_intel_mcstate})"
 						_retval=0
 					fi
 			;;

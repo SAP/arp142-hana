@@ -5,7 +5,7 @@ check_200_transparent_hugepages_x64() {
 	local -i _retval=99
 
 	# MODIFICATION SECTION>>
-	local -r _sapnote='#2131662'		# XXXXX
+	local -r _sapnote='#2131662'		# Transparent Huge Pages (THP) on SAP HANA Servers
 	# MODIFICATION SECTION<<
 
 	if [[ ! -e  '/sys/kernel/mm/transparent_hugepage/enabled' ]]; then

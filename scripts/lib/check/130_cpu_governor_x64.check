@@ -5,7 +5,7 @@ check_130_cpu_governor_x64() {
 	local -i _retval=99
 
 	# MODIFICATION SECTION>>
-	local -r _sapnote='#1890444'		# Slow HANA system due to CPU power save mode
+	local -r _sapnote='#1944799'		 #SAP HANA Guidelines for SLES Operating System Installation
 	# MODIFICATION SECTION<<
 
 	if ! lib_func_is_bare_metal ; then
