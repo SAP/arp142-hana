@@ -9,7 +9,7 @@ check_230_vm_max_map_count() {
 	# MODIFICATION SECTION<<
 
 	# LIMIT ( 1.000.000 + (32768 * RAM in GB) <= 2.147.483.647)
-	local -ir _set_mmcount=$(( 1000000 + (32768 * LIB_PLATF_RAM_MB / 1024) ))
+	local -ir _set_mmcount=$(( 1000000 + (32768 * LIB_PLATF_RAM_MiB / 1024) ))
 	local -ir _maximum_mmcount=2147483647
 
 	# https://www.gnu.org/software/bash/manual/html_node/Shell-Arithmetic.html#Shell-Arithmetic

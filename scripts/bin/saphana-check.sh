@@ -14,17 +14,13 @@ set -u 		# treat unset variables as an error
 PROGVERSION="x.y-<dev>"
 PROGDATE="YYYY-XXX-ZZ"
 
-
 die() {
-  [ $# -gt 0 ] && echo "error: $@" >&2
+  [ $# -gt 0 ] && echo "error: $*" >&2
   exit 1
 }
 
-# # Make sure only root can run our script
-# if [ "$(id -u)" -ne 0 ]; then
-#    printf "This script must be run as root\n" 1>&2
-#    exit 1
-# fi
+# Make sure only root can run our script
+# [[ "$(id -u)" -ne 0 ]] && die 'This script must be run as root'
 
 #set POSIX/C locales - date/time format normalized for all platforms
 LC_ALL=POSIX
@@ -36,11 +32,9 @@ readonly PROGRAM_DIR
 # configure shflags - define flags
 source "${PROGRAM_DIR}/shflags" || die 'unable to load shflags library'
 
-#DEFINE_string	'checks'	''		'<\"check1 check2 ...\">  A space-separated list of checks that will be performed.'	'c'
-#DEFINE_string	'checkset'	''		'<Checkset>  A textfile containing the various checks to perform.'	'C'
-DEFINE_integer	'loglevel'	3		'notify/silent=0 (always), error=1, warn=2, info=3, debug=5, trace=6'	'l'
 DEFINE_string	'checks'	''		'<\"check1 check2 ...\">  A space-separated list of checks that will be performed.'	'c'
 DEFINE_string	'checkset'	''		'<Checkset>  A textfile containing the various checks to perform.'	'C'
+DEFINE_integer	'loglevel'	4		'notify/silent=0 (always), error=1, warn=2, info=3, debug=5, trace=6'	'l'
 DEFINE_boolean	'verbose'	false	'enable chk_verbose mode (set loglevel=4)' 'v'
 DEFINE_boolean	'debug'		false	'enable debug mode (set loglevel=5)' 'd'
 DEFINE_boolean	'trace'		false	'enable trace mode (set loglevel=6)' 't'
@@ -180,10 +174,12 @@ main() {
 	lib_func_get_linux_distrib
 	logNotify "${OS_NAME} ${OS_VERSION} ${OS_LEVEL}"
 
-	logNotify "Architecture: ${LIB_PLATF_ARCHITECTURE}"
-	logNotify "Byte Order: ${LIB_PLATF_BYTEORDER}"
+	logNotify "Vendor: ${LIB_PLATF_VENDOR:-} - Type: ${LIB_PLATF_NAME:-}"
+	logNotify "Architecture: ${LIB_PLATF_ARCHITECTURE:-}"
+	logNotify "Byte Order: ${LIB_PLATF_BYTEORDER:-}"
 	
-	logNotify "Memory: ${LIB_PLATF_RAM_MB} MB"
+	logNotify "CPU: ${LIB_PLATF_CPU:-}"
+	logNotify "Memory: ${LIB_PLATF_RAM_MiB:-} MiB"
 	
 	if lib_func_is_bare_metal
 	then

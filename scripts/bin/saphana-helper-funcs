@@ -114,10 +114,33 @@ lib_func_is_bare_metal() {
 
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	if [[ ${lib_platf_virtualized} -ne 0 ]] ;
-	then
-		_retval=0
-	fi
+	[[ ${lib_platf_virtualized} -ne 0 ]] &&	_retval=0
+
+	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+	return ${_retval}
+}
+
+# Returns 0 on Intel, 1 on other
+lib_func_is_intel() {
+
+	local -i _retval=1
+
+	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+	[[ "${LIB_PLATF_CPU}" == Intel* ]] && _retval=0
+
+	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+	return ${_retval}
+}
+
+# Returns 0 on AMD, 1 on other
+lib_func_is_amd() {
+
+	local -i _retval=1
+
+	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+	[[ "${LIB_PLATF_CPU}" == AMD* ]] && _retval=0
 
 	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
 	return ${_retval}
@@ -130,9 +153,7 @@ lib_func_is_ibmpower() {
 
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	if [[ "${LIB_PLATF_ARCHITECTURE}" == 'ppc64' ]]; then
-		_retval=0
-	fi
+	[[ "${LIB_PLATF_ARCHITECTURE}" == 'ppc64' ]] && _retval=0
 
 	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
 	return ${_retval}
@@ -393,19 +414,30 @@ __get_platform_cpu_details() {
 		case ${platform[$i]} in
 
 		"Architecture:"*)
-							LIB_PLATF_ARCHITECTURE=$(lib_func_trim_left "${platform[$i]/Architecture:}")
-							readonly LIB_PLATF_ARCHITECTURE
+							if [[ ! -n ${LIB_PLATF_ARCHITECTURE:-} ]]; then
+								LIB_PLATF_ARCHITECTURE=$(lib_func_trim_left "${platform[$i]/Architecture:}")
+								readonly LIB_PLATF_ARCHITECTURE
+							fi
 		;;
 		"Byte Order:"*)
 							LIB_PLATF_BYTEORDER=$(lib_func_trim_left "${platform[$i]/Byte Order:}")
 							readonly LIB_PLATF_BYTEORDER
-							break
+							#break
 		;;
-		# Model also exists on Intel --> e.g. 63
-		# "Model:"*)			#on Power only	<Model:	IBM,9119-MHE>
+		# "Model:"*)		#on Power <Model: IBM,9119-MHE> ; on <Intel Model: 63>
 		# 					LIB_PLATF_NAME=$(lib_func_trim_left ${platform[$i]/Model:})
 		# 					readonly LIB_PLATF_NAME
 		#;;
+
+		"Model name:"*)		#on x64 only	
+							#<Intel(R) Xeon(R) CPU E7-8880 v3 @ 2.30GHz>; AMD Opteron 23xx (Gen 3 Class Opteron)
+							if [[ ! -n ${LIB_PLATF_CPU:-} ]]; then
+		 						LIB_PLATF_CPU=$(lib_func_trim_left ${platform[$i]/Model name:})
+		 						readonly LIB_PLATF_CPU
+							fi
+							break
+		;;
+
 		esac
 
 	done
@@ -420,11 +452,11 @@ __get_platform_mem_details() {
 	#$(cat /proc/meminfo | awk '/^MemTotal:/ {match($0, /[0-9]+/); print substr($0,RSTART,RLENGTH) }')
 
 	#dmidecode only for INTEL
-	#LIB_PLATF_RAM_MB=$(printf "( %s  0)\n" "$(dmidecode -t memory | sed -e '/^\s*#/d' | grep "^\W*Size:.*B" | awk '{ if ($3=="GB") { x=$2*1024; print x } else print $2 }' | tr '\n' '+' )" | bc)
+	#LIB_PLATF_RAM_MiB=$(printf "( %s  0)\n" "$(dmidecode -t memory | sed -e '/^\s*#/d' | grep "^\W*Size:.*B" | awk '{ if ($3=="GB") { x=$2*1024; print x } else print $2 }' | tr '\n' '+' )" | bc)
 	
 	#works for INTEL, IBM Power
-	LIB_PLATF_RAM_MB=$(printf "( %s  0)\n" "$(numactl -H | grep "size:.*B" | awk '{ if ($5=="GB") { x=$4*1024; print x } else print $4 }' | tr '\n' '+' )" | bc)
-	readonly LIB_PLATF_RAM_MB
+	LIB_PLATF_RAM_MiB=$(printf "( %s  0)\n" "$(numactl -H | grep "size:.*B" | awk '{ if ($5=="GB") { x=$4*1024; print x } else print $4 }' | tr '\n' '+' )" | bc)
+	readonly LIB_PLATF_RAM_MiB
 
 }
 
@@ -439,10 +471,22 @@ _lib_helper_main() {
 
 	# ToDo:	Power platform does not provide 'dmidecode'
 
-	# Platform - "x3950 X6 -[6241ZB5]-", "ProLiant DL785 G6", "VMware Virtual Platform"
+	# Vendor - IBM, Lenovo, ...
+	if [[ ! -n ${LIB_PLATF_VENDOR:-} ]]; then
+		LIB_PLATF_VENDOR=$(dmidecode -s system-manufacturer)
+		readonly LIB_PLATF_VENDOR
+	fi
+
+	# Platform - "x3950 X6 -[6241ZB5]-", "ProLiant DL785 G6", "VMware Virtual Platform", "RHEV Hypervisor"
 	if [[ ! -n ${LIB_PLATF_NAME:-} ]]; then
 		LIB_PLATF_NAME=$(dmidecode -s system-product-name)
 		readonly LIB_PLATF_NAME
+	fi
+
+	if [[ ! -n ${LIB_PLATF_CPU:-} ]]; then
+		LIB_PLATF_CPU=$(grep  'model name' /proc/cpuinfo | sort -u)
+		LIB_PLATF_CPU=$(lib_func_trim_left ${LIB_PLATF_CPU/model name[[:blank:]]:})
+		readonly LIB_PLATF_CPU
 	fi
 
 	# # BIOS vendor of the HW: "LENOVO","HP","IBM Corp.","Phoenix Technologies LTD"
@@ -459,9 +503,11 @@ _lib_helper_main() {
 
 ##########################################################
 #GLOBAL -x --> exported
+declare -x LIB_PLATF_VENDOR
 declare -x LIB_PLATF_NAME
 # declare -x LIB_PLATF_BIOS
-declare -xi LIB_PLATF_RAM_MB
+declare -x LIB_PLATF_CPU
+declare -xi LIB_PLATF_RAM_MiB
 
 declare -x LIB_PLATF_ARCHITECTURE
 declare -x LIB_PLATF_BYTEORDER

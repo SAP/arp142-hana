@@ -17,10 +17,10 @@ check_510_pagecache_limit_sles() {
 
 		# <= 128 GB:    4096	(=recommended limit) (262144 MB)
 		# >= 256 GB:    2% of RAM_GB * 1024 MB
-		local -ir calc_pg_limit=$(( LIB_PLATF_RAM_MB * 2 / 100 ))
+		local -ir calc_pg_limit=$(( LIB_PLATF_RAM_MiB * 2 / 100 ))
 
 		# https://www.gnu.org/software/bash/manual/html_node/Shell-Arithmetic.html#Shell-Arithmetic
-		local -ir set_pg_limit=$(( LIB_PLATF_RAM_MB > 262144 ? calc_pg_limit : 4096 ))
+		local -ir set_pg_limit=$(( LIB_PLATF_RAM_MiB > 262144 ? calc_pg_limit : 4096 ))
 		local -ri pgcache_limit_mb=$(</proc/sys/vm/pagecache_limit_mb)
 
         if [[ ${pgcache_limit_mb} -eq 0 ]]; then
