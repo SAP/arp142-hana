@@ -1,7 +1,7 @@
 001_os_kernel_sles
 020_ulimit_package
 025_glibc_version_sles
-030_os_clocksource_x64
+030_os_clocksource
 130_cpu_governor_x64
 140_cpu_idle_cstates_intel
 150_cpu_perfbias_intel
