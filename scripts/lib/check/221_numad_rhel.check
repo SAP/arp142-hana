@@ -1,0 +1,35 @@
+check_221_numad_rhel() {
+
+	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+	local -i _retval=99
+
+	# MODIFICATION SECTION>>
+	local -r sapnote='#2292690'	#SAP HANA DB: Recommended OS settings for RHEL 7
+	# MODIFICATION SECTION<<
+
+	if  ! lib_func_is_rhel ;	then
+
+		logCheckSkipped 'Linux distribution is not RHEL. Skipping check' "<${FUNCNAME[0]}>"
+		_retval=3
+
+	else
+
+		if systemctl status numad | grep -q 'Active: inactive' ; then
+
+			logCheckOk "Userspace daemon numad is disabled (SAP Note ${sapnote:-})"
+			_retval=0
+
+		else
+
+			logCheckError "Userspace daemon numad is not disabled (SAP Note ${sapnote:-})"
+			_retval=2
+
+		fi
+
+	fi
+
+	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+	return ${_retval}
+
+}
