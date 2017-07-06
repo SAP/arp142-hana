@@ -26,7 +26,7 @@ check_002_os_kernel_rhel() {
 		case "${OS_VERSION}" in
 
 			6.4 )
-					logCheckError 'Upgrade to RHEL for SAP Applications yy zz (SAP Note #xxxxxxx)'
+					logCheckError 'Upgrade to RHEL for SAP Applications 6.5+ (SAP Note #2235581)'
 					_retval=2
 				;;
 
@@ -51,7 +51,7 @@ check_002_os_kernel_rhel() {
 				;;
 
 			*)
-					logCheckWarning "CHECK does not support RHEL release."
+					logCheckWarning 'CHECK does not support RHEL release.' "${FUNCNAME[0]} - ${OS_VERSION}"
 					_retval=1
 				;;
 		esac
