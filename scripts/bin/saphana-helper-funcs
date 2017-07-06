@@ -448,16 +448,35 @@ __get_platform_mem_details() {
 
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	# Installed RAM - /proc/meminfo not 100% correct
-	#$(cat /proc/meminfo | awk '/^MemTotal:/ {match($0, /[0-9]+/); print substr($0,RSTART,RLENGTH) }')
+	local collectedby
 
-	#dmidecode only for INTEL
-	#LIB_PLATF_RAM_MiB=$(printf "( %s  0)\n" "$(dmidecode -t memory | sed -e '/^\s*#/d' | grep "^\W*Size:.*B" | awk '{ if ($3=="GB") { x=$2*1024; print x } else print $2 }' | tr '\n' '+' )" | bc)
-	
-	#works for INTEL, IBM Power
-	LIB_PLATF_RAM_MiB=$(printf "( %s  0)\n" "$(numactl -H | grep "size:.*B" | awk '{ if ($5=="GB") { x=$4*1024; print x } else print $4 }' | tr '\n' '+' )" | bc)
+	#dmidecode only for INTEL - most accurate
+	if [[ ! -n ${LIB_PLATF_RAM_MiB:-} && -x "$(command -v dmidecode)" ]]; then
+
+		LIB_PLATF_RAM_MiB=$(printf "( %s  0)\n" "$(dmidecode -t memory | sed -e '/^\s*#/d' | grep "^\W*Size:.*B" | awk '{ if ($3=="GB") { x=$2*1024; print x } else print $2 }' | tr '\n' '+' )" | bc)
+		collectedby='dmidecode'
+
+	fi
+
+	#numactl works for INTEL, IBM Power
+	if [[ ! -n ${LIB_PLATF_RAM_MiB:-} && -x "$(command -v numactl)" ]]; then
+
+		LIB_PLATF_RAM_MiB=$(printf "( %s  0)\n" "$(numactl --hardware | grep "size:.*B" | awk '{ if ($5=="GB") { x=$4*1024; print x } else print $4 }' | tr '\n' '+' )" | bc)
+		collectedby='numactl'
+
+	fi 
+
+	#last chance - but MemTotal in /proc/meminfo not 100% correct
+	if [[ ! -n ${LIB_PLATF_RAM_MiB:-} ]]; then
+
+		LIB_PLATF_RAM_MiB=$(cat /proc/meminfo | awk '/^MemTotal:/ {match($0, /[0-9]+/); print substr($0,RSTART,RLENGTH) }')
+		collectedby='meminfo'
+
+	fi
+
 	readonly LIB_PLATF_RAM_MiB
 
+	logTrace "<${FUNCNAME[*]} # LIB_PLATF_RAM_MiB (${collectedby:-}): ${LIB_PLATF_RAM_MiB:-}>"
 }
 
 #============================================================
