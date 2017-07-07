@@ -43,7 +43,7 @@ check_130_cpu_governor_x64() {
 				;;
 
 			*)		logCheckWarning "Not all CPU governors are set to performance (SAP Note ${_sapnote})"
-						_retval=1
+					_retval=1
 				;;
 		esac
 

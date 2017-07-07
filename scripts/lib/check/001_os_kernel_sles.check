@@ -30,7 +30,7 @@ check_001_os_kernel_sles() {
 			case "${OS_VERSION}" in
 
 			11.3)
-				logCheckError 'Upgrade to SLES for SAP Applications 11 SP4 (SAP Note #1557506)'
+				logCheckError "SLESonPower version is not supported - upgrade to SLES4SAP 11.4 (SAP Note #2235581) (is: ${OS_VERSION})"
 				_retval=2
 				;;
 
@@ -45,7 +45,7 @@ check_001_os_kernel_sles() {
 				;;
 
 			*)
-					logCheckError 'Current SLESonPower release is not supported (SAP Note #1557506)'
+					logCheckError "SLESonPower version is not supported (SAP Note #2235581) (is: ${OS_VERSION})"
 					_retval=2
 				;;
 			esac
@@ -55,7 +55,7 @@ check_001_os_kernel_sles() {
 			case "${OS_VERSION}" in
 
 				11.1 | 11.2 )
-					logCheckError 'Upgrade to SLES for SAP Applications 11 SP4 (SAP Note #1557506)'
+					logCheckError "Upgrade to SLES for SAP Applications 11 SP4 (SAP Note #2235581) (is: ${OS_VERSION})"
 					_retval=2
 					;;
 
@@ -83,8 +83,8 @@ check_001_os_kernel_sles() {
 					;;
 
 				*)
-						logCheckWarning "CHECK does not support SLES release."
-						_retval=1
+						logCheckError "SLES version is not supported (SAP Note #2235581) (is: ${OS_VERSION})"
+						_retval=2
 					;;
 			esac
 
@@ -103,10 +103,10 @@ check_001_os_kernel_sles() {
 
 			lib_func_compare_versions "${kernelversion}" "${_goodversion}"
 			if [[ $? -eq 2 ]]; then
-				logCheckError "Linux kernel must be upgraded. (SAP Note ${_sapnote}) (is: ${OS_LEVEL}, should be: >=${_goodversion})"
+				logCheckError "Linux kernel must be upgraded. (SAP Note ${_sapnote:-}) (is: ${OS_LEVEL}, should be: >=${_goodversion})"
 				_retval=2
 			else
-				logCheckOk "Linux kernel version is at required level. (SAP Note ${_sapnote}) (is: ${OS_LEVEL})"
+				logCheckOk "Linux kernel version is at required level. (SAP Note ${_sapnote:-}) (is: ${OS_LEVEL})"
 				_retval=0
 			fi
 
