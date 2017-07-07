@@ -13,9 +13,14 @@ check_221_numad_rhel() {
 		logCheckSkipped 'Linux distribution is not RHEL. Skipping check' "<${FUNCNAME[0]}>"
 		_retval=3
 
+	elif  [[ ! -x '/usr/bin/numad' ]]; then
+
+		logCheckOk "Userspace daemon numad not installed (SAP Note ${sapnote:-})"
+		_retval=0
+
 	else
 
-		if systemctl status numad | grep -q 'Active: inactive' ; then
+		if systemctl status numad 2> /dev/null | grep -q 'Active: inactive' ; then
 
 			logCheckOk "Userspace daemon numad is disabled (SAP Note ${sapnote:-})"
 			_retval=0

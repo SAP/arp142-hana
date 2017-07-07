@@ -25,26 +25,31 @@ check_300_net_parameter() {
 	#to clarify
 	#local -ri tcp_idle=$(sysctl -n net.ipv4.tcp_slow_start_after_idle)	# = 0
 
-		local -i _curr_value
-		local -i _reco_value
-		local    _parameter
+	local -i _curr_value
+	local -i _reco_value
+	local    _parameter
 
-		# i+=2 --> every 2nd item
-		for ((i=0; i < ${#_tcp_parameter[@]}; i+=2)); do
+	# i+=2 --> every 2nd item
+	for ((i=0; i < ${#_tcp_parameter[@]}; i+=2)); do
 
-			logTrace "<${FUNCNAME[0]}> # ${_tcp_parameter[$i]}>"
+		logTrace "<${FUNCNAME[0]}> # ${_tcp_parameter[$i]}>"
 
-			_parameter=${_tcp_parameter[$i]}
-			_reco_value=${_tcp_parameter[$i+1]}
+		_parameter=${_tcp_parameter[$i]}
+		_reco_value=${_tcp_parameter[$i+1]}
 
-			_curr_value=$(sysctl -n "${_parameter}") 
+		_curr_value=$(sysctl -n "${_parameter}") 
 
-			if [[ ${_curr_value} -ne ${_reco_value} ]]; then
-				logCheckWarning "Wrong sysctl parameter ${_parameter} (SAP Note ${_sapnote}) (is: ${_curr_value}, should be: ${_reco_value})"
-				_retval=1
-			fi
+		if [[ ${_curr_value} -ne ${_reco_value} ]]; then
+			logCheckWarning "Wrong sysctl parameter ${_parameter} (SAP Note ${_sapnote:-}) (is: ${_curr_value}, should be: ${_reco_value})"
+			_retval=1
+		fi
 
-		done
+	done
+
+	if [[ ${_retval} -eq 99 ]]; then
+			logCheckOk "All network sysctl parameter set as recommended (SAP Note ${_sapnote:-})"
+			_retval=0
+	fi
 
 	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
 	return ${_retval}
