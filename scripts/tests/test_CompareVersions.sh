@@ -20,9 +20,9 @@ test_CompareVersions () {
 	esac
 	if [[ $op != "$3" ]]
 	then
-		printf "FAIL: Expected '%s', Actual '%s', Arg1 '%s', Arg2 '%s'\\n"	"$3" "$op" "$1" "$2"
+		printf 'FAIL: Expected "%s", Actual "%s", Arg1 "%s", Arg2 "%s"\n'	"$3" "$op" "$1" "$2"
 	else
-		printf "Pass: '%s %s %s'\\n"	"$1" "$op" "$2"
+		printf 'Pass: "%s %s %s"\n'	"$1" "$op" "$2"
 	fi
 }
 

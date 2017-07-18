@@ -20,7 +20,7 @@ die() {
 }
 
 # Make sure only root can run our script
-# [[ "$(id -u)" -ne 0 ]] && die 'This script must be run as root'
+# [[ ${UID}} -ne 0 ]] && die 'This script must be run as root'
 
 #set POSIX/C locales - date/time format normalized for all platforms
 LC_ALL=POSIX

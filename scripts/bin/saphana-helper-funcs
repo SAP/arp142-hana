@@ -168,8 +168,10 @@ lib_func_compare_versions() {
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
 	local -i _retval=0
-    local version1=$(lib_func_trim "$1")
-	local version2=$(lib_func_trim "$2")
+	local version1
+	local version2
+    version1=$(lib_func_trim "$1")
+	version2=$(lib_func_trim "$2")
 
     #${1//\-/\.} - Variable Substitution (faster then tr,sed or grep) - replace - by .
 	#required for 2.11.3-17.95.2 --> 2.11.3.17.95.2
@@ -184,8 +186,10 @@ lib_func_compare_versions() {
 
 		#to_array, split by .
         local IFS=.
-        local ver1=(${version1})
-        local ver2=(${version2})
+        local -a ver1
+        local -a ver2
+		read -r -a ver1 <<< "${version1}"
+		read -r -a ver2 <<< "${version2}"
 
         local -i i
         # fill empty fields in ver1 with zeros
@@ -223,22 +227,20 @@ lib_func_compare_versions() {
 lib_func_trim_left() {
     local var="$*"
     # remove leading whitespace characters
-    var="${var#"${var%%[![:space:]]*}"}"
-    printf "%s" "$var"
+    printf '%s' "${var#"${var%%[![:space:]]*}"}"
 }
 
 lib_func_trim_right() {
     local var="$*"
     # remove trailing whitespace characters
-    var="${var%"${var##*[![:space:]]}"}"
-    printf "%s" "$var"
+    printf '%s' "${var%"${var##*[![:space:]]}"}"
 }
 
 lib_func_trim() {
     local var="$*"
     var=$(lib_func_trim_left "${var}")
     var=$(lib_func_trim_right "${var}")
-    printf "%s" "$var"
+    printf '%s' "$var"
 }
 ##########################################################
 # Non-global functions - not to be used in other scripts
@@ -260,11 +262,11 @@ __linux_distrib_os_release() {
 		logTrace "<${FUNCNAME[0]}> # ${_os_release_file}:${line}"
 
 		#NAME=""
-		_ostmp=$(echo "${line}" | awk '/^NAME=/ {match($0, /".*"/); print substr($0,RSTART+1,RLENGTH-2)}')
+		_ostmp=$(awk '/^NAME=/ {match($0, /".*"/); print substr($0,RSTART+1,RLENGTH-2)}' <<< "${line}")
 		_osname=${_osname:=$_ostmp}
 
 		#match 12.1 | 12.0.1 | 7.0
-		_ostmp=$(echo "${line}" | awk '/^VERSION_ID=/ {match($0, /([0-9]+)(\.([0-9]+))+/); print substr($0,RSTART,RLENGTH) }')
+		_ostmp=$(awk '/^VERSION_ID=/ {match($0, /([0-9]+)(\.([0-9]+))+/); print substr($0,RSTART,RLENGTH) }' <<< "${line}")
 		_osvers=${_osvers:=$_ostmp}
 
 	done < "${_os_release_file}"
@@ -405,7 +407,9 @@ __get_platform_cpu_details() {
 
 	# get System details
 	local -r IFS=$'\n'
-	local -ar platform=($(lscpu))
+	local -a platform
+
+	platform=($(lscpu))
 
 	for ((i=0; i < ${#platform[@]}; ++i)); do
 
@@ -424,6 +428,18 @@ __get_platform_cpu_details() {
 							readonly LIB_PLATF_BYTEORDER
 							#break
 		;;
+
+		# "Thread(s) per core:"*)
+
+		# ;;
+
+		# "Core(s) per socket:"*)
+
+		# ;;
+
+		# "NUMA node(s):"*)
+
+		# ;;
 		# "Model:"*)		#on Power <Model: IBM,9119-MHE> ; on <Intel Model: 63>
 		# 					LIB_PLATF_NAME=$(lib_func_trim_left ${platform[$i]/Model:})
 		# 					readonly LIB_PLATF_NAME
@@ -508,10 +524,6 @@ _lib_helper_main() {
 		readonly LIB_PLATF_CPU
 	fi
 
-	# # BIOS vendor of the HW: "LENOVO","HP","IBM Corp.","Phoenix Technologies LTD"
-	# LIB_PLATF_BIOS=$(dmidecode -s bios-vendor | sed -e '/^\s*#/d')
-	# readonly LIB_PLATF_BIOS
-
 	__get_platform_mem_details
 
 	# ToDo:	verify for AMD processors
@@ -522,14 +534,13 @@ _lib_helper_main() {
 
 ##########################################################
 #GLOBAL -x --> exported
-declare -x LIB_PLATF_VENDOR
-declare -x LIB_PLATF_NAME
-# declare -x LIB_PLATF_BIOS
-declare -x LIB_PLATF_CPU
-declare -xi LIB_PLATF_RAM_MiB
+declare		LIB_PLATF_VENDOR
+declare		LIB_PLATF_NAME
+declare 	LIB_PLATF_CPU
+declare -i	LIB_PLATF_RAM_MiB
 
-declare -x LIB_PLATF_ARCHITECTURE
-declare -x LIB_PLATF_BYTEORDER
+declare 	LIB_PLATF_ARCHITECTURE
+declare 	LIB_PLATF_BYTEORDER
 
 #LIB local
 declare -i lib_platf_virtualized
