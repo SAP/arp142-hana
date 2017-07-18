@@ -3,23 +3,26 @@
 #Useful information
 #http://stackoverflow.com/questions/4023830/how-compare-two-strings-in-dot-separated-version-format-in-bash
 
+PROGRAM_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+readonly PROGRAM_DIR
+
 #Import Libraries
-source ../bin/saphana-logger
-source ../bin/saphana-helper-funcs
+source "${PROGRAM_DIR}/../bin/saphana-logger"
+source "${PROGRAM_DIR}/../bin/saphana-helper-funcs"
 
 
 test_CompareVersions () {
-	lib_func_compare_versions $1 $2
+	lib_func_compare_versions "$1" "$2"
 	case $? in
 		0) op='=';;
 		1) op='>';;
 		2) op='<';;
 	esac
-	if [[ $op != $3 ]]
+	if [[ $op != "$3" ]]
 	then
-		printf "FAIL: Expected '%s', Actual '%s', Arg1 '%s', Arg2 '%s'\n"	"$3" "$op" "$1" "$2"
+		printf "FAIL: Expected '%s', Actual '%s', Arg1 '%s', Arg2 '%s'\\n"	"$3" "$op" "$1" "$2"
 	else
-		printf "Pass: '%s %s %s'\n"	"$1" "$op" "$2"
+		printf "Pass: '%s %s %s'\\n"	"$1" "$op" "$2"
 	fi
 }
 
@@ -29,6 +32,7 @@ test_CompareVersions () {
 printf 'The following tests should pass\n'
 while read -r test
 do
+	# shellcheck disable=SC2086
 	test_CompareVersions $test
 done << EOF
 1            1            =

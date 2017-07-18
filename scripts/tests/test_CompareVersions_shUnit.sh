@@ -3,6 +3,8 @@
 #Useful information
 #http://stackoverflow.com/questions/4023830/how-compare-two-strings-in-dot-separated-version-format-in-bash
 
+PROGRAM_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+readonly PROGRAM_DIR
 
 testCompareVersionsEqualTo() {
 
@@ -92,12 +94,12 @@ testCompareVersionsShouldFail() {
 
 oneTimeSetUp () {
 	#Import Libraries
-	source ../bin/saphana-logger
-	source ../bin/saphana-helper-funcs
+	source "${PROGRAM_DIR}/../bin/saphana-logger"
+	source "${PROGRAM_DIR}/../bin/saphana-helper-funcs"
 }
 # oneTimeTearDown
 # setUp
 # tearDown
 
 # load shunit2
-source shunit
+source "${PROGRAM_DIR}/shunit"
