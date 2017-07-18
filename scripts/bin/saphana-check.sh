@@ -130,7 +130,7 @@ generate_checklist() {
 		checkname=check_$(basename "${checkfile}" .check)
 		
 		if ! safetycheck=$(lib_func_check_check_security "$checkfile") ; then
-			printf "Skipping check %s. Reason: %s\n"	"${checkname}"	"${safetycheck}"
+			logCheckSkipped "Skipping check ${checkname}. Reason: ${safetycheck}"
 			continue;
 		fi
 
@@ -151,7 +151,7 @@ run_checklist() {
     do
         # printCheckHeader "Checking " $check
         # if ! isCheckBlacklisted $check ; then
-			printf "\n"
+			printf '\n'
             ${check}
 			#ToDo: count_error, count_warning - removed from logger
         # else
@@ -194,11 +194,11 @@ main() {
 	fi
 	
 
-	printf "\n"
+	printf '\n'
 
 	generate_checklist
 	run_checklist
-	printf "\n\n"
+	printf '\n\n'
 
 	exit 0
 }

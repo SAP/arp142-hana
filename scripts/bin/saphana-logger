@@ -17,16 +17,16 @@ HANA_LOGGER_VERSION='0.0.1'
 #exec 3>&2 # logging stream (file descriptor 3) defaults to STDERR
 
 # notify/silent=0 (always), error=1, warn=2, info=3, CHK_verbose=4, debug=5, trace=6
-logNotify() {		logger 0 "[N]"	"$1"; } # Always prints
-logError() {		logger 1 "[E]"	"$1"; }
-logWarn() {			logger 2 "[W]"	"$1"; }
-logInfo() {			logger 3 "[I]"	"$1"; }
-logDebug() {		logger 5 "[D]"	"$1"; }
-logTrace() {		logger 6 "[T]"	"$1"; }
+logNotify() {		logger 0 '[N]'	"$1"; } # Always prints
+logError() {		logger 1 '[E]'	"$1"; }
+logWarn() {			logger 2 '[W]'	"$1"; }
+logInfo() {			logger 3 '[I]'	"$1"; }
+logDebug() {		logger 5 '[D]'	"$1"; }
+logTrace() {		logger 6 '[T]'	"$1"; }
 
 logger() {
 	
-	local loglevel=$1
+	local loglevel="$1"
 	shift 1
 
 	if [[ ${LOG_VERBOSE_LVL} -ge ${loglevel} ]]; then
@@ -36,15 +36,15 @@ logger() {
 		
 		local -r  datestring=$(date +'%H:%M:%S.%3N')
 		local -ir prefix_length=$((13+11))	#len("00:04:32.001")+1 && len("[C] <ERROR>")
-		local -ri content_width=$((COLUMNS-prefix_length-1))
+		local -ir content_width=$((COLUMNS-prefix_length-1))
 
 		# Expand escaped characters, wrap at COLUMNS chars, indent wrapped lines
 		#printf "%-24s %s\n" "${datestring} ${logleveltag}" "$*" | fold -w ${COLUMNS} | sed '2~1s/^/                        /' #>&3
 		if [[ -t 1 ]]; then #FD1 = stdout
 			local line
-			printf "%s\n" "$*" | fold -w ${content_width} | ( read -r line ; printf "%-${prefix_length}s %s\n" "${datestring} ${logleveltag}" "${line}" ; while read -r line ; do printf "%-${prefix_length}s %s\n" " " "${line}" ; done )
+			printf '%s\n' "$*" | fold -w ${content_width} | { read -r line ; printf "%-${prefix_length}s %s\\n" "${datestring} ${logleveltag}" "${line}" ; while read -r line ; do printf "%-${prefix_length}s %s\\n" " " "${line}" ; done }
 		else
-			printf "%-${prefix_length}s %s\n" "${datestring} ${logleveltag}" "$*"
+			printf "%-${prefix_length}s %s\\n" "${datestring} ${logleveltag}" "$*"
 		fi
 	fi
 }
@@ -58,45 +58,45 @@ use_colored_output() {
 logCheckError() {
 
 	if use_colored_output; then
-		logger 1 "[C]" "${warn}<ERROR>${norm}"	"$@"
+		logger 1 '[C]' "${warn}<ERROR>${norm}"	"$@"
 	else
-		logger 1 "[C] <ERROR>" "$@"
+		logger 1 '[C] <ERROR>' "$@"
 	fi
 }
 
 logCheckWarning() {
 
 	if use_colored_output; then
-		logger 2 "[C]" "${attn}${blb}<WARN>${norm}"	"$@"
+		logger 2 '[C]' "${attn}${blb}<WARN>${norm}"	"$@"
 	else
-		logger 2 "[C] <WARN>" "$@"
+		logger 2 '[C] <WARN>' "$@"
 	fi
 }
 
 logCheckOk() {
 
 	if use_colored_output; then
-		print_folded "${done}<OK>${norm}"	"$@"
+		logger 3 '[C]' "${done}<OK>${norm}"	"$@"
 	else
-		logger 3 "[C] <OK>" "$@"
+		logger 3 '[C] <OK>' "$@"
 	fi
 }
 
 logCheckInfo() {
 
 	if use_colored_output; then
-		print_folded "${done}<INFO>${norm}"	"$@"
+		logger 4 '[C]' "${done}<INFO>${norm}" "$@"
 	else
-		logger 4 "[C] <INFO>" "$@"
+		logger 4 '[C] <INFO>' "$@"
 	fi
 }
 
 logCheckSkipped() {
 
 	if use_colored_output; then
-		print_folded "${done}<SKIP>${norm}"	"$@"
+		logger 4 '[C]' "${done}<SKIP>${norm}"	"$@"
 	else
-		logger 4 "[C] <SKIP>" "$@"
+		logger 4 '[C] <SKIP>' "$@"
 	fi
 }
 

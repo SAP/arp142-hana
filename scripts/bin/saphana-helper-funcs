@@ -26,14 +26,14 @@ lib_func_check_check_security() {
 	local -i fileownerid
 	fileownerid=$(stat -c %u "${fullpath}")
 	if [[ "${fileownerid}" -ne 0 ]]; then
-		printf "Check %s is not owned by root.\n"	"${fullpath}"
+		printf 'Check %s is not owned by root.\n'	"${fullpath}"
 		return 1
 	fi
 
 	local fileperm
 	fileperm=$(stat -c %A "${fullpath}")
 	if [[ "${fileperm}" != ?r???-??-? ]]; then
-		printf "Check %s is world writable.\n"	"${fullpath}"
+		printf 'Check %s is world writable.\n'	"${fullpath}"
 		return 1
 	fi
 }
@@ -432,7 +432,7 @@ __get_platform_cpu_details() {
 		"Model name:"*)		#on x64 only	
 							#<Intel(R) Xeon(R) CPU E7-8880 v3 @ 2.30GHz>; AMD Opteron 23xx (Gen 3 Class Opteron)
 							if [[ ! -n ${LIB_PLATF_CPU:-} ]]; then
-		 						LIB_PLATF_CPU=$(lib_func_trim_left ${platform[$i]/Model name:})
+		 						LIB_PLATF_CPU=$(lib_func_trim_left "${platform[$i]/Model name:}")
 		 						readonly LIB_PLATF_CPU
 							fi
 							break
@@ -453,7 +453,7 @@ __get_platform_mem_details() {
 	#dmidecode only for INTEL - most accurate
 	if [[ ! -n ${LIB_PLATF_RAM_MiB:-} && -x "$(command -v dmidecode)" ]]; then
 
-		LIB_PLATF_RAM_MiB=$(printf "( %s  0)\n" "$(dmidecode -t memory | sed -e '/^\s*#/d' | grep "^\W*Size:.*B" | awk '{ if ($3=="GB") { x=$2*1024; print x } else print $2 }' | tr '\n' '+' )" | bc)
+		LIB_PLATF_RAM_MiB=$(printf '( %s  0)\n' "$(dmidecode -t memory | sed -e '/^\s*#/d' | grep '^\W*Size:.*B' | awk '{ if ($3=="GB") { x=$2*1024; print x } else print $2 }' | tr '\n' '+' )" | bc)
 		collectedby='dmidecode'
 
 	fi
@@ -461,7 +461,7 @@ __get_platform_mem_details() {
 	#numactl works for INTEL, IBM Power
 	if [[ ! -n ${LIB_PLATF_RAM_MiB:-} && -x "$(command -v numactl)" ]]; then
 
-		LIB_PLATF_RAM_MiB=$(printf "( %s  0)\n" "$(numactl --hardware | grep "size:.*B" | awk '{ if ($5=="GB") { x=$4*1024; print x } else print $4 }' | tr '\n' '+' )" | bc)
+		LIB_PLATF_RAM_MiB=$(printf '( %s  0)\n' "$(numactl --hardware | grep 'size:.*B' | awk '{ if ($5=="GB") { x=$4*1024; print x } else print $4 }' | tr '\n' '+' )" | bc)
 		collectedby='numactl'
 
 	fi 
@@ -469,7 +469,7 @@ __get_platform_mem_details() {
 	#last chance - but MemTotal in /proc/meminfo not 100% correct
 	if [[ ! -n ${LIB_PLATF_RAM_MiB:-} ]]; then
 
-		LIB_PLATF_RAM_MiB=$(cat /proc/meminfo | awk '/^MemTotal:/ {match($0, /[0-9]+/); print substr($0,RSTART,RLENGTH) }')
+		LIB_PLATF_RAM_MiB=$(awk '/^MemTotal:/ {match($0, /[0-9]+/); print substr($0,RSTART,RLENGTH) }' /proc/meminfo)
 		collectedby='meminfo'
 
 	fi
@@ -504,7 +504,7 @@ _lib_helper_main() {
 
 	if [[ ! -n ${LIB_PLATF_CPU:-} ]]; then
 		LIB_PLATF_CPU=$(grep  'model name' /proc/cpuinfo | sort -u)
-		LIB_PLATF_CPU=$(lib_func_trim_left ${LIB_PLATF_CPU/model name[[:blank:]]:})
+		LIB_PLATF_CPU=$(lib_func_trim_left "${LIB_PLATF_CPU/model name[[:blank:]]:}")
 		readonly LIB_PLATF_CPU
 	fi
 
