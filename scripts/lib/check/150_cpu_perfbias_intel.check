@@ -27,12 +27,12 @@ check_150_cpu_perfbias_intel() {
 
         if [[ ${perf_bias} -eq 0 ]]; then
 
-            logCheckOk "Energy Performance Bias EPB set to performance (SAP Note ${_sapnote}) (is: ${perf_bias})"
+            logCheckOk "Energy Performance Bias EPB set to performance (SAP Note ${_sapnote:-}) (is: ${perf_bias})"
             _retval=0
 
         else
 
-            logCheckWarning "Energy Performance Bias EPB not set to performance (SAP Note ${_sapnote}) (is: ${perf_bias}, should be: 0)"
+            logCheckWarning "Energy Performance Bias EPB not set to performance (SAP Note ${_sapnote:-}) (is: ${perf_bias}, should be: 0)"
             _retval=1
 
         fi
