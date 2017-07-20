@@ -2,6 +2,7 @@
 020_ulimit_package
 025_glibc_version_sles
 030_os_clocksource
+060_systemd_version_sles
 130_cpu_governor_x64
 140_cpu_idle_cstates_intel
 150_cpu_perfbias_intel
