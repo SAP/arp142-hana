@@ -309,15 +309,15 @@ __linux_distrib_suse_release() {
 		logTrace "<${FUNCNAME[0]}> # ${_suse_release_file}:${line}"
 
 		#Enterprise?
-		_ostmp=$(echo "${line}" | awk '/^SUSE Linux Enterprise/ {match($0, /([0-9]+)/); print substr($0,RSTART,RLENGTH) }')
+		_ostmp=$(awk '/^SUSE Linux Enterprise/ {match($0, /([0-9]+)/); print substr($0,RSTART,RLENGTH) }' <<< "${line}")
 		_osname=${_osname:=$_ostmp}
 
 		#11 - version
-		_ostmp=$(echo "${line}" | awk '/^VERSION = / {match($0, /([0-9]+)/); print substr($0,RSTART,RLENGTH) }')
+		_ostmp=$(awk '/^VERSION = / {match($0, /([0-9]+)/); print substr($0,RSTART,RLENGTH) }' <<< "${line}")
 		_osvers=${_osvers:=$_ostmp}
 
 		#2	- patchlevel
-		_ostmp=$(echo "${line}" | awk '/^PATCHLEVEL = / {match($0, /([0-9]+)/); print substr($0,RSTART,RLENGTH) }')
+		_ostmp=$(awk '/^PATCHLEVEL = / {match($0, /([0-9]+)/); print substr($0,RSTART,RLENGTH) }' <<< "${line}")
 		_susepatchl=${_susepatchl:=$_ostmp}
 
 	done < "${_suse_release_file}"
@@ -348,11 +348,11 @@ __linux_distrib_oracle_release() {
 		logTrace "<${FUNCNAME[0]}> # ${_oracle_release_file}:${line}"
 
 		#Server within string - match any number
-		_oltmp=$(echo "${line}" | awk '/^Oracle Linux Server/ {match($0, /([0-9]+)/); print substr($0,RSTART,RLENGTH) }')
+		_oltmp=$(awk '/^Oracle Linux Server/ {match($0, /([0-9]+)/); print substr($0,RSTART,RLENGTH) }' <<< "${line}")
 		_olname=${_olname:=$_oltmp}
 
 		#match 6.4
-		_oltmp=$(echo "${line}" | awk '/^Oracle Linux/ {match($0, /([0-9]+)\.([0-9]+)/); print substr($0,RSTART,RLENGTH) }')
+		_oltmp=$(awk '/^Oracle Linux/ {match($0, /([0-9]+)\.([0-9]+)/); print substr($0,RSTART,RLENGTH) }' <<< "${line}")
 		_olversion=${_olversion:=$_oltmp}
 
 	done < "${_oracle_release_file}"
@@ -382,11 +382,11 @@ __linux_distrib_redhat_release() {
 		logTrace "<${FUNCNAME[0]}> # ${_redhat_release_file}:${line}"
 
 		#Enterprise within string - match any number
-		_rhtmp=$(echo "${line}" | awk '/^Red Hat Enterprise Linux/ {match($0, /([0-9]+)/); print substr($0,RSTART,RLENGTH) }')
+		_rhtmp=$(awk '/^Red Hat Enterprise Linux/ {match($0, /([0-9]+)/); print substr($0,RSTART,RLENGTH) }' <<< "${line}")
 		_rhname=${_rhname:=$_rhtmp}
 
 		#match 6.4
-		_rhtmp=$(echo "${line}" | awk '/^Red Hat/ {match($0, /([0-9]+)\.([0-9]+)/); print substr($0,RSTART,RLENGTH) }')
+		_rhtmp=$(awk '/^Red Hat/ {match($0, /([0-9]+)\.([0-9]+)/); print substr($0,RSTART,RLENGTH) }' <<< "${line}")
 		_rhversion=${_rhversion:=$_rhtmp}
 
 	done < "${_redhat_release_file}"
@@ -465,11 +465,13 @@ __get_platform_mem_details() {
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
 	local collectedby
+	local formula
 
 	#dmidecode only for INTEL - most accurate
 	if [[ ! -n ${LIB_PLATF_RAM_MiB:-} && -x "$(command -v dmidecode)" ]]; then
 
-		LIB_PLATF_RAM_MiB=$(printf '( %s  0)\n' "$(dmidecode -t memory | sed -e '/^\s*#/d' | grep '^\W*Size:.*B' | awk '{ if ($3=="GB") { x=$2*1024; print x } else print $2 }' | tr '\n' '+' )" | bc)
+		formula=$( printf '%s 0\n' "$(dmidecode -t memory | sed -e '/^\s*#/d' | grep '^\W*Size:.*B' | awk '{ if ($3=="GB") { x=$2*1024; print x } else print $2 }' | tr '\n' '+' )" )
+		LIB_PLATF_RAM_MiB=$(( ${formula} ))
 		collectedby='dmidecode'
 
 	fi
@@ -477,7 +479,8 @@ __get_platform_mem_details() {
 	#numactl works for INTEL, IBM Power
 	if [[ ! -n ${LIB_PLATF_RAM_MiB:-} && -x "$(command -v numactl)" ]]; then
 
-		LIB_PLATF_RAM_MiB=$(printf '( %s  0)\n' "$(numactl --hardware | grep 'size:.*B' | awk '{ if ($5=="GB") { x=$4*1024; print x } else print $4 }' | tr '\n' '+' )" | bc)
+		formula=$( printf '%s 0\n' "$(numactl --hardware | grep 'size:.*B' | awk '{ if ($5=="GB") { x=$4*1024; print x } else print $4 }' | tr '\n' '+' )" )
+		LIB_PLATF_RAM_MiB=$(( ${formula} ))
 		collectedby='numactl'
 
 	fi 
@@ -492,7 +495,7 @@ __get_platform_mem_details() {
 
 	readonly LIB_PLATF_RAM_MiB
 
-	logTrace "<${FUNCNAME[*]} # LIB_PLATF_RAM_MiB (${collectedby:-}): ${LIB_PLATF_RAM_MiB:-}>"
+	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # LIB_PLATF_RAM_MiB (${collectedby:-}): ${LIB_PLATF_RAM_MiB:-}"
 }
 
 #============================================================

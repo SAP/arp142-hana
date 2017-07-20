@@ -147,7 +147,7 @@ run_checklist() {
 
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-    for check in ${CHECKLIST[*]}
+    for check in ${CHECKLIST[*]:-}		#empty = unbound variable but count works "${#arr[@]}" = 0
     do
         # printCheckHeader "Checking " $check
         # if ! isCheckBlacklisted $check ; then
