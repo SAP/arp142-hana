@@ -1,37 +1,36 @@
-check_060_systemd_version_sles() {
+check_060_systemd_version() {
 
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
 	local -i _retval=99
 
 	# MODIFICATION SECTION>>
-	local -ar _kernel122=( '228-142.1' '#2205917' )
+	local -ar sles122=( '228-142.1' '#2205917' )	#SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
+	local -ar rhel7=( '219-19.el7_2.4' '#2292690')	#SAP HANA DB: Recommended OS settings for RHEL 7
 	# MODIFICATION SECTION<<
 
 	local _goodversion
 	local _sapnote
 	
-	#ToDo: what about RHEL       
-	if ! lib_func_is_sles ; then
+	
+	case "${OS_VERSION}" in
 
-		logCheckSkipped 'Linux distribution is not SLES. Skipping check' "<${FUNCNAME[0]}>"
-		_retval=3
+		12.2*)
+				_goodversion="${sles122[0]}"
+				_sapnote="${sles122[1]}"
+			;;
 
-	else
+		7.*)
+				_goodversion="${rhel7[0]}"
+				_sapnote="${rhel7[1]}"
+			;;
 
-		case "${OS_VERSION}" in
+		*)
+				logCheckSkipped "CHECK not applicable for Linux release (is: ${OS_NAME} ${OS_VERSION}). Skipping check" "<${FUNCNAME[0]}>"
+				_retval=3
+			;;
+	esac
 
-			12.2*)
-					_goodversion="${_kernel122[0]}"
-					_sapnote="${_kernel122[1]}"
-				;;
-			*)
-					logCheckSkipped "CHECK not applicable for SLES release (is: ${OS_VERSION})" "<${FUNCNAME[0]}>"
-					_retval=1
-				;;
-		esac
-
-	fi
 
 	if [[ ${_retval} -eq 99 ]]; then
 	
