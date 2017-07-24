@@ -1,5 +1,5 @@
 001_os_kernel_sles
-020_ulimit_package
+020_ulimit_package_sles
 025_glibc_version_sles
 030_os_clocksource
 060_systemd_version
