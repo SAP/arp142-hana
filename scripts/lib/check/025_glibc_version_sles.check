@@ -36,7 +36,7 @@ check_025_glibc_version_sles() {
 					_sapnote="${_kernel122[1]}"
 				;;
 			*)
-					logCheckWarning "CHECK does not support SLES release."
+					logCheckWarning "CHECK does not support SLES release (is: ${OS_VERSION})"
 					_retval=1
 				;;
 		esac

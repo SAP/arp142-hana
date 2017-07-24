@@ -14,6 +14,7 @@ check_300_net_parameter() {
 									'net.ipv4.tcp_timestamps'       1    \
 									'net.ipv4.tcp_syn_retries'      8    \
 									'net.ipv4.tcp_window_scaling'   1    \
+									'net.ipv4.tcp_slow_start_after_idle'   0    \
 	)
 	# MODIFICATION SECTION<<
 
@@ -22,7 +23,7 @@ check_300_net_parameter() {
 	#local -ar _tcp_reuse=( 'net.ipv4.tcp_tw_reuse' 1 )
 	#local -ar _tcp_recycle=( 'net.ipv4.tcp_tw_recycle' 1 )
 	
-	#to clarify
+	#to clarify - not in SAPNote, but SLES/RHEL use this within tuning profiles
 	#local -ri tcp_idle=$(sysctl -n net.ipv4.tcp_slow_start_after_idle)	# = 0
 
 	local -i _curr_value
