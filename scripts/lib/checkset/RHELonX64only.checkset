@@ -3,6 +3,7 @@
 050_selinux_rhel
 130_cpu_governor_x64
 140_cpu_idle_cstates_intel
+145_cpu_force_latency
 150_cpu_perfbias_intel
 200_transparent_hugepages_x64
 220_numa_balancing

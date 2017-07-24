@@ -1,0 +1,76 @@
+check_145_cpu_force_latency() {
+
+	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+	local -i _retval=99
+
+	#dynamic way to adjust allowed CPU c_states - max_cstate vs cpu_dma_latency
+	#cpu_idle must be loaded; applicable for kernel versions >=4.* - intel and power
+	#tuned profile parameter force_latency finally sets /dev/cpu_dma_latency
+
+	# MODIFICATION SECTION>>
+	local -ir _reco_value=70
+	local -r sapnote='#2205917'			#SLES12.2 only 
+	# MODIFICATION SECTION<<	
+
+	if ! lib_func_is_bare_metal ; then
+
+		logCheckSkipped 'Running virtualized. Skipping check' "<${FUNCNAME[0]}>"
+		_retval=3
+	
+	else
+		case "${OS_LEVEL}" in
+
+			[2-3].*)
+					logCheckSkipped "CHECK not applicable for kernel release (is: ${OS_LEVEL})" "<${FUNCNAME[0]}>"
+					_retval=3
+				;;
+
+			*)		
+					local -r _current_driver="$(</sys/devices/system/cpu/cpuidle/current_driver)"
+					if [[ ${_current_driver} == 'none' ]]; then
+
+						logCheckWarning 'CPU idle driver not active - check BIOS settings for disabled c-states'
+						logCheckWarning "Disabled c-states inactivate cpu_dma_latency/force_latency settings (SAP Note ${sapnote:-})"
+						_retval=1
+
+					fi
+			;;
+
+		esac
+	fi
+
+	if [[ ${_retval} -eq 99 ]]; then
+
+		#requires root to read from /dev/cpu_dma_latency
+		#this hexdump call might not work for RHEL ?
+
+		local -r _curr_value=$(hexdump --format '"%i"' /dev/cpu_dma_latency)
+
+		if [[ ${_curr_value:-} -eq ${_reco_value} ]]; then
+
+			logCheckOk "CPU latency set as recommended (SAP Note ${sapnote:-}) (is: ${_curr_value:-})"
+			_retval=0
+
+		elif [[ ${_curr_value:-} -lt 3 ]]; then		#3 = C1
+
+			logCheckError "CPU latency set to low - impacting CPU TurboMode features (SAP Note ${sapnote:-}) (is: ${_curr_value:-}, should be: ${_reco_value})"
+			_retval=2
+
+		elif [[ ${_curr_value:-} -gt ${_reco_value:-} ]]; then
+
+			logCheckError "CPU latency set to high -  (SAP Note ${sapnote:-}) (is: ${_curr_value:-}, should be: ${_reco_value})"
+			_retval=2
+
+		else # 2 < x < reco_value
+			logCheckInfo "CPU latency could be adjusted (SAP Note ${sapnote:-}) (is: ${_curr_value}, should be: ${_reco_value})"
+			_retval=0
+
+		fi
+
+	fi
+
+	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+	return ${_retval}
+
+}
