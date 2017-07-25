@@ -508,17 +508,20 @@ _lib_helper_main() {
 	__get_platform_cpu_details
 
 	# ToDo:	Power platform does not provide 'dmidecode'
+	if [[ -x "$(command -v dmidecode)" ]]; then
 
-	# Vendor - IBM, Lenovo, ...
-	if [[ ! -n ${LIB_PLATF_VENDOR:-} ]]; then
-		LIB_PLATF_VENDOR=$(dmidecode -s system-manufacturer)
-		readonly LIB_PLATF_VENDOR
-	fi
+		# Vendor - IBM, Lenovo, ...
+		if [[ ! -n ${LIB_PLATF_VENDOR:-} ]]; then
+			LIB_PLATF_VENDOR=$(dmidecode -s system-manufacturer)
+			readonly LIB_PLATF_VENDOR
+		fi
 
-	# Platform - "x3950 X6 -[6241ZB5]-", "ProLiant DL785 G6", "VMware Virtual Platform", "RHEV Hypervisor"
-	if [[ ! -n ${LIB_PLATF_NAME:-} ]]; then
-		LIB_PLATF_NAME=$(dmidecode -s system-product-name)
-		readonly LIB_PLATF_NAME
+		# Platform - "x3950 X6 -[6241ZB5]-", "ProLiant DL785 G6", "VMware Virtual Platform", "RHEV Hypervisor"
+		if [[ ! -n ${LIB_PLATF_NAME:-} ]]; then
+			LIB_PLATF_NAME=$(dmidecode -s system-product-name)
+			readonly LIB_PLATF_NAME
+		fi
+
 	fi
 
 	if [[ ! -n ${LIB_PLATF_CPU:-} ]]; then
