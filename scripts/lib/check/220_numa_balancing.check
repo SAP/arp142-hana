@@ -14,7 +14,7 @@ check_220_numa_balancing() {
 	lib_func_is_sles && sapnote=${_sapnote_sles}
 	lib_func_is_rhel && sapnote=${_sapnote_rhel}
 
-	[[ ! -n ${sapnote:-} ]] && logCheckWarning 'CHECK does not support Linux distribution.' "${FUNCNAME[0]} - ${OS_NAME} ${OS_VERSION}"
+	[[ ! -n ${sapnote:-} ]] && logCheckWarning 'CHECK does not support Linux distribution.' "${FUNCNAME[0]} - ${OS_NAME} ${OS_VERSION}"; _retval=1
 
 
 	if [[ ! -e '/proc/sys/kernel/numa_balancing' ]]; then
