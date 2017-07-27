@@ -22,21 +22,20 @@ check_022_cgroup_pids_max_sles() {
 		logCheckSkipped 'Cgroups not configured. Skipping check' "<${FUNCNAME[0]}>"
 		_retval=3
 
-	fi
-
-	if [[ ${_retval} -eq 99 ]]; then
+	else
 
 		#unique value within array
-		local -r IFS=$'\n'
+
+		#ToDo: restrict to HANA <sid>adm 
+		#grep -E '^\w{3}adm' /etc/passwd | cut -d: -f1 
 		
 		#bash4
 		mapfile -t pids_max < <(sort -u /sys/fs/cgroup/pids/user.slice/user-*.slice/pids.max 2>/dev/null)
 
 		#bash3 alternative
+		#local -r IFS=$'\n'
 		#local -ar pids_max=( $( sort -u /sys/fs/cgroup/pids/user.slice/user-*.slice/pids.max 2>/dev/null ) )
 		
-		#ToDo: restrict to HANA <sid>adm 
-		#grep -E '^\w{3}adm' /etc/passwd | cut -d: -f1 
 
 		if [[ ${#pids_max[@]} -eq 0 ]]; then 	#array length
 
