@@ -4,6 +4,7 @@
 030_os_clocksource
 040_glibc_version_sles
 060_systemd_version
+062_systemd_pam_config_sles
 130_cpu_governor_x64
 140_cpu_idle_cstates_intel
 145_cpu_force_latency
