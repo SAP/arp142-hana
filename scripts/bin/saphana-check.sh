@@ -29,9 +29,15 @@ die() {
 # Make sure only root can run our script
 # [[ ${UID}} -ne 0 ]] && die 'This script must be run as root'
 
-#set POSIX/C locales - date/time format normalized for all platforms
+#set POSIX/C locales - date/time/regex format normalized for all platforms
 LC_ALL=POSIX
 export LC_ALL
+
+PROGRAM_NAME=$(basename "$0")
+readonly PROGRAM_NAME
+
+PROGRAM_CMDLINE="$*"
+readonly PROGRAM_CMDLINE
 
 PROGRAM_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 readonly PROGRAM_DIR
@@ -177,9 +183,16 @@ run_checklist() {
 main() {
 
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+	local -r _line='-------------------------------------------------------------------'
 	
 	lib_func_get_linux_distrib
-	logNotify "${OS_NAME} ${OS_VERSION} ${OS_LEVEL}"
+
+	logNotify "${_line}"
+	logNotify "SAP HANA OS checks - ${PROGVERSION} ${PROGDATE}"
+	logNotify "CMD: ${PROGRAM_NAME} ${PROGRAM_CMDLINE}"
+	logNotify "${_line}"
+	logNotify "OS: ${OS_NAME} ${OS_VERSION} - Kernel: ${OS_LEVEL}"
 
 	logNotify "Vendor: ${LIB_PLATF_VENDOR:-} - Type: ${LIB_PLATF_NAME:-}"
 	logNotify "Architecture: ${LIB_PLATF_ARCHITECTURE:-}"

@@ -15,7 +15,8 @@ umask 022
 # return if saphana-logger already loaded
 [[ -n "${HANA_LOGGER_VERSION:-}" ]] && return 0
 
-HANA_LOGGER_VERSION='0.0.1'
+HANA_LOGGER_VERSION='0.1-<dev>'
+HANA_LOGGER_DATE="YYYY-XXX-ZZ"
 
 #exec 3>&2 # logging stream (file descriptor 3) defaults to STDERR
 
