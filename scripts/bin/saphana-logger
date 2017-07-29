@@ -2,13 +2,16 @@
 umask 022
 
 #------------------------------------------------------------------
-# SAP HANA Logger
+# SAP HANA OS checks
 #------------------------------------------------------------------
 # (C) Copyright SAP 2017
+# Author: DBS - CoE EMEA HANA Platform & Technical Infrastructure 
 #
-# Library Functions
 # Script name: "saphana-logger"
+#
+# Logging Functions
 #------------------------------------------------------------------
+
 # return if saphana-logger already loaded
 [[ -n "${HANA_LOGGER_VERSION:-}" ]] && return 0
 

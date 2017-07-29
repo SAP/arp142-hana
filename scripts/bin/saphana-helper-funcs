@@ -2,12 +2,14 @@
 umask 022
 
 #------------------------------------------------------------------
-# SAP HANA ...
+# SAP HANA OS checks
 #------------------------------------------------------------------
 # (C) Copyright SAP 2017
+# Author: DBS - CoE EMEA HANA Platform & Technical Infrastructure 
+#
+# Script name: "saphana-helper-funcs"
 #
 # Library Functions
-# Script name: "saphana-helper-funcs.sh"
 #------------------------------------------------------------------
 
 # return if saphana-helper-funcs already loaded

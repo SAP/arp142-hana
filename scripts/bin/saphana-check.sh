@@ -3,16 +3,23 @@ umask 022
 set -u 		# treat unset variables as an error
 
 #------------------------------------------------------------------
-# SAP HANA ...
+# SAP HANA OS checks
 #------------------------------------------------------------------
 # (C) Copyright SAP 2017
+# Author: DBS - CoE EMEA HANA Platform & Technical Infrastructure 
 #
-# Library Functions
 # Script name: "saphana-check.sh"
+#
+# tool to check OS parameter recommendations for SAP HANA environments
+# supports SLES and RHEL on Intel and SLES on Power
+#
+# inspired by Lenovo's saphana-support-lenovo.sh Support script 
 #------------------------------------------------------------------
 
 PROGVERSION="x.y-<dev>"
 PROGDATE="YYYY-XXX-ZZ"
+#------------------------------------------------------------------
+
 
 die() {
   [ $# -gt 0 ] && echo "error: $*" >&2
