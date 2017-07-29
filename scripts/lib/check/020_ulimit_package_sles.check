@@ -26,7 +26,7 @@ check_020_ulimit_package_sles() {
 
 		esac
 
-		if rpm -qi ulimit > /dev/null ; then
+		if rpm -q ulimit > /dev/null ; then
 			logCheckError "ulimit RPM is installed. Remove this RPM (SAP Note ${sapnote:-})"
 			_retval=2
 		else
