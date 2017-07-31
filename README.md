@@ -2,7 +2,7 @@
 
 ## How to run
 
-* [Download latest package from Git repository](https://github.wdf.sap.corp/SAP-COE-HPTI/saphana-checks/archive/master.zip)
+* [Download released version v0.1](https://github.wdf.sap.corp/SAP-COE-HPTI/saphana-checks/releases/download/v0.1/saphana-checks-v0.1.zip) or [latest development](https://github.wdf.sap.corp/SAP-COE-HPTI/saphana-checks/archive/master.zip)
 * extract scripts directory to Linux server
 * cd scripts/bin
 * run ./saphana-check.sh
