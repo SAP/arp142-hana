@@ -98,14 +98,9 @@ check_001_os_kernel_sles() {
 
 		if [[ ${_retval} -eq 99 ]]; then
 
-			local kernelversion=${OS_LEVEL}
+			local kernelversion
 
-			#ToDO: normalized kernel version should be provided by helper function - RegEx
-			kernelversion=${kernelversion/PTF-default/1}	#3.0.101-0.47.71.7930.0.PTF-default
-			kernelversion=${kernelversion/default/1}		#3.0.101-0.47.71-default
-			kernelversion=${kernelversion/bigsmp/1}			#3.0.101-0.47-bigsmp
-			kernelversion=${kernelversion/bigmem/1}			#3.0.101-88-bigmem
-			kernelversion=${kernelversion/ppc64/1}			#3.0.101-71-ppc64
+			kernelversion=$(lib_func_normalize_kernel "${OS_LEVEL}")
 
 			lib_func_compare_versions "${kernelversion}" "${_goodversion}"
 			if [[ $? -eq 2 ]]; then

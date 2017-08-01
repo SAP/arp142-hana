@@ -58,11 +58,10 @@ check_002_os_kernel_rhel() {
 
 		if [[ ${_retval} -eq 99 ]]; then
 
-			local kernelversion=${OS_LEVEL}
+			local kernelversion
 
-			#ToDO: normalized kernel version should be provided by helper function
-			kernelversion=${kernelversion/.el[6-7]*/}		# Remove trailing ".el6.x86_64"
-			#2.6.32-504.16.2.el6.x86_64
+			kernelversion=$(lib_func_normalize_kernel "${OS_LEVEL}")
+			#2.6.32-504.16.2.el6.x86_64	-->	2.6.32-504.16.2
 
 			lib_func_compare_versions "${kernelversion}" "${_goodversion}"
 			if [[ $? -eq 2 ]]; then
