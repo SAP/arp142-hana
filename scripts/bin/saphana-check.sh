@@ -200,7 +200,7 @@ main() {
 	logNotify "Byte Order: ${LIB_PLATF_BYTEORDER:-}"
 	
 	logNotify "CPU: ${LIB_PLATF_CPU:-}"
-	logNotify "Memory: ${LIB_PLATF_RAM_MiB:-} MiB"
+	logNotify "Memory: $(( LIB_PLATF_RAM_MiB/1024 )) GiB (${LIB_PLATF_RAM_MiB:-} MiB)"
 	
 	if lib_func_is_bare_metal
 	then

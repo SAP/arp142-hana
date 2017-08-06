@@ -19,7 +19,7 @@ umask 022
 [[ -n "${HANA_HELPER_VERSION:-}" ]] && return 0
 
 HANA_HELPER_VERSION='0.2-dev'
-HANA_HELPER_DATE='2017-AUG-XX'
+#HANA_HELPER_DATE='2017-AUG-XX'
 
 ##################################################
 # Global functions - to be used in other scripts
@@ -260,7 +260,7 @@ lib_func_normalize_kernel() {
 	kernelversion=${kernelversion/bigsmp*/1}			#3.0.101-0.47-bigsmp
 	kernelversion=${kernelversion/bigmem*/1}			#3.0.101-88-bigmem
 	kernelversion=${kernelversion/ppc64*/1}			#3.0.101-71-ppc64
-	kernelversion=${kernelversion/.el[6-7]*/}		# Remove trailing ".el6.x86_64"
+	kernelversion=${kernelversion/.el[[:digit:]]*/}		# Remove trailing ".el6.x86_64"
 
 	printf '%s' "${kernelversion}"
 }
@@ -493,7 +493,7 @@ __get_platform_mem_details() {
 	if [[ ! -n ${LIB_PLATF_RAM_MiB:-} && -x "$(command -v dmidecode)" ]]; then
 
 		formula=$( printf '%s 0\n' "$(dmidecode -t memory | sed -e '/^\s*#/d' | grep '^\W*Size:.*B' | awk '{ if ($3=="GB") { x=$2*1024; print x } else print $2 }' | tr '\n' '+' )" )
-		LIB_PLATF_RAM_MiB=$(( ${formula} ))
+		LIB_PLATF_RAM_MiB=$(( formula ))
 		collectedby='dmidecode'
 
 	fi
@@ -502,7 +502,7 @@ __get_platform_mem_details() {
 	if [[ ! -n ${LIB_PLATF_RAM_MiB:-} && -x "$(command -v numactl)" ]]; then
 
 		formula=$( printf '%s 0\n' "$(numactl --hardware | grep 'size:.*B' | awk '{ if ($5=="GB") { x=$4*1024; print x } else print $4 }' | tr '\n' '+' )" )
-		LIB_PLATF_RAM_MiB=$(( ${formula} ))
+		LIB_PLATF_RAM_MiB=$(( formula ))
 		collectedby='numactl'
 
 	fi 
