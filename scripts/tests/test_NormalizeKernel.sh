@@ -14,7 +14,7 @@ testNormalizeKernelEqualTo() {
 		kernelversion=$(lib_func_normalize_kernel "${_test[0]}")
 
 		#printf "test[$i]: <%s> <%s>\n" "${kernelversion}" "${_test[1]}"
-		assertEquals "EqualTo failure test#$(( i++ ))" "${kernelversion}" "${_test[1]}"
+		assertEquals "EqualTo failure test#$(( i++ ))" "${_test[1]}" "${kernelversion}"
 		
 	done <<- EOF
 	3.0.101-0.47.71.7930.0.PTF-default		3.0.101-0.47.71.7930.0.1
@@ -23,6 +23,8 @@ testNormalizeKernelEqualTo() {
 	3.0.101-88-bigmem						3.0.101-88-1
 	3.0.101-71-ppc64						3.0.101-71-1
 	2.6.32-504.16.2.el6.x86_64				2.6.32-504.16.2				# Remove trailing ".el6.x86_64"
+	3.10.0-327.46.1.el7.x86_64				3.10.0-327.46.1
+	3.10.0-514.26.2.el7.x86_64				3.10.0-514.26.2
 	EOF
 }
 
@@ -32,7 +34,7 @@ testNormalizeKernelShouldFail() {
 
 	#The following tests should fail (test the tester)
 	kernelversion=$(lib_func_normalize_kernel '3.0.101-0.47.71-default2')
-	assertNotEquals 'test[1]: testing the tester failed' "${kernelversion}" '3.0.101-0.47.71.1'
+	assertNotEquals 'test[1]: testing the tester failed' '3.0.101-0.47.71.1' "${kernelversion}"
 }
 
 oneTimeSetUp () {
