@@ -1,6 +1,6 @@
 #! /bin/bash
 
-PROGRAM_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROGRAM_DIR="$( cd "${BASH_SOURCE[0]%/*}" && pwd )"
 readonly PROGRAM_DIR
 
 testNormalizeKernelEqualTo() {

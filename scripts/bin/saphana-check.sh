@@ -33,13 +33,13 @@ die() {
 LC_ALL=POSIX
 export LC_ALL
 
-PROGRAM_NAME=$(basename "$0")
+PROGRAM_NAME=${0##*/}
 readonly PROGRAM_NAME
 
 PROGRAM_CMDLINE="$*"
 readonly PROGRAM_CMDLINE
 
-PROGRAM_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROGRAM_DIR="$( cd "${BASH_SOURCE[0]%/*}" && pwd )"
 readonly PROGRAM_DIR
 
 # configure shflags - define flags
@@ -140,7 +140,8 @@ generate_checklist() {
 	for checkfile in ${CHECKFILELIST[*]}
 	do
 		
-		checkname=check_$(basename "${checkfile}" .check)
+		checkname=${checkfile##*/}
+		checkname="check_${checkname%.check}"
 		
 		if ! safetycheck=$(lib_func_check_check_security "$checkfile") ; then
 			logCheckSkipped "Skipping check ${checkname}. Reason: ${safetycheck}"
