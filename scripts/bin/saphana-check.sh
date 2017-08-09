@@ -191,8 +191,9 @@ main() {
 
 	logNotify "${_line}"
 	logNotify "SAP HANA OS checks - ${PROGVERSION} ${PROGDATE}"
-	logNotify "CMD: ${PROGRAM_NAME} ${PROGRAM_CMDLINE}"
+	logNotify "CMD: ${PROGRAM_DIR}/${PROGRAM_NAME} ${PROGRAM_CMDLINE}"
 	logNotify "${_line}"
+	logNotify "Host: $(hostname)"
 	logNotify "OS: ${OS_NAME} ${OS_VERSION} - Kernel: ${OS_LEVEL}"
 
 	logNotify "Vendor: ${LIB_PLATF_VENDOR:-} - Type: ${LIB_PLATF_NAME:-}"
