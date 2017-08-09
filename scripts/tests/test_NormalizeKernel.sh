@@ -1,4 +1,5 @@
 #! /bin/bash
+set -u 		# treat unset variables as an error
 
 PROGRAM_DIR="$( cd "${BASH_SOURCE[0]%/*}" && pwd )"
 readonly PROGRAM_DIR
@@ -37,14 +38,16 @@ testNormalizeKernelShouldFail() {
 	assertNotEquals 'test[1]: testing the tester failed' '3.0.101-0.47.71.1' "${kernelversion}"
 }
 
-oneTimeSetUp () {
-	#Import Libraries
-	source "${PROGRAM_DIR}/../bin/saphana-logger"
-	source "${PROGRAM_DIR}/../bin/saphana-helper-funcs"
-}
+# oneTimeSetUp () {
+
+# }
 # oneTimeTearDown
 # setUp
 # tearDown
 
-# load shunit2
+#Import Libraries 
+# - order is important - sourcing shunit triggers testing
+# - thats also the reason, why it could not be done during oneTimeSetup
+source "${PROGRAM_DIR}/../bin/saphana-logger"
+source "${PROGRAM_DIR}/../bin/saphana-helper-funcs"
 source "${PROGRAM_DIR}/shunit"
