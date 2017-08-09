@@ -1,4 +1,5 @@
 #!/bin/bash
+set -u 		# treat unset variables as an error
 
 #Useful information
 #http://stackoverflow.com/questions/4023830/how-compare-two-strings-in-dot-separated-version-format-in-bash
@@ -57,6 +58,7 @@ done << EOF
 2.19-38.2       2.19-38.2       =
 2.19-38.2       2.11.3-17.95.2  >
 2.11.3-17.95.2  2.19-38.2       <
+3.0.101-0.47.71-1	3.0.101-0.47.71 >
 EOF
 
 printf 'The following test should fail (test the tester)\n'
