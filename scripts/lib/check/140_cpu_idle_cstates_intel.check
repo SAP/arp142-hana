@@ -90,7 +90,7 @@ check_140_cpu_idle_cstates_intel() {
 
 					local -i _acpi_mcstate
 
-					if ! _acpi_mcstate=$(grep 'ACPI: processor limited to max C-state' /var/log/boot.msg | grep -E -o '[0-9]+$'); then
+					if ! _acpi_mcstate=$(grep 'ACPI: processor limited to max C-state' /var/log/boot.msg 2>/dev/null | grep -E -o '[0-9]+$'); then
 						logCheckWarning 'CPU idle driver -acpi_idle- max_cstate could not be determined (is: unknown, should be: 0)'
 						_retval=1
 					else
