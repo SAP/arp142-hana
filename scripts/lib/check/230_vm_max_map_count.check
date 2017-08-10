@@ -8,8 +8,13 @@ check_230_vm_max_map_count() {
 	local -r _sapnote='#1980196'		#Setting /proc/sys/vm/max_map_count on HANA systems
 	# MODIFICATION SECTION<<
 
-	# LIMIT ( 1.000.000 + (32768 * RAM in GB) <= 2.147.483.647)
-	local -ir _set_mmcount=$(( 1000000 + (32768 * LIB_PLATF_RAM_MiB / 1024) ))
+	# LIMIT <= 2.147.483.647
+	# Intel ( 1.000.000 + (32768 * RAM in GB))
+	# Power ( 1.000.000 + (16384 * RAM in GB))
+	local -i factor=32768
+	lib_func_is_ibmpower && factor=16384
+
+	local -ir _set_mmcount=$(( 1000000 + (factor * LIB_PLATF_RAM_MiB / 1024) ))
 	local -ir _maximum_mmcount=2147483647
 
 	# https://www.gnu.org/software/bash/manual/html_node/Shell-Arithmetic.html#Shell-Arithmetic
