@@ -1,4 +1,5 @@
 001_os_kernel_sles
+005_os_release_kernel_sles
 020_ulimit_package_sles
 022_cgroup_pids_max_sles
 030_os_clocksource

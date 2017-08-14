@@ -1,4 +1,5 @@
 002_os_kernel_rhel
+006_os_release_kernel_rhel
 030_os_clocksource
 050_selinux_rhel
 060_systemd_version
