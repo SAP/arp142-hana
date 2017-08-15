@@ -51,8 +51,8 @@ check_002_os_kernel_rhel() {
 				;;
 
 			*)
-					logCheckWarning 'CHECK does not support RHEL release.' "${FUNCNAME[0]} - ${OS_VERSION}"
-					_retval=1
+					logCheckError "RHEL version is not supported (SAP Note #2235581) (is: ${OS_VERSION})"
+					_retval=2
 				;;
 		esac
 
