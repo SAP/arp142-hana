@@ -21,22 +21,36 @@ check_150_cpu_perfbias_intel() {
 		lib_func_is_sles && _sapnote=${_sapnote_sles}
 		lib_func_is_rhel && _sapnote=${_sapnote_rhel}
 
-        local -r perf_bias_output=$(cpupower info | grep perf-bias)
-        local -ir perf_bias=$(lib_func_trim_left "${perf_bias_output/perf-bias:}")
+		if [[ ! -x '/usr/bin/cpupower' ]]; then
 
-
-        if [[ ${perf_bias} -eq 0 ]]; then
-
-            logCheckOk "Energy Performance Bias EPB set to performance (SAP Note ${_sapnote:-}) (is: ${perf_bias})"
-            _retval=0
-
-        else
-
-            logCheckWarning "Energy Performance Bias EPB not set to performance (SAP Note ${_sapnote:-}) (is: ${perf_bias}, should be: 0)"
+            logCheckWarning "Energy Performance Bias EPB could not be checked - cpupower not installed (SAP Note ${_sapnote:-}) (is: unknown, should be: 0)"
             _retval=1
 
-        fi
+		else
 
+			local perf_bias_output 
+			perf_bias_output=$(/usr/bin/cpupower info 2>/dev/null | grep perf-bias)
+			perf_bias_output=${perf_bias_output:=-1}	#if null set to -1 
+
+			local -ir perf_bias=$(lib_func_trim_left "${perf_bias_output/perf-bias:}")
+
+			if [[ ${perf_bias} -eq 0 ]]; then
+
+				logCheckOk "Energy Performance Bias EPB set to performance (SAP Note ${_sapnote:-}) (is: ${perf_bias})"
+				_retval=0
+
+			elif [[ ${perf_bias} -gt 0 ]]; then
+
+				logCheckWarning "Energy Performance Bias EPB not set to performance (SAP Note ${_sapnote:-}) (is: ${perf_bias}, should be: 0)"
+				_retval=1
+
+			else
+
+				logCheckWarning "Energy Performance Bias EPB could not be determined (SAP Note ${_sapnote:-}) (is: ?, should be: 0)"
+				_retval=1
+
+			fi
+		fi
     fi
 
 	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
