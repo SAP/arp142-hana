@@ -189,38 +189,43 @@ main() {
 	
 	lib_func_get_linux_distrib
 
-	logNotify "${_line}"
-	logNotify "SAP HANA OS checks - ${PROGVERSION} ${PROGDATE}"
-	logNotify "CMD: ${PROGRAM_DIR}/${PROGRAM_NAME} ${PROGRAM_CMDLINE}"
-	logNotify "${_line}"
-	logNotify "Host: $(hostname)"
-	logNotify "OS: ${OS_NAME} ${OS_VERSION} - Kernel: ${OS_LEVEL}"
-
-	logNotify "Vendor: ${LIB_PLATF_VENDOR:-} - Type: ${LIB_PLATF_NAME:-}"
-	logNotify "Architecture: ${LIB_PLATF_ARCHITECTURE:-}"
-	logNotify "Byte Order: ${LIB_PLATF_BYTEORDER:-}"
-	
-	logNotify "CPU: ${LIB_PLATF_CPU:-}"
-	logNotify "Memory: $(( LIB_PLATF_RAM_MiB/1024 )) GiB (${LIB_PLATF_RAM_MiB:-} MiB)"
+	logNotify "## ${_line}"
+	logNotify "## SAP HANA OS checks"
+	logNotify "## Scriptversion: ${PROGVERSION} Scriptdate: ${PROGDATE}"
+	logNotify "## ${_line}"
+	logNotify "## CMD:           ${PROGRAM_DIR}/${PROGRAM_NAME} ${PROGRAM_CMDLINE}"
+	logNotify '##'
+	logNotify "## Host:          $(hostname -f)"
+	logNotify "## TimeLOC:       $(date +"%Y-%m-%d %H:%M:%S")"
+	logNotify "## TimeUTC:       $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+	logNotify "## ${_line}"
+	logNotify "## Vendor:        ${LIB_PLATF_VENDOR:-} - Type: ${LIB_PLATF_NAME:-}"
+	logNotify "## Architecture:  ${LIB_PLATF_ARCHITECTURE:-} - Byte Order: ${LIB_PLATF_BYTEORDER:-}"
 	
 	if lib_func_is_bare_metal
 	then
-		logNotify 'Running on Bare-Metal'
+		logNotify '##                Running on Bare-Metal'
 	else
-		logNotify 'Running Virtualized'
+		logNotify '##                Running Virtualized'
 	fi
 
 	if lib_func_is_ibmpower
 	then
-		logNotify 'Running on IBM Power'
+		logNotify '##                Running on IBM Power'
 	fi
 	
+	logNotify "## CPU:           ${LIB_PLATF_CPU:-}"
+	logNotify "## Memory:        $(( LIB_PLATF_RAM_MiB/1024 )) GiB (${LIB_PLATF_RAM_MiB:-} MiB)"
+	logNotify '##'
+	logNotify "## OS:            ${OS_NAME} ${OS_VERSION} - Kernel: ${OS_LEVEL}"
 
 	printf '\n'
 
 	generate_checklist
 	run_checklist
-	printf '\n\n'
+
+	printf '\n'
+	logNotify '## Exit'
 
 	exit 0
 }
