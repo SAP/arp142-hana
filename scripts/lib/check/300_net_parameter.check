@@ -41,15 +41,23 @@ check_300_net_parameter() {
 		_curr_value=$(sysctl -n "${_parameter}") 
 
 		if [[ ${_curr_value} -ne ${_reco_value} ]]; then
-			logCheckWarning "Wrong sysctl parameter ${_parameter} (SAP Note ${_sapnote:-}) (is: ${_curr_value}, should be: ${_reco_value})"
+			logCheckWarning "sysctl parameter ${_parameter} NOT set as recommended (is: ${_curr_value}, should be: ${_reco_value})"
 			_retval=1
+		else
+			logCheckOk "sysctl parameter ${_parameter} set as recommended (is: ${_curr_value})"
 		fi
 
 	done
 
 	if [[ ${_retval} -eq 99 ]]; then
-			logCheckOk "All network sysctl parameter set as recommended (SAP Note ${_sapnote:-})"
-			_retval=0
+
+		logCheckOk "All network sysctl parameter set as recommended (SAP Note ${_sapnote:-})"
+		_retval=0
+
+	else
+
+		logCheckWarning "Not All network sysctl parameter set as recommended (SAP Note ${_sapnote:-})"
+
 	fi
 
 	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"

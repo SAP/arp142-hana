@@ -22,7 +22,7 @@ check_145_cpu_force_latency() {
 		case "${OS_LEVEL}" in
 
 			[2-3].*)
-					logCheckSkipped "CHECK not applicable for kernel release (is: ${OS_LEVEL})" "<${FUNCNAME[0]}>"
+					logCheckSkipped 'CHECK not applicable for kernel release' "(is: ${OS_LEVEL})." "Skipping check <${FUNCNAME[0]}>"
 					_retval=3
 				;;
 
