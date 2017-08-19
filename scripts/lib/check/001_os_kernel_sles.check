@@ -100,7 +100,8 @@ check_001_os_kernel_sles() {
 
 			local kernelversion
 
-			kernelversion=$(lib_func_normalize_kernel "${OS_LEVEL}")
+			lib_func_normalize_kernel "${OS_LEVEL}"
+			kernelversion="${lib_func_normalize_kernel_return}"
 
 			lib_func_compare_versions "${kernelversion}" "${_goodversion}"
 			if [[ $? -eq 2 ]]; then

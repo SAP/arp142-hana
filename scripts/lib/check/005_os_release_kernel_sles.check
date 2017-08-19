@@ -58,7 +58,8 @@ check_005_os_release_kernel_sles() {
 
 			local kernelversion
 
-			kernelversion=$(lib_func_normalize_kernel "${OS_LEVEL}")
+			lib_func_normalize_kernel "${OS_LEVEL}"
+			kernelversion="${lib_func_normalize_kernel_return}"
 
 			lib_func_compare_versions "${kernelversion}" "${kernel_low}"
 			if [[ $? -eq 2 ]]; then

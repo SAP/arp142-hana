@@ -60,7 +60,8 @@ check_002_os_kernel_rhel() {
 
 			local kernelversion
 
-			kernelversion=$(lib_func_normalize_kernel "${OS_LEVEL}")
+			lib_func_normalize_kernel "${OS_LEVEL}"
+			kernelversion="${lib_func_normalize_kernel_return}"
 			#2.6.32-504.16.2.el6.x86_64	-->	2.6.32-504.16.2
 
 			lib_func_compare_versions "${kernelversion}" "${_goodversion}"
