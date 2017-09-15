@@ -11,9 +11,9 @@ check_001_os_kernel_sles() {
 	local -ar _kernel114power=( '3.0.101-104.2' '#2240716' )
 	local -ar _kernel120=( '3.12.61-52.72.1' '#2205917' )
 	local -ar _kernel121=( '3.12.74-60.64.40.1' '#2205917' )
-	local -ar _kernel122=( '4.4.21-69.1' '#2205917' )
+	local -ar _kernel122=( '4.4.74-92.35.1' '#2205917' )
 	local -ar _kernel121power=( '3.12.67-60.64.18' '#2205917' )
-	local -ar _kernel122power=( '4.4.21-69.1' '#2205917' )
+	local -ar _kernel122power=( '4.4.74-92.35.1' '#2205917' )
 	# MODIFICATION SECTION<<
 
 	if  ! lib_func_is_sles ;	then
