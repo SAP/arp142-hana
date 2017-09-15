@@ -17,7 +17,7 @@ set -u 		# treat unset variables as an error
 #------------------------------------------------------------------
 
 PROGVERSION='0.2-dev'
-PROGDATE='2017-AUG-XX'
+PROGDATE='2017-SEP-XX'
 #------------------------------------------------------------------
 
 
@@ -137,7 +137,7 @@ generate_checklist() {
 	local checkname
 	local safetycheck
 
-	for checkfile in ${CHECKFILELIST[*]}
+	for checkfile in ${CHECKFILELIST[*]:-}
 	do
 		
 		checkname=${checkfile##*/}
