@@ -158,7 +158,9 @@ lib_func_is_ibmpower() {
 
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	[[ "${LIB_PLATF_ARCHITECTURE}" == 'ppc64' ]] && _retval=0
+	if [[ "${LIB_PLATF_ARCHITECTURE}" == 'ppc64le' ]] || [[ "${LIB_PLATF_ARCHITECTURE}" == 'ppc64' ]]; then
+		_retval=0
+	fi
 
 	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
 	return ${_retval}
