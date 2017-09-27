@@ -1,5 +1,15 @@
 # saphana-checks
 
+## FAQ
+Q: Does it work on all linux versions - independend from distributions, kernel, filesystem, hana version?
+A: Yes, checks itself will make sure if they are applicalbe for environment. Checks are not complete, eg. filesystems/HANA specifics are not checked so far.
+
+Q: Does it change anything on the system?
+A: No, scripts only read data. There is no change/writing of anything.
+
+Q: Are there any restrictions attention should be paid to?
+A: Scripts require root permission in order to read certain kernel parameter values.
+
 ## How to run
 
 * [Download released version v0.1](https://github.wdf.sap.corp/SAP-COE-HPTI/saphana-checks/releases/download/v0.1/saphana-checks-v0.1.zip) or [latest development](https://github.wdf.sap.corp/SAP-COE-HPTI/saphana-checks/archive/master.zip)
