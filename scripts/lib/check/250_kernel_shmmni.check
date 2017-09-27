@@ -38,7 +38,7 @@ check_250_kernel_shmmni() {
 
 	else
 
-		logCheckInfo "Parameter kernel.shmmni is set as recommended (SAP Note ${_sapnote:-}) (is: ${curr_shmmni})"
+		logCheckOk "Parameter kernel.shmmni is set as recommended (SAP Note ${_sapnote:-}) (is: ${curr_shmmni})"
 		_retval=0
 
 	fi
