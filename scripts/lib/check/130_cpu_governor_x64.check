@@ -13,9 +13,9 @@ check_130_cpu_governor_x64() {
 		logCheckSkipped 'Running virtualized. Skipping check' "<${FUNCNAME[0]}>"
 		_retval=3
 
-	elif lib_func_is_ibmpower ; then
+	elif ! lib_func_is_intel ; then
 
-		logCheckSkipped 'Running on IBM Power. Skipping check' "<${FUNCNAME[0]}>"
+		logCheckSkipped 'Not running on Intel CPU. Skipping check' "<${FUNCNAME[0]}>"
 		_retval=3
 
 	else
