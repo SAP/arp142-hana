@@ -30,12 +30,12 @@ check_510_pagecache_limit_sles() {
 
 		elif [[ ${pgcache_limit_mb} -lt ${set_pg_limit} ]]; then
 		    
-			logCheckError "vm.pagecache_limit_mb is set to low (SAP Note ${_sapnote}) (is: ${pgcache_limit_mb}, should be: ${set_pg_limit})"
+			logCheckError "vm.pagecache_limit_mb is set to low (SAP Note ${_sapnote:-}) (is: ${pgcache_limit_mb}, should be: ${set_pg_limit})"
             _retval=2
 
 		elif [[ ${pgcache_limit_mb} -gt ${set_pg_limit} ]]; then
 		    
-			logCheckError "vm.pagecache_limit_mb is set to high (SAP Note ${_sapnote}) (is: ${pgcache_limit_mb}, should be: ${set_pg_limit})"
+			logCheckError "vm.pagecache_limit_mb is set to high (SAP Note ${_sapnote:-}) (is: ${pgcache_limit_mb}, should be: ${set_pg_limit})"
             _retval=2
 
         else
