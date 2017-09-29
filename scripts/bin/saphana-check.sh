@@ -16,7 +16,7 @@ set -u 		# treat unset variables as an error
 # inspired by Lenovo's saphana-support-lenovo.sh Support script 
 #------------------------------------------------------------------
 
-PROGVERSION='0.2'
+PROGVERSION='0.3-dev'
 PROGDATE='2017-SEP-27'
 #------------------------------------------------------------------
 
