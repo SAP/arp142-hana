@@ -1,5 +1,6 @@
 002_os_kernel_rhel
 006_os_release_kernel_rhel
+020_ulimit_package
 030_os_clocksource
 040_glibc_x64
 050_selinux_rhel
