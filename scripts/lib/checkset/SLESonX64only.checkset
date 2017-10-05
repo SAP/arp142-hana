@@ -3,7 +3,7 @@
 020_ulimit_package_sles
 022_cgroup_pids_max_sles
 030_os_clocksource
-040_glibc_version_sles
+040_glibc_x64
 060_systemd_version
 062_systemd_pam_config_sles
 130_cpu_governor_x64
