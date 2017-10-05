@@ -1,19 +1,24 @@
-# only certain SLES vesion are supported
-# in case 11.4 kernel - bigmem kernel should be used, must be used >4 TiB systems 
 check_003_os_sles_ibmpower() {
+# only certain SLES version are supported
+# in case 11.4 kernel - bigmem kernel should be used, must be used >4 TiB systems 
 
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
 	local -i _retval=99
 
 	# MODIFICATION SECTION>>
-	local -r sapnote114='#2240716'
-	local -r sapnote12x='#2205917'
+	local -r sapnote114='#2240716'	#SAP HANA DB: Recommended OS settings for SLES 11 / SLES for SAP Applications 11 SP4
+	local -r sapnote12x='#2235581'	#SAP HANA: Supported Operating Systems
 	# MODIFICATION SECTION<<
 
 	if  ! lib_func_is_ibmpower ;	then
 
 		logCheckSkipped 'Not running on IBM Power. Skipping check' "<${FUNCNAME[0]}>"
+		_retval=3
+
+	elif  ! lib_func_is_sles ;	then
+
+		logCheckSkipped 'Linux distribution is not SLES. Skipping check' "<${FUNCNAME[0]}>"
 		_retval=3
 
 	else
@@ -29,37 +34,37 @@ check_003_os_sles_ibmpower() {
 
 					if [[ "${OS_LEVEL}" != *"bigmem"* ]]; then
 
-						logCheckInfo "SLESonPower version is supported. (SAP Note ${sapnote114}) (is: ${OS_VERSION})"
+						logCheckInfo "SLESonPower version is supported. (SAP Note ${sapnote114:-}) (is: ${OS_VERSION})"
 
 						#4 TiB must use the kernel-bigmem
 						if [[ ${LIB_PLATF_RAM_MiB} -le 4194304 ]]; then
 
-							logCheckWarning "BIGMEM kernel should be used. (SAP Note ${sapnote114}) (is: ${OS_LEVEL}, should be: *-bigmem)"
+							logCheckWarning "BIGMEM kernel should be used. (SAP Note ${sapnote114:-}) (is: ${OS_LEVEL}, should be: *-bigmem)"
 							_retval=1
 
 						else
 
-							logCheckError "BIGMEM kernel must be used. (SAP Note ${sapnote114}) (is: ${OS_LEVEL}, must be: *-bigmem)"
+							logCheckError "BIGMEM kernel must be used. (SAP Note ${sapnote114:-}) (is: ${OS_LEVEL}, must be: *-bigmem)"
 							_retval=2
 
 						fi
 
 					else
 
-						logCheckOk "SLESonPower version supported and BIGMEM kernel used (SAP Note ${sapnote114}) (is: ${OS_VERSION} - ${OS_LEVEL})"
+						logCheckOk "SLESonPower version supported and BIGMEM kernel used (SAP Note ${sapnote114:-}) (is: ${OS_VERSION} - ${OS_LEVEL})"
 						_retval=0
 
 					fi
 
 				;;
 
-			12.1*)	
-					logCheckOk "SLESonPower version is supported (SAP Note ${sapnote12x}) (is: ${OS_VERSION})"
+			12.[1-2]*)	
+					logCheckOk "SLESonPower version is supported (SAP Note ${sapnote12x:-}) (is: ${OS_VERSION})"
 					_retval=0
 				;;
 
 			*)
-					logCheckError "SLESonPower version is not supported (SAP Note #2235581) (is: ${OS_VERSION})"
+					logCheckError "SLESonPower version is NOT supported (SAP Note #2235581) (is: ${OS_VERSION})"
 					_retval=2
 				;;
 
