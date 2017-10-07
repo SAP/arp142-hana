@@ -13,7 +13,7 @@ check_006_os_release_kernel_rhel() {
 	local -ar _kernel66=( '2.6.32-504' )
 	local -ar _kernel67=( '2.6.32-573' )
 	local -ar _kernel72=( '3.10.0-327' )
-	#local -ar _kernel73=( '3.10.0-514' )
+	local -ar _kernel73=( '3.10.0-514' )
 	#local -ar _kernel74=( '3.10.0-693' )
 
 	local -r sapnote='#2235581'	#SAP HANA: Supported Operating Systems
@@ -44,7 +44,7 @@ check_006_os_release_kernel_rhel() {
 
 			7.2)	expected_kernel="${_kernel72[0]}" ;;
 
-			#7.3)	expected_kernel="${_kernel73[0]}" ;;
+			7.3)	expected_kernel="${_kernel73[0]}" ;;
 
 			*)
 					logCheckWarning 'CHECK does not support RHEL release.' "${FUNCNAME[0]} - ${OS_VERSION}"
