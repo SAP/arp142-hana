@@ -28,27 +28,28 @@ check_510_pagecache_limit_sles() {
             logCheckOk "vm.pagecache_limit_mb is set as recommended (SAP Note ${_sapnote:-}) (is: 0)"
             _retval=0
 
-		elif [[ ${pgcache_limit_mb} -lt ${set_pg_limit} ]]; then
-		    
-			logCheckError "vm.pagecache_limit_mb is set to low (SAP Note ${_sapnote:-}) (is: ${pgcache_limit_mb}, should be: ${set_pg_limit})"
-            _retval=2
-
-		elif [[ ${pgcache_limit_mb} -gt ${set_pg_limit} ]]; then
-		    
-			logCheckWarning "vm.pagecache_limit_mb is set to high (SAP Note ${_sapnote:-}) (is: ${pgcache_limit_mb}, should be: ${set_pg_limit})"
-            _retval=1
-
         else
 
-			logCheckWarning "vm.pagecache_limit_mb is set - should only be set to address a certain issue  (SAP Note ${_sapnote:-}) (is: ${pgcache_limit_mb}, should be: 0)"
+			logCheckWarning "vm.pagecache_limit_mb is set - should only be set to address a certain issue (SAP Note ${_sapnote:-}) (is: ${pgcache_limit_mb}, should be: 0)"
             _retval=1
 
+			if [[ ${pgcache_limit_mb} -lt ${set_pg_limit} ]]; then
+				
+				logCheckError "vm.pagecache_limit_mb is set to low (SAP Note ${_sapnote:-}) (is: ${pgcache_limit_mb}, should be: ${set_pg_limit})"
+				_retval=2
+
+			elif [[ ${pgcache_limit_mb} -gt ${set_pg_limit} ]]; then
+				
+				logCheckWarning "vm.pagecache_limit_mb is set to high (SAP Note ${_sapnote:-}) (is: ${pgcache_limit_mb}, should be: ${set_pg_limit})"
+				_retval=1
+
+			fi
         fi
 
-	fi #sles
+	fi
 
 	#pgcache_ignore_dirty
-	if [[ ${_retval} -ge 1 ]]; then
+	if [[ ${_retval} -eq 1 && ${_retval} -eq 2 ]]; then
 
         local -ri pgcache_ignore_dirty=$(</proc/sys/vm/pagecache_limit_ignore_dirty)
 		logCheckInfo "vm.pagecache_limit_ignore_dirty depends on HANA Data+Log filesystem (is: ${pgcache_ignore_dirty}, should be: 0 for local FS, 1 for NFS)"
