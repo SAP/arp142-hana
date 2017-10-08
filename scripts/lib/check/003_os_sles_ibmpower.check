@@ -23,52 +23,70 @@ check_003_os_sles_ibmpower() {
 
 	else
 
-		case "${OS_VERSION}" in
+		if [[ "${LIB_PLATF_ARCHITECTURE}" == 'ppc64' ]]; then	#BigEndian
 
-			11.3)
-					logCheckError "SLESonPower version is not supported - upgrade to SLES4SAP 11.4 (SAP Note #2235581) (is: ${OS_VERSION})"
-					_retval=2
+			case "${OS_VERSION}" in
+
+				11.3)
+						logCheckError "SLESonPower release is not supported - upgrade to SLES4SAP 11.4 (SAP Note #2235581) (is: ${OS_VERSION})"
+						_retval=2
 				;;
 
-			11.4)	
+				11.4)	
 
-					if [[ "${OS_LEVEL}" != *"bigmem"* ]]; then
+						if [[ "${OS_LEVEL}" != *"bigmem"* ]]; then
 
-						logCheckInfo "SLESonPower version is supported. (SAP Note ${sapnote114:-}) (is: ${OS_VERSION})"
+							logCheckInfo "SLESonPower release is supported. (SAP Note ${sapnote114:-}) (is: ${OS_VERSION})"
 
-						#4 TiB must use the kernel-bigmem
-						if [[ ${LIB_PLATF_RAM_MiB} -le 4194304 ]]; then
+							#4 TiB must use the kernel-bigmem
+							if [[ ${LIB_PLATF_RAM_MiB} -le 4194304 ]]; then
 
-							logCheckWarning "BIGMEM kernel should be used. (SAP Note ${sapnote114:-}) (is: ${OS_LEVEL}, should be: *-bigmem)"
-							_retval=1
+								logCheckWarning "BIGMEM kernel should be used. (SAP Note ${sapnote114:-}) (is: ${OS_LEVEL}, should be: *-bigmem)"
+								_retval=1
+
+							else
+
+								logCheckError "BIGMEM kernel must be used. (SAP Note ${sapnote114:-}) (is: ${OS_LEVEL}, must be: *-bigmem)"
+								_retval=2
+
+							fi
 
 						else
 
-							logCheckError "BIGMEM kernel must be used. (SAP Note ${sapnote114:-}) (is: ${OS_LEVEL}, must be: *-bigmem)"
-							_retval=2
+							logCheckOk "SLESonPower release supported and BIGMEM kernel used (SAP Note ${sapnote114:-}) (is: ${OS_VERSION} - ${OS_LEVEL})"
+							_retval=0
 
 						fi
+				;;
 
-					else
+				*)
+						logCheckError "SLESonPower release with BigEndian architecture is NOT supported (SAP Note #2235581) (is: ${OS_VERSION})"
+						_retval=2
+				;;
+			
+			esac
 
-						logCheckOk "SLESonPower version supported and BIGMEM kernel used (SAP Note ${sapnote114:-}) (is: ${OS_VERSION} - ${OS_LEVEL})"
+		elif [[ "${LIB_PLATF_ARCHITECTURE}" == 'ppc64le' ]]; then
+
+			case "${OS_VERSION}" in
+
+				12.[1-2]*)	
+						logCheckOk "SLESonPower release is supported (SAP Note ${sapnote12x:-}) (is: ${OS_VERSION})"
 						_retval=0
+					;;
 
-					fi
+				*)
+						logCheckError "SLESonPower release with LittleEndian architecture is NOT supported (SAP Note #2235581) (is: ${OS_VERSION})"
+						_retval=2
+					;;
 
-				;;
+			esac
 
-			12.[1-2]*)	
-					logCheckOk "SLESonPower version is supported (SAP Note ${sapnote12x:-}) (is: ${OS_VERSION})"
-					_retval=0
-				;;
+		else
 
-			*)
-					logCheckError "SLESonPower version is NOT supported (SAP Note #2235581) (is: ${OS_VERSION})"
-					_retval=2
-				;;
-
-		esac
+			logCheckError "Platform architecture <${LIB_PLATF_ARCHITECTURE}> NOT supported. Skipping check <${FUNCNAME[0]}>"
+			_retval=2
+		fi
 
 	fi
 
