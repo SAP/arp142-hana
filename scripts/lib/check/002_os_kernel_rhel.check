@@ -10,8 +10,8 @@ check_002_os_kernel_rhel() {
 	local -ar _kernel66=( '2.6.32-504.16.2' '#2136965' )
 	local -ar _kernel67=( '2.6.32-573' '#2247020' )		#not known, take release kernel, all should be fine
 	local -ar _kernel72=( '3.10.0-327' '#2292690' ) 	#dito
-	local -ar _rhel73=( '3.10.0-514' '#2292690' ) 	#dito
-	local -ar _rhel73power=( '3.10.0-514' '#2292690' ) 	#dito
+	local -ar _rhel73=( '3.10.0-514.28.1.el7' '#2292690' )
+	local -ar _rhel73power=( '3.10.0-514.28.1.el7' '#2292690' )
 	# MODIFICATION SECTION<<
 
 	if  ! lib_func_is_rhel ;	then
@@ -53,10 +53,10 @@ check_002_os_kernel_rhel() {
 						_sapnote="${_kernel72[1]}"
 					;;
 				
-				7.3)
-						_goodversion="${_rhel73[0]}"
-						_sapnote="${_rhel73[1]}"
-					;;
+				# 7.3)
+				# 		_goodversion="${_rhel73[0]}"
+				# 		_sapnote="${_rhel73[1]}"
+				# 	;;
 
 				*)
 						logCheckError "RHEL version is not supported (SAP Note #2235581) (is: ${OS_VERSION})"

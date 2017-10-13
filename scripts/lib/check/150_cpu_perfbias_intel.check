@@ -6,8 +6,7 @@ check_150_cpu_perfbias_intel() {
 
 	# MODIFICATION SECTION>>
 	local -r _sapnote_sles='#2205917'    #SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
-	local -r _sapnote_rhel='#2009879'	 #SAP HANA Guidelines for Red Hat Enterprise Linux (RHEL) Operating System 
-										 #(tuning profile - 'sap-hana' which includes 'throughput-performance')
+	local -r _sapnote_rhel='#2292690'	 #SAP HANA DB: Recommended OS settings for RHEL 7
 	# MODIFICATION SECTION<<
 
 	if  ! lib_func_is_intel ; then

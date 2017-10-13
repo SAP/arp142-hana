@@ -10,8 +10,11 @@ check_145_cpu_force_latency() {
 
 	# MODIFICATION SECTION>>
 	local -ir _reco_value=70
-	local -r sapnote='#2205917'			#SLES12.2 only 
+	local -r _sapnote_sles='#2205917'			#SLES12.2 only
+	local -r _sapnote_rhel='#2292690'			#SAP HANA DB: Recommended OS settings for RHEL 7
 	# MODIFICATION SECTION<<	
+
+	local sapnote
 
 	if ! lib_func_is_bare_metal ; then
 
@@ -19,52 +22,81 @@ check_145_cpu_force_latency() {
 		_retval=3
 	
 	else
-		case "${OS_LEVEL}" in
 
-			[2-3].*)
-					logCheckSkipped 'CHECK not applicable for kernel release' "(is: ${OS_LEVEL})." "Skipping check <${FUNCNAME[0]}>"
-					_retval=3
+		if lib_func_is_sles ; then
+			case "${OS_VERSION}" in
+
+				11.[3-4]* | 12.1* )
+						logCheckSkipped 'CHECK not applicable for SLES release' "(is: ${OS_VERSION})." "Skipping check <${FUNCNAME[0]}>"
+						_retval=3
 				;;
 
-			*)		
-					local -r _current_driver="$(</sys/devices/system/cpu/cpuidle/current_driver)"
-					if [[ ${_current_driver} == 'none' ]]; then
-
-						logCheckWarning 'CPU idle driver not active - check BIOS settings for disabled c-states'
-						logCheckWarning "Disabled c-states inactivate cpu_dma_latency/force_latency settings (SAP Note ${sapnote:-})"
+				12.[2-3]* )
+						sapnote="${_sapnote_sles}"
+					;;
+				*)
+						logCheckWarning "CHECK does NOT support SLES release (is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
 						_retval=1
+					;;
+			esac
 
-					fi
-			;;
+		elif lib_func_is_rhel ; then
+			case "${OS_VERSION}" in
 
-		esac
+				6.[5-7]* | 7.2* )
+						logCheckSkipped 'CHECK not applicable for RHEL release' "(is: ${OS_VERSION})." "Skipping check <${FUNCNAME[0]}>"
+						_retval=3
+				;;
+				7.[3-4]* )
+						sapnote="${_sapnote_rhel}"
+					;;
+				*)
+						logCheckWarning "CHECK does NOT support RHEL release (is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+						_retval=1
+					;;
+			esac
+
+		else
+				logCheckError "Linux distribution NOT supported (SAP Note #2235581) (is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
+				_retval=2
+		fi
+
 	fi
 
 	if [[ ${_retval} -eq 99 ]]; then
 
-		#requires root to read from /dev/cpu_dma_latency
-		#this hexdump call might not work for RHEL ?
+		local -r _current_driver="$(</sys/devices/system/cpu/cpuidle/current_driver)"
+		if [[ ${_current_driver} == 'none' ]]; then
 
-		local -r _curr_value=$(hexdump --format '"%i"' /dev/cpu_dma_latency)
+			logCheckWarning 'CPU idle driver not active - check BIOS settings for disabled c-states'
+			logCheckWarning "Disabled c-states inactivate cpu_dma_latency/force_latency settings (SAP Note ${sapnote:-})"
+			_retval=1
 
-		if [[ ${_curr_value:-} -eq ${_reco_value} ]]; then
+		else
 
-			logCheckOk "CPU latency set as recommended (SAP Note ${sapnote:-}) (is: ${_curr_value:-})"
-			_retval=0
+			#requires root to read from /dev/cpu_dma_latency
+			local -r _curr_value=$(hexdump -e '"%i"' /dev/cpu_dma_latency)
 
-		elif [[ ${_curr_value:-} -lt 3 ]]; then		#3 = C1
+			if [[ ${_curr_value:-} -eq ${_reco_value} ]]; then
 
-			logCheckError "CPU latency set to low - impacting CPU TurboMode features (SAP Note ${sapnote:-}) (is: ${_curr_value:-}, should be: ${_reco_value})"
-			_retval=2
+				logCheckOk "CPU latency set as recommended (SAP Note ${sapnote:-}) (is: ${_curr_value:-})"
+				_retval=0
 
-		elif [[ ${_curr_value:-} -gt ${_reco_value:-} ]]; then
+			elif [[ ${_curr_value:-} -lt 3 ]]; then		#3 = C1
 
-			logCheckError "CPU latency set to high -  (SAP Note ${sapnote:-}) (is: ${_curr_value:-}, should be: ${_reco_value})"
-			_retval=2
+				logCheckError "CPU latency set to low - impacting CPU TurboMode features (SAP Note ${sapnote:-}) (is: ${_curr_value:-}, should be: ${_reco_value})"
+				_retval=2
 
-		else # 2 < x < reco_value
-			logCheckInfo "CPU latency could be adjusted (SAP Note ${sapnote:-}) (is: ${_curr_value}, should be: ${_reco_value})"
-			_retval=0
+			elif [[ ${_curr_value:-} -gt ${_reco_value:-} ]]; then
+
+				logCheckError "CPU latency set to high -  (SAP Note ${sapnote:-}) (is: ${_curr_value:-}, should be: ${_reco_value})"
+				_retval=2
+
+			else # 2 < x < reco_value
+				logCheckInfo "CPU latency could be adjusted (SAP Note ${sapnote:-}) (is: ${_curr_value}, should be: ${_reco_value})"
+				_retval=0
+
+			fi
 
 		fi
 
