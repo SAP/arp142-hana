@@ -8,7 +8,7 @@ check_230_vm_max_map_count() {
 	local -r _sapnote='#1980196'		#Setting /proc/sys/vm/max_map_count on HANA systems
 	# MODIFICATION SECTION<<
 
-	# LIMIT <= 2.147.483.647
+	# LIMIT <= 2.147.483.647 - but make sure that value is not larger than 2147483647.
 	# Intel ( 1.000.000 + (32768 * RAM in GB))
 	# Power ( 1.000.000 + (16384 * RAM in GB))
 	local -i factor=32768
@@ -25,6 +25,11 @@ check_230_vm_max_map_count() {
 	if [[ ${_curr_mmcount} -lt ${_limit_mmcount} ]]; then
 
 		logCheckError "Parameter vm.max_map_count must be increased (SAP Note ${_sapnote:-}) (is: ${_curr_mmcount}, should be: ${_limit_mmcount})"
+		_retval=2
+
+	elif [[ ${_curr_mmcount} -gt ${_maximum_mmcount} ]]; then
+
+		logCheckError "Parameter vm.max_map_count is set to high (SAP Note ${_sapnote:-}) (is: ${_curr_mmcount}, should be: ${_maximum_mmcount})"
 		_retval=2
 
 	else
