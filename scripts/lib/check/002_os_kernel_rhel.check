@@ -53,10 +53,10 @@ check_002_os_kernel_rhel() {
 						_sapnote="${_kernel72[1]}"
 					;;
 				
-				# 7.3)
-				# 		_goodversion="${_rhel73[0]}"
-				# 		_sapnote="${_rhel73[1]}"
-				# 	;;
+				7.3)
+						_goodversion="${_rhel73[0]}"
+						_sapnote="${_rhel73[1]}"
+					;;
 
 				*)
 						logCheckError "RHEL version is not supported (SAP Note #2235581) (is: ${OS_VERSION})"

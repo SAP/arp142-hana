@@ -11,6 +11,7 @@ check_040_glibc_x64() {
 	local -ar _sles114=( '2.11.3-17.95.2' '#2263929' )
 	local -ar _sles122=( '2.22-51.6' '#2205917' )
 	local -ar _rhel72=( '2.17-106.el7_2.9' '#2292690' )
+	local -ar _rhel73=( '2.17-157.el7_3.5' '#2292690' )
 	# MODIFICATION SECTION<<
 
 	local _goodversion
@@ -45,10 +46,16 @@ check_040_glibc_x64() {
 		elif lib_func_is_rhel ; then
 			case "${OS_VERSION}" in
 
-				7.[2-3]* )
+				7.2* )
 
 						_goodversion="${_rhel72[0]}"
 						_sapnote="${_rhel72[1]}"
+					;;
+
+				7.3* )
+
+						_goodversion="${_rhel73[0]}"
+						_sapnote="${_rhel73[1]}"
 					;;
 
 				*)
