@@ -132,7 +132,7 @@ lib_func_is_intel() {
 
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	[[ "${LIB_PLATF_CPU}" == Intel* ]] && _retval=0
+	[[ "${LIB_PLATF_CPU_VENDOR:-}" == 'GenuineIntel' ]] && _retval=0
 
 	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
 	return ${_retval}
@@ -145,7 +145,20 @@ lib_func_is_amd() {
 
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	[[ "${LIB_PLATF_CPU}" == AMD* ]] && _retval=0
+	[[ "${LIB_PLATF_CPU_VENDOR:-}" == 'AuthenticAMD' ]] && _retval=0
+
+	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+	return ${_retval}
+}
+
+# Returns 0 on x86_64, 1 on other
+lib_func_is_x64() {
+
+	local -i _retval=1
+
+	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+	[[ "${LIB_PLATF_ARCHITECTURE:-}" == 'x86_64' ]] && _retval=0
 
 	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
 	return ${_retval}
@@ -464,10 +477,25 @@ __get_platform_cpu_details() {
 		# "NUMA node(s):"*)
 
 		# ;;
-		# "Model:"*)		#on Power <Model: IBM,9119-MHE> ; on <Intel Model: 63>
-		# 					LIB_PLATF_NAME=$(lib_func_trim_left ${platform[$i]/Model:})
-		# 					readonly LIB_PLATF_NAME
-		#;;
+
+		"Vendor ID:"*)
+							if [[ ! -n ${LIB_PLATF_CPU_VENDOR:-} ]]; then
+		 						LIB_PLATF_CPU_VENDOR=$(lib_func_trim_left "${platform[$i]/Vendor ID:}")
+		 						readonly LIB_PLATF_CPU_VENDOR
+							fi
+		;;
+
+		"Model:"*)			#on Power <Model: IBM,9119-MHE> ; on Intel <Model: 63>
+							if lib_func_is_ibmpower ; then
+								LIB_PLATF_NAME=$(lib_func_trim_left ${platform[$i]/Model:})
+								readonly LIB_PLATF_NAME
+							
+							elif lib_func_is_intel || lib_func_is_amd ; then
+								LIB_PLATF_CPU_MODELID=$(lib_func_trim_left ${platform[$i]/Model:})
+								readonly LIB_PLATF_CPU_MODELID
+
+							fi
+		;;
 
 		"Model name:"*)		#on x64 only	
 							#<Intel(R) Xeon(R) CPU E7-8880 v3 @ 2.30GHz>; AMD Opteron 23xx (Gen 3 Class Opteron)
@@ -477,6 +505,14 @@ __get_platform_cpu_details() {
 							fi
 							break
 		;;
+
+		# "Hypervisor vendor:"*)	#Power Only
+		
+		# ;;
+
+		# "Virtualization type:"*) #Power Only
+		
+		# ;;
 
 		esac
 
@@ -566,7 +602,9 @@ _lib_helper_main() {
 #GLOBAL -x --> exported
 declare		LIB_PLATF_VENDOR
 declare		LIB_PLATF_NAME
+declare 	LIB_PLATF_CPU_VENDOR
 declare 	LIB_PLATF_CPU
+declare 	LIB_PLATF_CPU_MODELID
 declare -i	LIB_PLATF_RAM_MiB
 
 declare 	LIB_PLATF_ARCHITECTURE
