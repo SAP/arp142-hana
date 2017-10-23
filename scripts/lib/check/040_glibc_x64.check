@@ -17,9 +17,9 @@ check_040_glibc_x64() {
 	local _goodversion
 	local _sapnote
 	
-	if ! lib_func_is_intel ; then
+	if ! lib_func_is_x64 ; then
 
-		logCheckSkipped 'Not running on Intel CPU. Skipping check' "<${FUNCNAME[0]}>"
+		logCheckSkipped 'Not running on x64 CPU. Skipping check' "<${FUNCNAME[0]}>"
 		_retval=3
 
 	else
