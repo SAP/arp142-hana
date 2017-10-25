@@ -503,16 +503,26 @@ __get_platform_cpu_details() {
 		 						LIB_PLATF_CPU=$(lib_func_trim_left "${platform[$i]/Model name:}")
 		 						readonly LIB_PLATF_CPU
 							fi
-							break
 		;;
 
-		# "Hypervisor vendor:"*)	#Power Only
-		
-		# ;;
+		# Virtualization information provieded by lscpu version >=2.25 and only if virtualized
+		# x64:		( VMware - full ) ; ( Xen - none ) ; 
+		# Power:	( pHyp - para ) ; ( pHyp - none ) ; ( KVM - para ) ; ( none - none ) = PowerNV = bare-metal
 
-		# "Virtualization type:"*) #Power Only
-		
-		# ;;
+		"Hypervisor vendor:"*)
+							if [[ ! -n ${LIB_PLATF_VIRT_VENDOR:-} ]]; then
+		 						LIB_PLATF_VIRT_VENDOR=$(lib_func_trim_left "${platform[$i]/Hypervisor vendor:}")
+		 						readonly LIB_PLATF_VIRT_VENDOR
+							fi
+		;;
+
+		"Virtualization type:"*)
+							if [[ ! -n ${LIB_PLATF_VIRT_TYPE:-} ]]; then
+		 						LIB_PLATF_VIRT_TYPE=$(lib_func_trim_left "${platform[$i]/Virtualization type:}")
+		 						readonly LIB_PLATF_VIRT_TYPE
+							fi
+							break
+		;;
 
 		esac
 
@@ -609,6 +619,9 @@ declare -i	LIB_PLATF_RAM_MiB
 
 declare 	LIB_PLATF_ARCHITECTURE
 declare 	LIB_PLATF_BYTEORDER
+
+declare		LIB_PLATF_VIRT_VENDOR
+declare		LIB_PLATF_VIRT_TYPE
 
 #LIB local
 declare -i lib_platf_virtualized
