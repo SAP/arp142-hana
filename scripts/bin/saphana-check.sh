@@ -201,7 +201,7 @@ main() {
 	logNotify "## ${_line}"
 	logNotify "## Vendor:        ${LIB_PLATF_VENDOR:-} - Type: ${LIB_PLATF_NAME:-}"
 	logNotify "## Architecture:  ${LIB_PLATF_ARCHITECTURE:-} - Byte Order: ${LIB_PLATF_BYTEORDER:-}"
-	
+
 	if lib_func_is_bare_metal
 	then
 		logNotify '##                Running on Bare-Metal'
@@ -213,9 +213,9 @@ main() {
 	then
 		logNotify '##                Running on IBM Power'
 	fi
-	
+
 	logNotify "## CPU:           ${LIB_PLATF_CPU:-}"
-	logNotify "## Memory:        $(( LIB_PLATF_RAM_MiB/1024 )) GiB (${LIB_PLATF_RAM_MiB:-} MiB)"
+	logNotify "## Memory:        $(awk -v RAM_MiB=${LIB_PLATF_RAM_MiB} 'BEGIN {printf "%.0f GiB (%d MiB)", RAM_MiB/1024, RAM_MiB }')"
 	logNotify '##'
 	logNotify "## OS:            ${OS_NAME} ${OS_VERSION} - Kernel: ${OS_LEVEL}"
 
