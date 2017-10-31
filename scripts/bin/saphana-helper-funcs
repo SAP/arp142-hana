@@ -566,6 +566,8 @@ _lib_helper_main() {
 
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
+	lib_func_get_linux_distrib
+
 	__get_platform_cpu_details
 
 	# ToDo:	Power platform does not provide 'dmidecode'
@@ -624,5 +626,9 @@ declare		LIB_PLATF_VIRT_TYPE
 
 #LIB local
 declare -i lib_platf_virtualized
+
+
+#Import logger
+source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/saphana-logger" || { echo 'unable to load saphana-logger library' >&2; exit 1; }
 
 _lib_helper_main

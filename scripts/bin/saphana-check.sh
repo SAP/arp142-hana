@@ -42,8 +42,11 @@ readonly PROGRAM_CMDLINE
 PROGRAM_DIR="$( cd "${BASH_SOURCE[0]%/*}" && pwd )"
 readonly PROGRAM_DIR
 
+PROGRAM_BINDIR="${PROGRAM_DIR}"
+readonly PROGRAM_BINDIR
+
 # configure shflags - define flags
-source "${PROGRAM_DIR}/shflags" || die 'unable to load shflags library'
+source "${PROGRAM_BINDIR}/shflags" || die 'unable to load shflags library'
 
 DEFINE_string	'checks'	''		'<\"check1 check2 ...\">  A space-separated list of checks that will be performed.'	'c'
 DEFINE_string	'checkset'	''		'<Checkset>  A textfile containing the various checks to perform.'	'C'
@@ -54,7 +57,7 @@ DEFINE_boolean	'trace'		false	'enable trace mode (set loglevel=6)' 't'
 FLAGS_HELP="USAGE: $0 [flags]"
 
 
-PROGRAM_LIBDIR="$( cd "${PROGRAM_DIR}/../lib" && pwd )"
+PROGRAM_LIBDIR="$( cd "${PROGRAM_BINDIR}/../lib" && pwd )"
 readonly PROGRAM_LIBDIR
 
 OS_NAME=''
@@ -187,8 +190,6 @@ main() {
 
 	local -r _line='-------------------------------------------------------------------'
 	
-	lib_func_get_linux_distrib
-
 	logNotify "## ${_line}"
 	logNotify "## SAP HANA OS checks"
 	logNotify "## Scriptversion: ${PROGVERSION} Scriptdate: ${PROGDATE}"
@@ -231,7 +232,7 @@ main() {
 }
 
 #Import logger
-source "${PROGRAM_DIR}/saphana-logger" || die 'unable to load saphana-logger library'
+source "${PROGRAM_BINDIR}/saphana-logger" || die 'unable to load saphana-logger library'
 
 # parse the command-line - shflags
 FLAGS "$@" || exit 1
@@ -239,7 +240,7 @@ eval set -- "${FLAGS_ARGV}"
 evaluate_cmdline_options
 
 #Import remaining Libraries - logging is now active
-source "${PROGRAM_DIR}/saphana-helper-funcs" || die 'unable to load saphana-helper-funcs library'
+source "${PROGRAM_BINDIR}/saphana-helper-funcs" || die 'unable to load saphana-helper-funcs library'
 
 # call main
 main "$@"
