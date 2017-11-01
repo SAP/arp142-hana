@@ -106,4 +106,4 @@ testCompareVersionsShouldFail() {
 # - thats also the reason, why it could not be done during oneTimeSetup
 source "${PROGRAM_DIR}/../bin/saphana-logger"
 source "${PROGRAM_DIR}/../bin/saphana-helper-funcs"
-source "${PROGRAM_DIR}/shunit"
+source "${PROGRAM_DIR}/shunit2"
