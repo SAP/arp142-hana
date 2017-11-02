@@ -16,11 +16,11 @@ check_250_kernel_shmmni() {
 	local -i reco_shmmni_limit=4096
 
 	#determine recommended value
-	if [[ ${LIB_PLATF_RAM_MiB} -ge 262144 ]]; then
+	if [[ ${LIB_PLATF_RAM_MiB_PHYS} -ge 262144 ]]; then
 
 		reco_shmmni_limit=524288
 
-	elif [[ ${LIB_PLATF_RAM_MiB} -ge 65536 ]]; then
+	elif [[ ${LIB_PLATF_RAM_MiB_PHYS} -ge 65536 ]]; then
 
 		reco_shmmni_limit=65536
 

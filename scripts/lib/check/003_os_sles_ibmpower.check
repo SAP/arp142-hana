@@ -39,7 +39,7 @@ check_003_os_sles_ibmpower() {
 							logCheckInfo "SLESonPower release is supported. (SAP Note ${sapnote114:-}) (is: ${OS_VERSION})"
 
 							#4 TiB must use the kernel-bigmem
-							if [[ ${LIB_PLATF_RAM_MiB} -le 4194304 ]]; then
+							if [[ ${LIB_PLATF_RAM_MiB_PHYS} -le 4194304 ]]; then
 
 								logCheckWarning "BIGMEM kernel should be used. (SAP Note ${sapnote114:-}) (is: ${OS_LEVEL}, should be: *-bigmem)"
 								_retval=1

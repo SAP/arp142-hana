@@ -216,7 +216,7 @@ main() {
 	fi
 
 	logNotify "## CPU:           ${LIB_PLATF_CPU:-}"
-	logNotify "## Memory:        $(awk -v RAM_MiB=${LIB_PLATF_RAM_MiB} 'BEGIN {printf "%.0f GiB (%d MiB)", RAM_MiB/1024, RAM_MiB }')"
+	logNotify "## Memory:        $(awk -v RAM_MiB=${LIB_PLATF_RAM_MiB_PHYS} 'BEGIN {printf "%.0f GiB (%d MiB)", RAM_MiB/1024, RAM_MiB }')"
 	logNotify '##'
 	logNotify "## OS:            ${OS_NAME} ${OS_VERSION} - Kernel: ${OS_LEVEL}"
 
