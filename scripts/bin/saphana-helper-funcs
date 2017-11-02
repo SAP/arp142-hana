@@ -541,13 +541,13 @@ __get_platform_mem_details() {
 	#dmesg - kernel boot message
 	if [[ ! -n ${LIB_PLATF_RAM_MiB:-} && -x "$(command -v dmesg)" ]]; then
 
-		LIB_PLATF_RAM_MiB=$(dmesg |awk '/Memory:.*available/ {match($0, /\/([0-9]+?)K/); printf "%.0f", substr($0,RSTART+1,RLENGTH-2) / 1024 }')
+		LIB_PLATF_RAM_MiB=$(dmesg |awk '/Memory:.*available/ {match($0, /\/([0-9]+?)(K|k)/); printf "%.0f", substr($0,RSTART+1,RLENGTH-2) / 1024 }')
 		collectedby='dmesg'
 
 	fi
 
 	#last chance - but MemTotal in /proc/meminfo not 100% correct
-	if [[ ! -n ${LIB_PLATF_RAM_MiB:-} ]]; then
+	if [[ ! -n ${LIB_PLATF_RAM_MiB:-} || ${LIB_PLATF_RAM_MiB} -eq 0 ]]; then
 
 		LIB_PLATF_RAM_MiB=$(awk '/^MemTotal:/ {match($0, /[0-9]+/); printf "%.0f", substr($0,RSTART,RLENGTH)/1024 }' /proc/meminfo)
 		collectedby='meminfo'
