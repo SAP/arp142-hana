@@ -9,12 +9,12 @@ check_005_os_release_kernel_sles() {
 
 	# MODIFICATION SECTION>>
 	# array	'lowest expected ' 'upper boundary'
-	local -ar _kernel113=( '3.0.76-0.11.1' '3.0.101-0.63' )
-	local -ar _kernel114=( '3.0.101-63.1' '3.12' '#2240716' )
+	local -ar _kernel113=( '3.0.76-0.11.1' '3.0.101-0.47.999' )
+	local -ar _kernel114=( '3.0.101-63.1' '3.0.101-999' '#2240716' )
 	local -ar _kernel120=( '3.12.28-4.6' '3.12.61-52.9999' )
 	local -ar _kernel121=( '3.12.49-11.1' '3.12.999' )
-	local -ar _kernel122=( '4.4.21-69.1' '4.4.74-92.9999' )
-	#local -ar _kernel123=( '4.4.75' '4.5' )
+	local -ar _kernel122=( '4.4.21-69.1' '4.4.999' )
+	#local -ar _kernel123=( '4.4.73-5.1' '4.4.999' )
 
 	local -r sapnote='#2235581'	#SAP HANA: Supported Operating Systems
 	# MODIFICATION SECTION<<
