@@ -23,7 +23,7 @@
 RUNNER_LOADED=0
 
 RUNNER_ARGV0=$(basename "$0")
-RUNNER_SHELLS='/bin/sh ash /bin/bash /bin/dash /bin/ksh /bin/pdksh /bin/zsh'
+RUNNER_SHELLS='/bin/bash'
 RUNNER_TEST_SUFFIX='_test.sh'
 
 runner_warn() { echo "runner:WARN $*" >&2; }
