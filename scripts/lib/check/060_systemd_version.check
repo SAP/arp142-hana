@@ -33,18 +33,29 @@ check_060_systemd_version() {
 
 
 	if [[ ${_retval} -eq 99 ]]; then
-	
+
+		local normalized_goodversion
+		local normalized_fullversion
+
 		local -r _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" systemd)
 
-			lib_func_compare_versions "${_fullversion}" "${_goodversion:-}"
+		#normalize good version
+		lib_func_normalize_rpm "${_goodversion}"
+		normalized_goodversion="${lib_func_normalize_rpm_return}"
 
-			if [[ $? -ne 2 ]]; then
-				logCheckOk "SYSTEMD version seems to be ok (SAP Note ${_sapnote:-}) (is: ${_fullversion})"
-				_retval=0
-			else
-				logCheckError "SYSTEMD must be updated (SAP Note ${_sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
-				_retval=2
-			fi
+		#normalize full version - e.g. 219-19.el7_2.4
+		lib_func_normalize_rpm "${_fullversion}"
+		normalized_fullversion="${lib_func_normalize_rpm_return}"
+
+		lib_func_compare_versions "${normalized_fullversion}" "${normalized_goodversion}"
+
+		if [[ $? -ne 2 ]]; then
+			logCheckOk "SYSTEMD version seems to be ok (SAP Note ${_sapnote:-}) (is: ${_fullversion})"
+			_retval=0
+		else
+			logCheckError "SYSTEMD must be updated (SAP Note ${_sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
+			_retval=2
+		fi
 
 	fi
 
