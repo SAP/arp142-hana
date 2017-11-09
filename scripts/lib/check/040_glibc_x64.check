@@ -79,12 +79,12 @@ check_040_glibc_x64() {
 		local -r _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" glibc)
 
 		#normalize good version
-		lib_func_normalize_glibc "${_goodversion}"
-		normalized_goodversion="${lib_func_normalize_glibc_return}"
+		lib_func_normalize_rpm "${_goodversion}"
+		normalized_goodversion="${lib_func_normalize_rpm_return}"
 
 		#normalize full version - e.g. 2.17-157.el7_3.5
-		lib_func_normalize_glibc "${_fullversion}"
-		normalized_fullversion="${lib_func_normalize_glibc_return}"
+		lib_func_normalize_rpm "${_fullversion}"
+		normalized_fullversion="${lib_func_normalize_rpm_return}"
 
 		lib_func_compare_versions "${normalized_fullversion}" "${normalized_goodversion}"
 

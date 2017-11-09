@@ -280,16 +280,16 @@ lib_func_normalize_kernel() {
 	lib_func_normalize_kernel_return="${kernelversion}"	#variable is available to caller
 }
 
-lib_func_normalize_glibc() {
+lib_func_normalize_rpm() {
 
-	local glibcversion="$1"
+	local rpmversion="$1"
 	shift 1
 
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	glibcversion=${glibcversion/.el[[:digit:]]*_[[:digit:]]*./.0.}		# 2.17-157.el7_3.5 replace "el7_3" by "0" -> 2.17-157.0.5
+	rpmversion=${rpmversion/.el[[:digit:]]*_[[:digit:]]*./.0.}		# 2.17-157.el7_3.5 replace "el7_3" by "0" -> 2.17-157.0.5
 
-	lib_func_normalize_glibc_return="${glibcversion}"	#variable is available to caller
+	lib_func_normalize_rpm_return="${rpmversion}"	#variable is available to caller
 }
 ##########################################################
 # Non-global functions - not to be used in other scripts
