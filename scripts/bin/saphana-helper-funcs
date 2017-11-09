@@ -287,7 +287,8 @@ lib_func_normalize_rpm() {
 
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	rpmversion=${rpmversion/.el[[:digit:]]*_[[:digit:]]*./.0.}		# 2.17-157.el7_3.5 replace "el7_3" by "0" -> 2.17-157.0.5
+	rpmversion=${rpmversion/.el[[:digit:]]*_[[:digit:]]*./.0.}		# 2.17-157.el7_3.5	-> 2.17-157.0.5
+	rpmversion=${rpmversion/.el[[:digit:]]*/.0}						# 219-30.el7		-> 219-30.0
 
 	lib_func_normalize_rpm_return="${rpmversion}"	#variable is available to caller
 }
