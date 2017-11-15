@@ -17,4 +17,4 @@
 240_samepage_merging
 250_kernel_shmmni
 300_net_parameter
-311_ip_port_range_upper_uneven
+311_ip_port_range
