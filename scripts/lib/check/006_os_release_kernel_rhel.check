@@ -8,7 +8,7 @@ check_006_os_release_kernel_rhel() {
 	# https://access.redhat.com/articles/3078
 
 	# MODIFICATION SECTION>>
-	# array	'expected kernelversion'
+	# array	'expected kernelversion' - must not have *.el suffix
 	local -ar _kernel65=( '2.6.32-431' )
 	local -ar _kernel66=( '2.6.32-504' )
 	local -ar _kernel67=( '2.6.32-573' )
@@ -46,6 +46,8 @@ check_006_os_release_kernel_rhel() {
 
 			7.3)	expected_kernel="${_kernel73[0]}" ;;
 
+			#7.4)	expected_kernel="${_kernel74[0]}" ;;
+
 			*)
 					logCheckWarning 'CHECK does not support RHEL release.' "${FUNCNAME[0]} - ${OS_VERSION}"
 					_retval=1
@@ -54,17 +56,22 @@ check_006_os_release_kernel_rhel() {
 
 		if [[ ${_retval} -eq 99 ]]; then
 
-			local kernelversion
-			kernelversion=${OS_LEVEL:0:${#expected_kernel}}	#substring - lenght as expected kernel version
+			local normalized_kernelversion
 
-			if ! lib_func_compare_versions "${kernelversion}" "${expected_kernel}" ; then
+			lib_func_normalize_kernel "${OS_LEVEL}"
+			normalized_kernelversion="${lib_func_normalize_kernel_return}"
+			#2.6.32-504.16.2.el6.x86_64	-->	2.6.32-504.16.2
+
+			normalized_kernelversion=${normalized_kernelversion:0:${#expected_kernel}}	#substring - lenght as expected kernel version
+
+			if ! lib_func_compare_versions "${normalized_kernelversion}" "${expected_kernel}" ; then
 
 				logCheckError "Linux kernel does NOT match RHEL release and must be changed. (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${OS_LEVEL}, must be: ${expected_kernel}.*)"
 				_retval=2
 
 			else
 
-				logCheckOk "Linux kernel matches RHEL release. (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${OS_LEVEL})"
+				logCheckOk "Linux kernel matches RHEL release. (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${expected_kernel})"
 				_retval=0
 
 			fi
