@@ -224,6 +224,14 @@ lib_func_normalize_rpm() {
 	lib_func_normalize_rpm_return="${rpmversion}"	#variable is available to caller
 }
 
+
+lib_func_stringContain() {
+	#$1=string $2=substring
+    #case "$1" in *"$2"* ) return 0;;esac
+	#return 1
+	[[ -z "${1##*$2*}" ]] && [ -z "$2" -o -n "$1" ];
+}
+
 ##########################################################
 # Non-global functions - not to be used in other scripts
 ##########################################################
