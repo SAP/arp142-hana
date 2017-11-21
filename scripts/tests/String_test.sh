@@ -4,7 +4,7 @@ set -u 		# treat unset variables as an error
 PROGRAM_DIR="$( cd "${BASH_SOURCE[0]%/*}" && pwd )"
 readonly PROGRAM_DIR
 
-testStringContains() {
+testStringContain() {
 
 	local -i i=1
 
@@ -22,7 +22,7 @@ testStringContains() {
 	EOF
 }
 
-testStringDoesNotContains() {
+testStringDoesNotContain() {
 
 	local -i i=1
 
