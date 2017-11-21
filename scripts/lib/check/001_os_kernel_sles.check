@@ -7,8 +7,8 @@ check_001_os_kernel_sles() {
 	# MODIFICATION SECTION>>
 	# array	'goodnormalized_kernelversion'	'sap note'
 	local -ar _kernel113=( '3.0.101-0.47.86.1' '#2339544' )	#1954788
-	local -ar _kernel114=( '3.0.101-104.2' '#2240716' )
-	local -ar _kernel114power=( '3.0.101-104.2' '#2240716' )
+	local -ar _kernel114=( '3.0.101-108.7.1' '#2240716' )		#2240716-v21
+	local -ar _kernel114power=( '3.0.101-108.7.1' '#2240716' )
 	local -ar _kernel120=( '3.12.61-52.72.1' '#2205917' )
 	local -ar _kernel121=( '3.12.74-60.64.40.1' '#2205917' )
 	local -ar _kernel122=( '4.4.74-92.35.1' '#2205917' )
