@@ -1,4 +1,5 @@
 # saphana-checks
+[![Travis CI](https://travis-ci.mo.sap.corp/SAP-COE-HPTI/saphana-checks.svg?token=1mpYpLDN3GSv5tMmhNxn&branch=master)](https://travis-ci.mo.sap.corp/SAP-COE-HPTI/saphana-checks)
 
 ## FAQ
 Q: Does it work on all linux versions - independend from distributions, kernel, filesystem, hana version?  

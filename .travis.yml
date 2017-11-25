@@ -1,0 +1,60 @@
+sudo: required
+# dist: trusty - not active so far
+language: bash
+
+env:
+  global:
+    - OCTOKIT_API_ENDPOINT="GITHUB ENTERPRISE API ENDPOINT"
+    - SHUNIT_COLOR='always'
+
+os:
+  - linux
+#  - osx
+
+# addons: - section is not valid
+#    apt:
+#     sources:
+#     - debian-sid    # Grab shellcheck from the Debian repo (o_O)
+#      packages:
+#      - shellcheck
+
+before_install:
+    - sudo apt-add-repository "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse"
+    - sudo apt-get -qq update
+    - sudo apt-get -t trusty-backports install shellcheck
+    # - sudo pip install bashate
+
+script:
+  # Run unit tests - runs all the unit tests that can be found, and generates a nice report of the tests
+  - bash -c 'cd ./scripts/tests/; ./test_runner'
+  # - bash -c 'shopt -s globstar; shellcheck **/*.{sh,check}'
+  # - bash -c 'shopt -s globstar; bashate **/*.{sh,check}'
+
+after_success:
+    - mkdir -p build/saphana-checks
+    - mv ./scripts/bin build/saphana-checks
+    - mv ./scripts/lib build/saphana-checks
+    - chmod 744 build/saphana-checks/bin/saphana-check.sh
+    - tar -czf build/saphana-checks-$TRAVIS_COMMIT.tgz --directory=./build saphana-checks
+    # - ls -l build/
+    # - tar -tvf build/saphana*.tgz
+
+# matrix:
+#   fast_finish: true
+
+# before_deploy:
+#   # Set up git user name and tag this commit
+#   - git config --local user.name "YOUR GIT USER NAME"
+#   - git config --local user.email "YOUR GIT USER EMAIL"
+#   - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
+
+# deploy:
+#   provider: releases
+#   prerelease: true
+#   api_key:
+#     secure: <encryptedtoken>
+#   file_glob: true
+#   file: "build/saphana-checks-*.tgz"
+#   skip_cleanup: true
+#   on:
+#     tags: true
