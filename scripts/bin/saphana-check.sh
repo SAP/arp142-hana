@@ -54,6 +54,7 @@ DEFINE_integer	'loglevel'	4		'notify/silent=0 (always), error=1, warn=2, info=3,
 DEFINE_boolean	'verbose'	false	'enable chk_verbose mode (set loglevel=4)' 'v'
 DEFINE_boolean	'debug'		false	'enable debug mode (set loglevel=5)' 'd'
 DEFINE_boolean	'trace'		false	'enable trace mode (set loglevel=6)' 't'
+# shellcheck disable=SC2034
 FLAGS_HELP="USAGE: $0 [flags]"
 
 
@@ -133,7 +134,7 @@ generate_checklist() {
 		[[ "${FLAGS_checkset}" != "" ]] && generate_checkfilelist_checkset
 
     else
-        CHECKFILELIST=$(ls -1 ${PROGRAM_LIBDIR}/check/*.check)
+        CHECKFILELIST=( "$(ls -1 "${PROGRAM_LIBDIR}"/check/*.check)" )
     fi
 
 	local checkfile
@@ -216,7 +217,7 @@ main() {
 	fi
 
 	logNotify "## CPU:           ${LIB_PLATF_CPU:-}"
-	logNotify "## Memory:        $(awk -v RAM_MiB=${LIB_PLATF_RAM_MiB_PHYS} 'BEGIN {printf "%.0f GiB (%d MiB)", RAM_MiB/1024, RAM_MiB }')"
+	logNotify "## Memory:        $(awk -v RAM_MiB="${LIB_PLATF_RAM_MiB_PHYS}" 'BEGIN {printf "%.0f GiB (%d MiB)", RAM_MiB/1024, RAM_MiB }')"
 	logNotify '##'
 	logNotify "## OS:            ${OS_NAME} ${OS_VERSION} - Kernel: ${OS_LEVEL}"
 
