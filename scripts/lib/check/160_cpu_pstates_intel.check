@@ -25,7 +25,7 @@ check_160_cpu_pstates_intel() {
 
 			12.* | 7.* )		#intel_pstate only for IvyBridge onwards
 								#INTEL_FAM6_IVYBRIDGE		0x3A	--> DEC 58
-								if [[ LIB_PLATF_CPU_MODELID -ge 58 ]]; then
+								if [[ ${LIB_PLATF_CPU_MODELID} -ge 58 ]]; then
 									_retval=99
 								else
 									logCheckSkipped 'Not running on intel_pstate supported Intel CPU (>=IvyBridge). Skipping check' "<${FUNCNAME[0]}>"
