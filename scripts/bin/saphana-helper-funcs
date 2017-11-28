@@ -241,25 +241,27 @@ __get_platform_cpu_details() {
 	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
 	# get System details
-	local -r IFS=$'\n'
 	local -a platform
 
-	platform=($(lscpu))
+	local -r IFS=$'\n';
+	platform=( "$(lscpu)" )
 
-	for ((i=0; i < ${#platform[@]}; ++i)); do
+	local line
+	for line in ${platform[*]:-}
+	do
 
-		logTrace "<${FUNCNAME[0]}> # ${platform[$i]}>"
+		logTrace "<${FUNCNAME[0]}> # ${line}>"
 
-		case ${platform[$i]} in
+		case ${line} in
 
 		"Architecture:"*)
 							if [[ ! -n ${LIB_PLATF_ARCHITECTURE:-} ]]; then
-								LIB_PLATF_ARCHITECTURE=$(lib_func_trim_left "${platform[$i]/Architecture:}")
+								LIB_PLATF_ARCHITECTURE=$(lib_func_trim_left "${line/Architecture:}")
 								readonly LIB_PLATF_ARCHITECTURE
 							fi
 		;;
 		"Byte Order:"*)
-							LIB_PLATF_BYTEORDER=$(lib_func_trim_left "${platform[$i]/Byte Order:}")
+							LIB_PLATF_BYTEORDER=$(lib_func_trim_left "${line/Byte Order:}")
 							readonly LIB_PLATF_BYTEORDER
 							#break
 		;;
@@ -278,20 +280,20 @@ __get_platform_cpu_details() {
 
 		"Vendor ID:"*)		#GenuineIntel; AuthenticAMD
 							if [[ ! -n ${LIB_PLATF_CPU_VENDOR:-} ]]; then
-		 						LIB_PLATF_CPU_VENDOR=$(lib_func_trim_left "${platform[$i]/Vendor ID:}")
+		 						LIB_PLATF_CPU_VENDOR=$(lib_func_trim_left "${line/Vendor ID:}")
 		 						readonly LIB_PLATF_CPU_VENDOR
 							fi
 		;;
 
 		"Model:"*)			#on Power <Model: IBM,9119-MHE> ; on Intel <Model: 63>
 							if lib_func_is_ibmpower ; then
-								LIB_PLATF_NAME=$(lib_func_trim_left ${platform[$i]/Model:})
+								LIB_PLATF_NAME=$(lib_func_trim_left "${line/Model:}")
 								readonly LIB_PLATF_NAME
 								LIB_PLATF_VENDOR='IBM'
 								readonly LIB_PLATF_VENDOR
 							
 							elif lib_func_is_intel || lib_func_is_amd ; then
-								LIB_PLATF_CPU_MODELID=$(lib_func_trim_left ${platform[$i]/Model:})
+								LIB_PLATF_CPU_MODELID=$(lib_func_trim_left "${line/Model:}")
 								readonly LIB_PLATF_CPU_MODELID
 
 							fi
@@ -300,7 +302,7 @@ __get_platform_cpu_details() {
 		"Model name:"*)		#on x64 only	
 							#<Intel(R) Xeon(R) CPU E7-8880 v3 @ 2.30GHz>; AMD Opteron 23xx (Gen 3 Class Opteron)
 							if [[ ! -n ${LIB_PLATF_CPU:-} ]]; then
-		 						LIB_PLATF_CPU=$(lib_func_trim_left "${platform[$i]/Model name:}")
+		 						LIB_PLATF_CPU=$(lib_func_trim_left "${line/Model name:}")
 		 						readonly LIB_PLATF_CPU
 							fi
 		;;
@@ -311,14 +313,14 @@ __get_platform_cpu_details() {
 
 		"Hypervisor vendor:"*)
 							if [[ ! -n ${LIB_PLATF_VIRT_VENDOR:-} ]]; then
-		 						LIB_PLATF_VIRT_VENDOR=$(lib_func_trim_left "${platform[$i]/Hypervisor vendor:}")
+		 						LIB_PLATF_VIRT_VENDOR=$(lib_func_trim_left "${line/Hypervisor vendor:}")
 		 						readonly LIB_PLATF_VIRT_VENDOR
 							fi
 		;;
 
 		"Virtualization type:"*)
 							if [[ ! -n ${LIB_PLATF_VIRT_TYPE:-} ]]; then
-		 						LIB_PLATF_VIRT_TYPE=$(lib_func_trim_left "${platform[$i]/Virtualization type:}")
+		 						LIB_PLATF_VIRT_TYPE=$(lib_func_trim_left "${line/Virtualization type:}")
 		 						readonly LIB_PLATF_VIRT_TYPE
 							fi
 							break
@@ -339,7 +341,8 @@ __get_platform_mem_details() {
 	#dmesg - kernel boot message
 	if [[ ! -n ${LIB_PLATF_RAM_MiB_PHYS:-} && -x "$(command -v dmesg)" ]]; then
 
-		local boot_mem_line=$(dmesg | grep Memory:.*available)
+		local boot_mem_line
+		boot_mem_line=$(dmesg | grep "Memory:.*available")
 		LIB_PLATF_RAM_MiB_PHYS=$(awk '/Memory:.*available/ {match($0, /\/([0-9]+?)(K|k)/); printf "%.0f", substr($0,RSTART+1,RLENGTH-2) / 1024 }' <<< "${boot_mem_line}" )
 
 		#since 3.11 - reports the total number of physical pages in the system; before max_pfn --> need to substract absent memory
