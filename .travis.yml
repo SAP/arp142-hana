@@ -4,8 +4,9 @@ language: bash
 
 env:
   global:
-    - OCTOKIT_API_ENDPOINT="GITHUB ENTERPRISE API ENDPOINT"
+    - OCTOKIT_API_ENDPOINT="https://github.wdf.sap.corp/api/v3"
     - SHUNIT_COLOR='always'
+    - COMMIT=${TRAVIS_COMMIT::8}
 
 os:
   - linux
@@ -34,27 +35,50 @@ after_success:
     - mkdir -p build/saphana-checks
     - mv ./scripts/bin build/saphana-checks
     - mv ./scripts/lib build/saphana-checks
+
+    - perl ./helperscripts/replace-version.pl build/saphana-checks/bin/saphana-check.sh $TRAVIS_BRANCH b$TRAVIS_BUILD_NUMBER-g$COMMIT
+    - diff build/saphana-checks/bin/saphana-check.sh scripts/bin/saphana-check.sh
+
+    - perl -pi -e 's/HANA_HELPER_VERSION=.*/XYZ/g' build/saphana-checks/bin/saphana-helper-funcs
+    - perl -pi -e 's/HANA_HELPER_DATE=.*/XYZ/g' build/saphana-checks/bin/saphana-helper-funcs
+
     - chmod 744 build/saphana-checks/bin/saphana-check.sh
-    - tar -czf build/saphana-checks-$TRAVIS_COMMIT.tgz --directory=./build saphana-checks
+    - tar -czf build/saphana-checks-v$_VERSION-b$TRAVIS_BUILD_NUMBER-g$COMMIT.tgz --directory=./build saphana-checks
+    - sha256sum build/saphana-checks-v$_VERSION-b$TRAVIS_BUILD_NUMBER-g$COMMIT.tgz > build/saphana-checks-v$_VERSION-b$TRAVIS_BUILD_NUMBER-g$COMMIT.tgz.sha256
     - ls -l build/
     # - tar -tvf build/saphana*.tgz
 
 # matrix:
 #   fast_finish: true
 
-# before_deploy:
-#   # Set up git user name and tag this commit
-#   - git config --local user.name "YOUR GIT USER NAME"
-#   - git config --local user.email "YOUR GIT USER EMAIL"
-#   - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
+before_deploy:
+   # Set up git user name and tag this commit
+   # - git config --local user.name "d027354"
+   # - git config --local user.email "peter.pitterling@sap.com"
+   # - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
+   # - git tag "v$_VERSION-b$TRAVIS_BUILD_NUMBER-g$COMMIT"
+    - sudo cp -R certs/SAPNetCA_G2.crt /usr/local/share/ca-certificates/
+    - sudo cp -R certs/SAP_Global_Root_CA.crt /usr/local/share/ca-certificates/
+    - sudo update-ca-certificates
 
-# deploy:
-#   provider: releases
-#   prerelease: true
-#   api_key:
-#     secure: <encryptedtoken>
-#   file_glob: true
-#   file: "build/saphana-checks-*.tgz"
-#   skip_cleanup: true
-#   on:
-#     tags: true
+deploy:
+  provider: releases
+  prerelease: true
+  api_key:
+    secure: aQnueMZKDNLrM8J9oLlPItJ+qUMqj1Dm9demLPGwPD0j66jtSUFIV7ioR84FILLqklY0mPDCrfjCN2klYp6NJDGRQuKIQZaNdHQTY1rKUJQyS23MQ03ASf2F0PE3vk4t3fm1XBD2IKjP/4m8BBfx/LV41AXv35CG217I0ryrtluPkU8Mjx8j/bNZZLA9/NeapNcjdMxeV6uTWrmcOYY7dYEuUAXws7UWU4+qY7PzGQQemPJmXpNS8jtlMS0aUVETI/L+Irs8NouoeoMrsfzs876jpc0AH3tG+2q6Foc8EB/ivGC1Amq3pia1asoKQ0CtUOfiDRuPcOAVjnn0+/eAJueOgd3gf6JuG8SWO6HUrpF6eRNE1gk9HP/kKj5CxfR1PqUw08UDok2VMYCS2prFPljaihZ5jCcCzYJN1iDS2ejmI+xf4xFT2opGaH21zEzJlimv8vAlmm0gc3mce3tXawD31cpWariMt5fQdLbM1RnkcJ5OM0am3lyqEUqVmB/rmUwwAXUgFjm6Ng7vnkCW3bPvLptEJ5PUGmbAyl4oAbSUEF0G0JeSrk0VKXIftMmm5TzrRR/8xKLq1jOL00fsFeQIiz6A5sPz2Fs1Wlbb/hBr32HlzZxa83sTWIA/aNfWz0W6B8BlzqC1Fkyp4IGHeM6vVMjXD11vbKb9URG761E=
+  file_glob: true
+  file: "build/saphana-checks-*.tgz*"
+  skip_cleanup: true
+  on:
+    # repo: SAP-COE-HPTI/saphana-checks
+    tags: true
+
+  provider: releases
+  api_key:
+    secure: aQnueMZKDNLrM8J9oLlPItJ+qUMqj1Dm9demLPGwPD0j66jtSUFIV7ioR84FILLqklY0mPDCrfjCN2klYp6NJDGRQuKIQZaNdHQTY1rKUJQyS23MQ03ASf2F0PE3vk4t3fm1XBD2IKjP/4m8BBfx/LV41AXv35CG217I0ryrtluPkU8Mjx8j/bNZZLA9/NeapNcjdMxeV6uTWrmcOYY7dYEuUAXws7UWU4+qY7PzGQQemPJmXpNS8jtlMS0aUVETI/L+Irs8NouoeoMrsfzs876jpc0AH3tG+2q6Foc8EB/ivGC1Amq3pia1asoKQ0CtUOfiDRuPcOAVjnn0+/eAJueOgd3gf6JuG8SWO6HUrpF6eRNE1gk9HP/kKj5CxfR1PqUw08UDok2VMYCS2prFPljaihZ5jCcCzYJN1iDS2ejmI+xf4xFT2opGaH21zEzJlimv8vAlmm0gc3mce3tXawD31cpWariMt5fQdLbM1RnkcJ5OM0am3lyqEUqVmB/rmUwwAXUgFjm6Ng7vnkCW3bPvLptEJ5PUGmbAyl4oAbSUEF0G0JeSrk0VKXIftMmm5TzrRR/8xKLq1jOL00fsFeQIiz6A5sPz2Fs1Wlbb/hBr32HlzZxa83sTWIA/aNfWz0W6B8BlzqC1Fkyp4IGHeM6vVMjXD11vbKb9URG761E=
+  file_glob: true
+  file: "build/saphana-checks-*.tgz*"
+  skip_cleanup: true
+  on:
+    repo: SAP-COE-HPTI/saphana-checks
+    tags: true
