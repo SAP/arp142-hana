@@ -16,10 +16,10 @@ umask 022
 # has got the prefix LIB_.
 
 # return if saphana-helper-funcs already loaded
-[[ -n "${HANA_HELPER_VERSION:-}" ]] && return 0
+[[ -n "${HANA_HELPER_PROGVERSION:-}" ]] && return 0
 
-HANA_HELPER_VERSION='0.3-dev'
-#HANA_HELPER_DATE='2017-SEP-27'
+HANA_HELPER_PROGVERSION='0.3-dev'
+#HANA_HELPER_PROGDATE='2017-SEP-27'
 
 ##################################################
 # Global functions - to be used in other scripts
