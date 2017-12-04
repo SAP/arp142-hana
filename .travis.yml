@@ -8,7 +8,6 @@ env:
     - SHUNIT_COLOR='always'
     - COMMIT=${TRAVIS_COMMIT::8}
     - BUILD_COMMIT=b${TRAVIS_BUILD_NUMBER}-g${COMMIT}
-    - VERSION_BUILD_COMMIT=v${_VERSION}-${BUILD_COMMIT}
 
 os:
   - linux
@@ -22,6 +21,12 @@ os:
 #      - shellcheck
 
 before_install:
+    #MY_RELEASE is not availalbe within env:global
+    - if [[ ${MY_RELEASE} -eq 1 ]]; then
+        VERSION_BUILD_COMMIT=v${_VERSION}-${BUILD_COMMIT};
+      else
+        VERSION_BUILD_COMMIT=v${_VERSION}-dev-${BUILD_COMMIT};
+      fi
     - sudo apt-add-repository "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse"
     - sudo apt-get -qq update
     - sudo apt-get -t trusty-backports install shellcheck
@@ -39,36 +44,44 @@ after_success:
     - cp -rp ./scripts/lib build/saphana-checks
 
     # modifiy VERSION & DATE 
-    - perl ./helperscripts/replace-version.pl build/saphana-checks/bin/saphana-check.sh ${TRAVIS_BRANCH} ${BUILD_COMMIT}
+    - perl ./helperscripts/replace-version.pl build/saphana-checks/bin/saphana-check.sh ${VERSION_BUILD_COMMIT}
     - diff build/saphana-checks/bin/saphana-check.sh scripts/bin/saphana-check.sh
 
-    - perl ./helperscripts/replace-version.pl build/saphana-checks/bin/saphana-helper-funcs ${TRAVIS_BRANCH} ${BUILD_COMMIT}
+    - perl ./helperscripts/replace-version.pl build/saphana-checks/bin/saphana-helper-funcs ${VERSION_BUILD_COMMIT}
     - diff build/saphana-checks/bin/saphana-helper-funcs scripts/bin/saphana-helper-funcs
 
-    - perl ./helperscripts/replace-version.pl build/saphana-checks/bin/saphana-logger ${TRAVIS_BRANCH} ${BUILD_COMMIT}
+    - perl ./helperscripts/replace-version.pl build/saphana-checks/bin/saphana-logger ${VERSION_BUILD_COMMIT}
     - diff build/saphana-checks/bin/saphana-logger scripts/bin/saphana-logger
 
-    # create zipped tarball
-    - sudo chmod -R 444 build/saphana-checks
-    - sudo chmod 744 build/saphana-checks/bin/saphana-check.sh
-    - sudo chown -R root:root build/saphana-checks
-    - sudo tar -czf build/saphana-checks-${VERSION_BUILD_COMMIT}.tgz --directory=./build saphana-checks
-    - sha256sum build/saphana-checks-${VERSION_BUILD_COMMIT}.tgz > build/saphana-checks-${VERSION_BUILD_COMMIT}.tgz.sha256
-    - ls -l build/
-    # - tar -tvf build/saphana*.tgz
+    - ls -R build/
 
 # matrix:
 #   fast_finish: true
 
 before_deploy:
+    - if [[ ${MY_RELEASE} -eq 1 ]]; then
+        TAR_VERSION=v${_VERSION};
+      else
+        TAR_VERSION=v${_VERSION}-dev-${BUILD_COMMIT};
+      fi
    # Set up git user name and tag this commit
    # - git config --local user.name "d027354"
    # - git config --local user.email "peter.pitterling@sap.com"
    # - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
    # - git tag "v$_VERSION-b$TRAVIS_BUILD_NUMBER-g$COMMIT"
-    - sudo cp -R certs/SAPNetCA_G2.crt /usr/local/share/ca-certificates/
-    - sudo cp -R certs/SAP_Global_Root_CA.crt /usr/local/share/ca-certificates/
-    - sudo update-ca-certificates
+    - 'test $TRAVIS_TEST_RESULT = 0 \ 
+    && sudo cp -R certs/SAPNetCA_G2.crt /usr/local/share/ca-certificates/ \
+    && sudo cp -R certs/SAP_Global_Root_CA.crt /usr/local/share/ca-certificates/ \
+    && sudo update-ca-certificates'
+
+    # create zipped tarball
+    - sudo chmod -R 444 build/saphana-checks
+    - sudo chmod 744 build/saphana-checks/bin/saphana-check.sh
+    - sudo chown -R root:root build/saphana-checks
+    - sudo tar -czf build/saphana-checks-${TAR_VERSION}.tgz --directory=./build saphana-checks
+    - sha256sum build/saphana-checks-${TAR_VERSION}.tgz > build/saphana-checks-${TAR_VERSION}.tgz.sha256
+    - ls -l build/
+    - tar -tvf build/saphana*.tgz
 
 deploy:
   provider: releases
@@ -83,7 +96,6 @@ deploy:
     repo: SAP-COE-HPTI/saphana-checks
     all_branches: true
     tags: true
-    condition: $MY_RELEASE = false
 
   # provider: releases
   # prerelease: false

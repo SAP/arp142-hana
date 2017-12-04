@@ -4,16 +4,17 @@ use File::Copy;
 
 #argv
 my $origfile = $ARGV[0]; #'build/saphana-checks/bin/saphana-check.sh';
-my $branchname = $ARGV[1];
-my $prog_vers = $ARGV[2];
+my $prog_vers = $ARGV[1];
 chomp $origfile;
-chomp $branchname;
 chomp $prog_vers;
 
+my $travis = $ENV{TRAVIS};
 my $data = '';
 
-#BACKUP - make a backup of original File before editing
-#copy($origfile,"$origfile.bak") or die "Backup Copy failed: $!";
+if ( ! defined ${travis} ) {
+    #backup original File before editing in case of non TRAVIS environment
+    copy($origfile,"$origfile.bak") or die "Backup Copy failed: $!";
+} 
 
 #DATE
 my $prog_date = `date +"%Y-%b-%d"`;
@@ -23,17 +24,8 @@ chomp $prog_date;
 $data = read_file($origfile);
 
 #REPLACE
- if ( "${branchname}" eq "master" ) {
-	#PROGVERSION='v0.3-dev-50-gb9359c2' --> PROGVERSION="v0.3" ???
-	$data =~ s/PROGVERSION='(.*?)(-.*)?'/PROGVERSION='$1-${prog_vers}'/;
- }
- else {
-	#PROGVERSION='v0.3-dev-50-gb9359c2'
-	$data =~ s/PROGVERSION='(.*?)(-.*)?'/PROGVERSION='$1-dev-${prog_vers}'/;
- }
-
- #PROGDATE
- $data =~ s/PROGDATE=.*/PROGDATE='${prog_date}'/;
+$data =~ s/PROGVERSION=.*/PROGVERSION='${prog_vers}'/;
+$data =~ s/PROGDATE=.*/PROGDATE='${prog_date}'/;
  
 #Write File 
 write_file("$origfile", $data);
