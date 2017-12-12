@@ -5,7 +5,7 @@ umask 022
 # SAP HANA OS checks
 #------------------------------------------------------------------
 # (C) Copyright SAP 2017
-# Author: DBS - CoE EMEA HANA Platform & Technical Infrastructure 
+# Author: DBS - CoE EMEA HANA Platform & Technical Infrastructure
 #
 # Script name: "saphana-logger"
 #
@@ -15,8 +15,8 @@ umask 022
 # return if saphana-logger already loaded
 [[ -n "${HANA_LOGGER_PROGVERSION:-}" ]] && return 0
 
-HANA_LOGGER_PROGVERSION='0.3-dev'
-#HANA_LOGGER_PROGDATE='2017-SEP-27'
+HANA_LOGGER_PROGVERSION='0.4-dev'
+#HANA_LOGGER_PROGDATE='2017-DEC-05'
 
 #exec 3>&2 # logging stream (file descriptor 3) defaults to STDERR
 
@@ -29,79 +29,79 @@ logDebug() {		logger 5 '[D]'	"$1"; }
 logTrace() {		logger 6 '[T]'	"$1"; }
 
 logger() {
-	
-	local loglevel="$1"
-	shift 1
 
-	if [[ ${LOG_VERBOSE_LVL} -ge ${loglevel} ]]; then
+    local loglevel="$1"
+    shift 1
 
-		local logleveltag="$1"
-		shift 1
-		
-		local -r  datestring=$(date +'%H:%M:%S.%3N')
-		local -ir prefix_length=$((13+11))	#len("00:04:32.001")+1 && len("[C] <ERROR>")
-		local -ir content_width=$((COLUMNS-prefix_length-1))
+    if [[ ${LOG_VERBOSE_LVL} -ge ${loglevel} ]]; then
 
-		# Expand escaped characters, wrap at COLUMNS chars, indent wrapped lines
-		#printf "%-24s %s\n" "${datestring} ${logleveltag}" "$*" | fold -w ${COLUMNS} | sed '2~1s/^/                        /' #>&3
-		if [[ -t 1 ]]; then #FD1 = stdout
-			local line
-			printf '%s\n' "$*" | fold -w ${content_width} | { read -r line ; printf "%-${prefix_length}s %s\\n" "${datestring} ${logleveltag}" "${line}" ; while read -r line ; do printf "%-${prefix_length}s %s\\n" " " "${line}" ; done }
-		else
-			printf "%-${prefix_length}s %s\\n" "${datestring} ${logleveltag}" "$*"
-		fi
-	fi
+        local logleveltag="$1"
+        shift 1
+
+        local -r  datestring=$(date +'%H:%M:%S.%3N')
+        local -ir prefix_length=$((13+11))	#len("00:04:32.001")+1 && len("[C] <ERROR>")
+        local -ir content_width=$((COLUMNS-prefix_length-1))
+
+        # Expand escaped characters, wrap at COLUMNS chars, indent wrapped lines
+        #printf "%-24s %s\n" "${datestring} ${logleveltag}" "$*" | fold -w ${COLUMNS} | sed '2~1s/^/                        /' #>&3
+        if [[ -t 1 ]]; then #FD1 = stdout
+            local line
+            printf '%s\n' "$*" | fold -w ${content_width} | { read -r line ; printf "%-${prefix_length}s %s\\n" "${datestring} ${logleveltag}" "${line}" ; while read -r line ; do printf "%-${prefix_length}s %s\\n" " " "${line}" ; done }
+        else
+            printf "%-${prefix_length}s %s\\n" "${datestring} ${logleveltag}" "$*"
+        fi
+    fi
 }
 
 
 #ToDo: remove/revise use_colored_output stuff
 use_colored_output() {
-	return 1
+    return 1
 }
 
 logCheckError() {
 
-	if use_colored_output; then
-		logger 1 '[C]' "${warn}<ERROR>${norm}"	"$@"
-	else
-		logger 1 '[C] <ERROR>' "$@"
-	fi
+    if use_colored_output; then
+        logger 1 '[C]' "${warn}<ERROR>${norm}"	"$@"
+    else
+        logger 1 '[C] <ERROR>' "$@"
+    fi
 }
 
 logCheckWarning() {
 
-	if use_colored_output; then
-		logger 2 '[C]' "${attn}${blb}<WARN>${norm}"	"$@"
-	else
-		logger 2 '[C] <WARN>' "$@"
-	fi
+    if use_colored_output; then
+        logger 2 '[C]' "${attn}${blb}<WARN>${norm}"	"$@"
+    else
+        logger 2 '[C] <WARN>' "$@"
+    fi
 }
 
 logCheckOk() {
 
-	if use_colored_output; then
-		logger 3 '[C]' "${done}<OK>${norm}"	"$@"
-	else
-		logger 3 '[C] <OK>' "$@"
-	fi
+    if use_colored_output; then
+        logger 3 '[C]' "${done}<OK>${norm}"	"$@"
+    else
+        logger 3 '[C] <OK>' "$@"
+    fi
 }
 
 logCheckInfo() {
 
-	if use_colored_output; then
-		logger 4 '[C]' "${done}<INFO>${norm}" "$@"
-	else
-		logger 4 '[C] <INFO>' "$@"
-	fi
+    if use_colored_output; then
+        logger 4 '[C]' "${done}<INFO>${norm}" "$@"
+    else
+        logger 4 '[C] <INFO>' "$@"
+    fi
 }
 
 logCheckSkipped() {
 
-	if use_colored_output; then
-		logger 4 '[C]' "${done}<SKIP>${norm}"	"$@"
-	else
-		logger 4 '[C] <SKIP>' "$@"
-	fi
+    if use_colored_output; then
+        logger 4 '[C]' "${done}<SKIP>${norm}"	"$@"
+    else
+        logger 4 '[C] <SKIP>' "$@"
+    fi
 }
 
 
@@ -110,14 +110,14 @@ logCheckSkipped() {
 #============================================================
 _lib_logger_main() {
 
-	COLUMNS=80 # required before 1st logger usage
+    COLUMNS=80 # required before 1st logger usage
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	# ToDo: -t 1 stdout? 
-	#  if [[ -t 1 && -n "$TERM" && "$TERM" != "dumb" ]]; then
+    # ToDo: -t 1 stdout?
+    #  if [[ -t 1 && -n "$TERM" && "$TERM" != "dumb" ]]; then
     if [[ -n "$TERM" && "$TERM" != "dumb" ]]; then
-        COLUMNS=$(tput cols)		
+        COLUMNS=$(tput cols)
     fi
 
 }

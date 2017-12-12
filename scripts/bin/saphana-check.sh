@@ -6,24 +6,24 @@ set -u 		# treat unset variables as an error
 # SAP HANA OS checks
 #------------------------------------------------------------------
 # (C) Copyright SAP 2017
-# Author: DBS - CoE EMEA HANA Platform & Technical Infrastructure 
+# Author: DBS - CoE EMEA HANA Platform & Technical Infrastructure
 #
 # Script name: "saphana-check.sh"
 #
 # tool to check OS parameter recommendations for SAP HANA environments
 # supports SLES and RHEL on Intel and SLES on Power
 #
-# inspired by Lenovo's saphana-support-lenovo.sh Support script 
+# inspired by Lenovo's saphana-support-lenovo.sh Support script
 #------------------------------------------------------------------
 
-PROGVERSION='0.3-dev'
-PROGDATE='2017-SEP-27'
+PROGVERSION='0.4-dev'
+PROGDATE='2017-DEC-05'
 #------------------------------------------------------------------
 
 
-die() {
-  [ $# -gt 0 ] && echo "error: $*" >&2
-  exit 1
+function die {
+    [ $# -gt 0 ] && echo "error: $*" >&2
+    exit 1
 }
 
 # Make sure only root can run our script
@@ -72,31 +72,30 @@ declare -a CHECKFILELIST=()
 #============================================================
 # utility stuff
 #============================================================
-evaluate_cmdline_options() {
+function evaluate_cmdline_options {
 
-	[[ ${FLAGS_loglevel} -lt 7 ]] && LOG_VERBOSE_LVL=${FLAGS_loglevel} 
+    [[ ${FLAGS_loglevel} -lt 7 ]] && LOG_VERBOSE_LVL=${FLAGS_loglevel}
 
-	[[ ${FLAGS_verbose} -eq ${FLAGS_TRUE} ]] && LOG_VERBOSE_LVL=4
+    [[ ${FLAGS_verbose} -eq ${FLAGS_TRUE} ]] && LOG_VERBOSE_LVL=4
 
-	[[ ${FLAGS_debug} -eq ${FLAGS_TRUE} ]] && LOG_VERBOSE_LVL=5
+    [[ ${FLAGS_debug} -eq ${FLAGS_TRUE} ]] && LOG_VERBOSE_LVL=5
 
-	[[ ${FLAGS_trace} -eq ${FLAGS_TRUE} ]] && LOG_VERBOSE_LVL=6
+    [[ ${FLAGS_trace} -eq ${FLAGS_TRUE} ]] && LOG_VERBOSE_LVL=6
 
-	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # LOG_VERBOSE_LVL=${LOG_VERBOSE_LVL}"
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # LOG_VERBOSE_LVL=${LOG_VERBOSE_LVL}"
 }
 
 #============================================================
 # Check handling
 #============================================================
-generate_checkfilelist_checks() {
+function generate_checkfilelist_checks {
 
-	local checklist="$1"
-	shift 1
+    local checklist="$1"
+    shift 1
 
-	local check
-	
-    for check in ${checklist}
-    do
+    local check
+
+    for check in ${checklist}; do
         if [[ -f "${PROGRAM_LIBDIR}/check/${check}.check" ]]; then
 
             CHECKFILELIST+=("${PROGRAM_LIBDIR}/check/${check}.check")
@@ -104,74 +103,74 @@ generate_checkfilelist_checks() {
     done
 }
 
-generate_checkfilelist_checkset() {
+function generate_checkfilelist_checkset {
 
     local checksetfile="${PROGRAM_LIBDIR}/checkset/${FLAGS_checkset}.checkset"
-	local checkset
+    local checkset
 
-	if [[ ! -f "${checksetfile}" ]]; then
+    if [[ ! -f "${checksetfile}" ]]; then
         logError "${checksetfile} does not exist."
-		exit 1
-	fi
+        exit 1
+    fi
 
-	if ! checkset=$(<"${checksetfile}") ; then
-		logError "Could not load checkset file ${checksetfile}"
-		exit 1
-	fi
+    if ! checkset=$(<"${checksetfile}") ; then
+        logError "Could not load checkset file ${checksetfile}"
+        exit 1
+    fi
 
     generate_checkfilelist_checks "${checkset}"
 }
 
-generate_checklist() {
+function generate_checklist {
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
     # generate checklist
     if [[ "${FLAGS_checks}" != "" || "${FLAGS_checkset}" != "" ]]; then
-        
-		[[ "${FLAGS_checks}" != "" ]] && generate_checkfilelist_checks "${FLAGS_checks}"
 
-		[[ "${FLAGS_checkset}" != "" ]] && generate_checkfilelist_checkset
+        [[ "${FLAGS_checks}" != "" ]] && generate_checkfilelist_checks "${FLAGS_checks}"
+
+        [[ "${FLAGS_checkset}" != "" ]] && generate_checkfilelist_checkset
 
     else
         CHECKFILELIST=( "$(ls -1 "${PROGRAM_LIBDIR}"/check/*.check)" )
     fi
 
-	local checkfile
-	local checkname
-	local safetycheck
+    local checkfile
+    local checkname
+    local safetycheck
 
-	for checkfile in ${CHECKFILELIST[*]:-}
-	do
-		
-		checkname=${checkfile##*/}
-		checkname="check_${checkname%.check}"
-		
-		if ! safetycheck=$(lib_func_check_check_security "$checkfile") ; then
-			logCheckSkipped "Skipping check ${checkname}. Reason: ${safetycheck}"
-			continue;
-		fi
+    for checkfile in ${CHECKFILELIST[*]:-}; do
 
-		
-		if ! source "${checkfile}" ; then
-			logCheckSkipped "Skipping check ${checkname}, could not load check file ${checkfile}"
-		else
-			CHECKLIST+=("${checkname}")
-		fi
-	done
+        checkname=${checkfile##*/}
+        checkname="check_${checkname%.check}"
+
+        if ! safetycheck=$(lib_func_check_check_security "$checkfile") ; then
+            logCheckSkipped "Skipping check ${checkname}. Reason: ${safetycheck}"
+            continue;
+        fi
+
+
+        if ! source "${checkfile}" ; then
+            logCheckSkipped "Skipping check ${checkname}, 
+                                        could not load check file ${checkfile}"
+        else
+            CHECKLIST+=("${checkname}")
+        fi
+    done
 }
 
-run_checklist() {
+function run_checklist {
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-    for check in ${CHECKLIST[*]:-}		#empty = unbound variable but count works "${#arr[@]}" = 0
-    do
+    #empty = unbound variable but count works "${#arr[@]}" = 0
+    for check in ${CHECKLIST[*]:-}; do
         # printCheckHeader "Checking " $check
         # if ! isCheckBlacklisted $check ; then
-			printf '\n'
+            printf '\n'
             ${check}
-			#ToDo: count_error, count_warning - removed from logger
+            #ToDo: count_error, count_warning - removed from logger
         # else
         #     logCheckSkipped "Skipping blacklisted check $check."
         # fi
@@ -185,55 +184,57 @@ run_checklist() {
 #============================================================
 # main
 #============================================================
-main() {
+function main {
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	local -r _line='-------------------------------------------------------------------'
-	
-	logNotify "## ${_line}"
-	logNotify "## SAP HANA OS checks"
-	logNotify "## Scriptversion: ${PROGVERSION} Scriptdate: ${PROGDATE}"
-	logNotify "## ${_line}"
-	logNotify "## CMD:           ${PROGRAM_DIR}/${PROGRAM_NAME} ${PROGRAM_CMDLINE}"
-	logNotify '##'
-	logNotify "## Host:          $(hostname -f)"
-	logNotify "## TimeLOC:       $(date +"%Y-%m-%d %H:%M:%S")"
-	logNotify "## TimeUTC:       $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
-	logNotify "## ${_line}"
-	logNotify "## Vendor:        ${LIB_PLATF_VENDOR:-} - Type: ${LIB_PLATF_NAME:-}"
-	logNotify "## Architecture:  ${LIB_PLATF_ARCHITECTURE:-} - Byte Order: ${LIB_PLATF_BYTEORDER:-}"
+    local -r _line='-------------------------------------------------------------------'
 
-	if lib_func_is_bare_metal
-	then
-		logNotify '##                Running on Bare-Metal'
-	else
-		logNotify '##                Running Virtualized'
-	fi
+    logNotify "## ${_line}"
+    logNotify "## SAP HANA OS checks"
+    logNotify "## Scriptversion: ${PROGVERSION} Scriptdate: ${PROGDATE}"
+    logNotify "## ${_line}"
+    logNotify "## CMD:           ${PROGRAM_DIR}/${PROGRAM_NAME} ${PROGRAM_CMDLINE}"
+    logNotify '##'
+    logNotify "## Host:          $(hostname -f)"
+    logNotify "## TimeLOC:       $(date +"%Y-%m-%d %H:%M:%S")"
+    logNotify "## TimeUTC:       $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+    logNotify "## ${_line}"
+    logNotify "## Vendor:        ${LIB_PLATF_VENDOR:-} - Type: ${LIB_PLATF_NAME:-}"
+    logNotify "## Architecture:  ${LIB_PLATF_ARCHITECTURE:-} - Byte Order: ${LIB_PLATF_BYTEORDER:-}"
 
-	if lib_func_is_ibmpower
-	then
-		logNotify '##                Running on IBM Power'
-	fi
+    if lib_func_is_bare_metal
+    then
+        logNotify '##                Running on Bare-Metal'
+    else
+        logNotify '##                Running Virtualized'
+    fi
 
-	logNotify "## CPU:           ${LIB_PLATF_CPU:-}"
-	logNotify "## Memory:        $(awk -v RAM_MiB="${LIB_PLATF_RAM_MiB_PHYS}" 'BEGIN {printf "%.0f GiB (%d MiB)", RAM_MiB/1024, RAM_MiB }')"
-	logNotify '##'
-	logNotify "## OS:            ${OS_NAME} ${OS_VERSION} - Kernel: ${OS_LEVEL}"
+    if lib_func_is_ibmpower
+    then
+        logNotify '##                Running on IBM Power'
+    fi
 
-	printf '\n'
+    logNotify "## CPU:           ${LIB_PLATF_CPU:-}"
+    logNotify "## Memory:        $(awk -v RAM_MiB="${LIB_PLATF_RAM_MiB_PHYS}" \
+                'BEGIN {printf "%.0f GiB (%d MiB)", RAM_MiB/1024, RAM_MiB }')"
+    logNotify '##'
+    logNotify "## OS:            ${OS_NAME} ${OS_VERSION} - Kernel: ${OS_LEVEL}"
 
-	generate_checklist
-	run_checklist
+    printf '\n'
 
-	printf '\n'
-	logNotify '## Exit'
+    generate_checklist
+    run_checklist
 
-	exit 0
+    printf '\n'
+    logNotify '## Exit'
+
+    exit 0
 }
 
 #Import logger
-source "${PROGRAM_BINDIR}/saphana-logger" || die 'unable to load saphana-logger library'
+source "${PROGRAM_BINDIR}/saphana-logger" || 
+                            die 'unable to load saphana-logger library'
 
 # parse the command-line - shflags
 FLAGS "$@" || exit 1
@@ -241,7 +242,8 @@ eval set -- "${FLAGS_ARGV}"
 evaluate_cmdline_options
 
 #Import remaining Libraries - logging is now active
-source "${PROGRAM_BINDIR}/saphana-helper-funcs" || die 'unable to load saphana-helper-funcs library'
+source "${PROGRAM_BINDIR}/saphana-helper-funcs" || 
+                            die 'unable to load saphana-helper-funcs library'
 
 # call main
 main "$@"

@@ -5,7 +5,7 @@ umask 022
 # Library - Linux distribution / Linux release Functions
 #------------------------------------------------------------------
 # (C) Copyright SAP 2017
-# Author: DBS - CoE EMEA HANA Platform & Technical Infrastructure 
+# Author: DBS - CoE EMEA HANA Platform & Technical Infrastructure
 #
 # Script name: "lib_linux_release"
 #
@@ -14,258 +14,269 @@ umask 022
 # return if library is already loaded
 [[ -n "${LIB_LINUX_RELEASE:-}" ]] && return 0
 
-LIB_LINUX_RELEASE='1.0'
+LIB_LINUX_RELEASE='1.1dev'
 #LIB_RELEASE_DATE='2017-NOV-11'
 
 
 ##################################################
 # Global functions - to be used in other scripts
 ##################################################
-lib_func_get_linux_distrib() {
+function lib_func_get_linux_distrib {
 
-	#a local variable declared in a function is also visible to functions called by the parent function.
-	local -r osfile='/etc/os-release'
-	local -r susefile='/etc/SuSE-release'
-	local -r redhatfile='/etc/redhat-release'
-	local -r oraclefile='/etc/oracle-release'
+    # a local variable declared in a function is also visible to
+    # functions called by the parent function.
+    local -r osfile='/etc/os-release'
+    local -r susefile='/etc/SuSE-release'
+    local -r redhatfile='/etc/redhat-release'
+    local -r oraclefile='/etc/oracle-release'
 
-	local _os_name
-	local _os_version
+    local _os_name
+    local _os_version
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	if [ -f ${osfile} ] ; then
-		#newer releases contain this file
-		__linux_distrib_os_release "${osfile}"
+    if [ -f ${osfile} ] ; then
+        #newer releases contain this file
+        __linux_distrib_os_release "${osfile}"
 
-	elif [ -f ${susefile} ] ; then
-		__linux_distrib_suse_release "${susefile}"
+    elif [ -f ${susefile} ] ; then
+        __linux_distrib_suse_release "${susefile}"
 
-	elif [ -f ${oraclefile} ] ; then
-		#oracle is based on RedHat - redhatfile also exist, but check oracle first
-		__linux_distrib_oracle_release "${oraclefile}"
+    elif [ -f ${oraclefile} ] ; then
+        #oracle is based on RedHat-redhatfile also exist, but check oracle first
+        __linux_distrib_oracle_release "${oraclefile}"
 
-	elif [ -f ${redhatfile} ] ; then
-		__linux_distrib_redhat_release "${redhatfile}"
+    elif [ -f ${redhatfile} ] ; then
+        __linux_distrib_redhat_release "${redhatfile}"
 
-	else
-		_os_name='Linux UNKNOWN'
-	fi
+    else
+        _os_name='Linux UNKNOWN'
+    fi
 
-	OS_NAME="${_os_name}"
-	OS_VERSION="${_os_version}"
-	OS_LEVEL=$(uname -r)
+    OS_NAME="${_os_name}"
+    OS_VERSION="${_os_version}"
+    OS_LEVEL=$(uname -r)
 
-	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # ${OS_NAME} ; ${OS_VERSION} ; ${OS_LEVEL}"
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> #
+                                    ${OS_NAME} ; ${OS_VERSION} ; ${OS_LEVEL}"
 
 }
 
 # Returns 0 on SLES, 1 on other
-lib_func_is_sles() {
+function lib_func_is_sles {
 
-	local -i _retval=1
+    local -i _retval=1
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	[[ "${OS_NAME}" == "${lib_release_sles}" ]] && _retval=0
+    [[ "${OS_NAME}" == "${lib_release_sles}" ]] && _retval=0
 
-	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
-	return ${_retval}
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
 }
 
 # Returns 0 on RHEL, 1 on other
-lib_func_is_rhel() {
+function lib_func_is_rhel {
 
-	local -i _retval=1
+    local -i _retval=1
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	[[ "${OS_NAME}" == "${lib_release_rhel}" ]] && _retval=0
+    [[ "${OS_NAME}" == "${lib_release_rhel}" ]] && _retval=0
 
-	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
-	return ${_retval}
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
 }
 
 # Returns 0 on OLS, 1 on other
-lib_func_is_ols() {
+function lib_func_is_ols {
 
-	local -i _retval=1
+    local -i _retval=1
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	[[ "${OS_NAME}" == "${lib_release_ols}" ]] && _retval=0
+    [[ "${OS_NAME}" == "${lib_release_ols}" ]] && _retval=0
 
-	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
-	return ${_retval}
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
 }
 
 ##########################################################
 # Non-global functions - not to be used in other scripts
 ##########################################################
 
-__linux_distrib_os_release() {
+function __linux_distrib_os_release {
 
-	local _os_release_file="$1"
-	shift 1
+    local _os_release_file="$1"
+    shift 1
 
-	local _ostmp
-	local _osname
-	local _osvers
+    local _ostmp
+    local _osname
+    local _osvers
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	while read -r line; do
+    while read -r line; do
 
-		logTrace "<${FUNCNAME[0]}> # ${_os_release_file}:${line}"
+        logTrace "<${FUNCNAME[0]}> # ${_os_release_file}:${line}"
 
-		#NAME=""
-		_ostmp=$(awk '/^NAME=/ {match($0, /".*"/); print substr($0,RSTART+1,RLENGTH-2)}' <<< "${line}")
-		_osname=${_osname:=$_ostmp}
+        #NAME=""
+        _ostmp=$(awk '/^NAME=/ {match($0, /".*"/);
+                            print substr($0,RSTART+1,RLENGTH-2)}' <<< "${line}")
+        _osname=${_osname:=$_ostmp}
 
-		#match 12.1 | 12.0.1 | 7.0
-		_ostmp=$(awk '/^VERSION_ID=/ {match($0, /([0-9]+)(\.([0-9]+))+/); print substr($0,RSTART,RLENGTH) }' <<< "${line}")
-		_osvers=${_osvers:=$_ostmp}
+        #match 12.1 | 12.0.1 | 7.0
+        _ostmp=$(awk '/^VERSION_ID=/ {match($0, /([0-9]+)(\.([0-9]+))+/);
+                            print substr($0,RSTART,RLENGTH) }' <<< "${line}")
+        _osvers=${_osvers:=$_ostmp}
 
-	done < "${_os_release_file}"
+    done < "${_os_release_file}"
 
-	_os_version="${_osvers}"
+    _os_version="${_osvers}"
 
-	case ${_osname} in
-		"SLES"*)
-				_os_name="${lib_release_sles}"
-				;;
+    case ${_osname} in
+        "SLES"*)
+                _os_name="${lib_release_sles}"
+                ;;
 
-		"Red Hat Enterprise Linux Server")
-				_os_name="${lib_release_rhel}"
-				;;
+        "Red Hat Enterprise Linux Server")
+                _os_name="${lib_release_rhel}"
+                ;;
 
-		"Oracle Linux Server")
-				_os_name="${lib_release_ols}"
-				;;
+        "Oracle Linux Server")
+                _os_name="${lib_release_ols}"
+                ;;
 
-		*)
-			_os_name='Linux UNKNOWN'
-			;;
-	esac
+        *)
+            _os_name='Linux UNKNOWN'
+            ;;
+    esac
 }
 
-__linux_distrib_suse_release() {
+function __linux_distrib_suse_release {
 
-	local _suse_release_file="$1"
-	shift 1
+    local _suse_release_file="$1"
+    shift 1
 
-	local _ostmp
-	local _osname
-	local _osvers
-	local _susepatchl
+    local _ostmp
+    local _osname
+    local _osvers
+    local _susepatchl
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	while read -r line; do
+    while read -r line; do
 
-		logTrace "<${FUNCNAME[0]}> # ${_suse_release_file}:${line}"
+        logTrace "<${FUNCNAME[0]}> # ${_suse_release_file}:${line}"
 
-		#Enterprise?
-		_ostmp=$(awk '/^SUSE Linux Enterprise/ {match($0, /([0-9]+)/); print substr($0,RSTART,RLENGTH) }' <<< "${line}")
-		_osname=${_osname:=$_ostmp}
+        #Enterprise?
+        _ostmp=$(awk '/^SUSE Linux Enterprise/ {match($0, /([0-9]+)/);
+                            print substr($0,RSTART,RLENGTH) }' <<< "${line}")
+        _osname=${_osname:=$_ostmp}
 
-		#11 - version
-		_ostmp=$(awk '/^VERSION = / {match($0, /([0-9]+)/); print substr($0,RSTART,RLENGTH) }' <<< "${line}")
-		_osvers=${_osvers:=$_ostmp}
+        #11 - version
+        _ostmp=$(awk '/^VERSION = / {match($0, /([0-9]+)/);
+                            print substr($0,RSTART,RLENGTH) }' <<< "${line}")
+        _osvers=${_osvers:=$_ostmp}
 
-		#2	- patchlevel
-		_ostmp=$(awk '/^PATCHLEVEL = / {match($0, /([0-9]+)/); print substr($0,RSTART,RLENGTH) }' <<< "${line}")
-		_susepatchl=${_susepatchl:=$_ostmp}
+        #2	- patchlevel
+        _ostmp=$(awk '/^PATCHLEVEL = / {match($0, /([0-9]+)/);
+                            print substr($0,RSTART,RLENGTH) }' <<< "${line}")
+        _susepatchl=${_susepatchl:=$_ostmp}
 
-	done < "${_suse_release_file}"
+    done < "${_suse_release_file}"
 
-	_os_version="${_osvers}.${_susepatchl}"
+    _os_version="${_osvers}.${_susepatchl}"
 
-	if [ -n "${_osname}" ] ; then
-		_os_name="${lib_release_sles}"
-	else
-		_os_name='Linux Suse UNKNOWN'
-	fi
+    if [ -n "${_osname}" ] ; then
+        _os_name="${lib_release_sles}"
+    else
+        _os_name='Linux Suse UNKNOWN'
+    fi
 }
 
-__linux_distrib_redhat_release() {
+function __linux_distrib_redhat_release {
 
-	local _redhat_release_file="$1"
-	shift 1
+    local _redhat_release_file="$1"
+    shift 1
 
-	local _rhtmp
-	local _rhname
-	local _rhversion
+    local _rhtmp
+    local _rhname
+    local _rhversion
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	while read -r line; do
+    while read -r line; do
 
-		logTrace "<${FUNCNAME[0]}> # ${_redhat_release_file}:${line}"
+        logTrace "<${FUNCNAME[0]}> # ${_redhat_release_file}:${line}"
 
-		#Enterprise within string - match any number
-		_rhtmp=$(awk '/^Red Hat Enterprise Linux/ {match($0, /([0-9]+)/); print substr($0,RSTART,RLENGTH) }' <<< "${line}")
-		_rhname=${_rhname:=$_rhtmp}
+        #Enterprise within string - match any number
+        _rhtmp=$(awk '/^Red Hat Enterprise Linux/ {match($0, /([0-9]+)/);
+                            print substr($0,RSTART,RLENGTH) }' <<< "${line}")
+        _rhname=${_rhname:=$_rhtmp}
 
-		#match 6.4
-		_rhtmp=$(awk '/^Red Hat/ {match($0, /([0-9]+)\.([0-9]+)/); print substr($0,RSTART,RLENGTH) }' <<< "${line}")
-		_rhversion=${_rhversion:=$_rhtmp}
+        #match 6.4
+        _rhtmp=$(awk '/^Red Hat/ {match($0, /([0-9]+)\.([0-9]+)/);
+                            print substr($0,RSTART,RLENGTH) }' <<< "${line}")
+        _rhversion=${_rhversion:=$_rhtmp}
 
-	done < "${_redhat_release_file}"
+    done < "${_redhat_release_file}"
 
-	_os_version=${_rhversion}
+    _os_version=${_rhversion}
 
-	if [ -n "${_rhname}" ] ; then
-		_os_name="${lib_release_rhel}"
-	else
-		_os_name='Linux Redhat UNKNOWN'
-	fi
+    if [ -n "${_rhname}" ] ; then
+        _os_name="${lib_release_rhel}"
+    else
+        _os_name='Linux Redhat UNKNOWN'
+    fi
 
 }
 
-__linux_distrib_oracle_release() {
+function __linux_distrib_oracle_release {
 
-	local _oracle_release_file="$1"
-	shift 1
+    local _oracle_release_file="$1"
+    shift 1
 
-	local _oltmp
-	local _olname
-	local _olversion
+    local _oltmp
+    local _olname
+    local _olversion
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	#oracle is based on RedHat - redhatfile also exist, but check oracle first
-	while read -r line; do
+    #oracle is based on RedHat - redhatfile also exist, but check oracle first
+    while read -r line; do
 
-		logTrace "<${FUNCNAME[0]}> # ${_oracle_release_file}:${line}"
+        logTrace "<${FUNCNAME[0]}> # ${_oracle_release_file}:${line}"
 
-		#Server within string - match any number
-		_oltmp=$(awk '/^Oracle Linux Server/ {match($0, /([0-9]+)/); print substr($0,RSTART,RLENGTH) }' <<< "${line}")
-		_olname=${_olname:=$_oltmp}
+        #Server within string - match any number
+        _oltmp=$(awk '/^Oracle Linux Server/ {match($0, /([0-9]+)/);
+                            print substr($0,RSTART,RLENGTH) }' <<< "${line}")
+        _olname=${_olname:=$_oltmp}
 
-		#match 6.4
-		_oltmp=$(awk '/^Oracle Linux/ {match($0, /([0-9]+)\.([0-9]+)/); print substr($0,RSTART,RLENGTH) }' <<< "${line}")
-		_olversion=${_olversion:=$_oltmp}
+        #match 6.4
+        _oltmp=$(awk '/^Oracle Linux/ {match($0, /([0-9]+)\.([0-9]+)/);
+                            print substr($0,RSTART,RLENGTH) }' <<< "${line}")
+        _olversion=${_olversion:=$_oltmp}
 
-	done < "${_oracle_release_file}"
+    done < "${_oracle_release_file}"
 
-	_os_version=${_olversion}
+    _os_version=${_olversion}
 
-	if [ -n "${_olname}" ] ; then
-		_os_name="${lib_release_ols}"
-	else
-		_os_name='Linux Oracle UNKNOWN'
-	fi
+    if [ -n "${_olname}" ] ; then
+        _os_name="${lib_release_ols}"
+    else
+        _os_name='Linux Oracle UNKNOWN'
+    fi
 }
 
 #============================================================
 # LIB MAIN - initialization
 #============================================================
-_lib_linux_release_main() {
+function _lib_linux_release_main {
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	lib_func_get_linux_distrib
+    lib_func_get_linux_distrib
 
     readonly OS_NAME
     readonly OS_VERSION
@@ -274,7 +285,8 @@ _lib_linux_release_main() {
 
 #Import libraries
 #shellcheck source=bin/saphana-logger
-source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/saphana-logger" || { echo 'unable to load saphana-logger library' >&2; exit 1; }
+source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/saphana-logger" ||
+                { echo 'unable to load saphana-logger library' >&2; exit 1; }
 
 #LIB LOCAL
 declare -r lib_release_rhel='Linux RHEL'

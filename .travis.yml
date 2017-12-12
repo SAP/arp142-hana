@@ -30,13 +30,15 @@ before_install:
     - sudo apt-add-repository "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse"
     - sudo apt-get -qq update
     - sudo apt-get -t trusty-backports install shellcheck
-    # - sudo pip install bashate
+    - sudo pip install bashate
 
 script:
   # Run unit tests - runs all the unit tests that can be found, and generates a nice report of the tests
   - bash -c 'cd ./scripts/tests/; ./test_runner'
   - bash -c 'shopt -s globstar; shellcheck **/*.{sh,check}'
   # - bash -c 'shopt -s globstar; bashate scripts/**/*.{sh,check}'
+  - bash -c 'shopt -s globstar; bashate scripts/bin/saphana* scripts/bin/lib*'
+
 
 after_success:
     - mkdir -p build/saphana-checks

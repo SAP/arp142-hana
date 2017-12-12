@@ -5,7 +5,7 @@ umask 022
 # SAP HANA OS checks
 #------------------------------------------------------------------
 # (C) Copyright SAP 2017
-# Author: DBS - CoE EMEA HANA Platform & Technical Infrastructure 
+# Author: DBS - CoE EMEA HANA Platform & Technical Infrastructure
 #
 # Script name: "saphana-helper-funcs"
 #
@@ -18,96 +18,96 @@ umask 022
 # return if saphana-helper-funcs already loaded
 [[ -n "${HANA_HELPER_PROGVERSION:-}" ]] && return 0
 
-HANA_HELPER_PROGVERSION='0.3-dev'
-#HANA_HELPER_PROGDATE='2017-SEP-27'
+HANA_HELPER_PROGVERSION='0.4-dev'
+#HANA_HELPER_PROGDATE='2017-DEC-05'
 
 ##################################################
 # Global functions - to be used in other scripts
 ##################################################
 lib_func_check_check_security() {
-    
-	local fullpath=$1
 
-	local -i fileownerid
-	fileownerid=$(stat -c %u "${fullpath}")
-	if [[ "${fileownerid}" -ne 0 ]]; then
-		printf 'Check %s is not owned by root.\n'	"${fullpath}"
-		return 1
-	fi
+    local fullpath=$1
 
-	local fileperm
-	fileperm=$(stat -c %A "${fullpath}")
-	if [[ "${fileperm}" != ?r???-??-? ]]; then
-		printf 'Check %s is world writable.\n'	"${fullpath}"
-		return 1
-	fi
+    local -i fileownerid
+    fileownerid=$(stat -c %u "${fullpath}")
+    if [[ "${fileownerid}" -ne 0 ]]; then
+        printf 'Check %s is not owned by root.\n'	"${fullpath}"
+        return 1
+    fi
+
+    local fileperm
+    fileperm=$(stat -c %A "${fullpath}")
+    if [[ "${fileperm}" != ?r???-??-? ]]; then
+        printf 'Check %s is world writable.\n'	"${fullpath}"
+        return 1
+    fi
 }
 
 # Returns 1 on Virtualization, 0 on Bare-Metal
 lib_func_is_bare_metal() {
 
-	local -i _retval=1
+    local -i _retval=1
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	[[ ${lib_platf_virtualized} -ne 0 ]] &&	_retval=0
+    [[ ${lib_platf_virtualized} -ne 0 ]] &&	_retval=0
 
-	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
-	return ${_retval}
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
 }
 
 # Returns 0 on Intel, 1 on other
 lib_func_is_intel() {
 
-	local -i _retval=1
+    local -i _retval=1
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	[[ "${LIB_PLATF_CPU_VENDOR:-}" == 'GenuineIntel' ]] && _retval=0
+    [[ "${LIB_PLATF_CPU_VENDOR:-}" == 'GenuineIntel' ]] && _retval=0
 
-	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
-	return ${_retval}
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
 }
 
 # Returns 0 on AMD, 1 on other
 lib_func_is_amd() {
 
-	local -i _retval=1
+    local -i _retval=1
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	[[ "${LIB_PLATF_CPU_VENDOR:-}" == 'AuthenticAMD' ]] && _retval=0
+    [[ "${LIB_PLATF_CPU_VENDOR:-}" == 'AuthenticAMD' ]] && _retval=0
 
-	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
-	return ${_retval}
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
 }
 
 # Returns 0 on x86_64, 1 on other
 lib_func_is_x64() {
 
-	local -i _retval=1
+    local -i _retval=1
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	[[ "${LIB_PLATF_ARCHITECTURE:-}" == 'x86_64' ]] && _retval=0
+    [[ "${LIB_PLATF_ARCHITECTURE:-}" == 'x86_64' ]] && _retval=0
 
-	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
-	return ${_retval}
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
 }
 
 # Returns 0 on Power, 1 on other
 lib_func_is_ibmpower() {
 
-	local -i _retval=1
+    local -i _retval=1
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	if [[ "${LIB_PLATF_ARCHITECTURE}" == 'ppc64le' ]] || [[ "${LIB_PLATF_ARCHITECTURE}" == 'ppc64' ]]; then
-		_retval=0
-	fi
+    if [[ "${LIB_PLATF_ARCHITECTURE}" == 'ppc64le' ]] || [[ "${LIB_PLATF_ARCHITECTURE}" == 'ppc64' ]]; then
+        _retval=0
+    fi
 
-	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
-	return ${_retval}
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
 }
 
 # Compares two version strings
@@ -118,51 +118,46 @@ lib_func_compare_versions() {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	local -i _retval=0
-	local version1
-	local version2
+    local -i _retval=0
+    local version1
+    local version2
     version1=$(lib_func_trim "$1")
-	version2=$(lib_func_trim "$2")
+    version2=$(lib_func_trim "$2")
 
     #${1//\-/\.} - Variable Substitution (faster then tr,sed or grep) - replace - by .
-	#required for 2.11.3-17.95.2 --> 2.11.3.17.95.2
+    #required for 2.11.3-17.95.2 --> 2.11.3.17.95.2
     version1=${version1//\-/\.}
     version2=${version2//\-/\.}
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # compare <${version1}> to <${version2}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # compare <${version1}> to <${version2}>"
 
     if [[ "${version1}" == "${version2}" ]]; then
         _retval=0
     else
 
-		#to_array, split by .
+        #to_array, split by .
         local IFS=.
         local -a ver1
         local -a ver2
-		read -r -a ver1 <<< "${version1}"
-		read -r -a ver2 <<< "${version2}"
+        read -r -a ver1 <<< "${version1}"
+        read -r -a ver2 <<< "${version2}"
 
         local -i i
         # fill empty fields in ver1 with zeros
-        for ((i=${#ver1[@]}; i<${#ver2[@]}; i++))
-        do
+        for ((i=${#ver1[@]}; i<${#ver2[@]}; i++)); do
             ver1[i]=0
         done
 
-        for ((i=0; i<${#ver1[@]}; i++))
-        do
-            if [[ -z ${ver2[i]:-} ]]
-            then
+        for ((i=0; i<${#ver1[@]}; i++)); do
+            if [[ -z ${ver2[i]:-} ]]; then
                 # fill empty fields in ver2 with zeros
                 ver2[i]=0
             fi
-            if ((10#${ver1[i]} > 10#${ver2[i]}))
-            then
+            if ((10#${ver1[i]} > 10#${ver2[i]})); then
                 _retval=1
                 break
             fi
-            if ((10#${ver1[i]} < 10#${ver2[i]}))
-            then
+            if ((10#${ver1[i]} < 10#${ver2[i]})); then
                 _retval=2
                 break
             fi
@@ -171,7 +166,7 @@ lib_func_compare_versions() {
     fi
 
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
-	return ${_retval}
+    return ${_retval}
 }
 
 
@@ -196,40 +191,40 @@ lib_func_trim() {
 
 lib_func_normalize_kernel() {
 
-	local kernelversion="$1"
-	shift 1
+    local kernelversion="$1"
+    shift 1
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	kernelversion=${kernelversion/PTF-default*/1}	#3.0.101-0.47.71.7930.0.PTF-default
-	kernelversion=${kernelversion/default*/1}		#3.0.101-0.47.71-default
-	kernelversion=${kernelversion/bigsmp*/1}			#3.0.101-0.47-bigsmp
-	kernelversion=${kernelversion/bigmem*/1}			#3.0.101-88-bigmem
-	kernelversion=${kernelversion/ppc64*/1}			#3.0.101-71-ppc64
-	kernelversion=${kernelversion/.el[[:digit:]]*/}		# Remove trailing ".el6.x86_64" or ".el7.ppc64le"
+    kernelversion=${kernelversion/PTF-default*/1}	#3.0.101-0.47.71.7930.0.PTF-default
+    kernelversion=${kernelversion/default*/1}		#3.0.101-0.47.71-default
+    kernelversion=${kernelversion/bigsmp*/1}			#3.0.101-0.47-bigsmp
+    kernelversion=${kernelversion/bigmem*/1}			#3.0.101-88-bigmem
+    kernelversion=${kernelversion/ppc64*/1}			#3.0.101-71-ppc64
+    kernelversion=${kernelversion/.el[[:digit:]]*/}		# Remove trailing ".el6.x86_64" or ".el7.ppc64le"
 
-	lib_func_normalize_kernel_return="${kernelversion}"	#variable is available to caller
+    lib_func_normalize_kernel_return="${kernelversion}"	#variable is available to caller
 }
 
 lib_func_normalize_rpm() {
 
-	local rpmversion="$1"
-	shift 1
+    local rpmversion="$1"
+    shift 1
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	rpmversion=${rpmversion/.el[[:digit:]]*_[[:digit:]]*./.0.}		# 2.17-157.el7_3.5	-> 2.17-157.0.5
-	rpmversion=${rpmversion/.el[[:digit:]]*/.0}						# 219-30.el7		-> 219-30.0
+    rpmversion=${rpmversion/.el[[:digit:]]*_[[:digit:]]*./.0.}		# 2.17-157.el7_3.5	-> 2.17-157.0.5
+    rpmversion=${rpmversion/.el[[:digit:]]*/.0}						# 219-30.el7		-> 219-30.0
 
-	lib_func_normalize_rpm_return="${rpmversion}"	#variable is available to caller
+    lib_func_normalize_rpm_return="${rpmversion}"	#variable is available to caller
 }
 
 
 lib_func_stringContain() {
-	#$1=string $2=substring
+    #$1=string $2=substring
     #case "$1" in *"$2"* ) return 0;;esac
-	#return 1
-	[[ -z "${1##*$2*}" ]] && [[ -z "$2" || -n "$1" ]];
+    #return 1
+    [[ -z "${1##*$2*}" ]] && [[ -z "$2" || -n "$1" ]];
 }
 
 ##########################################################
@@ -238,136 +233,135 @@ lib_func_stringContain() {
 
 __get_platform_cpu_details() {
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	# get System details
-	local -a platform
+    # get System details
+    local -a platform
 
-	local -r IFS=$'\n';
-	platform=( "$(lscpu)" )
+    local -r IFS=$'\n';
+    platform=( "$(lscpu)" )
 
-	local line
-	for line in ${platform[*]:-}
-	do
+    local line
+    for line in ${platform[*]:-}; do
 
-		logTrace "<${FUNCNAME[0]}> # ${line}>"
+        logTrace "<${FUNCNAME[0]}> # ${line}>"
 
-		case ${line} in
+        case ${line} in
 
-		"Architecture:"*)
-							if [[ ! -n ${LIB_PLATF_ARCHITECTURE:-} ]]; then
-								LIB_PLATF_ARCHITECTURE=$(lib_func_trim_left "${line/Architecture:}")
-								readonly LIB_PLATF_ARCHITECTURE
-							fi
-		;;
-		"Byte Order:"*)
-							LIB_PLATF_BYTEORDER=$(lib_func_trim_left "${line/Byte Order:}")
-							readonly LIB_PLATF_BYTEORDER
-							#break
-		;;
+        "Architecture:"*)
+                            if [[ ! -n ${LIB_PLATF_ARCHITECTURE:-} ]]; then
+                                LIB_PLATF_ARCHITECTURE=$(lib_func_trim_left "${line/Architecture:}")
+                                readonly LIB_PLATF_ARCHITECTURE
+                            fi
+        ;;
+        "Byte Order:"*)
+                            LIB_PLATF_BYTEORDER=$(lib_func_trim_left "${line/Byte Order:}")
+                            readonly LIB_PLATF_BYTEORDER
+                            #break
+        ;;
 
-		# "Thread(s) per core:"*)
+        # "Thread(s) per core:"*)
 
-		# ;;
+        # ;;
 
-		# "Core(s) per socket:"*)
+        # "Core(s) per socket:"*)
 
-		# ;;
+        # ;;
 
-		# "NUMA node(s):"*)
+        # "NUMA node(s):"*)
 
-		# ;;
+        # ;;
 
-		"Vendor ID:"*)		#GenuineIntel; AuthenticAMD
-							if [[ ! -n ${LIB_PLATF_CPU_VENDOR:-} ]]; then
-		 						LIB_PLATF_CPU_VENDOR=$(lib_func_trim_left "${line/Vendor ID:}")
-		 						readonly LIB_PLATF_CPU_VENDOR
-							fi
-		;;
+        "Vendor ID:"*)		#GenuineIntel; AuthenticAMD
+                            if [[ ! -n ${LIB_PLATF_CPU_VENDOR:-} ]]; then
+                                 LIB_PLATF_CPU_VENDOR=$(lib_func_trim_left "${line/Vendor ID:}")
+                                 readonly LIB_PLATF_CPU_VENDOR
+                            fi
+        ;;
 
-		"Model:"*)			#on Power <Model: IBM,9119-MHE> ; on Intel <Model: 63>
-							if lib_func_is_ibmpower ; then
-								LIB_PLATF_NAME=$(lib_func_trim_left "${line/Model:}")
-								readonly LIB_PLATF_NAME
-								LIB_PLATF_VENDOR='IBM'
-								readonly LIB_PLATF_VENDOR
-							
-							elif lib_func_is_intel || lib_func_is_amd ; then
-								LIB_PLATF_CPU_MODELID=$(lib_func_trim_left "${line/Model:}")
-								readonly LIB_PLATF_CPU_MODELID
+        "Model:"*)			#on Power <Model: IBM,9119-MHE> ; on Intel <Model: 63>
+                            if lib_func_is_ibmpower ; then
+                                LIB_PLATF_NAME=$(lib_func_trim_left "${line/Model:}")
+                                readonly LIB_PLATF_NAME
+                                LIB_PLATF_VENDOR='IBM'
+                                readonly LIB_PLATF_VENDOR
 
-							fi
-		;;
+                            elif lib_func_is_intel || lib_func_is_amd ; then
+                                LIB_PLATF_CPU_MODELID=$(lib_func_trim_left "${line/Model:}")
+                                readonly LIB_PLATF_CPU_MODELID
 
-		"Model name:"*)		#on x64 only	
-							#<Intel(R) Xeon(R) CPU E7-8880 v3 @ 2.30GHz>; AMD Opteron 23xx (Gen 3 Class Opteron)
-							if [[ ! -n ${LIB_PLATF_CPU:-} ]]; then
-		 						LIB_PLATF_CPU=$(lib_func_trim_left "${line/Model name:}")
-		 						readonly LIB_PLATF_CPU
-							fi
-		;;
+                            fi
+        ;;
 
-		# Virtualization information provieded by lscpu version >=2.25 and only if virtualized
-		# x64:		( VMware - full ) ; ( Xen - none ) ; 
-		# Power:	( pHyp - para ) ; ( pHyp - none ) ; ( KVM - para ) ; ( none - none ) = PowerNV = bare-metal
+        "Model name:"*)		#on x64 only
+                            #<Intel(R) Xeon(R) CPU E7-8880 v3 @ 2.30GHz>; AMD Opteron 23xx (Gen 3 Class Opteron)
+                            if [[ ! -n ${LIB_PLATF_CPU:-} ]]; then
+                                 LIB_PLATF_CPU=$(lib_func_trim_left "${line/Model name:}")
+                                 readonly LIB_PLATF_CPU
+                            fi
+        ;;
 
-		"Hypervisor vendor:"*)
-							if [[ ! -n ${LIB_PLATF_VIRT_VENDOR:-} ]]; then
-		 						LIB_PLATF_VIRT_VENDOR=$(lib_func_trim_left "${line/Hypervisor vendor:}")
-		 						readonly LIB_PLATF_VIRT_VENDOR
-							fi
-		;;
+        # Virtualization information provieded by lscpu version >=2.25 and only if virtualized
+        # x64:		( VMware - full ) ; ( Xen - none ) ;
+        # Power:	( pHyp - para ) ; ( pHyp - none ) ; ( KVM - para ) ; ( none - none ) = PowerNV = bare-metal
 
-		"Virtualization type:"*)
-							if [[ ! -n ${LIB_PLATF_VIRT_TYPE:-} ]]; then
-		 						LIB_PLATF_VIRT_TYPE=$(lib_func_trim_left "${line/Virtualization type:}")
-		 						readonly LIB_PLATF_VIRT_TYPE
-							fi
-							break
-		;;
+        "Hypervisor vendor:"*)
+                            if [[ ! -n ${LIB_PLATF_VIRT_VENDOR:-} ]]; then
+                                 LIB_PLATF_VIRT_VENDOR=$(lib_func_trim_left "${line/Hypervisor vendor:}")
+                                 readonly LIB_PLATF_VIRT_VENDOR
+                            fi
+        ;;
 
-		esac
+        "Virtualization type:"*)
+                            if [[ ! -n ${LIB_PLATF_VIRT_TYPE:-} ]]; then
+                                 LIB_PLATF_VIRT_TYPE=$(lib_func_trim_left "${line/Virtualization type:}")
+                                 readonly LIB_PLATF_VIRT_TYPE
+                            fi
+                            break
+        ;;
 
-	done
+        esac
+
+    done
 
 }
 
 __get_platform_mem_details() {
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	local collectedby
+    local collectedby
 
-	#dmesg - kernel boot message
-	if [[ ! -n ${LIB_PLATF_RAM_MiB_PHYS:-} && -x "$(command -v dmesg)" ]]; then
+    #dmesg - kernel boot message
+    if [[ ! -n ${LIB_PLATF_RAM_MiB_PHYS:-} && -x "$(command -v dmesg)" ]]; then
 
-		local boot_mem_line
-		boot_mem_line=$(dmesg | grep "Memory:.*available")
-		LIB_PLATF_RAM_MiB_PHYS=$(awk '/Memory:.*available/ {match($0, /\/([0-9]+?)(K|k)/); printf "%.0f", substr($0,RSTART+1,RLENGTH-2) / 1024 }' <<< "${boot_mem_line}" )
+        local boot_mem_line
+        boot_mem_line=$(dmesg | grep "Memory:.*available")
+        LIB_PLATF_RAM_MiB_PHYS=$(awk '/Memory:.*available/ {match($0, /\/([0-9]+?)(K|k)/); printf "%.0f", substr($0,RSTART+1,RLENGTH-2) / 1024 }' <<< "${boot_mem_line}" )
 
-		#since 3.11 - reports the total number of physical pages in the system; before max_pfn --> need to substract absent memory
-		local -i boot_mem_absent_mb
-		boot_mem_absent_mb=$(awk '/Memory:.*available/ {match($0, /([0-9]+?)k absent/); printf "%.0f", substr($0,RSTART,RLENGTH-2) / 1024}' <<< "${boot_mem_line}" )
-		[[ ${boot_mem_absent_mb} -ne 0 ]] && LIB_PLATF_RAM_MiB_PHYS=$(( LIB_PLATF_RAM_MiB_PHYS - boot_mem_absent_mb )) 
+        #since 3.11 - reports the total number of physical pages in the system; before max_pfn --> need to substract absent memory
+        local -i boot_mem_absent_mb
+        boot_mem_absent_mb=$(awk '/Memory:.*available/ {match($0, /([0-9]+?)k absent/); printf "%.0f", substr($0,RSTART,RLENGTH-2) / 1024}' <<< "${boot_mem_line}" )
+        [[ ${boot_mem_absent_mb} -ne 0 ]] && LIB_PLATF_RAM_MiB_PHYS=$(( LIB_PLATF_RAM_MiB_PHYS - boot_mem_absent_mb ))
 
-		collectedby='dmesg'
+        collectedby='dmesg'
 
-	fi
+    fi
 
-	#MemTotal in /proc/meminfo - usable memory
-	LIB_PLATF_RAM_MiB_AVAILABLE=$(awk '/^MemTotal:/ {match($0, /[0-9]+/); printf "%.0f", substr($0,RSTART,RLENGTH)/1024 }' /proc/meminfo)
-	
-	if [[ ! -n ${LIB_PLATF_RAM_MiB_PHYS:-} || ${LIB_PLATF_RAM_MiB_PHYS} -eq 0 ]]; then
+    #MemTotal in /proc/meminfo - usable memory
+    LIB_PLATF_RAM_MiB_AVAILABLE=$(awk '/^MemTotal:/ {match($0, /[0-9]+/); printf "%.0f", substr($0,RSTART,RLENGTH)/1024 }' /proc/meminfo)
 
-		LIB_PLATF_RAM_MiB_PHYS=${LIB_PLATF_RAM_MiB_AVAILABLE:-}
-		collectedby='meminfo'
+    if [[ ! -n ${LIB_PLATF_RAM_MiB_PHYS:-} || ${LIB_PLATF_RAM_MiB_PHYS} -eq 0 ]]; then
 
-	fi
+        LIB_PLATF_RAM_MiB_PHYS=${LIB_PLATF_RAM_MiB_AVAILABLE:-}
+        collectedby='meminfo'
 
-	readonly LIB_PLATF_RAM_MiB_PHYS
-	readonly LIB_PLATF_RAM_MiB_AVAILABLE
+    fi
 
-	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # LIB_PLATF_RAM_MiB_PHYS (${collectedby:-}): ${LIB_PLATF_RAM_MiB_PHYS:-}; LIB_PLATF_RAM_MiB_AVAILABLE ${LIB_PLATF_RAM_MiB_AVAILABLE:-}"
+    readonly LIB_PLATF_RAM_MiB_PHYS
+    readonly LIB_PLATF_RAM_MiB_AVAILABLE
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # LIB_PLATF_RAM_MiB_PHYS (${collectedby:-}): ${LIB_PLATF_RAM_MiB_PHYS:-}; LIB_PLATF_RAM_MiB_AVAILABLE ${LIB_PLATF_RAM_MiB_AVAILABLE:-}"
 }
 
 #============================================================
@@ -375,46 +369,46 @@ __get_platform_mem_details() {
 #============================================================
 _lib_helper_main() {
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	__get_platform_cpu_details
+    __get_platform_cpu_details
 
-	# ToDo:	Power platform does not provide 'dmidecode'
-	if [[ -x "$(command -v dmidecode)" ]]; then
+    # ToDo:	Power platform does not provide 'dmidecode'
+    if [[ -x "$(command -v dmidecode)" ]]; then
 
-		# Vendor - IBM, Lenovo, ...
-		if [[ ! -n ${LIB_PLATF_VENDOR:-} ]]; then
-			LIB_PLATF_VENDOR=$(dmidecode -s system-manufacturer)
-			readonly LIB_PLATF_VENDOR
-		fi
+        # Vendor - IBM, Lenovo, ...
+        if [[ ! -n ${LIB_PLATF_VENDOR:-} ]]; then
+            LIB_PLATF_VENDOR=$(dmidecode -s system-manufacturer)
+            readonly LIB_PLATF_VENDOR
+        fi
 
-		# Platform - "x3950 X6 -[6241ZB5]-", "ProLiant DL785 G6", "VMware Virtual Platform", "RHEV Hypervisor"
-		if [[ ! -n ${LIB_PLATF_NAME:-} ]]; then
-			LIB_PLATF_NAME=$(dmidecode -s system-product-name)
-			readonly LIB_PLATF_NAME
-		fi
+        # Platform - "x3950 X6 -[6241ZB5]-", "ProLiant DL785 G6", "VMware Virtual Platform", "RHEV Hypervisor"
+        if [[ ! -n ${LIB_PLATF_NAME:-} ]]; then
+            LIB_PLATF_NAME=$(dmidecode -s system-product-name)
+            readonly LIB_PLATF_NAME
+        fi
 
-	fi
+    fi
 
-	if [[ ! -n ${LIB_PLATF_CPU:-} ]]; then
+    if [[ ! -n ${LIB_PLATF_CPU:-} ]]; then
 
-		if lib_func_is_x64 ; then
-			LIB_PLATF_CPU=$(grep  'model name' /proc/cpuinfo | sort -u)
-			LIB_PLATF_CPU=$(lib_func_trim_left "${LIB_PLATF_CPU/model name[[:blank:]]:}")
+        if lib_func_is_x64 ; then
+            LIB_PLATF_CPU=$(grep  'model name' /proc/cpuinfo | sort -u)
+            LIB_PLATF_CPU=$(lib_func_trim_left "${LIB_PLATF_CPU/model name[[:blank:]]:}")
 
-		elif lib_func_is_ibmpower ; then
-			LIB_PLATF_CPU=$(grep  'cpu' /proc/cpuinfo | sort -u)
-			LIB_PLATF_CPU=$(lib_func_trim_left "${LIB_PLATF_CPU/cpu[[:space:]]*:}")
-		fi
+        elif lib_func_is_ibmpower ; then
+            LIB_PLATF_CPU=$(grep  'cpu' /proc/cpuinfo | sort -u)
+            LIB_PLATF_CPU=$(lib_func_trim_left "${LIB_PLATF_CPU/cpu[[:space:]]*:}")
+        fi
 
-		readonly LIB_PLATF_CPU
-	fi
+        readonly LIB_PLATF_CPU
+    fi
 
-	__get_platform_mem_details
+    __get_platform_mem_details
 
-	# ToDo:	verify for AMD processors
-	lib_platf_virtualized=$(grep -q '^flags.*hypervisor' /proc/cpuinfo;echo $?)
-	readonly lib_platf_virtualized
+    # ToDo:	verify for AMD processors
+    lib_platf_virtualized=$(grep -q '^flags.*hypervisor' /proc/cpuinfo;echo $?)
+    readonly lib_platf_virtualized
 
 }
 
