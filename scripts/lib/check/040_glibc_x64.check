@@ -1,104 +1,104 @@
 check_040_glibc_x64() {
 
-	#SLES11.2/3/4	- #2263929
-	#Security advise SCN-2016-257 https://listserv.sap.corp/pipermail/cert.linux.suse/2016/000959.html
+    #SLES11.2/3/4	- #2263929
+    #Security advise SCN-2016-257 https://listserv.sap.corp/pipermail/cert.linux.suse/2016/000959.html
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	local -i _retval=99
+    local -i _retval=99
 
-	# MODIFICATION SECTION>>
-	local -ar _sles114=( '2.11.3-17.95.2' '#2263929' )
-	local -ar _sles122=( '2.22-51.6' '#2205917' )
-	local -ar _rhel72=( '2.17-106.el7_2.9' '#2292690' )
-	local -ar _rhel73=( '2.17-157.el7_3.5' '#2292690' )
-	# MODIFICATION SECTION<<
+    # MODIFICATION SECTION>>
+    local -ar _sles114=( '2.11.3-17.95.2' '#2263929' )
+    local -ar _sles122=( '2.22-51.6' '#2205917' )
+    local -ar _rhel72=( '2.17-106.el7_2.9' '#2292690' )
+    local -ar _rhel73=( '2.17-157.el7_3.5' '#2292690' )
+    # MODIFICATION SECTION<<
 
-	local _goodversion
-	local _sapnote
-	
-	if ! lib_func_is_x64 ; then
+    local _goodversion
+    local _sapnote
 
-		logCheckSkipped 'Not running on x64 CPU. Skipping check' "<${FUNCNAME[0]}>"
-		_retval=3
+    if ! lib_func_is_x64 ; then
 
-	else
+        logCheckSkipped 'Not running on x64 CPU. Skipping check' "<${FUNCNAME[0]}>"
+        _retval=3
 
-		if lib_func_is_sles ; then
-			case "${OS_VERSION}" in
+    else
 
-				11.* | 12.0* | 12.1* )
+        if lib_func_is_sles ; then
+            case "${OS_VERSION}" in
 
-						_goodversion="${_sles114[0]}"
-						_sapnote="${_sles114[1]}"
-					;;
+                11.* | 12.0* | 12.1* )
 
-				12.2*)
-						_goodversion="${_sles122[0]}"
-						_sapnote="${_sles122[1]}"
-					;;
-				*)
-						logCheckWarning "CHECK does not support SLES release (is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
-						_retval=1
-					;;
-			esac
+                        _goodversion="${_sles114[0]}"
+                        _sapnote="${_sles114[1]}"
+                    ;;
 
-		elif lib_func_is_rhel ; then
-			case "${OS_VERSION}" in
+                12.2*)
+                        _goodversion="${_sles122[0]}"
+                        _sapnote="${_sles122[1]}"
+                    ;;
+                *)
+                        logCheckWarning "CHECK does not support SLES release (is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                        _retval=1
+                    ;;
+            esac
 
-				7.2* )
+        elif lib_func_is_rhel ; then
+            case "${OS_VERSION}" in
 
-						_goodversion="${_rhel72[0]}"
-						_sapnote="${_rhel72[1]}"
-					;;
+                7.2* )
 
-				7.3* )
+                        _goodversion="${_rhel72[0]}"
+                        _sapnote="${_rhel72[1]}"
+                    ;;
 
-						_goodversion="${_rhel73[0]}"
-						_sapnote="${_rhel73[1]}"
-					;;
+                7.3* )
 
-				*)
-						logCheckWarning "CHECK does not support RHEL release (is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
-						_retval=1
-					;;
-			esac
+                        _goodversion="${_rhel73[0]}"
+                        _sapnote="${_rhel73[1]}"
+                    ;;
 
-		else
-				logCheckError "Linux distribution NOT supported (SAP Note #2235581) (is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
-				_retval=2
-		fi
+                *)
+                        logCheckWarning "CHECK does not support RHEL release (is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                        _retval=1
+                    ;;
+            esac
 
-	fi
+        else
+                logCheckError "Linux distribution NOT supported (SAP Note #2235581) (is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                _retval=2
+        fi
 
-	if [[ ${_retval} -eq 99 ]]; then
-	
-		local normalized_goodversion
-		local normalized_fullversion
+    fi
 
-		local -r _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" glibc)
+    if [[ ${_retval} -eq 99 ]]; then
 
-		#normalize good version
-		lib_func_normalize_rpm "${_goodversion}"
-		normalized_goodversion="${lib_func_normalize_rpm_return}"
+        local normalized_goodversion
+        local normalized_fullversion
 
-		#normalize full version - e.g. 2.17-157.el7_3.5
-		lib_func_normalize_rpm "${_fullversion}"
-		normalized_fullversion="${lib_func_normalize_rpm_return}"
+        local -r _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" glibc)
 
-		lib_func_compare_versions "${normalized_fullversion}" "${normalized_goodversion}"
+        #normalize good version
+        lib_func_normalize_rpm "${_goodversion}"
+        normalized_goodversion="${lib_func_normalize_rpm_return}"
 
-		if [[ $? -ne 2 ]]; then
-			logCheckOk "GLIBC version seems to be ok (SAP Note ${_sapnote:-}) (is: ${_fullversion})"
-			_retval=0
-		else
-			logCheckError "GLIBC must be updated (SAP Note ${_sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
-			_retval=2
-		fi
+        #normalize full version - e.g. 2.17-157.el7_3.5
+        lib_func_normalize_rpm "${_fullversion}"
+        normalized_fullversion="${lib_func_normalize_rpm_return}"
 
-	fi
+        lib_func_compare_versions "${normalized_fullversion}" "${normalized_goodversion}"
 
-	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
-	return ${_retval}
+        if [[ $? -ne 2 ]]; then
+            logCheckOk "GLIBC version seems to be ok (SAP Note ${_sapnote:-}) (is: ${_fullversion})"
+            _retval=0
+        else
+            logCheckError "GLIBC must be updated (SAP Note ${_sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
+            _retval=2
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
 
 }

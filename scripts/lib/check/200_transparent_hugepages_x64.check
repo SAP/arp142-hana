@@ -1,38 +1,38 @@
 check_200_transparent_hugepages_x64() {
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	local -i _retval=99
+    local -i _retval=99
 
-	# MODIFICATION SECTION>>
-	local -r _sapnote='#2131662'		# Transparent Huge Pages (THP) on SAP HANA Servers
-	# MODIFICATION SECTION<<
+    # MODIFICATION SECTION>>
+    local -r _sapnote='#2131662'		# Transparent Huge Pages (THP) on SAP HANA Servers
+    # MODIFICATION SECTION<<
 
-	if ! lib_func_is_x64 ; then
+    if ! lib_func_is_x64 ; then
 
-		logCheckSkipped 'Not running on x64 CPU. Skipping check' "<${FUNCNAME[0]}>"
-		_retval=3
+        logCheckSkipped 'Not running on x64 CPU. Skipping check' "<${FUNCNAME[0]}>"
+        _retval=3
 
-	else
+    else
 
-		if [[ ! -e  '/sys/kernel/mm/transparent_hugepage/enabled' ]]; then
-			#e.g. PowerLinux, XEN
-			logCheckSkipped "Transparent Hugepages not configurable (SAP Note ${_sapnote:-}). Skipping check" "<${FUNCNAME[0]}>"
-			_retval=3
-		else
+        if [[ ! -e  '/sys/kernel/mm/transparent_hugepage/enabled' ]]; then
+            #e.g. PowerLinux, XEN
+            logCheckSkipped "Transparent Hugepages not configurable (SAP Note ${_sapnote:-}). Skipping check" "<${FUNCNAME[0]}>"
+            _retval=3
+        else
 
-			if grep -q "\[never\]" /sys/kernel/mm/transparent_hugepage/enabled ; then
-				logCheckOk "Transparent Hugepages are disabled (SAP Note ${_sapnote:-})"
-				_retval=0
-			else
-				logCheckError "Transparent Hugepages are not disabled (SAP Note ${_sapnote:-})"
-				_retval=2
-			fi
-		fi
+            if grep -q "\[never\]" /sys/kernel/mm/transparent_hugepage/enabled ; then
+                logCheckOk "Transparent Hugepages are disabled (SAP Note ${_sapnote:-})"
+                _retval=0
+            else
+                logCheckError "Transparent Hugepages are not disabled (SAP Note ${_sapnote:-})"
+                _retval=2
+            fi
+        fi
 
-	fi
+    fi
 
-	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
-	return ${_retval}
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
 
 }

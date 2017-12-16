@@ -1,32 +1,32 @@
 check_050_selinux_rhel() {
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	local -i _retval=99
+    local -i _retval=99
 
-	# MODIFICATION SECTION>>
+    # MODIFICATION SECTION>>
     local -r sapnote65='#2013638'	# SAP HANA DB: Recommended OS settings for RHEL 6.5
     local -r sapnote66='#2136965'	# SAP HANA DB: Recommended OS settings for RHEL 6.6
     local -r sapnote67='#2247020'	# SAP HANA DB: Recommended OS settings for RHEL 6.7
-	local -r sapnote7='#2292690'	# SAP HANA DB: Recommended OS settings for RHEL 7
-	# MODIFICATION SECTION<<
+    local -r sapnote7='#2292690'	# SAP HANA DB: Recommended OS settings for RHEL 7
+    # MODIFICATION SECTION<<
 
-	if  ! lib_func_is_rhel ;	then
+    if  ! lib_func_is_rhel ;	then
 
-		logCheckSkipped 'Linux distribution is not RHEL. Skipping check' "<${FUNCNAME[0]}>"
-		_retval=3
+        logCheckSkipped 'Linux distribution is not RHEL. Skipping check' "<${FUNCNAME[0]}>"
+        _retval=3
 
-	else
-		local sapnote
+    else
+        local sapnote
 
-		case "${OS_VERSION}" in
+        case "${OS_VERSION}" in
 
-			6.5)	sapnote="${sapnote65}"	;;
-			6.6)	sapnote="${sapnote66}"	;;
-			6.7)	sapnote="${sapnote67}"	;;
-			7.*)	sapnote="${sapnote7}"	;;
+            6.5)	sapnote="${sapnote65}"	;;
+            6.6)	sapnote="${sapnote66}"	;;
+            6.7)	sapnote="${sapnote67}"	;;
+            7.*)	sapnote="${sapnote7}"	;;
 
-		esac
+        esac
 
         if ! /usr/sbin/getenforce | grep -q 'Disabled' ; then
             logCheckError "SELinux is not disabled (SAP Note ${sapnote:-})"
@@ -36,9 +36,9 @@ check_050_selinux_rhel() {
             _retval=0
         fi
 
-	fi
+    fi
 
-	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
-	return ${_retval}
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
 
 }

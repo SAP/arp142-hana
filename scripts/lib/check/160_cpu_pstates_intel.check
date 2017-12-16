@@ -1,101 +1,101 @@
 check_160_cpu_pstates_intel() {
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	local -i _retval=99
+    local -i _retval=99
 
-	# MODIFICATION SECTION>>
-	local -r sapnote='n/a'
-	# MODIFICATION SECTION<<
+    # MODIFICATION SECTION>>
+    local -r sapnote='n/a'
+    # MODIFICATION SECTION<<
 
 
-	if ! lib_func_is_intel ; then
+    if ! lib_func_is_intel ; then
 
-		logCheckSkipped 'Not running on Intel CPU. Skipping check' "<${FUNCNAME[0]}>"
-		_retval=3
+        logCheckSkipped 'Not running on Intel CPU. Skipping check' "<${FUNCNAME[0]}>"
+        _retval=3
 
-	elif ! lib_func_is_bare_metal ; then
+    elif ! lib_func_is_bare_metal ; then
 
-		logCheckSkipped 'Running virtualized. Skipping check' "<${FUNCNAME[0]}>"
-		_retval=3
+        logCheckSkipped 'Running virtualized. Skipping check' "<${FUNCNAME[0]}>"
+        _retval=3
 
-	else
+    else
 
-		case "${OS_VERSION}" in
+        case "${OS_VERSION}" in
 
-			12.* | 7.* )		#intel_pstate only for IvyBridge onwards
-								#INTEL_FAM6_IVYBRIDGE		0x3A	--> DEC 58
-								if [[ ${LIB_PLATF_CPU_MODELID} -ge 58 ]]; then
-									_retval=99
-								else
-									logCheckSkipped 'Not running on intel_pstate supported Intel CPU (>=IvyBridge). Skipping check' "<${FUNCNAME[0]}>"
-									_retval=3
-								fi
-			;;
+            12.* | 7.* )		#intel_pstate only for IvyBridge onwards
+                                #INTEL_FAM6_IVYBRIDGE		0x3A	--> DEC 58
+                                if [[ ${LIB_PLATF_CPU_MODELID} -ge 58 ]]; then
+                                    _retval=99
+                                else
+                                    logCheckSkipped 'Not running on intel_pstate supported Intel CPU (>=IvyBridge). Skipping check' "<${FUNCNAME[0]}>"
+                                    _retval=3
+                                fi
+            ;;
 
-			*)
-						logCheckSkipped "CHECK not applicable for Linux release (is: ${OS_NAME} ${OS_VERSION}). Skipping check" "<${FUNCNAME[0]}>"
-						_retval=3
-			;;
+            *)
+                        logCheckSkipped "CHECK not applicable for Linux release (is: ${OS_NAME} ${OS_VERSION}). Skipping check" "<${FUNCNAME[0]}>"
+                        _retval=3
+            ;;
 
-		esac
-		
-	fi
+        esac
 
-	#Check is applicable
-	if [[ ${_retval} -eq 99 ]]; then
+    fi
 
-		#unique value within array
-		mapfile -t cpufreq_drivers < <((cat /sys/devices/system/cpu/cpu*/*/scaling_driver | sort -u) 2>/dev/null)
+    #Check is applicable
+    if [[ ${_retval} -eq 99 ]]; then
 
-		case ${#cpufreq_drivers[@]} in				#array length
+        #unique value within array
+        mapfile -t cpufreq_drivers < <((cat /sys/devices/system/cpu/cpu*/*/scaling_driver | sort -u) 2>/dev/null)
 
-			0)		
-						logCheckWarning "CPU scaling driver not set.(SAP Note  ${sapnote:-}) (is: -, should be: intel_pstate)"
-						_retval=1
-				;;
+        case ${#cpufreq_drivers[@]} in				#array length
 
-			1)		
-						local -r current_driver="${cpufreq_drivers[0]}"
+            0)
+                        logCheckWarning "CPU scaling driver not set.(SAP Note  ${sapnote:-}) (is: -, should be: intel_pstate)"
+                        _retval=1
+                ;;
 
-						if [[ "${current_driver}" != 'intel_pstate' ]];then
+            1)
+                        local -r current_driver="${cpufreq_drivers[0]}"
 
-							logCheckWarning "CPU scaling driver NOT set as recommended (SAP Note ${sapnote:-}) (is: ${current_driver}, should be: intel_pstate)"
-							_retval=1
+                        if [[ "${current_driver}" != 'intel_pstate' ]];then
 
-						else
+                            logCheckWarning "CPU scaling driver NOT set as recommended (SAP Note ${sapnote:-}) (is: ${current_driver}, should be: intel_pstate)"
+                            _retval=1
 
-							logCheckOk "CPU scaling driver set as recommended (SAP Note ${sapnote:-}) (is: intel_pstate)"
+                        else
 
-						fi
+                            logCheckOk "CPU scaling driver set as recommended (SAP Note ${sapnote:-}) (is: intel_pstate)"
 
-				;;
+                        fi
 
-			*)		logCheckError "CPU scaling driver NOT set as recommended (SAP Note ${sapnote:-}) (is: multiple, should be: intel_pstate)"
-					_retval=2
-				;;
-		esac
-	
-	fi
+                ;;
 
-	# valid cpufreq scaling driver used - check individual settings
-	if [[ ${_retval} -eq 99 ]]; then
+            *)		logCheckError "CPU scaling driver NOT set as recommended (SAP Note ${sapnote:-}) (is: multiple, should be: intel_pstate)"
+                    _retval=2
+                ;;
+        esac
 
-		local -ri intel_noturbo=$(</sys/devices/system/cpu/*intel_pstate/no_turbo)
+    fi
 
-		if [[ ${intel_noturbo} -ne 0 ]]; then
+    # valid cpufreq scaling driver used - check individual settings
+    if [[ ${_retval} -eq 99 ]]; then
 
-			logCheckWarning "CPU scaling driver <intel_pstate> no_turbo setting set (SAP Note ${sapnote:-}) (is: ${intel_noturbo}, should be: 0)"
-			_retval=1
+        local -ri intel_noturbo=$(</sys/devices/system/cpu/*intel_pstate/no_turbo)
 
-		else
-			logCheckOk "CPU scaling driver <intel_pstate> no_turbo setting as recommended (SAP Note ${sapnote:-}) (is: ${intel_noturbo})"
-			_retval=0
-		fi
+        if [[ ${intel_noturbo} -ne 0 ]]; then
 
-	fi
+            logCheckWarning "CPU scaling driver <intel_pstate> no_turbo setting set (SAP Note ${sapnote:-}) (is: ${intel_noturbo}, should be: 0)"
+            _retval=1
 
-	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
-	return ${_retval}
+        else
+            logCheckOk "CPU scaling driver <intel_pstate> no_turbo setting as recommended (SAP Note ${sapnote:-}) (is: ${intel_noturbo})"
+            _retval=0
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
 
 }

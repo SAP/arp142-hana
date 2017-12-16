@@ -1,96 +1,96 @@
 check_003_os_sles_ibmpower() {
 # only certain SLES version are supported
-# in case 11.4 kernel - bigmem kernel should be used, must be used >4 TiB systems 
+# in case 11.4 kernel - bigmem kernel should be used, must be used >4 TiB systems
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	local -i _retval=99
+    local -i _retval=99
 
-	# MODIFICATION SECTION>>
-	local -r sapnote114='#2240716'	#SAP HANA DB: Recommended OS settings for SLES 11 / SLES for SAP Applications 11 SP4
-	local -r sapnote12x='#2235581'	#SAP HANA: Supported Operating Systems
-	# MODIFICATION SECTION<<
+    # MODIFICATION SECTION>>
+    local -r sapnote114='#2240716'	#SAP HANA DB: Recommended OS settings for SLES 11 / SLES for SAP Applications 11 SP4
+    local -r sapnote12x='#2235581'	#SAP HANA: Supported Operating Systems
+    # MODIFICATION SECTION<<
 
-	if  ! lib_func_is_ibmpower ;	then
+    if  ! lib_func_is_ibmpower ;	then
 
-		logCheckSkipped 'Not running on IBM Power. Skipping check' "<${FUNCNAME[0]}>"
-		_retval=3
+        logCheckSkipped 'Not running on IBM Power. Skipping check' "<${FUNCNAME[0]}>"
+        _retval=3
 
-	elif  ! lib_func_is_sles ;	then
+    elif  ! lib_func_is_sles ;	then
 
-		logCheckSkipped 'Linux distribution is not SLES. Skipping check' "<${FUNCNAME[0]}>"
-		_retval=3
+        logCheckSkipped 'Linux distribution is not SLES. Skipping check' "<${FUNCNAME[0]}>"
+        _retval=3
 
-	else
+    else
 
-		if [[ "${LIB_PLATF_ARCHITECTURE}" == 'ppc64' ]]; then	#BigEndian
+        if [[ "${LIB_PLATF_ARCHITECTURE}" == 'ppc64' ]]; then	#BigEndian
 
-			case "${OS_VERSION}" in
+            case "${OS_VERSION}" in
 
-				11.3)
-						logCheckError "SLESonPower release is not supported - upgrade to SLES4SAP 11.4 (SAP Note #2235581) (is: ${OS_VERSION})"
-						_retval=2
-				;;
+                11.3)
+                        logCheckError "SLESonPower release is not supported - upgrade to SLES4SAP 11.4 (SAP Note #2235581) (is: ${OS_VERSION})"
+                        _retval=2
+                ;;
 
-				11.4)	
+                11.4)
 
-						if [[ "${OS_LEVEL}" != *"bigmem"* ]]; then
+                        if [[ "${OS_LEVEL}" != *"bigmem"* ]]; then
 
-							logCheckInfo "SLESonPower release is supported. (SAP Note ${sapnote114:-}) (is: ${OS_VERSION})"
+                            logCheckInfo "SLESonPower release is supported. (SAP Note ${sapnote114:-}) (is: ${OS_VERSION})"
 
-							#4 TiB must use the kernel-bigmem
-							if [[ ${LIB_PLATF_RAM_MiB_PHYS} -le 4194304 ]]; then
+                            #4 TiB must use the kernel-bigmem
+                            if [[ ${LIB_PLATF_RAM_MiB_PHYS} -le 4194304 ]]; then
 
-								logCheckWarning "BIGMEM kernel should be used. (SAP Note ${sapnote114:-}) (is: ${OS_LEVEL}, should be: *-bigmem)"
-								_retval=1
+                                logCheckWarning "BIGMEM kernel should be used. (SAP Note ${sapnote114:-}) (is: ${OS_LEVEL}, should be: *-bigmem)"
+                                _retval=1
 
-							else
+                            else
 
-								logCheckError "BIGMEM kernel must be used. (SAP Note ${sapnote114:-}) (is: ${OS_LEVEL}, must be: *-bigmem)"
-								_retval=2
+                                logCheckError "BIGMEM kernel must be used. (SAP Note ${sapnote114:-}) (is: ${OS_LEVEL}, must be: *-bigmem)"
+                                _retval=2
 
-							fi
+                            fi
 
-						else
+                        else
 
-							logCheckOk "SLESonPower release supported and BIGMEM kernel used (SAP Note ${sapnote114:-}) (is: ${OS_VERSION} - ${OS_LEVEL})"
-							_retval=0
+                            logCheckOk "SLESonPower release supported and BIGMEM kernel used (SAP Note ${sapnote114:-}) (is: ${OS_VERSION} - ${OS_LEVEL})"
+                            _retval=0
 
-						fi
-				;;
+                        fi
+                ;;
 
-				*)
-						logCheckError "SLESonPower release with BigEndian architecture is NOT supported (SAP Note #2235581) (is: ${OS_VERSION})"
-						_retval=2
-				;;
-			
-			esac
+                *)
+                        logCheckError "SLESonPower release with BigEndian architecture is NOT supported (SAP Note #2235581) (is: ${OS_VERSION})"
+                        _retval=2
+                ;;
 
-		elif [[ "${LIB_PLATF_ARCHITECTURE}" == 'ppc64le' ]]; then
+            esac
 
-			case "${OS_VERSION}" in
+        elif [[ "${LIB_PLATF_ARCHITECTURE}" == 'ppc64le' ]]; then
 
-				12.[1-2]*)	
-						logCheckOk "SLESonPower release is supported (SAP Note ${sapnote12x:-}) (is: ${OS_VERSION})"
-						_retval=0
-					;;
+            case "${OS_VERSION}" in
 
-				*)
-						logCheckError "SLESonPower release with LittleEndian architecture is NOT supported (SAP Note #2235581) (is: ${OS_VERSION})"
-						_retval=2
-					;;
+                12.[1-2]*)
+                        logCheckOk "SLESonPower release is supported (SAP Note ${sapnote12x:-}) (is: ${OS_VERSION})"
+                        _retval=0
+                    ;;
 
-			esac
+                *)
+                        logCheckError "SLESonPower release with LittleEndian architecture is NOT supported (SAP Note #2235581) (is: ${OS_VERSION})"
+                        _retval=2
+                    ;;
 
-		else
+            esac
 
-			logCheckError "Platform architecture <${LIB_PLATF_ARCHITECTURE}> NOT supported. Skipping check <${FUNCNAME[0]}>"
-			_retval=2
-		fi
+        else
 
-	fi
+            logCheckError "Platform architecture <${LIB_PLATF_ARCHITECTURE}> NOT supported. Skipping check <${FUNCNAME[0]}>"
+            _retval=2
+        fi
 
-	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
-	return ${_retval}
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
 
 }

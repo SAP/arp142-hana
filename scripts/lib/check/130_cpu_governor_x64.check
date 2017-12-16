@@ -1,55 +1,55 @@
 check_130_cpu_governor_x64() {
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	local -i _retval=99
+    local -i _retval=99
 
-	# MODIFICATION SECTION>>
-	local -r _sapnote='#1944799'		 #SAP HANA Guidelines for SLES Operating System Installation
-	# MODIFICATION SECTION<<
+    # MODIFICATION SECTION>>
+    local -r _sapnote='#1944799'		 #SAP HANA Guidelines for SLES Operating System Installation
+    # MODIFICATION SECTION<<
 
-	if ! lib_func_is_bare_metal ; then
+    if ! lib_func_is_bare_metal ; then
 
-		logCheckSkipped 'Running virtualized. Skipping check' "<${FUNCNAME[0]}>"
-		_retval=3
+        logCheckSkipped 'Running virtualized. Skipping check' "<${FUNCNAME[0]}>"
+        _retval=3
 
-	elif ! lib_func_is_x64 ; then
+    elif ! lib_func_is_x64 ; then
 
-		logCheckSkipped 'Not running on x64 CPU. Skipping check' "<${FUNCNAME[0]}>"
-		_retval=3
+        logCheckSkipped 'Not running on x64 CPU. Skipping check' "<${FUNCNAME[0]}>"
+        _retval=3
 
-	else
+    else
 
-		#unique value within array
-		local -r IFS=$'\n'
-		local -ar govs=($( (cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor | sort -u) 2>/dev/null) )
+        #unique value within array
+        local -r IFS=$'\n'
+        local -ar govs=($( (cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor | sort -u) 2>/dev/null) )
 
-		case ${#govs[@]} in								#array length
+        case ${#govs[@]} in								#array length
 
-			0)		
-						logCheckWarning "CPU governors are not set.(SAP Note  ${_sapnote:-})"
-						_retval=1
-				;;
+            0)
+                        logCheckWarning "CPU governors are not set.(SAP Note  ${_sapnote:-})"
+                        _retval=1
+                ;;
 
-			1)		
-						if [[ "${govs[0]}" != 'performance' ]];then
-							logCheckWarning "CPU governors NOT set as recommended (SAP Note ${_sapnote:-}) (is: ${govs[0]}, should be: performance)"
-							_retval=1
-						else
-							logCheckOk "CPU governors set as recommended (SAP Note ${_sapnote:-}) (is: performance)"
-							_retval=0
-						fi
+            1)
+                        if [[ "${govs[0]}" != 'performance' ]];then
+                            logCheckWarning "CPU governors NOT set as recommended (SAP Note ${_sapnote:-}) (is: ${govs[0]}, should be: performance)"
+                            _retval=1
+                        else
+                            logCheckOk "CPU governors set as recommended (SAP Note ${_sapnote:-}) (is: performance)"
+                            _retval=0
+                        fi
 
-				;;
+                ;;
 
-			*)		logCheckWarning "CPU governors NOT set as recommended (SAP Note ${_sapnote:-}) (is: multiple, should be: performance)"
-					_retval=1
-				;;
-		esac
+            *)		logCheckWarning "CPU governors NOT set as recommended (SAP Note ${_sapnote:-}) (is: multiple, should be: performance)"
+                    _retval=1
+                ;;
+        esac
 
-	fi
+    fi
 
-	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
-	return ${_retval}
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
 
 }

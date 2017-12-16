@@ -1,47 +1,47 @@
 check_062_systemd_pam_config_sles() {
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	local -i _retval=99
+    local -i _retval=99
 
-	# MODIFICATION SECTION>>
-	local -r reco_regex='session[[:blank:]]+optional[[:blank:]]+pam_systemd.so'
-	local -r sapnote	
-	# MODIFICATION SECTION<<
+    # MODIFICATION SECTION>>
+    local -r reco_regex='session[[:blank:]]+optional[[:blank:]]+pam_systemd.so'
+    local -r sapnote
+    # MODIFICATION SECTION<<
 
-	
-	if ! lib_func_is_sles ; then
 
-		logCheckSkipped 'Linux distribution is not SLES. Skipping check' "<${FUNCNAME[0]}>"
-		_retval=3
+    if ! lib_func_is_sles ; then
 
-	elif ! rpm -q systemd >/dev/null ; then
+        logCheckSkipped 'Linux distribution is not SLES. Skipping check' "<${FUNCNAME[0]}>"
+        _retval=3
 
-		logCheckSkipped 'systemd RPM is not installed. Skipping check' "<${FUNCNAME[0]}>"
-		_retval=3
+    elif ! rpm -q systemd >/dev/null ; then
 
-	elif [[ ! -e  '/etc/pam.d/common-session' ]] ; then
+        logCheckSkipped 'systemd RPM is not installed. Skipping check' "<${FUNCNAME[0]}>"
+        _retval=3
 
-		logCheckSkipped 'PAM common-session does not exist. Skipping check' "<${FUNCNAME[0]}>"
-		_retval=3
+    elif [[ ! -e  '/etc/pam.d/common-session' ]] ; then
 
-	else
-	
-		if grep -q -E "${reco_regex}" /etc/pam.d/common-session ; then
+        logCheckSkipped 'PAM common-session does not exist. Skipping check' "<${FUNCNAME[0]}>"
+        _retval=3
 
-			logCheckOk "PAM common-session has expected <pam_systemd.so> entry (SAP Note ${sapnote:-})"
-			_retval=0
+    else
 
-		else
+        if grep -q -E "${reco_regex}" /etc/pam.d/common-session ; then
 
-			logCheckError "PAM common-session does NOT have expected <pam_systemd.so> entry (SAP Note ${sapnote:-})"
-			_retval=2
+            logCheckOk "PAM common-session has expected <pam_systemd.so> entry (SAP Note ${sapnote:-})"
+            _retval=0
 
-		fi
+        else
 
-	fi
+            logCheckError "PAM common-session does NOT have expected <pam_systemd.so> entry (SAP Note ${sapnote:-})"
+            _retval=2
 
-	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
-	return ${_retval}
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
 
 }

@@ -1,86 +1,86 @@
 check_006_os_release_kernel_rhel() {
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	local -i _retval=99
+    local -i _retval=99
 
-	# Linux kernel should match release
-	# https://access.redhat.com/articles/3078
+    # Linux kernel should match release
+    # https://access.redhat.com/articles/3078
 
-	# MODIFICATION SECTION>>
-	# array	'expected kernelversion' - must not have *.el suffix
-	local -ar _kernel65=( '2.6.32-431' )
-	local -ar _kernel66=( '2.6.32-504' )
-	local -ar _kernel67=( '2.6.32-573' )
-	local -ar _kernel72=( '3.10.0-327' )
-	local -ar _kernel73=( '3.10.0-514' )
-	#local -ar _kernel74=( '3.10.0-693' )
+    # MODIFICATION SECTION>>
+    # array	'expected kernelversion' - must not have *.el suffix
+    local -ar _kernel65=( '2.6.32-431' )
+    local -ar _kernel66=( '2.6.32-504' )
+    local -ar _kernel67=( '2.6.32-573' )
+    local -ar _kernel72=( '3.10.0-327' )
+    local -ar _kernel73=( '3.10.0-514' )
+    #local -ar _kernel74=( '3.10.0-693' )
 
-	local -r sapnote='#2235581'	#SAP HANA: Supported Operating Systems
-	# MODIFICATION SECTION<<
+    local -r sapnote='#2235581'	#SAP HANA: Supported Operating Systems
+    # MODIFICATION SECTION<<
 
-	if  ! lib_func_is_rhel ;	then
+    if  ! lib_func_is_rhel ;	then
 
-		logCheckSkipped 'Linux distribution is not RHEL. Skipping check' "<${FUNCNAME[0]}>"
-		_retval=3
+        logCheckSkipped 'Linux distribution is not RHEL. Skipping check' "<${FUNCNAME[0]}>"
+        _retval=3
 
-	else
+    else
 
-		local expected_kernel
-		local sapnote
+        local expected_kernel
+        local sapnote
 
-		case "${OS_VERSION}" in
+        case "${OS_VERSION}" in
 
-			6.[0-4] )
-					logCheckError 'Upgrade to RHEL for SAP Applications 6.5+ (SAP Note #2235581)'
-					_retval=2
-				;;
+            6.[0-4] )
+                    logCheckError 'Upgrade to RHEL for SAP Applications 6.5+ (SAP Note #2235581)'
+                    _retval=2
+                ;;
 
-			6.5)	expected_kernel="${_kernel65[0]}" ;;
+            6.5)	expected_kernel="${_kernel65[0]}" ;;
 
-			6.6)	expected_kernel="${_kernel66[0]}" ;;
+            6.6)	expected_kernel="${_kernel66[0]}" ;;
 
-			6.7)	expected_kernel="${_kernel67[0]}" ;;
+            6.7)	expected_kernel="${_kernel67[0]}" ;;
 
-			7.2)	expected_kernel="${_kernel72[0]}" ;;
+            7.2)	expected_kernel="${_kernel72[0]}" ;;
 
-			7.3)	expected_kernel="${_kernel73[0]}" ;;
+            7.3)	expected_kernel="${_kernel73[0]}" ;;
 
-			#7.4)	expected_kernel="${_kernel74[0]}" ;;
+            #7.4)	expected_kernel="${_kernel74[0]}" ;;
 
-			*)
-					logCheckWarning 'CHECK does not support RHEL release.' "${FUNCNAME[0]} - ${OS_VERSION}"
-					_retval=1
-				;;
-		esac
+            *)
+                    logCheckWarning 'CHECK does not support RHEL release.' "${FUNCNAME[0]} - ${OS_VERSION}"
+                    _retval=1
+                ;;
+        esac
 
-		if [[ ${_retval} -eq 99 ]]; then
+        if [[ ${_retval} -eq 99 ]]; then
 
-			local normalized_kernelversion
+            local normalized_kernelversion
 
-			lib_func_normalize_kernel "${OS_LEVEL}"
-			normalized_kernelversion="${lib_func_normalize_kernel_return}"
-			#2.6.32-504.16.2.el6.x86_64	-->	2.6.32-504.16.2
+            lib_func_normalize_kernel "${OS_LEVEL}"
+            normalized_kernelversion="${lib_func_normalize_kernel_return}"
+            #2.6.32-504.16.2.el6.x86_64	-->	2.6.32-504.16.2
 
-			normalized_kernelversion=${normalized_kernelversion:0:${#expected_kernel}}	#substring - lenght as expected kernel version
+            normalized_kernelversion=${normalized_kernelversion:0:${#expected_kernel}}	#substring - lenght as expected kernel version
 
-			if ! lib_func_compare_versions "${normalized_kernelversion}" "${expected_kernel}" ; then
+            if ! lib_func_compare_versions "${normalized_kernelversion}" "${expected_kernel}" ; then
 
-				logCheckError "Linux kernel does NOT match RHEL release and must be changed. (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${OS_LEVEL}, must be: ${expected_kernel}.*)"
-				_retval=2
+                logCheckError "Linux kernel does NOT match RHEL release and must be changed. (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${OS_LEVEL}, must be: ${expected_kernel}.*)"
+                _retval=2
 
-			else
+            else
 
-				logCheckOk "Linux kernel matches RHEL release. (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${expected_kernel})"
-				_retval=0
+                logCheckOk "Linux kernel matches RHEL release. (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${expected_kernel})"
+                _retval=0
 
-			fi
+            fi
 
-		fi
+        fi
 
-	fi
+    fi
 
-	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
-	return ${_retval}
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
 
 }

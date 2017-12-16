@@ -1,66 +1,66 @@
 check_022_cgroup_pids_max_sles() {
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	local -i _retval=99
+    local -i _retval=99
 
-	#UserTasksMax=infinity
-	#unlimits cgroup setting pids.max for users - /sys/fs/cgroup/pids/user.slice/user-*.slice/pids.max
+    #UserTasksMax=infinity
+    #unlimits cgroup setting pids.max for users - /sys/fs/cgroup/pids/user.slice/user-*.slice/pids.max
 
-	# MODIFICATION SECTION>>
-	local -r _reco_value='max'
-	local -r _sapnote='#2205917'			#SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12	- SLES12.2 only 
-	# MODIFICATION SECTION<<
+    # MODIFICATION SECTION>>
+    local -r _reco_value='max'
+    local -r _sapnote='#2205917'			#SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12	- SLES12.2 only
+    # MODIFICATION SECTION<<
 
-	if ! lib_func_is_sles ; then
+    if ! lib_func_is_sles ; then
 
-		logCheckSkipped 'Linux distribution is not SLES. Skipping check' "<${FUNCNAME[0]}>"
-		_retval=3
+        logCheckSkipped 'Linux distribution is not SLES. Skipping check' "<${FUNCNAME[0]}>"
+        _retval=3
 
-	elif [[ ! -e  '/sys/fs/cgroup/pids/user.slice' ]]; then
+    elif [[ ! -e  '/sys/fs/cgroup/pids/user.slice' ]]; then
 
-		logCheckSkipped 'Cgroups not configured. Skipping check' "<${FUNCNAME[0]}>"
-		_retval=3
+        logCheckSkipped 'Cgroups not configured. Skipping check' "<${FUNCNAME[0]}>"
+        _retval=3
 
-	else
+    else
 
-		#unique value within array
+        #unique value within array
 
-		#ToDo: restrict to HANA <sid>adm 
-		#grep -E '^\w{3}adm' /etc/passwd | cut -d: -f1 
-		
-		#bash4
-		mapfile -t pids_max < <(sort -u /sys/fs/cgroup/pids/user.slice/user-*.slice/pids.max 2>/dev/null)
+        #ToDo: restrict to HANA <sid>adm
+        #grep -E '^\w{3}adm' /etc/passwd | cut -d: -f1
 
-		#bash3 alternative
-		#local -r IFS=$'\n'
-		#local -ar pids_max=( $( sort -u /sys/fs/cgroup/pids/user.slice/user-*.slice/pids.max 2>/dev/null ) )
-		
+        #bash4
+        mapfile -t pids_max < <(sort -u /sys/fs/cgroup/pids/user.slice/user-*.slice/pids.max 2>/dev/null)
 
-		if [[ ${#pids_max[@]} -eq 0 ]]; then 	#array length
+        #bash3 alternative
+        #local -r IFS=$'\n'
+        #local -ar pids_max=( $( sort -u /sys/fs/cgroup/pids/user.slice/user-*.slice/pids.max 2>/dev/null ) )
 
-				logCheckWarning "UserTasksMax setting could not be determined (SAP Note ${_sapnote:-})"
-				_retval=1
 
-		else
+        if [[ ${#pids_max[@]} -eq 0 ]]; then 	#array length
 
-			if [[ "${pids_max[0]}" != "${_reco_value}" ]];then
+                logCheckWarning "UserTasksMax setting could not be determined (SAP Note ${_sapnote:-})"
+                _retval=1
 
-				logCheckError "UserTasksMax is NOT set to infinity (SAP Note ${_sapnote:-}) (is: ${pids_max[0]})"
-				_retval=2
+        else
 
-			else
+            if [[ "${pids_max[0]}" != "${_reco_value}" ]];then
 
-				logCheckOk "UserTasksMax set to infinity for all users (SAP Note ${_sapnote:-})"
-				_retval=0
+                logCheckError "UserTasksMax is NOT set to infinity (SAP Note ${_sapnote:-}) (is: ${pids_max[0]})"
+                _retval=2
 
-			fi
+            else
 
-		fi
+                logCheckOk "UserTasksMax set to infinity for all users (SAP Note ${_sapnote:-})"
+                _retval=0
 
-	fi
+            fi
 
-	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
-	return ${_retval}
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
 
 }

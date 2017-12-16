@@ -3,74 +3,74 @@ check_311_ip_port_range() {
 # Starting with kernel version 4.2 the upper value of net.ipv4.ip_local_port_range should be an uneven number,
 # an example setting could be: net.ipv4.ip_local_port_range = “1024 64999”
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	local -i _retval=99
+    local -i _retval=99
 
-	# MODIFICATION SECTION>>
-	local -r _sapnote='#2382421'	# Optimizing the Network Configuration on HANA- and OS-Level for SPS10 and Higher
+    # MODIFICATION SECTION>>
+    local -r _sapnote='#2382421'	# Optimizing the Network Configuration on HANA- and OS-Level for SPS10 and Higher
 
-	local kernel_applicable='4.2'
-	lib_func_is_rhel && kernel_applicable='3.10.0-514'
-	# MODIFICATION SECTION<<
+    local kernel_applicable='4.2'
+    lib_func_is_rhel && kernel_applicable='3.10.0-514'
+    # MODIFICATION SECTION<<
 
-	local kernelversion
+    local kernelversion
 
-	lib_func_normalize_kernel "${OS_LEVEL}"
-	kernelversion="${lib_func_normalize_kernel_return}"
+    lib_func_normalize_kernel "${OS_LEVEL}"
+    kernelversion="${lib_func_normalize_kernel_return}"
 
-	lib_func_compare_versions "${kernelversion}" "${kernel_applicable}"
-	if [[ $? -eq 2 ]]; then
-		logCheckSkipped "CHECK not applicable for Linux kernel (is: ${OS_LEVEL}). Skipping check" "<${FUNCNAME[0]}>"
-		_retval=3
-	fi
+    lib_func_compare_versions "${kernelversion}" "${kernel_applicable}"
+    if [[ $? -eq 2 ]]; then
+        logCheckSkipped "CHECK not applicable for Linux kernel (is: ${OS_LEVEL}). Skipping check" "<${FUNCNAME[0]}>"
+        _retval=3
+    fi
 
-	if [[ ${_retval} -eq 99 ]]; then
+    if [[ ${_retval} -eq 99 ]]; then
 
-		local -r port_range=$(sysctl -n net.ipv4.ip_local_port_range)		# 1024 64999
+        local -r port_range=$(sysctl -n net.ipv4.ip_local_port_range)		# 1024 64999
 
-		local -r port_range_lower="${port_range%%[[:space:]]*}"				# BLANKS and TABS --> 1024
-		local -ri port_range_lower_last_digit="${port_range_lower:(-1)}"	# get last digit  --> 4
+        local -r port_range_lower="${port_range%%[[:space:]]*}"				# BLANKS and TABS --> 1024
+        local -ri port_range_lower_last_digit="${port_range_lower:(-1)}"	# get last digit  --> 4
 
-		local -r port_range_upper="${port_range##*[[:space:]]}"				# BLANKS and TABS --> 64999
-		local -ri port_range_upper_last_digit="${port_range_upper:(-1)}"	# get last digit  --> 9
+        local -r port_range_upper="${port_range##*[[:space:]]}"				# BLANKS and TABS --> 64999
+        local -ri port_range_upper_last_digit="${port_range_upper:(-1)}"	# get last digit  --> 9
 
-		if [ $((port_range_lower_last_digit%2)) -eq 0 ]; then	#even?
+        if [ $((port_range_lower_last_digit%2)) -eq 0 ]; then	#even?
 
-			logCheckOk "sysctl parameter net.ipv4.ip_local_port_range's lower value set as recommended. (is: ${port_range_lower} = even)"
+            logCheckOk "sysctl parameter net.ipv4.ip_local_port_range's lower value set as recommended. (is: ${port_range_lower} = even)"
 
-		else
+        else
 
-			logCheckWarning "sysctl parameter net.ipv4.ip_local_port_range's lower value NOT set as recommended. (is: ${port_range_lower}, should be: even)"
-			_retval=1
+            logCheckWarning "sysctl parameter net.ipv4.ip_local_port_range's lower value NOT set as recommended. (is: ${port_range_lower}, should be: even)"
+            _retval=1
 
-		fi
+        fi
 
-		if [ $((port_range_upper_last_digit%2)) -ne 0 ]; then	#uneven?
+        if [ $((port_range_upper_last_digit%2)) -ne 0 ]; then	#uneven?
 
-			logCheckOk "sysctl parameter net.ipv4.ip_local_port_range's upper value set as recommended. (is: ${port_range_upper} = uneven)"
+            logCheckOk "sysctl parameter net.ipv4.ip_local_port_range's upper value set as recommended. (is: ${port_range_upper} = uneven)"
 
-		else
+        else
 
-			logCheckWarning "sysctl parameter net.ipv4.ip_local_port_range's upper value NOT set as recommended. (is: ${port_range_upper}, should be: uneven)"
-			_retval=1
+            logCheckWarning "sysctl parameter net.ipv4.ip_local_port_range's upper value NOT set as recommended. (is: ${port_range_upper}, should be: uneven)"
+            _retval=1
 
-		fi
+        fi
 
-		if [[ ${_retval} -eq 99 ]]; then
+        if [[ ${_retval} -eq 99 ]]; then
 
-			logCheckOk "sysctl parameter net.ipv4.ip_local_port_range set as recommended (SAP Note ${_sapnote:-})"
-			_retval=0
+            logCheckOk "sysctl parameter net.ipv4.ip_local_port_range set as recommended (SAP Note ${_sapnote:-})"
+            _retval=0
 
-		else
+        else
 
-			logCheckWarning "sysctl parameter net.ipv4.ip_local_port_range NOT set as recommended (SAP Note ${_sapnote:-})"
+            logCheckWarning "sysctl parameter net.ipv4.ip_local_port_range NOT set as recommended (SAP Note ${_sapnote:-})"
 
-		fi
+        fi
 
-	fi
+    fi
 
-	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
-	return ${_retval}
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
 
 }

@@ -1,50 +1,50 @@
 check_004_os_rhel_ibmpower() {
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	local -i _retval=99
+    local -i _retval=99
 
-	# MODIFICATION SECTION>>
-	local -r sapnote7x='#2235581'	#SAP HANA: Supported Operating Systems
-	# MODIFICATION SECTION<<
+    # MODIFICATION SECTION>>
+    local -r sapnote7x='#2235581'	#SAP HANA: Supported Operating Systems
+    # MODIFICATION SECTION<<
 
-	if  ! lib_func_is_ibmpower ;	then
+    if  ! lib_func_is_ibmpower ;	then
 
-		logCheckSkipped 'Not running on IBM Power. Skipping check' "<${FUNCNAME[0]}>"
-		_retval=3
+        logCheckSkipped 'Not running on IBM Power. Skipping check' "<${FUNCNAME[0]}>"
+        _retval=3
 
-	elif  ! lib_func_is_rhel ;	then
+    elif  ! lib_func_is_rhel ;	then
 
-		logCheckSkipped 'Linux distribution is not RHEL. Skipping check' "<${FUNCNAME[0]}>"
-		_retval=3
+        logCheckSkipped 'Linux distribution is not RHEL. Skipping check' "<${FUNCNAME[0]}>"
+        _retval=3
 
-	else
+    else
 
-		if [[ "${LIB_PLATF_ARCHITECTURE}" == 'ppc64le' ]] ; then
+        if [[ "${LIB_PLATF_ARCHITECTURE}" == 'ppc64le' ]] ; then
 
-			case "${OS_VERSION}" in
+            case "${OS_VERSION}" in
 
-				7.3*)	
-						logCheckOk "RHELonPower version is supported (SAP Note ${sapnote7x:-}) (is: ${OS_VERSION})"
-						_retval=0
-					;;
+                7.3*)
+                        logCheckOk "RHELonPower version is supported (SAP Note ${sapnote7x:-}) (is: ${OS_VERSION})"
+                        _retval=0
+                    ;;
 
-				*)
-						logCheckError "RHELonPower version with LittleEndian architecture is NOT supported (SAP Note #2235581) (is: ${OS_VERSION})"
-						_retval=2
-					;;
+                *)
+                        logCheckError "RHELonPower version with LittleEndian architecture is NOT supported (SAP Note #2235581) (is: ${OS_VERSION})"
+                        _retval=2
+                    ;;
 
-			esac
-		
-		else
+            esac
 
-				logCheckError "RHELonPower with BigEndian architecture is NOT supported (SAP Note #2235581) (is: ${OS_VERSION})"
-				_retval=2
+        else
 
-		fi
-	fi
+                logCheckError "RHELonPower with BigEndian architecture is NOT supported (SAP Note #2235581) (is: ${OS_VERSION})"
+                _retval=2
 
-	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
-	return ${_retval}
+        fi
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
 
 }

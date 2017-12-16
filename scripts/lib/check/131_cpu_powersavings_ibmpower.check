@@ -1,59 +1,59 @@
 check_131_cpu_powersavings_ibmpower() {
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	local -i _retval=99
+    local -i _retval=99
 
-	# MODIFICATION SECTION>>
-	local -r _sapnote='#2205917'	#SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
-	# MODIFICATION SECTION<<
+    # MODIFICATION SECTION>>
+    local -r _sapnote='#2205917'	#SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
+    # MODIFICATION SECTION<<
 
-	if ! lib_func_is_ibmpower ; then
+    if ! lib_func_is_ibmpower ; then
 
-		logCheckSkipped 'Not running on IBM Power. Skipping check' "<${FUNCNAME[0]}>"
-		_retval=3
+        logCheckSkipped 'Not running on IBM Power. Skipping check' "<${FUNCNAME[0]}>"
+        _retval=3
 
-	else
+    else
 
-		#unique value within array
-		local -r IFS=$'\n'
-		local -ar output=($(/usr/sbin/ppc64_cpu --frequency -t 1))	#measurement for 1s
+        #unique value within array
+        local -r IFS=$'\n'
+        local -ar output=($(/usr/sbin/ppc64_cpu --frequency -t 1))	#measurement for 1s
 
-		# Power Savings Mode: None
+        # Power Savings Mode: None
 
-		for ((i=0; i < ${#output[@]}; ++i)); do
+        for ((i=0; i < ${#output[@]}; ++i)); do
 
-			logTrace "<${FUNCNAME[0]}> # ${output[$i]}>"
+            logTrace "<${FUNCNAME[0]}> # ${output[$i]}>"
 
-			case ${output[$i]} in
+            case ${output[$i]} in
 
-				"Power Savings Mode:"*)		
-									
-									local -r savmode=$(lib_func_trim_left "${output[$i]/Power Savings Mode:}")
-				break
-				;;
+                "Power Savings Mode:"*)
 
-			esac
+                                    local -r savmode=$(lib_func_trim_left "${output[$i]/Power Savings Mode:}")
+                break
+                ;;
 
-		done
+            esac
 
-		shopt -s nocasematch
-		if [[ "${savmode}" == "None" ]]; then
+        done
 
-			logCheckOk "Power Savings Mode set as recommended. (SAP Note ${_sapnote:-}) (is: None)"
-			_retval=0
+        shopt -s nocasematch
+        if [[ "${savmode}" == "None" ]]; then
 
-		else
+            logCheckOk "Power Savings Mode set as recommended. (SAP Note ${_sapnote:-}) (is: None)"
+            _retval=0
 
-			logCheckError "Power Savings Mode NOT set as recommended. (SAP Note ${_sapnote:-}) (is: ${savmode}, should be: None)"
-			_retval=2
+        else
 
-		fi
-		shopt -u nocasematch
+            logCheckError "Power Savings Mode NOT set as recommended. (SAP Note ${_sapnote:-}) (is: ${savmode}, should be: None)"
+            _retval=2
 
-	fi
+        fi
+        shopt -u nocasematch
 
-	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
-	return ${_retval}
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
 
 }

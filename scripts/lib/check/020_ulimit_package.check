@@ -1,24 +1,24 @@
 check_020_ulimit_package() {
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	local -i _retval=99
+    local -i _retval=99
 
-	# MODIFICATION SECTION>>
+    # MODIFICATION SECTION>>
     local -r sapnote='#1999997'	# FAQ: SAP HANA Memory
-	# MODIFICATION SECTION<<
+    # MODIFICATION SECTION<<
 
 
-	if rpm -q ulimit > /dev/null ; then
-		logCheckError "ulimit RPM is installed. Remove this RPM (SAP Note ${sapnote:-})"
-		_retval=2
-	else
-		logCheckOk "ulimit RPM is not installed. (SAP Note ${sapnote:-})"
-		_retval=0
-	fi
+    if rpm -q ulimit > /dev/null ; then
+        logCheckError "ulimit RPM is installed. Remove this RPM (SAP Note ${sapnote:-})"
+        _retval=2
+    else
+        logCheckOk "ulimit RPM is not installed. (SAP Note ${sapnote:-})"
+        _retval=0
+    fi
 
 
-	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
-	return ${_retval}
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
 
 }

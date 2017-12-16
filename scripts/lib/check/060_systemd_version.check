@@ -1,65 +1,65 @@
 check_060_systemd_version() {
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	local -i _retval=99
+    local -i _retval=99
 
-	# MODIFICATION SECTION>>
-	local -ar sles122=( '228-142.1' '#2205917' )	#SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
-	local -ar rhel7=( '219-19.el7_2.4' '#2292690')	#SAP HANA DB: Recommended OS settings for RHEL 7
-	# MODIFICATION SECTION<<
+    # MODIFICATION SECTION>>
+    local -ar sles122=( '228-142.1' '#2205917' )	#SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
+    local -ar rhel7=( '219-19.el7_2.4' '#2292690')	#SAP HANA DB: Recommended OS settings for RHEL 7
+    # MODIFICATION SECTION<<
 
-	local _goodversion
-	local _sapnote
-	
-	
-	case "${OS_VERSION}" in
-
-		12.2*)
-				_goodversion="${sles122[0]}"
-				_sapnote="${sles122[1]}"
-			;;
-
-		7.*)
-				_goodversion="${rhel7[0]}"
-				_sapnote="${rhel7[1]}"
-			;;
-
-		*)
-				logCheckSkipped "CHECK not applicable for Linux release (is: ${OS_NAME} ${OS_VERSION}). Skipping check" "<${FUNCNAME[0]}>"
-				_retval=3
-			;;
-	esac
+    local _goodversion
+    local _sapnote
 
 
-	if [[ ${_retval} -eq 99 ]]; then
+    case "${OS_VERSION}" in
 
-		local normalized_goodversion
-		local normalized_fullversion
+        12.2*)
+                _goodversion="${sles122[0]}"
+                _sapnote="${sles122[1]}"
+            ;;
 
-		local -r _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" systemd)
+        7.*)
+                _goodversion="${rhel7[0]}"
+                _sapnote="${rhel7[1]}"
+            ;;
 
-		#normalize good version
-		lib_func_normalize_rpm "${_goodversion}"
-		normalized_goodversion="${lib_func_normalize_rpm_return}"
+        *)
+                logCheckSkipped "CHECK not applicable for Linux release (is: ${OS_NAME} ${OS_VERSION}). Skipping check" "<${FUNCNAME[0]}>"
+                _retval=3
+            ;;
+    esac
 
-		#normalize full version - e.g. 219-19.el7_2.4
-		lib_func_normalize_rpm "${_fullversion}"
-		normalized_fullversion="${lib_func_normalize_rpm_return}"
 
-		lib_func_compare_versions "${normalized_fullversion}" "${normalized_goodversion}"
+    if [[ ${_retval} -eq 99 ]]; then
 
-		if [[ $? -ne 2 ]]; then
-			logCheckOk "SYSTEMD version seems to be ok (SAP Note ${_sapnote:-}) (is: ${_fullversion})"
-			_retval=0
-		else
-			logCheckError "SYSTEMD must be updated (SAP Note ${_sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
-			_retval=2
-		fi
+        local normalized_goodversion
+        local normalized_fullversion
 
-	fi
+        local -r _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" systemd)
 
-	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
-	return ${_retval}
+        #normalize good version
+        lib_func_normalize_rpm "${_goodversion}"
+        normalized_goodversion="${lib_func_normalize_rpm_return}"
+
+        #normalize full version - e.g. 219-19.el7_2.4
+        lib_func_normalize_rpm "${_fullversion}"
+        normalized_fullversion="${lib_func_normalize_rpm_return}"
+
+        lib_func_compare_versions "${normalized_fullversion}" "${normalized_goodversion}"
+
+        if [[ $? -ne 2 ]]; then
+            logCheckOk "SYSTEMD version seems to be ok (SAP Note ${_sapnote:-}) (is: ${_fullversion})"
+            _retval=0
+        else
+            logCheckError "SYSTEMD must be updated (SAP Note ${_sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
+            _retval=2
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
 
 }

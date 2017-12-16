@@ -1,37 +1,37 @@
 check_240_samepage_merging() {
 
-	logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-	local -i _retval=99
+    local -i _retval=99
 
-	# MODIFICATION SECTION>>
-	local -r sapnote_sles='#1944799'	# SAP HANA Guidelines for SLES Operating System Installation
-	# MODIFICATION SECTION<<
+    # MODIFICATION SECTION>>
+    local -r sapnote_sles='#1944799'	# SAP HANA Guidelines for SLES Operating System Installation
+    # MODIFICATION SECTION<<
 
-	local sapnote="${sapnote_sles}"
+    local sapnote="${sapnote_sles}"
 
-	if [[ ! -e '/sys/kernel/mm/ksm/run' ]]; then
+    if [[ ! -e '/sys/kernel/mm/ksm/run' ]]; then
 
-		logCheckSkipped "KSM (kernel samepage merging) not configurable (SAP Note ${sapnote:-}). Skipping check" "<${FUNCNAME[0]}>"
-		_retval=3
+        logCheckSkipped "KSM (kernel samepage merging) not configurable (SAP Note ${sapnote:-}). Skipping check" "<${FUNCNAME[0]}>"
+        _retval=3
 
-	else
+    else
 
-		if [[ $(< /sys/kernel/mm/ksm/run) -eq 0 ]]; then
+        if [[ $(< /sys/kernel/mm/ksm/run) -eq 0 ]]; then
 
-			logCheckOk "KSM (kernel samepage merging) is disabled (SAP Note ${sapnote:-})"
-			_retval=0
+            logCheckOk "KSM (kernel samepage merging) is disabled (SAP Note ${sapnote:-})"
+            _retval=0
 
-		else
+        else
 
-			logCheckError "KSM (kernel samepage merging) is not disabled (SAP Note ${sapnote:-})"
-			_retval=2
+            logCheckError "KSM (kernel samepage merging) is not disabled (SAP Note ${sapnote:-})"
+            _retval=2
 
-		fi
+        fi
 
-	fi
+    fi
 
-	logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
-	return ${_retval}
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
 
 }
