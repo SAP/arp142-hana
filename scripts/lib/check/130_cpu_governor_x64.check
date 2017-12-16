@@ -1,4 +1,6 @@
-check_130_cpu_governor_x64() {
+#!/bin/bash
+
+function check_130_cpu_governor_x64 {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 

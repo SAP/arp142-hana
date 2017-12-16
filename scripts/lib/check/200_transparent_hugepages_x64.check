@@ -1,4 +1,6 @@
-check_200_transparent_hugepages_x64() {
+#!/bin/bash
+
+function check_200_transparent_hugepages_x64 {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 

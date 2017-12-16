@@ -1,4 +1,6 @@
-check_131_cpu_powersavings_ibmpower() {
+#!/bin/bash
+
+function check_131_cpu_powersavings_ibmpower {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 

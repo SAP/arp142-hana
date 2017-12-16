@@ -1,4 +1,6 @@
-check_160_cpu_pstates_intel() {
+#!/bin/bash
+
+function check_160_cpu_pstates_intel {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 

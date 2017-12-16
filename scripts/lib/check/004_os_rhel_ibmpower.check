@@ -1,4 +1,6 @@
-check_004_os_rhel_ibmpower() {
+#!/bin/bash
+
+function check_004_os_rhel_ibmpower {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 

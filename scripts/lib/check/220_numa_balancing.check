@@ -1,4 +1,6 @@
-check_220_numa_balancing() {
+#!/bin/bash
+
+function check_220_numa_balancing {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 

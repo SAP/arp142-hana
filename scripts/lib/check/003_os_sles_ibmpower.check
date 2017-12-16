@@ -1,4 +1,6 @@
-check_003_os_sles_ibmpower() {
+#!/bin/bash
+
+function check_003_os_sles_ibmpower {
 # only certain SLES version are supported
 # in case 11.4 kernel - bigmem kernel should be used, must be used >4 TiB systems
 
@@ -11,20 +13,20 @@ check_003_os_sles_ibmpower() {
     local -r sapnote12x='#2235581'	#SAP HANA: Supported Operating Systems
     # MODIFICATION SECTION<<
 
-    if  ! lib_func_is_ibmpower ;	then
+    if  ! lib_func_is_ibmpower ; then
 
         logCheckSkipped 'Not running on IBM Power. Skipping check' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif  ! lib_func_is_sles ;	then
+    elif  ! lib_func_is_sles ; then
 
         logCheckSkipped 'Linux distribution is not SLES. Skipping check' "<${FUNCNAME[0]}>"
         _retval=3
 
     else
 
-        if [[ "${LIB_PLATF_ARCHITECTURE}" == 'ppc64' ]]; then	#BigEndian
-
+        if [[ "${LIB_PLATF_ARCHITECTURE}" == 'ppc64' ]]; then
+            #BigEndian
             case "${OS_VERSION}" in
 
                 11.3)

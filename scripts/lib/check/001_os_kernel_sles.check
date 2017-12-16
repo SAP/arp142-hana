@@ -1,4 +1,6 @@
-check_001_os_kernel_sles() {
+#!/bin/bash
+
+function check_001_os_kernel_sles {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 

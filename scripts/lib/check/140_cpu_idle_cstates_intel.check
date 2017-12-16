@@ -1,4 +1,6 @@
-check_140_cpu_idle_cstates_intel() {
+#!/bin/bash
+
+function check_140_cpu_idle_cstates_intel {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 

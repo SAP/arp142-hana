@@ -1,4 +1,6 @@
-check_022_cgroup_pids_max_sles() {
+#!/bin/bash
+
+function check_022_cgroup_pids_max_sles {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
@@ -36,15 +38,15 @@ check_022_cgroup_pids_max_sles() {
         #local -r IFS=$'\n'
         #local -ar pids_max=( $( sort -u /sys/fs/cgroup/pids/user.slice/user-*.slice/pids.max 2>/dev/null ) )
 
-
-        if [[ ${#pids_max[@]} -eq 0 ]]; then 	#array length
+        #array length
+        if [[ ${#pids_max[@]} -eq 0 ]]; then
 
                 logCheckWarning "UserTasksMax setting could not be determined (SAP Note ${_sapnote:-})"
                 _retval=1
 
         else
 
-            if [[ "${pids_max[0]}" != "${_reco_value}" ]];then
+            if [[ "${pids_max[0]}" != "${_reco_value}" ]]; then
 
                 logCheckError "UserTasksMax is NOT set to infinity (SAP Note ${_sapnote:-}) (is: ${pids_max[0]})"
                 _retval=2

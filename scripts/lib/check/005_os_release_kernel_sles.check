@@ -1,4 +1,6 @@
-check_005_os_release_kernel_sles() {
+#!/bin/bash
+
+function check_005_os_release_kernel_sles {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 

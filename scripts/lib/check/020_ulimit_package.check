@@ -1,4 +1,6 @@
-check_020_ulimit_package() {
+#!/bin/bash
+
+function check_020_ulimit_package {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 

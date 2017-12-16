@@ -1,4 +1,6 @@
-check_145_cpu_force_latency() {
+#!/bin/bash
+
+function check_145_cpu_force_latency {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
@@ -82,8 +84,8 @@ check_145_cpu_force_latency() {
                 logCheckOk "CPU latency set as recommended (SAP Note ${sapnote:-}) (is: ${_curr_value:-})"
                 _retval=0
 
-            elif [[ ${_curr_value:-} -lt 3 ]]; then		#3 = C1
-
+            elif [[ ${_curr_value:-} -lt 3 ]]; then
+                #3 = C1
                 logCheckError "CPU latency set to low - impacting CPU TurboMode features (SAP Note ${sapnote:-}) (is: ${_curr_value:-}, should be: ${_reco_value})"
                 _retval=2
 

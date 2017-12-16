@@ -1,4 +1,6 @@
-check_030_os_clocksource() {
+#!/bin/bash
+
+function check_030_os_clocksource {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 

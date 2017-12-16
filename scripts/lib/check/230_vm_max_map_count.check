@@ -1,4 +1,6 @@
-check_230_vm_max_map_count() {
+#!/bin/bash
+
+function check_230_vm_max_map_count {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 

@@ -1,4 +1,6 @@
-check_311_ip_port_range() {
+#!/bin/bash
+
+function check_311_ip_port_range {
 
 # Starting with kernel version 4.2 the upper value of net.ipv4.ip_local_port_range should be an uneven number,
 # an example setting could be: net.ipv4.ip_local_port_range = “1024 64999”
@@ -35,8 +37,8 @@ check_311_ip_port_range() {
         local -r port_range_upper="${port_range##*[[:space:]]}"				# BLANKS and TABS --> 64999
         local -ri port_range_upper_last_digit="${port_range_upper:(-1)}"	# get last digit  --> 9
 
-        if [ $((port_range_lower_last_digit%2)) -eq 0 ]; then	#even?
-
+        if [[ $((port_range_lower_last_digit%2)) -eq 0 ]]; then
+            #even?
             logCheckOk "sysctl parameter net.ipv4.ip_local_port_range's lower value set as recommended. (is: ${port_range_lower} = even)"
 
         else
@@ -46,8 +48,8 @@ check_311_ip_port_range() {
 
         fi
 
-        if [ $((port_range_upper_last_digit%2)) -ne 0 ]; then	#uneven?
-
+        if [[ $((port_range_upper_last_digit%2)) -ne 0 ]]; then
+            #uneven?
             logCheckOk "sysctl parameter net.ipv4.ip_local_port_range's upper value set as recommended. (is: ${port_range_upper} = uneven)"
 
         else

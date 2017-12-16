@@ -1,4 +1,6 @@
-check_150_cpu_perfbias_intel() {
+#!/bin/bash
+
+function check_150_cpu_perfbias_intel {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 

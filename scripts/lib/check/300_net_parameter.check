@@ -1,4 +1,6 @@
-check_300_net_parameter() {
+#!/bin/bash
+
+function check_300_net_parameter {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 

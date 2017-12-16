@@ -1,4 +1,6 @@
-check_006_os_release_kernel_rhel() {
+#!/bin/bash
+
+function check_006_os_release_kernel_rhel {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 

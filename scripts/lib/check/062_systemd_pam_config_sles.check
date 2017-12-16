@@ -1,4 +1,6 @@
-check_062_systemd_pam_config_sles() {
+#!/bin/bash
+
+function check_062_systemd_pam_config_sles {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 

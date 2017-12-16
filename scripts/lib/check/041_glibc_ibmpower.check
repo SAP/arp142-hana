@@ -1,4 +1,6 @@
-check_041_glibc_ibmpower() {
+#!/bin/bash
+
+function check_041_glibc_ibmpower {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 

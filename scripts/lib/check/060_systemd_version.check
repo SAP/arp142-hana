@@ -1,4 +1,6 @@
-check_060_systemd_version() {
+#!/bin/bash
+
+function check_060_systemd_version {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 

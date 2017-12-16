@@ -1,4 +1,6 @@
-check_510_pagecache_limit_sles() {
+#!/bin/bash
+
+function check_510_pagecache_limit_sles {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 

@@ -1,4 +1,6 @@
-check_240_samepage_merging() {
+#!/bin/bash
+
+function check_240_samepage_merging {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 

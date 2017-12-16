@@ -1,4 +1,6 @@
-check_250_kernel_shmmni() {
+#!/bin/bash
+
+function check_250_kernel_shmmni {
 #system wide maximum number of shared memory segments.
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
