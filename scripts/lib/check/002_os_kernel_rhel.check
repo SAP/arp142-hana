@@ -9,9 +9,9 @@ check_002_os_kernel_rhel() {
 	local -ar _kernel65=( '2.6.32-431.29.2' '#2013638' )
 	local -ar _kernel66=( '2.6.32-504.16.2' '#2136965' )
 	local -ar _kernel67=( '2.6.32-573' '#2247020' )		#not known, take release kernel, all should be fine
-	local -ar _kernel72=( '3.10.0-327' '#2292690' ) 	#dito
-	local -ar _rhel73=( '3.10.0-514.28.1.el7' '#2292690' )
-	local -ar _rhel73power=( '3.10.0-514.28.1.el7' '#2292690' )
+	local -ar _kernel72=( '3.10.0-327.61.3.el7' '#2292690' )
+	local -ar _rhel73=( '3.10.0-514.35.1.el7' '#2292690' )
+	local -ar _rhel73power=( '3.10.0-514.35.1.el7' '#2292690' )
 	#local -ar _rhel74=( '3.10.0-693.5.2.el7' '#2292690' )
 	#local -ar _rhel74power=( '3.10.0-693.5.2.el7' '#2292690' )
 	# MODIFICATION SECTION<<
