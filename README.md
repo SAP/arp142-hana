@@ -13,7 +13,7 @@ A: Scripts require root permission in order to read certain kernel parameter val
 
 ## How to run
 
-* [Download v0.3](https://github.wdf.sap.corp/SAP-COE-HPTI/saphana-checks/releases/tag/v0.3)
+* [Download v0.3](https://github.wdf.sap.corp/SAP-COE-HPTI/saphana-checks/releases/latest)
 #### as root user - extract scripts to Linux server & run saphana-check.sh 
 * tar -xvf saphana-checks-*.tgz
 * ./saphana-checks/bin/saphana-check.sh

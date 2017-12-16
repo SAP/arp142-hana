@@ -35,10 +35,10 @@ before_install:
 script:
   # Run unit tests - runs all the unit tests that can be found, and generates a nice report of the tests
   - bash -c 'cd ./scripts/tests/; ./test_runner'
-  - bash -c 'shopt -s globstar; shellcheck **/*.{sh,check}'
   # - bash -c 'shopt -s globstar; bashate scripts/**/*.{sh,check}'
-  - bash -c 'shopt -s globstar; bashate scripts/bin/saphana* scripts/bin/lib*'
-
+  - bash -c 'shopt -s globstar; bashate -i E006 scripts/bin/saphana* scripts/bin/lib*'
+  - bash -c 'shopt -s globstar; bashate -i E006 scripts/**/*.check'
+  
 
 after_success:
     - mkdir -p build/saphana-checks
@@ -91,7 +91,7 @@ before_deploy:
 deploy:
   provider: releases
   prerelease: true
-  body: Travis build on [${TRAVIS_BRANCH}] - https://travis-ci.mo.sap.corp/SAP-COE-HPTI/saphana-checks/builds/${TRAVIS_BUILD_ID}
+  body: Travis build on [${TRAVIS_BRANCH}](https://travis-ci.mo.sap.corp/SAP-COE-HPTI/saphana-checks/builds/${TRAVIS_BUILD_ID})
   api_key:
     secure: aQnueMZKDNLrM8J9oLlPItJ+qUMqj1Dm9demLPGwPD0j66jtSUFIV7ioR84FILLqklY0mPDCrfjCN2klYp6NJDGRQuKIQZaNdHQTY1rKUJQyS23MQ03ASf2F0PE3vk4t3fm1XBD2IKjP/4m8BBfx/LV41AXv35CG217I0ryrtluPkU8Mjx8j/bNZZLA9/NeapNcjdMxeV6uTWrmcOYY7dYEuUAXws7UWU4+qY7PzGQQemPJmXpNS8jtlMS0aUVETI/L+Irs8NouoeoMrsfzs876jpc0AH3tG+2q6Foc8EB/ivGC1Amq3pia1asoKQ0CtUOfiDRuPcOAVjnn0+/eAJueOgd3gf6JuG8SWO6HUrpF6eRNE1gk9HP/kKj5CxfR1PqUw08UDok2VMYCS2prFPljaihZ5jCcCzYJN1iDS2ejmI+xf4xFT2opGaH21zEzJlimv8vAlmm0gc3mce3tXawD31cpWariMt5fQdLbM1RnkcJ5OM0am3lyqEUqVmB/rmUwwAXUgFjm6Ng7vnkCW3bPvLptEJ5PUGmbAyl4oAbSUEF0G0JeSrk0VKXIftMmm5TzrRR/8xKLq1jOL00fsFeQIiz6A5sPz2Fs1Wlbb/hBr32HlzZxa83sTWIA/aNfWz0W6B8BlzqC1Fkyp4IGHeM6vVMjXD11vbKb9URG761E=
   file_glob: true
