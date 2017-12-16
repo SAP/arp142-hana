@@ -152,7 +152,7 @@ function generate_checklist {
 
 
         if ! source "${checkfile}" ; then
-            logCheckSkipped "Skipping check ${checkname}, 
+            logCheckSkipped "Skipping check ${checkname},
                                         could not load check file ${checkfile}"
         else
             CHECKLIST+=("${checkname}")
@@ -233,7 +233,7 @@ function main {
 }
 
 #Import logger
-source "${PROGRAM_BINDIR}/saphana-logger" || 
+source "${PROGRAM_BINDIR}/saphana-logger" ||
                             die 'unable to load saphana-logger library'
 
 # parse the command-line - shflags
@@ -242,7 +242,7 @@ eval set -- "${FLAGS_ARGV}"
 evaluate_cmdline_options
 
 #Import remaining Libraries - logging is now active
-source "${PROGRAM_BINDIR}/saphana-helper-funcs" || 
+source "${PROGRAM_BINDIR}/saphana-helper-funcs" ||
                             die 'unable to load saphana-helper-funcs library'
 
 # call main
