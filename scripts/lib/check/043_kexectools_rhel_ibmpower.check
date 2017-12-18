@@ -1,0 +1,74 @@
+#!/bin/bash
+
+function check_043_kexectools_rhel_ibmpower {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -ar _rhel73=( '2.0.7-50.el7_3.2' '#2292690' )
+    # MODIFICATION SECTION<<
+
+    local _goodversion
+    local _sapnote
+
+    if  ! lib_func_is_ibmpower ;	then
+
+        logCheckSkipped 'Not running on IBM Power. Skipping check' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif ! lib_func_is_rhel ; then
+
+        logCheckSkipped 'Linux distribution is not RHEL. Skipping check' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+
+        case "${OS_VERSION}" in
+
+                7.3* )
+
+                        _goodversion="${_rhel73[0]}"
+                        _sapnote="${_rhel73[1]}"
+                    ;;
+
+                *)
+                        logCheckWarning "CHECK does not support RHEL release (is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                        _retval=1
+                    ;;
+            esac
+
+    fi
+
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local normalized_goodversion
+        local normalized_fullversion
+
+        local -r _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" kexec-tools)
+
+        #normalize good version
+        lib_func_normalize_rpm "${_goodversion}"
+        normalized_goodversion="${lib_func_normalize_rpm_return}"
+
+        #normalize full version - e.g. 2.0.7-50.el7_3.2
+        lib_func_normalize_rpm "${_fullversion}"
+        normalized_fullversion="${lib_func_normalize_rpm_return}"
+
+        lib_func_compare_versions "${normalized_fullversion}" "${normalized_goodversion}"
+
+        if [[ $? -ne 2 ]]; then
+            logCheckOk "kexec-tools version seems to be ok (SAP Note ${_sapnote:-}) (is: ${_fullversion})"
+            _retval=0
+        else
+            logCheckError "kexec-tools must be updated (SAP Note ${_sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
+            _retval=2
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}

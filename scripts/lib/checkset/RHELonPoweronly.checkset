@@ -4,6 +4,7 @@
 020_ulimit_package
 030_os_clocksource
 041_glibc_ibmpower
+043_kexectools_rhel_ibmpower
 050_selinux_rhel
 060_systemd_version
 131_cpu_powersavings_ibmpower
