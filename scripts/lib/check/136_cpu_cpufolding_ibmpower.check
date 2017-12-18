@@ -1,0 +1,38 @@
+#!/bin/bash
+
+function check_136_cpu_cpufolding_ibmpower {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r _sapnote_sles='#2205917'	# SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
+    local -r _sapnote_rhel='#2292690'	# SAP HANA DB: Recommended OS settings for RHEL 7
+    # MODIFICATION SECTION<<
+
+    if ! lib_func_is_ibmpower ; then
+
+        logCheckSkipped 'Not running on IBM Power. Skipping check' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+
+        local _sapnote
+        lib_func_is_sles && _sapnote=${_sapnote_sles}
+        lib_func_is_rhel && _sapnote=${_sapnote_rhel}
+
+        if rpm -q pseries-energy > /dev/null ; then
+            logCheckError "pseries-energy RPM is installed. Remove this RPM (SAP Note ${_sapnote:-})"
+            _retval=2
+        else
+            logCheckOk "pseries-energy RPM is not installed. (SAP Note ${_sapnote:-})"
+            _retval=0
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
