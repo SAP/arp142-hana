@@ -120,30 +120,38 @@ function __linux_distrib_os_release {
 
         logTrace "<${FUNCNAME[0]}> # ${_os_release_file}:${line}"
 
-        #NAME=""
-        _ostmp=$(awk '/^NAME=/ {match($0, /".*"/);
-                            print substr($0,RSTART+1,RLENGTH-2)}' <<< "${line}")
-        _osname=${_osname:=$_ostmp}
+        case ${line} in
 
-        #match 12.1 | 12.0.1 | 7.0
-        _ostmp=$(awk '/^VERSION_ID=/ {match($0, /([0-9]+)(\.([0-9]+))+/);
-                            print substr($0,RSTART,RLENGTH) }' <<< "${line}")
-        _osvers=${_osvers:=$_ostmp}
+            'NAME='*)
+                    _ostmp=$(awk '/^NAME=/ {match($0, /".*"/);
+                                print substr($0,RSTART+1,RLENGTH-2)}' <<< "${line}")
+                    _osname=${_osname:=$_ostmp}
+            ;;
+
+            'VERSION_ID='*)
+                    #match 12.1 | 12.0.1 | 7.0 | 15
+                    _ostmp=$(awk '/^VERSION_ID=/ {match($0, /([0-9]+)(\.([0-9]+))*/);
+                                print substr($0,RSTART,RLENGTH) }' <<< "${line}")
+                    _osvers=${_osvers:=$_ostmp}
+            break
+            ;;
+
+        esac
 
     done < "${_os_release_file}"
 
     _os_version="${_osvers}"
 
     case ${_osname} in
-        "SLES"*)
+        'SLES'*)
                 _os_name="${lib_release_sles}"
                 ;;
 
-        "Red Hat Enterprise Linux Server")
+        'Red Hat Enterprise Linux Server')
                 _os_name="${lib_release_rhel}"
                 ;;
 
-        "Oracle Linux Server")
+        'Oracle Linux Server')
                 _os_name="${lib_release_ols}"
                 ;;
 
