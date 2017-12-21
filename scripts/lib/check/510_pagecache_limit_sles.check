@@ -15,6 +15,11 @@ function check_510_pagecache_limit_sles {
         logCheckSkipped 'Linux distribution is not SLES. Skipping check' "<${FUNCNAME[0]}>"
         _retval=3
 
+    elif [[ ! -e '/proc/sys/vm/pagecache_limit_mb' ]]; then
+
+        logCheckSkipped "Pagecache Limit not configurable (SAP Note ${_sapnote:-}). Skipping check" "<${FUNCNAME[0]}>"
+        _retval=3
+
     else
 
         # <= 128 GB:    4096	(=recommended limit) (262144 MB)
