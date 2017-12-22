@@ -110,7 +110,6 @@ function __linux_distrib_os_release {
     local _os_release_file="$1"
     shift 1
 
-    local _ostmp
     local _osname
     local _osvers
 
@@ -123,16 +122,16 @@ function __linux_distrib_os_release {
         case ${line} in
 
             'NAME='*)
-                    _ostmp=$(awk '/^NAME=/ {match($0, /".*"/);
+                    _osname=$(awk '/^NAME=/ {match($0, /".*"/);
                                 print substr($0,RSTART+1,RLENGTH-2)}' <<< "${line}")
-                    _osname=${_osname:=$_ostmp}
             ;;
 
             'VERSION_ID='*)
                     #match 12.1 | 12.0.1 | 7.0 | 15
-                    _ostmp=$(awk '/^VERSION_ID=/ {match($0, /([0-9]+)(\.([0-9]+))*/);
+                    _osvers=$(awk '/^VERSION_ID=/ {match($0, /([0-9]+)(\.([0-9]+))*/);
                                 print substr($0,RSTART,RLENGTH) }' <<< "${line}")
-                    _osvers=${_osvers:=$_ostmp}
+
+                    [[ ! -z "${_osvers##*.*}" ]] && _osvers="${_osvers}.0"  #15 --> 15.0
             break
             ;;
 
