@@ -5,7 +5,7 @@ set -u 		# treat unset variables as an error
 #------------------------------------------------------------------
 # SAP HANA OS checks
 #------------------------------------------------------------------
-# (C) Copyright SAP 2017
+# (C) Copyright SAP 2017-2018
 # Author: DBS - CoE EMEA HANA Platform & Technical Infrastructure
 #
 # Script name: "saphana-check.sh"

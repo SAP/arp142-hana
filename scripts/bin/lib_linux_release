@@ -4,7 +4,7 @@ umask 022
 #------------------------------------------------------------------
 # Library - Linux distribution / Linux release Functions
 #------------------------------------------------------------------
-# (C) Copyright SAP 2017
+# (C) Copyright SAP 2017-2018
 # Author: DBS - CoE EMEA HANA Platform & Technical Infrastructure
 #
 # Script name: "lib_linux_release"

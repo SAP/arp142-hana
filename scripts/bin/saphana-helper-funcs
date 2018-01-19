@@ -4,7 +4,7 @@ umask 022
 #------------------------------------------------------------------
 # SAP HANA OS checks
 #------------------------------------------------------------------
-# (C) Copyright SAP 2017
+# (C) Copyright SAP 2017-2018
 # Author: DBS - CoE EMEA HANA Platform & Technical Infrastructure
 #
 # Script name: "saphana-helper-funcs"
@@ -24,7 +24,7 @@ HANA_HELPER_PROGVERSION='0.4-dev'
 ##################################################
 # Global functions - to be used in other scripts
 ##################################################
-lib_func_check_check_security() {
+function lib_func_check_check_security {
 
     local fullpath=$1
 
@@ -44,7 +44,7 @@ lib_func_check_check_security() {
 }
 
 # Returns 1 on Virtualization, 0 on Bare-Metal
-lib_func_is_bare_metal() {
+function lib_func_is_bare_metal {
 
     local -i _retval=1
 
@@ -57,7 +57,7 @@ lib_func_is_bare_metal() {
 }
 
 # Returns 0 on Intel, 1 on other
-lib_func_is_intel() {
+function lib_func_is_intel {
 
     local -i _retval=1
 
@@ -70,7 +70,7 @@ lib_func_is_intel() {
 }
 
 # Returns 0 on AMD, 1 on other
-lib_func_is_amd() {
+function lib_func_is_amd {
 
     local -i _retval=1
 
@@ -83,7 +83,7 @@ lib_func_is_amd() {
 }
 
 # Returns 0 on x86_64, 1 on other
-lib_func_is_x64() {
+function lib_func_is_x64 {
 
     local -i _retval=1
 
@@ -96,7 +96,7 @@ lib_func_is_x64() {
 }
 
 # Returns 0 on Power, 1 on other
-lib_func_is_ibmpower() {
+function lib_func_is_ibmpower {
 
     local -i _retval=1
 
@@ -114,7 +114,7 @@ lib_func_is_ibmpower() {
 # Two version strings as parameters.
 # Echos & returns 0 if equal, 1 if first is higher, 2 if second is higher
 # - no external utilities - factor 10x faster than original (tr,grep are quite expansive)
-lib_func_compare_versions() {
+function lib_func_compare_versions {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
@@ -169,7 +169,7 @@ lib_func_compare_versions() {
     return ${_retval}
 }
 
-LIB_COMPARE_TOOBIG_NUMBERS() {
+function LIB_COMPARE_TOOBIG_NUMBERS {
 # Two large numbers as string parameters.
 # returns 0 if equal, 1 if first is higher, 2 if second is higher
 
@@ -227,26 +227,26 @@ LIB_COMPARE_TOOBIG_NUMBERS() {
     return ${_retval}
 }
 
-lib_func_trim_left() {
+function lib_func_trim_left {
     local var="$*"
     # remove leading whitespace characters
     printf '%s' "${var#"${var%%[![:space:]]*}"}"
 }
 
-lib_func_trim_right() {
+function lib_func_trim_right {
     local var="$*"
     # remove trailing whitespace characters
     printf '%s' "${var%"${var##*[![:space:]]}"}"
 }
 
-lib_func_trim() {
+function lib_func_trim {
     local var="$*"
     var=$(lib_func_trim_left "${var}")
     var=$(lib_func_trim_right "${var}")
     printf '%s' "$var"
 }
 
-lib_func_normalize_kernel() {
+function lib_func_normalize_kernel {
 
     local kernelversion="$1"
     shift 1
@@ -263,7 +263,7 @@ lib_func_normalize_kernel() {
     lib_func_normalize_kernel_return="${kernelversion}"	#variable is available to caller
 }
 
-lib_func_normalize_rpm() {
+function lib_func_normalize_rpm {
 
     local rpmversion="$1"
     shift 1
@@ -277,7 +277,7 @@ lib_func_normalize_rpm() {
 }
 
 
-lib_func_stringContain() {
+function lib_func_stringContain {
     #$1=string $2=substring
     #case "$1" in *"$2"* ) return 0;;esac
     #return 1
@@ -288,7 +288,7 @@ lib_func_stringContain() {
 # Non-global functions - not to be used in other scripts
 ##########################################################
 
-__get_platform_cpu_details() {
+function __get_platform_cpu_details {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
@@ -382,7 +382,7 @@ __get_platform_cpu_details() {
 
 }
 
-__get_platform_mem_details() {
+function __get_platform_mem_details {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
@@ -423,7 +423,7 @@ __get_platform_mem_details() {
 #============================================================
 # LIB MAIN - initialization
 #============================================================
-_lib_helper_main() {
+function _lib_helper_main {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
