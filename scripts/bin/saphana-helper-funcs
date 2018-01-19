@@ -169,6 +169,63 @@ lib_func_compare_versions() {
     return ${_retval}
 }
 
+LIB_COMPARE_TOOBIG_NUMBERS() {
+# Two large numbers as string parameters.
+# returns 0 if equal, 1 if first is higher, 2 if second is higher
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=-1
+    local number1
+    local number2
+    number1="$1"
+    number2="$2"
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # compare <${number1}> to <${number2}>"
+
+    if [[ "${number1}" == "${number2}" ]]; then
+        _retval=0
+
+    elif [[ ${#number1} -gt ${#number2} ]]; then
+        _retval=1
+
+    elif [[ ${#number1} -lt ${#number2} ]]; then
+        _retval=2
+
+    elif [[ ${#number1} -le 18  ]]; then
+
+        _retval=$(( number1 > number2 ? 1 : 2 ))
+
+    else
+
+        #too large to be handled as integers; split and compare high/low part
+        local -i number1part
+        local -i number2part
+
+        #higher part
+        number1part=${number1:0:(( ${#number1} - 18 ))}
+        number2part=${number2:0:(( ${#number2} - 18 ))}
+
+        if [[ ${number1part} -gt ${number2part} ]]; then
+            _retval=1
+
+        elif [[ ${number1part} -lt ${number2part} ]]; then
+            _retval=2
+
+        else
+
+            #lower part
+            number1part=${number1:(-18)}
+            number2part=${number2:(-18)}
+            _retval=$(( number1part > number2part ? 1 : 2 ))
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+}
 
 lib_func_trim_left() {
     local var="$*"
