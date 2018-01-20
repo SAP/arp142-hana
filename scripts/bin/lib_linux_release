@@ -21,46 +21,6 @@ LIB_LINUX_RELEASE='1.1dev'
 ##################################################
 # Global functions - to be used in other scripts
 ##################################################
-function lib_func_get_linux_distrib {
-
-    # a local variable declared in a function is also visible to
-    # functions called by the parent function.
-    local -r osfile='/etc/os-release'
-    local -r susefile='/etc/SuSE-release'
-    local -r redhatfile='/etc/redhat-release'
-    local -r oraclefile='/etc/oracle-release'
-
-    local _os_name
-    local _os_version
-
-    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
-
-    if [ -f ${osfile} ] ; then
-        #newer releases contain this file
-        __linux_distrib_os_release "${osfile}"
-
-    elif [ -f ${susefile} ] ; then
-        __linux_distrib_suse_release "${susefile}"
-
-    elif [ -f ${oraclefile} ] ; then
-        #oracle is based on RedHat-redhatfile also exist, but check oracle first
-        __linux_distrib_oracle_release "${oraclefile}"
-
-    elif [ -f ${redhatfile} ] ; then
-        __linux_distrib_redhat_release "${redhatfile}"
-
-    else
-        _os_name='Linux UNKNOWN'
-    fi
-
-    OS_NAME="${_os_name}"
-    OS_VERSION="${_os_version}"
-    OS_LEVEL=$(uname -r)
-
-    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> #
-                                    ${OS_NAME} ; ${OS_VERSION} ; ${OS_LEVEL}"
-
-}
 
 # Returns 0 on SLES, 1 on other
 function lib_func_is_sles {
@@ -105,6 +65,47 @@ function lib_func_is_ols {
 # Non-global functions - not to be used in other scripts
 ##########################################################
 
+function __lib_func_get_linux_distrib {
+
+    # a local variable declared in a function is also visible to
+    # functions called by the parent function.
+    local -r osfile='/etc/os-release'
+    local -r susefile='/etc/SuSE-release'
+    local -r redhatfile='/etc/redhat-release'
+    local -r oraclefile='/etc/oracle-release'
+
+    local _os_name
+    local _os_version
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    if [ -f ${osfile} ] ; then
+        #newer releases contain this file
+        __linux_distrib_os_release "${osfile}"
+
+    elif [ -f ${susefile} ] ; then
+        __linux_distrib_suse_release "${susefile}"
+
+    elif [ -f ${oraclefile} ] ; then
+        #oracle is based on RedHat-redhatfile also exist, but check oracle first
+        __linux_distrib_oracle_release "${oraclefile}"
+
+    elif [ -f ${redhatfile} ] ; then
+        __linux_distrib_redhat_release "${redhatfile}"
+
+    else
+        _os_name='Linux UNKNOWN'
+    fi
+
+    OS_NAME="${_os_name}"
+    OS_VERSION="${_os_version}"
+    OS_LEVEL=$(uname -r)
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> #
+                                    ${OS_NAME} ; ${OS_VERSION} ; ${OS_LEVEL}"
+
+}
+
 function __linux_distrib_os_release {
 
     local _os_release_file="$1"
@@ -122,14 +123,12 @@ function __linux_distrib_os_release {
         case ${line} in
 
             'NAME='*)
-                    _osname=$(awk '/^NAME=/ {match($0, /".*"/);
-                                print substr($0,RSTART+1,RLENGTH-2)}' <<< "${line}")
+                    [[ "${line}" =~ \"(.*)\" ]] && _osname=${BASH_REMATCH[1]}
             ;;
 
             'VERSION_ID='*)
-                    #match 12.1 | 12.0.1 | 7.0 | 15
-                    _osvers=$(awk '/^VERSION_ID=/ {match($0, /([0-9]+)(\.([0-9]+))*/);
-                                print substr($0,RSTART,RLENGTH) }' <<< "${line}")
+                    #match 12.1 | 12.0.1 | 12.1.0.1 | 7.0 | 15
+                    [[ "${line}" =~ ([0-9]+)(\.([0-9]+))* ]] && _osvers=${BASH_REMATCH[0]}
 
                     [[ ! -z "${_osvers##*.*}" ]] && _osvers="${_osvers}.0"  #15 --> 15.0
             break
@@ -283,7 +282,7 @@ function _lib_linux_release_main {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-    lib_func_get_linux_distrib
+    __lib_func_get_linux_distrib
 
     readonly OS_NAME
     readonly OS_VERSION
