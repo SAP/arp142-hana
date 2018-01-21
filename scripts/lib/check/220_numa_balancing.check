@@ -13,8 +13,8 @@ function check_220_numa_balancing {
 
     local sapnote
 
-    lib_func_is_sles && sapnote=${_sapnote_sles}
-    lib_func_is_rhel && sapnote=${_sapnote_rhel}
+    LIB_FUNC_IS_SLES && sapnote=${_sapnote_sles}
+    LIB_FUNC_IS_RHEL && sapnote=${_sapnote_rhel}
 
     [[ ! -n ${sapnote:-} ]] && logCheckWarning 'CHECK does not support Linux distribution.' "${FUNCNAME[0]} - ${OS_NAME} ${OS_VERSION}"; _retval=1
 

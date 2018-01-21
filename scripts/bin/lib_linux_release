@@ -14,8 +14,8 @@ umask 022
 # return if library is already loaded
 [[ -n "${LIB_LINUX_RELEASE:-}" ]] && return 0
 
-LIB_LINUX_RELEASE='1.1dev'
-#LIB_RELEASE_DATE='2017-NOV-11'
+LIB_LINUX_RELEASE='1.2'
+#LIB_RELEASE_DATE='2018-JAN-21'
 
 
 ##################################################
@@ -23,7 +23,7 @@ LIB_LINUX_RELEASE='1.1dev'
 ##################################################
 
 # Returns 0 on SLES, 1 on other
-function lib_func_is_sles {
+function LIB_FUNC_IS_SLES {
 
     local -i _retval=1
 
@@ -36,7 +36,7 @@ function lib_func_is_sles {
 }
 
 # Returns 0 on RHEL, 1 on other
-function lib_func_is_rhel {
+function LIB_FUNC_IS_RHEL {
 
     local -i _retval=1
 
@@ -49,7 +49,7 @@ function lib_func_is_rhel {
 }
 
 # Returns 0 on OLS, 1 on other
-function lib_func_is_ols {
+function LIB_FUNC_IS_OLS {
 
     local -i _retval=1
 

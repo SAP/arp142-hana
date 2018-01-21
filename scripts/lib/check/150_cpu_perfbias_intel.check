@@ -19,8 +19,8 @@ function check_150_cpu_perfbias_intel {
     else
 
         local _sapnote
-        lib_func_is_sles && _sapnote=${_sapnote_sles}
-        lib_func_is_rhel && _sapnote=${_sapnote_rhel}
+        LIB_FUNC_IS_SLES && _sapnote=${_sapnote_sles}
+        LIB_FUNC_IS_RHEL && _sapnote=${_sapnote_rhel}
 
         if [[ ! -x '/usr/bin/cpupower' ]]; then
 

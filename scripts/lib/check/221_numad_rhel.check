@@ -10,7 +10,7 @@ function check_221_numad_rhel {
     local -r sapnote='#2292690'	#SAP HANA DB: Recommended OS settings for RHEL 7
     # MODIFICATION SECTION<<
 
-    if  ! lib_func_is_rhel ;	then
+    if  ! LIB_FUNC_IS_RHEL ;	then
 
         logCheckSkipped 'Linux distribution is not RHEL. Skipping check' "<${FUNCNAME[0]}>"
         _retval=3

@@ -25,7 +25,7 @@ function check_145_cpu_force_latency {
 
     else
 
-        if lib_func_is_sles ; then
+        if LIB_FUNC_IS_SLES ; then
             case "${OS_VERSION}" in
 
                 11.[3-4]* | 12.1* )
@@ -42,7 +42,7 @@ function check_145_cpu_force_latency {
                     ;;
             esac
 
-        elif lib_func_is_rhel ; then
+        elif LIB_FUNC_IS_RHEL ; then
             case "${OS_VERSION}" in
 
                 6.[5-7]* | 7.2* )

@@ -13,7 +13,7 @@ function check_311_ip_port_range {
     local -r _sapnote='#2382421'	# Optimizing the Network Configuration on HANA- and OS-Level for SPS10 and Higher
 
     local kernel_applicable='4.2'
-    lib_func_is_rhel && kernel_applicable='3.10.0-514'
+    LIB_FUNC_IS_RHEL && kernel_applicable='3.10.0-514'
     # MODIFICATION SECTION<<
 
     local kernelversion

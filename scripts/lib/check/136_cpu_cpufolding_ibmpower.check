@@ -19,8 +19,8 @@ function check_136_cpu_cpufolding_ibmpower {
     else
 
         local _sapnote
-        lib_func_is_sles && _sapnote=${_sapnote_sles}
-        lib_func_is_rhel && _sapnote=${_sapnote_rhel}
+        LIB_FUNC_IS_SLES && _sapnote=${_sapnote_sles}
+        LIB_FUNC_IS_RHEL && _sapnote=${_sapnote_rhel}
 
         if rpm -q pseries-energy > /dev/null ; then
             logCheckError "pseries-energy RPM is installed. Remove this RPM (SAP Note ${_sapnote:-})"
