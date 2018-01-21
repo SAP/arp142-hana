@@ -11,7 +11,7 @@ function check_136_cpu_cpufolding_ibmpower {
     local -r _sapnote_rhel='#2292690'	# SAP HANA DB: Recommended OS settings for RHEL 7
     # MODIFICATION SECTION<<
 
-    if ! lib_func_is_ibmpower ; then
+    if ! LIB_FUNC_IS_IBMPOWER ; then
 
         logCheckSkipped 'Not running on IBM Power. Skipping check' "<${FUNCNAME[0]}>"
         _retval=3

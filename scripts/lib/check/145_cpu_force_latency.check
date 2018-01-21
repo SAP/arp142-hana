@@ -18,7 +18,7 @@ function check_145_cpu_force_latency {
 
     local sapnote
 
-    if ! lib_func_is_bare_metal ; then
+    if ! LIB_FUNC_IS_BARE_METAL ; then
 
         logCheckSkipped 'Running virtualized. Skipping check' "<${FUNCNAME[0]}>"
         _retval=3

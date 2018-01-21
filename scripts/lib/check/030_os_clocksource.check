@@ -13,7 +13,7 @@ function check_030_os_clocksource {
     local -r reco_clocksource_power='timebase'
     # MODIFICATION SECTION<<
 
-    lib_func_is_ibmpower && reco_clocksource="${reco_clocksource_power}"
+    LIB_FUNC_IS_IBMPOWER && reco_clocksource="${reco_clocksource_power}"
 
 
     local -r curr_clocksource=$(</sys/devices/system/clocksource/clocksource0/current_clocksource)

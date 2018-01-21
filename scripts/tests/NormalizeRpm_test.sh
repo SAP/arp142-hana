@@ -12,8 +12,8 @@ testNormalizeRpmEqualTo() {
 	while read -ra _test
 	do
 		#printf "test[$i]: orig <%s> <%s>\n" "${_test[1]}" "${_test[0]}"
-		lib_func_normalize_rpm "${_test[0]}"
-		rpmversion="${lib_func_normalize_rpm_return}"
+		LIB_FUNC_NORMALIZE_RPM "${_test[0]}"
+		rpmversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
 
 		#printf "test[$i]: norm <%s> <%s>\n" "${_test[1]}" "${rpmversion}"
 		assertEquals "EqualTo failure test#$(( i++ ))" "${_test[1]}" "${rpmversion}"
@@ -31,8 +31,8 @@ testNormalizeRpmShouldFail() {
 	local rpmversion
 
 	#The following tests should fail (test the tester)
-	lib_func_normalize_rpm '2.17-157.el7_3.5'
-	rpmversion="${lib_func_normalize_rpm_return}"
+	LIB_FUNC_NORMALIZE_RPM '2.17-157.el7_3.5'
+	rpmversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
 
 	#printf "test[1]: norm <%s> <%s>\n"  '2.17-157.el7_3.5' "${rpmversion}"
 	assertNotEquals 'test[1]: testing the tester failed' '2.17-157.el7_3.5' "${rpmversion}"

@@ -13,7 +13,7 @@ source "${PROGRAM_DIR}/../bin/saphana-helper-funcs"
 
 
 test_CompareVersions () {
-	lib_func_compare_versions "$1" "$2"
+	LIB_FUNC_COMPARE_VERSIONS "$1" "$2"
 	case $? in
 		0) op='=';;
 		1) op='>';;

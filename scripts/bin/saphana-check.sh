@@ -145,7 +145,7 @@ function generate_checklist {
         checkname=${checkfile##*/}
         checkname="check_${checkname%.check}"
 
-        if ! safetycheck=$(lib_func_check_check_security "$checkfile") ; then
+        if ! safetycheck=$(LIB_FUNC_CHECK_CHECK_SECURITY "$checkfile") ; then
             logCheckSkipped "Skipping check ${checkname}. Reason: ${safetycheck}"
             continue;
         fi
@@ -203,14 +203,14 @@ function main {
     logNotify "## Vendor:        ${LIB_PLATF_VENDOR:-} - Type: ${LIB_PLATF_NAME:-}"
     logNotify "## Architecture:  ${LIB_PLATF_ARCHITECTURE:-} - Byte Order: ${LIB_PLATF_BYTEORDER:-}"
 
-    if lib_func_is_bare_metal
+    if LIB_FUNC_IS_BARE_METAL
     then
         logNotify '##                Running on Bare-Metal'
     else
         logNotify '##                Running Virtualized'
     fi
 
-    if lib_func_is_ibmpower
+    if LIB_FUNC_IS_IBMPOWER
     then
         logNotify '##                Running on IBM Power'
     fi

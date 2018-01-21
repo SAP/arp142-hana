@@ -24,7 +24,7 @@ HANA_HELPER_PROGVERSION='0.4-dev'
 ##################################################
 # Global functions - to be used in other scripts
 ##################################################
-function lib_func_check_check_security {
+function LIB_FUNC_CHECK_CHECK_SECURITY {
 
     local fullpath=$1
 
@@ -44,7 +44,7 @@ function lib_func_check_check_security {
 }
 
 # Returns 1 on Virtualization, 0 on Bare-Metal
-function lib_func_is_bare_metal {
+function LIB_FUNC_IS_BARE_METAL {
 
     local -i _retval=1
 
@@ -57,7 +57,7 @@ function lib_func_is_bare_metal {
 }
 
 # Returns 0 on Intel, 1 on other
-function lib_func_is_intel {
+function LIB_FUNC_IS_INTEL {
 
     local -i _retval=1
 
@@ -70,7 +70,7 @@ function lib_func_is_intel {
 }
 
 # Returns 0 on AMD, 1 on other
-function lib_func_is_amd {
+function LIB_FUNC_IS_AMD {
 
     local -i _retval=1
 
@@ -83,7 +83,7 @@ function lib_func_is_amd {
 }
 
 # Returns 0 on x86_64, 1 on other
-function lib_func_is_x64 {
+function LIB_FUNC_IS_X64 {
 
     local -i _retval=1
 
@@ -96,7 +96,7 @@ function lib_func_is_x64 {
 }
 
 # Returns 0 on Power, 1 on other
-function lib_func_is_ibmpower {
+function LIB_FUNC_IS_IBMPOWER {
 
     local -i _retval=1
 
@@ -114,15 +114,15 @@ function lib_func_is_ibmpower {
 # Two version strings as parameters.
 # Echos & returns 0 if equal, 1 if first is higher, 2 if second is higher
 # - no external utilities - factor 10x faster than original (tr,grep are quite expansive)
-function lib_func_compare_versions {
+function LIB_FUNC_COMPARE_VERSIONS {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
     local -i _retval=0
     local version1
     local version2
-    version1=$(lib_func_trim "$1")
-    version2=$(lib_func_trim "$2")
+    version1=$(LIB_FUNC_TRIM "$1")
+    version2=$(LIB_FUNC_TRIM "$2")
 
     #${1//\-/\.} - Variable Substitution (faster then tr,sed or grep) - replace - by .
     #required for 2.11.3-17.95.2 --> 2.11.3.17.95.2
@@ -227,26 +227,26 @@ function LIB_COMPARE_TOOBIG_NUMBERS {
     return ${_retval}
 }
 
-function lib_func_trim_left {
+function LIB_FUNC_TRIM_LEFT {
     local var="$*"
     # remove leading whitespace characters
     printf '%s' "${var#"${var%%[![:space:]]*}"}"
 }
 
-function lib_func_trim_right {
+function LIB_FUNC_TRIM_RIGHT {
     local var="$*"
     # remove trailing whitespace characters
     printf '%s' "${var%"${var##*[![:space:]]}"}"
 }
 
-function lib_func_trim {
+function LIB_FUNC_TRIM {
     local var="$*"
-    var=$(lib_func_trim_left "${var}")
-    var=$(lib_func_trim_right "${var}")
+    var=$(LIB_FUNC_TRIM_LEFT "${var}")
+    var=$(LIB_FUNC_TRIM_RIGHT "${var}")
     printf '%s' "$var"
 }
 
-function lib_func_normalize_kernel {
+function LIB_FUNC_NORMALIZE_KERNEL {
 
     local kernelversion="$1"
     shift 1
@@ -260,10 +260,10 @@ function lib_func_normalize_kernel {
     kernelversion=${kernelversion/ppc64*/1}			#3.0.101-71-ppc64
     kernelversion=${kernelversion/.el[[:digit:]]*/}		# Remove trailing ".el6.x86_64" or ".el7.ppc64le"
 
-    lib_func_normalize_kernel_return="${kernelversion}"	#variable is available to caller
+    LIB_FUNC_NORMALIZE_KERNEL_return="${kernelversion}"	#variable is available to caller
 }
 
-function lib_func_normalize_rpm {
+function LIB_FUNC_NORMALIZE_RPM {
 
     local rpmversion="$1"
     shift 1
@@ -273,11 +273,14 @@ function lib_func_normalize_rpm {
     rpmversion=${rpmversion/.el[[:digit:]]*_[[:digit:]]*./.0.}		# 2.17-157.el7_3.5	-> 2.17-157.0.5
     rpmversion=${rpmversion/.el[[:digit:]]*/.0}						# 219-30.el7		-> 219-30.0
 
-    lib_func_normalize_rpm_return="${rpmversion}"	#variable is available to caller
+    LIB_FUNC_NORMALIZE_RPM_RETURN="${rpmversion}"	#variable is available to caller
 }
 
 
-function lib_func_stringContain {
+function LIB_FUNC_STRINGCONTAIN {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
     #$1=string $2=substring
     #case "$1" in *"$2"* ) return 0;;esac
     #return 1
@@ -307,12 +310,12 @@ function __get_platform_cpu_details {
 
         "Architecture:"*)
                             if [[ ! -n ${LIB_PLATF_ARCHITECTURE:-} ]]; then
-                                LIB_PLATF_ARCHITECTURE=$(lib_func_trim_left "${line/Architecture:}")
+                                LIB_PLATF_ARCHITECTURE=$(LIB_FUNC_TRIM_LEFT "${line/Architecture:}")
                                 readonly LIB_PLATF_ARCHITECTURE
                             fi
         ;;
         "Byte Order:"*)
-                            LIB_PLATF_BYTEORDER=$(lib_func_trim_left "${line/Byte Order:}")
+                            LIB_PLATF_BYTEORDER=$(LIB_FUNC_TRIM_LEFT "${line/Byte Order:}")
                             readonly LIB_PLATF_BYTEORDER
                             #break
         ;;
@@ -331,20 +334,20 @@ function __get_platform_cpu_details {
 
         "Vendor ID:"*)		#GenuineIntel; AuthenticAMD
                             if [[ ! -n ${LIB_PLATF_CPU_VENDOR:-} ]]; then
-                                LIB_PLATF_CPU_VENDOR=$(lib_func_trim_left "${line/Vendor ID:}")
+                                LIB_PLATF_CPU_VENDOR=$(LIB_FUNC_TRIM_LEFT "${line/Vendor ID:}")
                                 readonly LIB_PLATF_CPU_VENDOR
                             fi
         ;;
 
         "Model:"*)			#on Power <Model: IBM,9119-MHE> ; on Intel <Model: 63>
-                            if lib_func_is_ibmpower ; then
-                                LIB_PLATF_NAME=$(lib_func_trim_left "${line/Model:}")
+                            if LIB_FUNC_IS_IBMPOWER ; then
+                                LIB_PLATF_NAME=$(LIB_FUNC_TRIM_LEFT "${line/Model:}")
                                 readonly LIB_PLATF_NAME
                                 LIB_PLATF_VENDOR='IBM'
                                 readonly LIB_PLATF_VENDOR
 
-                            elif lib_func_is_intel || lib_func_is_amd ; then
-                                LIB_PLATF_CPU_MODELID=$(lib_func_trim_left "${line/Model:}")
+                            elif LIB_FUNC_IS_INTEL || LIB_FUNC_IS_AMD ; then
+                                LIB_PLATF_CPU_MODELID=$(LIB_FUNC_TRIM_LEFT "${line/Model:}")
                                 readonly LIB_PLATF_CPU_MODELID
                             fi
         ;;
@@ -352,7 +355,7 @@ function __get_platform_cpu_details {
         "Model name:"*)		#on x64 only
                             #<Intel(R) Xeon(R) CPU E7-8880 v3 @ 2.30GHz>; AMD Opteron 23xx (Gen 3 Class Opteron)
                             if [[ ! -n ${LIB_PLATF_CPU:-} ]]; then
-                                LIB_PLATF_CPU=$(lib_func_trim_left "${line/Model name:}")
+                                LIB_PLATF_CPU=$(LIB_FUNC_TRIM_LEFT "${line/Model name:}")
                                 readonly LIB_PLATF_CPU
                             fi
         ;;
@@ -363,14 +366,14 @@ function __get_platform_cpu_details {
 
         "Hypervisor vendor:"*)
                             if [[ ! -n ${LIB_PLATF_VIRT_VENDOR:-} ]]; then
-                                LIB_PLATF_VIRT_VENDOR=$(lib_func_trim_left "${line/Hypervisor vendor:}")
+                                LIB_PLATF_VIRT_VENDOR=$(LIB_FUNC_TRIM_LEFT "${line/Hypervisor vendor:}")
                                 readonly LIB_PLATF_VIRT_VENDOR
                             fi
         ;;
 
         "Virtualization type:"*)
                             if [[ ! -n ${LIB_PLATF_VIRT_TYPE:-} ]]; then
-                                LIB_PLATF_VIRT_TYPE=$(lib_func_trim_left "${line/Virtualization type:}")
+                                LIB_PLATF_VIRT_TYPE=$(LIB_FUNC_TRIM_LEFT "${line/Virtualization type:}")
                                 readonly LIB_PLATF_VIRT_TYPE
                             fi
                             break
@@ -448,13 +451,13 @@ function _lib_helper_main {
 
     if [[ ! -n ${LIB_PLATF_CPU:-} ]]; then
 
-        if lib_func_is_x64 ; then
+        if LIB_FUNC_IS_X64 ; then
             LIB_PLATF_CPU=$(grep  'model name' /proc/cpuinfo | sort -u)
-            LIB_PLATF_CPU=$(lib_func_trim_left "${LIB_PLATF_CPU/model name[[:blank:]]:}")
+            LIB_PLATF_CPU=$(LIB_FUNC_TRIM_LEFT "${LIB_PLATF_CPU/model name[[:blank:]]:}")
 
-        elif lib_func_is_ibmpower ; then
+        elif LIB_FUNC_IS_IBMPOWER ; then
             LIB_PLATF_CPU=$(grep  'cpu' /proc/cpuinfo | sort -u)
-            LIB_PLATF_CPU=$(lib_func_trim_left "${LIB_PLATF_CPU/cpu[[:space:]]*:}")
+            LIB_PLATF_CPU=$(LIB_FUNC_TRIM_LEFT "${LIB_PLATF_CPU/cpu[[:space:]]*:}")
         fi
 
         readonly LIB_PLATF_CPU

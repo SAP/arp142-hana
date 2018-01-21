@@ -13,10 +13,10 @@ testStringContain() {
 	do
 		#printf "test[%d]: <%s> <%s>\\n" $i "${_test[0]}" "${_test[1]}"
 
-		lib_func_stringContain "${_test[0]}" "${_test[1]}"
+		LIB_FUNC_STRINGCONTAIN "${_test[0]}" "${_test[1]}"
 		assertTrue "StringContains failure test#$(( i++ ))" $?
 
-	done <<- 'EOF'
+	done <<- EOF
 	echo "My string":o "M
 	echo "My string":str
 	EOF
@@ -30,10 +30,10 @@ testStringDoesNotContain() {
 	do
 		#printf "test[%d]: <%s> <%s>\\n" $i "${_test[0]}" "${_test[1]}"
 
-		lib_func_stringContain "${_test[0]}" "${_test[1]}"
+		LIB_FUNC_STRINGCONTAIN "${_test[0]}" "${_test[1]}"
 		assertFalse "StringDoesNoContains failure test#$(( i++ ))" "$?"
 
-	done <<- 'EOF'
+	done <<- EOF
 	echo "My string":alt
 	echo "My string":My string2
 	EOF

@@ -12,8 +12,8 @@ testNormalizeKernelEqualTo() {
 	while read -ra _test
 	do
 		#printf "test[$i]: orig <%s> <%s>\n" "${_test[1]}" "${_test[0]}"
-		lib_func_normalize_kernel "${_test[0]}"
-		kernelversion="${lib_func_normalize_kernel_return}"
+		LIB_FUNC_NORMALIZE_KERNEL "${_test[0]}"
+		kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_return}"
 
 		#printf "test[$i]: norm <%s> <%s>\n"  "${_test[1]}"	"${kernelversion}"
 		assertEquals "EqualTo failure test#$(( i++ ))" "${_test[1]}" "${kernelversion}"
@@ -35,8 +35,8 @@ testNormalizeKernelShouldFail() {
 	local kernelversion
 
 	#The following tests should fail (test the tester)
-	lib_func_normalize_kernel '3.0.101-0.47.71-default2'
-	kernelversion="${lib_func_normalize_kernel_return}"
+	LIB_FUNC_NORMALIZE_KERNEL '3.0.101-0.47.71-default2'
+	kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_return}"
 
 	#printf "test[1]: norm <%s> <%s>\n"  '3.0.101-0.47.71-default2' "${kernelversion}"
 	assertNotEquals 'test[1]: testing the tester failed' '3.0.101-0.47.71.1' "${kernelversion}"

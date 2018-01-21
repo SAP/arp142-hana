@@ -13,7 +13,7 @@ function check_043_kexectools_rhel_ibmpower {
     local _goodversion
     local _sapnote
 
-    if  ! lib_func_is_ibmpower ;	then
+    if  ! LIB_FUNC_IS_IBMPOWER ;	then
 
         logCheckSkipped 'Not running on IBM Power. Skipping check' "<${FUNCNAME[0]}>"
         _retval=3
@@ -49,14 +49,14 @@ function check_043_kexectools_rhel_ibmpower {
         local -r _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" kexec-tools)
 
         #normalize good version
-        lib_func_normalize_rpm "${_goodversion}"
-        normalized_goodversion="${lib_func_normalize_rpm_return}"
+        LIB_FUNC_NORMALIZE_RPM "${_goodversion}"
+        normalized_goodversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
 
         #normalize full version - e.g. 2.0.7-50.el7_3.2
-        lib_func_normalize_rpm "${_fullversion}"
-        normalized_fullversion="${lib_func_normalize_rpm_return}"
+        LIB_FUNC_NORMALIZE_RPM "${_fullversion}"
+        normalized_fullversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
 
-        lib_func_compare_versions "${normalized_fullversion}" "${normalized_goodversion}"
+        LIB_FUNC_COMPARE_VERSIONS "${normalized_fullversion}" "${normalized_goodversion}"
 
         if [[ $? -ne 2 ]]; then
             logCheckOk "kexec-tools version seems to be ok (SAP Note ${_sapnote:-}) (is: ${_fullversion})"

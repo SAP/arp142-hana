@@ -60,10 +60,10 @@ function check_005_os_release_kernel_sles {
 
             local kernelversion
 
-            lib_func_normalize_kernel "${OS_LEVEL}"
-            kernelversion="${lib_func_normalize_kernel_return}"
+            LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
+            kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_return}"
 
-            lib_func_compare_versions "${kernelversion}" "${kernel_low}"
+            LIB_FUNC_COMPARE_VERSIONS "${kernelversion}" "${kernel_low}"
             if [[ $? -eq 2 ]]; then
 
                 logCheckError "Linux kernel does NOT match SLES release and must be changed. (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${OS_LEVEL}, must be >= ${kernel_low}.*)"
@@ -71,7 +71,7 @@ function check_005_os_release_kernel_sles {
 
             else
 
-                lib_func_compare_versions "${kernelversion}" "${kernel_high}"
+                LIB_FUNC_COMPARE_VERSIONS "${kernelversion}" "${kernel_high}"
                 if [[ $? -eq 1 ]]; then
 
                 logCheckError "Linux kernel does NOT match SLES release and must be changed. (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${OS_LEVEL}, must be <= ${kernel_high}.*)"

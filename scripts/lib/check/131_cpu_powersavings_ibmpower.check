@@ -10,7 +10,7 @@ function check_131_cpu_powersavings_ibmpower {
     local -r _sapnote='#2205917'	#SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
     # MODIFICATION SECTION<<
 
-    if ! lib_func_is_ibmpower ; then
+    if ! LIB_FUNC_IS_IBMPOWER ; then
 
         logCheckSkipped 'Not running on IBM Power. Skipping check' "<${FUNCNAME[0]}>"
         _retval=3
@@ -31,7 +31,7 @@ function check_131_cpu_powersavings_ibmpower {
 
                 "Power Savings Mode:"*)
 
-                                    local -r savmode=$(lib_func_trim_left "${output[$i]/Power Savings Mode:}")
+                                    local -r savmode=$(LIB_FUNC_TRIM_LEFT "${output[$i]/Power Savings Mode:}")
                 break
                 ;;
 

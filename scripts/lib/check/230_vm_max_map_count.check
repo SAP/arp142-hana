@@ -15,7 +15,7 @@ function check_230_vm_max_map_count {
     # Power ( 1.000.000 + (16384 * RAM in GB))
     # For the sake of simplicity, you can also set the parameter to the maximum possible value of 2147483647 (231-1), instead of using above formulas.
     local -i factor=32768
-    lib_func_is_ibmpower && factor=16384
+    LIB_FUNC_IS_IBMPOWER && factor=16384
 
     local -ir _set_mmcount=$(( 1000000 + (factor * LIB_PLATF_RAM_MiB_PHYS / 1024) ))
     local -ir _maximum_mmcount=2147483647

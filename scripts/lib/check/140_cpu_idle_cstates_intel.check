@@ -18,12 +18,12 @@ function check_140_cpu_idle_cstates_intel {
 
     local sapnote
 
-    if ! lib_func_is_bare_metal ; then
+    if ! LIB_FUNC_IS_BARE_METAL ; then
 
         logCheckSkipped 'Running virtualized. Skipping check' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif ! lib_func_is_intel ; then
+    elif ! LIB_FUNC_IS_INTEL ; then
 
         logCheckSkipped 'Not running on Intel CPU. Skipping check' "<${FUNCNAME[0]}>"
         _retval=3

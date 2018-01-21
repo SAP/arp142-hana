@@ -11,7 +11,7 @@ function check_150_cpu_perfbias_intel {
     local -r _sapnote_rhel='#2292690'	 #SAP HANA DB: Recommended OS settings for RHEL 7
     # MODIFICATION SECTION<<
 
-    if  ! lib_func_is_intel ; then
+    if  ! LIB_FUNC_IS_INTEL ; then
 
         logCheckSkipped 'Not running on Intel CPU. Skipping check' "<${FUNCNAME[0]}>"
         _retval=3
@@ -33,7 +33,7 @@ function check_150_cpu_perfbias_intel {
             perf_bias_output=$(/usr/bin/cpupower info 2>/dev/null | grep perf-bias)
             perf_bias_output=${perf_bias_output:=-1}	#if null set to -1
 
-            local -ir perf_bias=$(lib_func_trim_left "${perf_bias_output/perf-bias:}")
+            local -ir perf_bias=$(LIB_FUNC_TRIM_LEFT "${perf_bias_output/perf-bias:}")
 
             if [[ ${perf_bias} -eq 0 ]]; then
 

@@ -1,3 +1,0 @@
-branches: 
-  dev(elop)?(ment)?$:
-    tag: dev

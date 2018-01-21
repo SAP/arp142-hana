@@ -13,7 +13,7 @@ function check_003_os_sles_ibmpower {
     local -r sapnote12x='#2235581'	#SAP HANA: Supported Operating Systems
     # MODIFICATION SECTION<<
 
-    if  ! lib_func_is_ibmpower ; then
+    if  ! LIB_FUNC_IS_IBMPOWER ; then
 
         logCheckSkipped 'Not running on IBM Power. Skipping check' "<${FUNCNAME[0]}>"
         _retval=3

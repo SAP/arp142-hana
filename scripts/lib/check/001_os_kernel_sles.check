@@ -28,7 +28,7 @@ function check_001_os_kernel_sles {
         local _goodversion
         local _sapnote
 
-        if lib_func_is_ibmpower ; then
+        if LIB_FUNC_IS_IBMPOWER ; then
 
             case "${OS_VERSION}" in
 
@@ -47,7 +47,7 @@ function check_001_os_kernel_sles {
                 ;;
             esac
 
-        elif lib_func_is_intel ; then
+        elif LIB_FUNC_IS_INTEL ; then
 
             case "${OS_VERSION}" in
 
@@ -83,13 +83,13 @@ function check_001_os_kernel_sles {
             local normalized_kernelversion
             local normalized_goodversion
 
-            lib_func_normalize_kernel "${OS_LEVEL}"
-            normalized_kernelversion="${lib_func_normalize_kernel_return}"
+            LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
+            normalized_kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_return}"
 
-            lib_func_normalize_kernel "${_goodversion}"
-            normalized_goodversion="${lib_func_normalize_kernel_return}"
+            LIB_FUNC_NORMALIZE_KERNEL "${_goodversion}"
+            normalized_goodversion="${LIB_FUNC_NORMALIZE_KERNEL_return}"
 
-            lib_func_compare_versions "${normalized_kernelversion}" "${normalized_goodversion}"
+            LIB_FUNC_COMPARE_VERSIONS "${normalized_kernelversion}" "${normalized_goodversion}"
             if [[ $? -eq 2 ]]; then
                 logCheckError "Linux kernel must be upgraded. (SAP Note ${_sapnote:-}) (is: ${OS_LEVEL}, should be: >=${_goodversion})"
                 _retval=2

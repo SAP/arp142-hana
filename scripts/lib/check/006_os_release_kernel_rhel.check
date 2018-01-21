@@ -60,13 +60,13 @@ function check_006_os_release_kernel_rhel {
 
             local normalized_kernelversion
 
-            lib_func_normalize_kernel "${OS_LEVEL}"
-            normalized_kernelversion="${lib_func_normalize_kernel_return}"
+            LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
+            normalized_kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_return}"
             #2.6.32-504.16.2.el6.x86_64	-->	2.6.32-504.16.2
 
             normalized_kernelversion=${normalized_kernelversion:0:${#expected_kernel}}	#substring - lenght as expected kernel version
 
-            if ! lib_func_compare_versions "${normalized_kernelversion}" "${expected_kernel}" ; then
+            if ! LIB_FUNC_COMPARE_VERSIONS "${normalized_kernelversion}" "${expected_kernel}" ; then
 
                 logCheckError "Linux kernel does NOT match RHEL release and must be changed. (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${OS_LEVEL}, must be: ${expected_kernel}.*)"
                 _retval=2
