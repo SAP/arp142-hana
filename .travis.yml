@@ -71,13 +71,8 @@ before_deploy:
    # - git config --local user.email "peter.pitterling@sap.com"
    # - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
    # - git tag "v$_VERSION-b$TRAVIS_BUILD_NUMBER-g$COMMIT"
-    - sudo cp -R certs/SAPNetCA_G2.crt /usr/local/share/ca-certificates/
-    - sudo cp -R certs/SAP_Global_Root_CA.crt /usr/local/share/ca-certificates/
-    - sudo update-ca-certificates
-    # - 'test $TRAVIS_TEST_RESULT = 0 \ 
-    # && sudo cp -R certs/SAPNetCA_G2.crt /usr/local/share/ca-certificates/ \
-    # && sudo cp -R certs/SAP_Global_Root_CA.crt /usr/local/share/ca-certificates/ \
-    # && sudo update-ca-certificates'
+
+    - curl -k https://github.wdf.sap.corp/raw/GitHub/Install-Root-Certificates/master/install-certs-ubuntu-12.04.sh | sudo -E sh
 
     # create zipped tarball
     - sudo chmod -R 444 build/saphana-checks
