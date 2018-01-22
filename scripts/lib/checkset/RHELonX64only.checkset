@@ -3,6 +3,7 @@
 020_ulimit_package
 030_os_clocksource
 040_glibc_x64
+045_tunedprofiles-saphana_rhel
 050_selinux_rhel
 060_systemd_version
 130_cpu_governor_x64

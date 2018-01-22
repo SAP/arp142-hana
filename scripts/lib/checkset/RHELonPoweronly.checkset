@@ -4,7 +4,7 @@
 020_ulimit_package
 030_os_clocksource
 041_glibc_ibmpower
-043_kexectools_rhel_ibmpower
+045_tunedprofiles-saphana_rhel
 050_selinux_rhel
 060_systemd_version
 131_cpu_powersavings_ibmpower
