@@ -1,0 +1,56 @@
+#!/bin/bash
+
+check_250_kernel_sharedmemory() {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r _sapnote='#7010287'
+
+    #                               parameter                       recommended_value
+    local -ar _shm_parameter=(\
+                                    'kernel.shmmni'	                   32768 \
+                                    'kernel.shmall'      1152921504606846720 \
+                                    'kernel.shmmax'     18446744073709551615 \
+    )
+    # MODIFICATION SECTION<<
+
+    local _curr_value
+    local _reco_value
+    local _parameter
+
+    # i+=2 --> every 2nd item
+    for ((i=0; i < ${#_shm_parameter[@]}; i+=2)); do
+
+        logTrace "<${FUNCNAME[0]}> # ${_shm_parameter[$i]}>"
+
+        _parameter=${_shm_parameter[$i]}
+        _reco_value=${_shm_parameter[$i+1]}
+
+        _curr_value=$(sysctl -n "${_parameter}")
+
+        if ! LIB_COMPARE_TOOBIG_NUMBERS "${_curr_value}" "${_reco_value}" ; then
+            logCheckWarning "sysctl KSHM parameter ${_parameter} NOT set as recommended (is: ${_curr_value}, should be: ${_reco_value})"
+            _retval=1
+        else
+            logCheckOk "sysctl KSHM parameter ${_parameter} set as recommended (is: ${_curr_value})"
+        fi
+
+    done
+
+    if [[ ${_retval} -eq 99 ]]; then
+
+        logCheckOk "All kernel shared-memory sysctl parameter set as recommended (SuSE KB ${_sapnote:-}, SAP Note to be created)"
+        _retval=0
+
+    else
+
+        logCheckWarning "Not All kernel shared-memory sysctl parameter set as recommended (SuSE KB ${_sapnote:-}, SAP Note to be created)"
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+}
