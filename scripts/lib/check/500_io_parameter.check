@@ -22,7 +22,7 @@ function check_500_io_parameter {
     local  _parameter
     local  _sapnote_parameter
 
-    # i+=2 --> every 2nd item
+    # i+=2 --> every 3rd item
     for ((i=0; i < ${#_io_parameter[@]}; i+=3)); do
 
         logTrace "<${FUNCNAME[0]}> # ${_io_parameter[$i]}>"
