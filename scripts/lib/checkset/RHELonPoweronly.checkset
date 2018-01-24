@@ -15,6 +15,7 @@
 230_vm_max_map_count
 240_samepage_merging
 250_kernel_sharedmemory
+260_vm_dirty_bytes
 300_net_parameter
 311_ip_port_range
 500_io_parameter
