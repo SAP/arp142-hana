@@ -383,6 +383,19 @@ function __get_platform_cpu_details {
 
     done
 
+    if [[ ! -n ${LIB_PLATF_CPU:-} ]]; then
+
+        if LIB_FUNC_IS_X64 ; then
+            LIB_PLATF_CPU=$(grep  'model name' /proc/cpuinfo | sort -u)
+            LIB_PLATF_CPU=$(LIB_FUNC_TRIM_LEFT "${LIB_PLATF_CPU/model name[[:blank:]]:}")
+
+        elif LIB_FUNC_IS_IBMPOWER ; then
+            LIB_PLATF_CPU=$(grep  'cpu' /proc/cpuinfo | sort -u)
+            LIB_PLATF_CPU=$(LIB_FUNC_TRIM_LEFT "${LIB_PLATF_CPU/cpu[[:space:]]*:}")
+        fi
+
+        readonly LIB_PLATF_CPU
+    fi
 }
 
 function __get_platform_mem_details {
@@ -432,35 +445,21 @@ function _lib_helper_main {
 
     __get_platform_cpu_details
 
-    # ToDo:	Power platform does not provide 'dmidecode'
-    if [[ -x "$(command -v dmidecode)" ]]; then
+    # ToDo:	Power platform does not provide 'dmidecode or /sys/devices/virtual/dmi/id'
+    if [[ -e '/sys/devices/virtual/dmi/id' ]]; then
 
         # Vendor - IBM, Lenovo, ...
         if [[ ! -n ${LIB_PLATF_VENDOR:-} ]]; then
-            LIB_PLATF_VENDOR=$(dmidecode -s system-manufacturer)
+            LIB_PLATF_VENDOR="$(</sys/devices/virtual/dmi/id/sys_vendor)"
             readonly LIB_PLATF_VENDOR
         fi
 
         # Platform - "x3950 X6 -[6241ZB5]-", "ProLiant DL785 G6", "VMware Virtual Platform", "RHEV Hypervisor"
         if [[ ! -n ${LIB_PLATF_NAME:-} ]]; then
-            LIB_PLATF_NAME=$(dmidecode -s system-product-name)
+            LIB_PLATF_NAME="$(</sys/devices/virtual/dmi/id/product_name)"
             readonly LIB_PLATF_NAME
         fi
 
-    fi
-
-    if [[ ! -n ${LIB_PLATF_CPU:-} ]]; then
-
-        if LIB_FUNC_IS_X64 ; then
-            LIB_PLATF_CPU=$(grep  'model name' /proc/cpuinfo | sort -u)
-            LIB_PLATF_CPU=$(LIB_FUNC_TRIM_LEFT "${LIB_PLATF_CPU/model name[[:blank:]]:}")
-
-        elif LIB_FUNC_IS_IBMPOWER ; then
-            LIB_PLATF_CPU=$(grep  'cpu' /proc/cpuinfo | sort -u)
-            LIB_PLATF_CPU=$(LIB_FUNC_TRIM_LEFT "${LIB_PLATF_CPU/cpu[[:space:]]*:}")
-        fi
-
-        readonly LIB_PLATF_CPU
     fi
 
     __get_platform_mem_details
