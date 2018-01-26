@@ -7,8 +7,7 @@ function check_136_cpu_cpufolding_ibmpower {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r _sapnote_sles='#2205917'	# SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
-    local -r _sapnote_rhel='#2292690'	# SAP HANA DB: Recommended OS settings for RHEL 7
+    local -r sapnote='#2055470'	# HANA on POWER Planning and Installation Specifics
     # MODIFICATION SECTION<<
 
     if ! LIB_FUNC_IS_IBMPOWER ; then
@@ -18,15 +17,11 @@ function check_136_cpu_cpufolding_ibmpower {
 
     else
 
-        local _sapnote
-        LIB_FUNC_IS_SLES && _sapnote=${_sapnote_sles}
-        LIB_FUNC_IS_RHEL && _sapnote=${_sapnote_rhel}
-
         if rpm -q pseries-energy > /dev/null ; then
-            logCheckError "pseries-energy RPM is installed. Remove this RPM (SAP Note ${_sapnote:-})"
+            logCheckError "pseries-energy RPM is installed. Remove this RPM (SAP Note ${sapnote:-})"
             _retval=2
         else
-            logCheckOk "pseries-energy RPM is not installed. (SAP Note ${_sapnote:-})"
+            logCheckOk "pseries-energy RPM is not installed. (SAP Note ${sapnote:-})"
             _retval=0
         fi
 
