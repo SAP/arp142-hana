@@ -8,14 +8,14 @@ function check_001_os_kernel_sles {
 
     # MODIFICATION SECTION>>
     # array	'goodnormalized_kernelversion'	'sap note'
-    local -ar _kernel113=( '3.0.101-0.47.86.1' '#2339544' )	#1954788
-    local -ar _kernel114=( '3.0.101-108.7.1' '#2240716' )		#2240716-v21
-    local -ar _kernel114power=( '3.0.101-108.7.1' '#2240716' )
-    local -ar _kernel120=( '3.12.61-52.72.1' '#2205917' )
-    local -ar _kernel121=( '3.12.74-60.64.40.1' '#2205917' )
-    local -ar _kernel122=( '4.4.74-92.35.1' '#2205917' )
-    local -ar _kernel121power=( '3.12.74-60.64.40.1' '#2205917' )
-    local -ar _kernel122power=( '4.4.74-92.35.1' '#2205917' )
+    local -ar sles113=( '3.0.101-0.47.86.1' '#2339544' )	#1954788
+    local -ar sles114=( '3.0.101-108.7.1' '#2240716' )		#2240716-v21
+    local -ar sles114power=( '3.0.101-108.7.1' '#2240716' )
+    local -ar sles120=( '3.12.61-52.72.1' '#2205917' )
+    local -ar sles121=( '3.12.74-60.64.40.1' '#2205917' )
+    local -ar sles122=( '4.4.74-92.35.1' '#2205917' )
+    local -ar sles121power=( '3.12.74-60.64.40.1' '#2205917' )
+    local -ar sles122power=( '4.4.74-92.35.1' '#2205917' )
     # MODIFICATION SECTION<<
 
     if  ! LIB_FUNC_IS_SLES ;	then
@@ -26,7 +26,7 @@ function check_001_os_kernel_sles {
     else
 
         local _goodversion
-        local _sapnote
+        local sapnote
 
         if LIB_FUNC_IS_IBMPOWER ; then
 
@@ -36,11 +36,11 @@ function check_001_os_kernel_sles {
                     _retval=2
                 ;;
 
-            11.4)	_goodversion="${_kernel114power[0]}" ; _sapnote="${_kernel114power[1]}" ;;
+            11.4)	_goodversion="${sles114power[0]}" ; sapnote="${sles114power[1]}" ;;
 
-            12.1*)	_goodversion="${_kernel121power[0]}" ; _sapnote="${_kernel121power[1]}" ;;
+            12.1*)	_goodversion="${sles121power[0]}" ; sapnote="${sles121power[1]}" ;;
 
-            12.2*)	_goodversion="${_kernel122power[0]}" ; _sapnote="${_kernel122power[1]}" ;;
+            12.2*)	_goodversion="${sles122power[0]}" ; sapnote="${sles122power[1]}" ;;
 
             *)		logCheckError "SLESonPower version is not supported (SAP Note #2235581) (is: ${OS_VERSION})"
                     _retval=2
@@ -51,20 +51,20 @@ function check_001_os_kernel_sles {
 
             case "${OS_VERSION}" in
 
-                11.1 | 11.2 )
+                11.[1-2] )
                     logCheckError "Upgrade to SLES for SAP Applications 11 SP4 (SAP Note #2235581) (is: ${OS_VERSION})"
                     _retval=2
                     ;;
 
-                11.3)	_goodversion="${_kernel113[0]}" ; _sapnote="${_kernel113[1]}" ;;
+                11.3)	_goodversion="${sles113[0]}" ; sapnote="${sles113[1]}" ;;
 
-                11.4)	_goodversion="${_kernel114[0]}" ; _sapnote="${_kernel114[1]}" ;;
+                11.4)	_goodversion="${sles114[0]}" ; sapnote="${sles114[1]}" ;;
 
-                12.0*)	_goodversion="${_kernel120[0]}" ; _sapnote="${_kernel120[1]}" ;;
+                12.0*)	_goodversion="${sles120[0]}" ; sapnote="${sles120[1]}" ;;
 
-                12.1*)	_goodversion="${_kernel121[0]}" ; _sapnote="${_kernel121[1]}" ;;
+                12.1*)	_goodversion="${sles121[0]}" ; sapnote="${sles121[1]}" ;;
 
-                12.2*)	_goodversion="${_kernel122[0]}" ; _sapnote="${_kernel122[1]}" ;;
+                12.2*)	_goodversion="${sles122[0]}" ; sapnote="${sles122[1]}" ;;
 
                 *)		logCheckError "SLES version is not supported (SAP Note #2235581) (is: ${OS_VERSION})"
                         _retval=2
@@ -91,10 +91,10 @@ function check_001_os_kernel_sles {
 
             LIB_FUNC_COMPARE_VERSIONS "${normalized_kernelversion}" "${normalized_goodversion}"
             if [[ $? -eq 2 ]]; then
-                logCheckError "Linux kernel must be upgraded. (SAP Note ${_sapnote:-}) (is: ${OS_LEVEL}, should be: >=${_goodversion})"
+                logCheckError "Linux kernel must be upgraded. (SAP Note ${sapnote:-}) (is: ${OS_LEVEL}, should be: >=${_goodversion})"
                 _retval=2
             else
-                logCheckOk "Linux kernel version is at required level. (SAP Note ${_sapnote:-}) (is: ${OS_LEVEL})"
+                logCheckOk "Linux kernel version is at required level. (SAP Note ${sapnote:-}) (is: ${OS_LEVEL})"
                 _retval=0
             fi
 

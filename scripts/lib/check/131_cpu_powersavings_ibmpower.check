@@ -7,7 +7,7 @@ function check_131_cpu_powersavings_ibmpower {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r _sapnote='#2205917'	#SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
+    local -r sapnote='#2205917'	#SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
     # MODIFICATION SECTION<<
 
     if ! LIB_FUNC_IS_IBMPOWER ; then
@@ -42,12 +42,12 @@ function check_131_cpu_powersavings_ibmpower {
         shopt -s nocasematch
         if [[ "${savmode}" == "None" ]]; then
 
-            logCheckOk "Power Savings Mode set as recommended. (SAP Note ${_sapnote:-}) (is: None)"
+            logCheckOk "Power Savings Mode set as recommended. (SAP Note ${sapnote:-}) (is: None)"
             _retval=0
 
         else
 
-            logCheckError "Power Savings Mode NOT set as recommended. (SAP Note ${_sapnote:-}) (is: ${savmode}, should be: None)"
+            logCheckError "Power Savings Mode NOT set as recommended. (SAP Note ${sapnote:-}) (is: ${savmode}, should be: None)"
             _retval=2
 
         fi

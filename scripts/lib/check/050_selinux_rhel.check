@@ -7,10 +7,10 @@ function check_050_selinux_rhel {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote65='#2013638'	# SAP HANA DB: Recommended OS settings for RHEL 6.5
-    local -r sapnote66='#2136965'	# SAP HANA DB: Recommended OS settings for RHEL 6.6
-    local -r sapnote67='#2247020'	# SAP HANA DB: Recommended OS settings for RHEL 6.7
-    local -r sapnote7='#2292690'	# SAP HANA DB: Recommended OS settings for RHEL 7
+    local -r sapnote_rhel65='#2013638'	# SAP HANA DB: Recommended OS settings for RHEL 6.5
+    local -r sapnote_rhel66='#2136965'	# SAP HANA DB: Recommended OS settings for RHEL 6.6
+    local -r sapnote_rhel67='#2247020'	# SAP HANA DB: Recommended OS settings for RHEL 6.7
+    local -r sapnote_rhel7='#2292690'	# SAP HANA DB: Recommended OS settings for RHEL 7
     # MODIFICATION SECTION<<
 
     if  ! LIB_FUNC_IS_RHEL ;	then
@@ -23,10 +23,10 @@ function check_050_selinux_rhel {
 
         case "${OS_VERSION}" in
 
-            6.5)	sapnote="${sapnote65}"	;;
-            6.6)	sapnote="${sapnote66}"	;;
-            6.7)	sapnote="${sapnote67}"	;;
-            7.*)	sapnote="${sapnote7}"	;;
+            6.5)	sapnote="${sapnote_rhel65}"	;;
+            6.6)	sapnote="${sapnote_rhel66}"	;;
+            6.7)	sapnote="${sapnote_rhel67}"	;;
+            7.*)	sapnote="${sapnote_rhel7}"	;;
 
         esac
 

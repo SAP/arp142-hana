@@ -7,12 +7,12 @@ function check_045_tunedprofiles-saphana_rhel {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -ar _rhel73=( '2.7.1-3.el7_3.3' '#2292690' )
-    local -ar _rhel74=( '2.8.0-5.el7_4.2' '#2292690' )
+    local -ar rhel73=( '2.7.1-3.el7_3.3' '#2292690' )
+    local -ar rhel74=( '2.8.0-5.el7_4.2' '#2292690' )
     # MODIFICATION SECTION<<
 
     local _goodversion
-    local _sapnote
+    local sapnote
 
     if ! LIB_FUNC_IS_RHEL ; then
 
@@ -28,9 +28,9 @@ function check_045_tunedprofiles-saphana_rhel {
                         _retval=3
                         ;;
 
-                7.3* )  _goodversion="${_rhel73[0]}" ; _sapnote="${_rhel73[1]}" ;;
+                7.3* )  _goodversion="${rhel73[0]}" ; sapnote="${rhel73[1]}" ;;
 
-                7.4* )  _goodversion="${_rhel74[0]}" ; _sapnote="${_rhel74[1]}" ;;
+                7.4* )  _goodversion="${rhel74[0]}" ; sapnote="${rhel74[1]}" ;;
 
                 *)
                         logCheckWarning "CHECK does not support RHEL release (is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
@@ -58,10 +58,10 @@ function check_045_tunedprofiles-saphana_rhel {
         LIB_FUNC_COMPARE_VERSIONS "${normalized_fullversion}" "${normalized_goodversion}"
 
         if [[ $? -ne 2 ]]; then
-            logCheckOk "tuned-profiles-sap-hana version seems to be ok (SAP Note ${_sapnote:-}) (is: ${_fullversion})"
+            logCheckOk "tuned-profiles-sap-hana version seems to be ok (SAP Note ${sapnote:-}) (is: ${_fullversion})"
             _retval=0
         else
-            logCheckError "tuned-profiles-sap-hana must be updated (SAP Note ${_sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
+            logCheckError "tuned-profiles-sap-hana must be updated (SAP Note ${sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
             _retval=2
         fi
 

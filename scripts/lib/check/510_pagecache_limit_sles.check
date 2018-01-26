@@ -7,7 +7,7 @@ function check_510_pagecache_limit_sles {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r _sapnote='#1557506'
+    local -r sapnote='#1557506'
     # MODIFICATION SECTION<<
 
     if  ! LIB_FUNC_IS_SLES ;	then
@@ -17,7 +17,7 @@ function check_510_pagecache_limit_sles {
 
     elif [[ ! -e '/proc/sys/vm/pagecache_limit_mb' ]]; then
 
-        logCheckSkipped "Pagecache Limit not configurable (SAP Note ${_sapnote:-}). Skipping check" "<${FUNCNAME[0]}>"
+        logCheckSkipped "Pagecache Limit not configurable (SAP Note ${sapnote:-}). Skipping check" "<${FUNCNAME[0]}>"
         _retval=3
 
     else
@@ -32,22 +32,22 @@ function check_510_pagecache_limit_sles {
 
         if [[ ${pgcache_limit_mb} -eq 0 ]]; then
 
-            logCheckOk "vm.pagecache_limit_mb is set as recommended (SAP Note ${_sapnote:-}) (is: 0)"
+            logCheckOk "vm.pagecache_limit_mb is set as recommended (SAP Note ${sapnote:-}) (is: 0)"
             _retval=0
 
         else
 
-            logCheckWarning "vm.pagecache_limit_mb is set - should only be set to address a certain issue (SAP Note ${_sapnote:-}) (is: ${pgcache_limit_mb}, should be: 0)"
+            logCheckWarning "vm.pagecache_limit_mb is set - should only be set to address a certain issue (SAP Note ${sapnote:-}) (is: ${pgcache_limit_mb}, should be: 0)"
             _retval=1
 
             if [[ ${pgcache_limit_mb} -lt ${set_pg_limit} ]]; then
 
-                logCheckError "vm.pagecache_limit_mb is set to low (SAP Note ${_sapnote:-}) (is: ${pgcache_limit_mb}, should be: ${set_pg_limit})"
+                logCheckError "vm.pagecache_limit_mb is set to low (SAP Note ${sapnote:-}) (is: ${pgcache_limit_mb}, should be: ${set_pg_limit})"
                 _retval=2
 
             elif [[ ${pgcache_limit_mb} -gt ${set_pg_limit} ]]; then
 
-                logCheckWarning "vm.pagecache_limit_mb is set to high (SAP Note ${_sapnote:-}) (is: ${pgcache_limit_mb}, should be: ${set_pg_limit})"
+                logCheckWarning "vm.pagecache_limit_mb is set to high (SAP Note ${sapnote:-}) (is: ${pgcache_limit_mb}, should be: ${set_pg_limit})"
                 _retval=1
 
             fi

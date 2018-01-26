@@ -8,14 +8,14 @@ function check_002_os_kernel_rhel {
 
     # MODIFICATION SECTION>>
     # array	'goodnormalized_kernelversion'	'sap note'
-    local -ar _kernel65=( '2.6.32-431.29.2' '#2013638' )
-    local -ar _kernel66=( '2.6.32-504.16.2' '#2136965' )
-    local -ar _kernel67=( '2.6.32-573' '#2247020' )		#not known, take release kernel, all should be fine
-    local -ar _kernel72=( '3.10.0-327.62.4.el7' '#2292690' )
-    local -ar _rhel73=( '3.10.0-514.36.5.el7' '#2292690' )
-    local -ar _rhel73power=( '3.10.0-514.36.5.el7' '#2292690' )
-    local -ar _rhel74=( '3.10.0-693.11.6.el7' '#2292690' )
-    local -ar _rhel74power=( '3.10.0-693.11.6.el7' '#2292690' )
+    local -ar rhel65=( '2.6.32-431.29.2' '#2013638' )
+    local -ar rhel66=( '2.6.32-504.16.2' '#2136965' )
+    local -ar rhel67=( '2.6.32-573' '#2247020' )		#not known, take release kernel, all should be fine
+    local -ar rhel72=( '3.10.0-327.62.4.el7' '#2292690' )
+    local -ar rhel73=( '3.10.0-514.36.5.el7' '#2292690' )
+    local -ar rhel73power=( '3.10.0-514.36.5.el7' '#2292690' )
+    local -ar rhel74=( '3.10.0-693.11.6.el7' '#2292690' )
+    local -ar rhel74power=( '3.10.0-693.11.6.el7' '#2292690' )
     # MODIFICATION SECTION<<
 
     if  ! LIB_FUNC_IS_RHEL ;	then
@@ -26,27 +26,27 @@ function check_002_os_kernel_rhel {
     else
 
         local _goodversion
-        local _sapnote
+        local sapnote
 
         if LIB_FUNC_IS_INTEL ; then
 
             case "${OS_VERSION}" in
 
-                6.4 )	logCheckError 'Upgrade to RHEL for SAP Applications 6.5+ (SAP Note #2235581)'
-                        _retval=2
+                6.[0-4])    logCheckError 'Upgrade to RHEL for SAP Applications 6.5+ (SAP Note #2235581)'
+                            _retval=2
                     ;;
 
-                6.5)	_goodversion="${_kernel65[0]}" ; _sapnote="${_kernel65[1]}" ;;
+                6.5)	_goodversion="${rhel65[0]}" ; sapnote="${rhel65[1]}" ;;
 
-                6.6)	_goodversion="${_kernel66[0]}" ; _sapnote="${_kernel66[1]}" ;;
+                6.6)	_goodversion="${rhel66[0]}" ; sapnote="${rhel66[1]}" ;;
 
-                6.7)	_goodversion="${_kernel67[0]}" ; _sapnote="${_kernel67[1]}" ;;
+                6.7)	_goodversion="${rhel67[0]}" ; sapnote="${rhel67[1]}" ;;
 
-                7.2)	_goodversion="${_kernel72[0]}" ; _sapnote="${_kernel72[1]}" ;;
+                7.2)	_goodversion="${rhel72[0]}" ; sapnote="${rhel72[1]}" ;;
 
-                7.3)	_goodversion="${_rhel73[0]}" ; _sapnote="${_rhel73[1]}" ;;
+                7.3)	_goodversion="${rhel73[0]}" ; sapnote="${rhel73[1]}" ;;
 
-                7.4)	_goodversion="${_rhel74[0]}" ; _sapnote="${_rhel74[1]}" ;;
+                7.4)	_goodversion="${rhel74[0]}" ; sapnote="${rhel74[1]}" ;;
 
                 *)		logCheckError "RHEL version is not supported (SAP Note #2235581) (is: ${OS_VERSION})"
                         _retval=2
@@ -57,9 +57,9 @@ function check_002_os_kernel_rhel {
 
             case "${OS_VERSION}" in
 
-                7.3)	_goodversion="${_rhel73power[0]}" ; _sapnote="${_rhel73power[1]}" ;;
+                7.3)	_goodversion="${rhel73power[0]}" ; sapnote="${rhel73power[1]}" ;;
 
-                7.4)	_goodversion="${_rhel74power[0]}" ; _sapnote="${_rhel74power[1]}" ;;
+                7.4)	_goodversion="${rhel74power[0]}" ; sapnote="${rhel74power[1]}" ;;
 
                 *)		logCheckError "RHEL version is not supported (SAP Note #2235581) (is: ${OS_VERSION})"
                         _retval=2
@@ -87,10 +87,10 @@ function check_002_os_kernel_rhel {
 
             LIB_FUNC_COMPARE_VERSIONS "${normalized_kernelversion}" "${normalized_goodversion}"
             if [[ $? -eq 2 ]]; then
-                logCheckError "Linux kernel must be upgraded. (SAP Note ${_sapnote:-}) (is: ${OS_LEVEL}, should be: >=${_goodversion})"
+                logCheckError "Linux kernel must be upgraded. (SAP Note ${sapnote:-}) (is: ${OS_LEVEL}, should be: >=${_goodversion})"
                 _retval=2
             else
-                logCheckOk "Linux kernel version is at required level. (SAP Note ${_sapnote:-}) (is: ${OS_LEVEL})"
+                logCheckOk "Linux kernel version is at required level. (SAP Note ${sapnote:-}) (is: ${OS_LEVEL})"
                 _retval=0
             fi
 

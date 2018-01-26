@@ -7,8 +7,8 @@ function check_150_cpu_perfbias_intel {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r _sapnote_sles='#2205917'    #SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
-    local -r _sapnote_rhel='#2292690'	 #SAP HANA DB: Recommended OS settings for RHEL 7
+    local -r sapnote_sles='#2205917'    #SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
+    local -r sapnote_rhel='#2292690'	 #SAP HANA DB: Recommended OS settings for RHEL 7
     # MODIFICATION SECTION<<
 
     if  ! LIB_FUNC_IS_INTEL ; then
@@ -18,13 +18,13 @@ function check_150_cpu_perfbias_intel {
 
     else
 
-        local _sapnote
-        LIB_FUNC_IS_SLES && _sapnote=${_sapnote_sles}
-        LIB_FUNC_IS_RHEL && _sapnote=${_sapnote_rhel}
+        local sapnote
+        LIB_FUNC_IS_SLES && sapnote=${sapnote_sles}
+        LIB_FUNC_IS_RHEL && sapnote=${sapnote_rhel}
 
         if [[ ! -x '/usr/bin/cpupower' ]]; then
 
-            logCheckWarning "Energy Performance Bias EPB could not be checked - cpupower not installed (SAP Note ${_sapnote:-}) (is: unknown, should be: 0)"
+            logCheckWarning "Energy Performance Bias EPB could not be checked - cpupower not installed (SAP Note ${sapnote:-}) (is: unknown, should be: 0)"
             _retval=1
 
         else
@@ -37,17 +37,17 @@ function check_150_cpu_perfbias_intel {
 
             if [[ ${perf_bias} -eq 0 ]]; then
 
-                logCheckOk "Energy Performance Bias EPB set to performance (SAP Note ${_sapnote:-}) (is: ${perf_bias})"
+                logCheckOk "Energy Performance Bias EPB set to performance (SAP Note ${sapnote:-}) (is: ${perf_bias})"
                 _retval=0
 
             elif [[ ${perf_bias} -gt 0 ]]; then
 
-                logCheckWarning "Energy Performance Bias EPB not set to performance (SAP Note ${_sapnote:-}) (is: ${perf_bias}, should be: 0)"
+                logCheckWarning "Energy Performance Bias EPB not set to performance (SAP Note ${sapnote:-}) (is: ${perf_bias}, should be: 0)"
                 _retval=1
 
             else
 
-                logCheckWarning "Energy Performance Bias EPB could not be determined (SAP Note ${_sapnote:-}) (is: ?, should be: 0)"
+                logCheckWarning "Energy Performance Bias EPB could not be determined (SAP Note ${sapnote:-}) (is: ?, should be: 0)"
                 _retval=1
 
             fi

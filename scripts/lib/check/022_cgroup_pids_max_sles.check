@@ -11,7 +11,7 @@ function check_022_cgroup_pids_max_sles {
 
     # MODIFICATION SECTION>>
     local -r _reco_value='max'
-    local -r _sapnote='#2205917'			#SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12	- SLES12.2 only
+    local -r sapnote='#2205917'			#SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12	- SLES12.2 only
     # MODIFICATION SECTION<<
 
     if ! LIB_FUNC_IS_SLES ; then
@@ -41,19 +41,19 @@ function check_022_cgroup_pids_max_sles {
         #array length
         if [[ ${#pids_max[@]} -eq 0 ]]; then
 
-                logCheckWarning "UserTasksMax setting could not be determined (SAP Note ${_sapnote:-})"
+                logCheckWarning "UserTasksMax setting could not be determined (SAP Note ${sapnote:-})"
                 _retval=1
 
         else
 
             if [[ "${pids_max[0]}" != "${_reco_value}" ]]; then
 
-                logCheckError "UserTasksMax is NOT set to infinity (SAP Note ${_sapnote:-}) (is: ${pids_max[0]})"
+                logCheckError "UserTasksMax is NOT set to infinity (SAP Note ${sapnote:-}) (is: ${pids_max[0]})"
                 _retval=2
 
             else
 
-                logCheckOk "UserTasksMax set to infinity for all users (SAP Note ${_sapnote:-})"
+                logCheckOk "UserTasksMax set to infinity for all users (SAP Note ${sapnote:-})"
                 _retval=0
 
             fi

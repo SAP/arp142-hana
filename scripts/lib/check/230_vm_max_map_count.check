@@ -7,7 +7,7 @@ function check_230_vm_max_map_count {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r _sapnote='#1980196'		#Setting /proc/sys/vm/max_map_count on HANA systems
+    local -r sapnote='#1980196'		#Setting /proc/sys/vm/max_map_count on HANA systems
     # MODIFICATION SECTION<<
 
     # LIMIT <= 2.147.483.647 - but make sure that value is not larger
@@ -27,15 +27,15 @@ function check_230_vm_max_map_count {
 
     if [[ ${_curr_mmcount} -lt ${_limit_mmcount} ]]; then
 
-        logCheckError "Parameter vm.max_map_count must be increased (SAP Note ${_sapnote:-}) (is: ${_curr_mmcount}, should be: ${_limit_mmcount}, could be: ${_maximum_mmcount})"
+        logCheckError "Parameter vm.max_map_count must be increased (SAP Note ${sapnote:-}) (is: ${_curr_mmcount}, should be: ${_limit_mmcount}, could be: ${_maximum_mmcount})"
         _retval=2
 
     else
 
         if [[ ${_curr_mmcount} -lt ${_maximum_mmcount} ]]; then
-            logCheckOk "Parameter vm.max_map_count set as recommended, but could be increased (SAP Note ${_sapnote:-}) (is: ${_curr_mmcount}, could be: ${_maximum_mmcount})"
+            logCheckOk "Parameter vm.max_map_count set as recommended, but could be increased (SAP Note ${sapnote:-}) (is: ${_curr_mmcount}, could be: ${_maximum_mmcount})"
         else
-            logCheckOk "Parameter vm.max_map_count set to maximum as recommended (SAP Note ${_sapnote:-}) (is: ${_curr_mmcount})"
+            logCheckOk "Parameter vm.max_map_count set to maximum as recommended (SAP Note ${sapnote:-}) (is: ${_curr_mmcount})"
         fi
         _retval=0
 

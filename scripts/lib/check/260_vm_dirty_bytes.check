@@ -7,7 +7,7 @@ check_260_vm_dirty_bytes() {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r _sapnote='#7010287'
+    local -r sapnote='#7010287'
 
     #                               parameter                       recommended_value
     local -ar _vm_parameter=(\
@@ -41,12 +41,12 @@ check_260_vm_dirty_bytes() {
 
     if [[ ${_retval} -eq 99 ]]; then
 
-        logCheckOk "All virtual memory dirty sysctl parameter set as recommended (SuSE KB ${_sapnote:-}, SAP Note to be created)"
+        logCheckOk "All virtual memory dirty sysctl parameter set as recommended (SuSE KB ${sapnote:-}, SAP Note to be created)"
         _retval=0
 
     else
 
-        logCheckWarning "NOT all virtual memory dirty sysctl parameter set as recommended (SuSE KB ${_sapnote:-}, SAP Note to be created)"
+        logCheckWarning "NOT all virtual memory dirty sysctl parameter set as recommended (SuSE KB ${sapnote:-}, SAP Note to be created)"
 
     fi
 

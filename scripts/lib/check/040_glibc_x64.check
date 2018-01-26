@@ -10,14 +10,14 @@ function check_040_glibc_x64 {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -ar _sles114=( '2.11.3-17.95.2' '#2263929' )
-    local -ar _sles122=( '2.22-51.6' '#2205917' )
-    local -ar _rhel72=( '2.17-106.el7_2.9' '#2292690' )
-    local -ar _rhel73=( '2.17-157.el7_3.5' '#2292690' )
+    local -ar sles114=( '2.11.3-17.95.2' '#2263929' )
+    local -ar sles122=( '2.22-51.6' '#2205917' )
+    local -ar rhel72=( '2.17-106.el7_2.9' '#2292690' )
+    local -ar rhel73=( '2.17-157.el7_3.5' '#2292690' )
     # MODIFICATION SECTION<<
 
     local _goodversion
-    local _sapnote
+    local sapnote
 
     if ! LIB_FUNC_IS_X64 ; then
 
@@ -29,18 +29,11 @@ function check_040_glibc_x64 {
         if LIB_FUNC_IS_SLES ; then
             case "${OS_VERSION}" in
 
-                11.* | 12.0* | 12.1* )
+                11.* | 12.[0-1]* ) _goodversion="${sles114[0]}" ; sapnote="${sles114[1]}" ;;
 
-                        _goodversion="${_sles114[0]}"
-                        _sapnote="${_sles114[1]}"
-                    ;;
+                12.2*)             _goodversion="${sles122[0]}" ; sapnote="${sles122[1]}" ;;
 
-                12.2*)
-                        _goodversion="${_sles122[0]}"
-                        _sapnote="${_sles122[1]}"
-                    ;;
-                *)
-                        logCheckWarning "CHECK does not support SLES release (is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                *)      logCheckWarning "CHECK does not support SLES release (is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
                         _retval=1
                     ;;
             esac
@@ -48,20 +41,11 @@ function check_040_glibc_x64 {
         elif LIB_FUNC_IS_RHEL ; then
             case "${OS_VERSION}" in
 
-                7.2* )
+                7.2* )  _goodversion="${rhel72[0]}" ; sapnote="${rhel72[1]}" ;;
 
-                        _goodversion="${_rhel72[0]}"
-                        _sapnote="${_rhel72[1]}"
-                    ;;
+                7.[3-4]* )  _goodversion="${rhel73[0]}" ; sapnote="${rhel73[1]}" ;;
 
-                7.3* )
-
-                        _goodversion="${_rhel73[0]}"
-                        _sapnote="${_rhel73[1]}"
-                    ;;
-
-                *)
-                        logCheckWarning "CHECK does not support RHEL release (is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                *)      logCheckWarning "CHECK does not support RHEL release (is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
                         _retval=1
                     ;;
             esac
@@ -91,10 +75,10 @@ function check_040_glibc_x64 {
         LIB_FUNC_COMPARE_VERSIONS "${normalized_fullversion}" "${normalized_goodversion}"
 
         if [[ $? -ne 2 ]]; then
-            logCheckOk "GLIBC version seems to be ok (SAP Note ${_sapnote:-}) (is: ${_fullversion})"
+            logCheckOk "GLIBC version seems to be ok (SAP Note ${sapnote:-}) (is: ${_fullversion})"
             _retval=0
         else
-            logCheckError "GLIBC must be updated (SAP Note ${_sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
+            logCheckError "GLIBC must be updated (SAP Note ${sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
             _retval=2
         fi
 

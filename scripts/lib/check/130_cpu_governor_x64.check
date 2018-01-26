@@ -7,7 +7,7 @@ function check_130_cpu_governor_x64 {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r _sapnote='#1944799'		 #SAP HANA Guidelines for SLES Operating System Installation
+    local -r sapnote='#1944799'		 #SAP HANA Guidelines for SLES Operating System Installation
     # MODIFICATION SECTION<<
 
     if ! LIB_FUNC_IS_BARE_METAL ; then
@@ -29,22 +29,22 @@ function check_130_cpu_governor_x64 {
         case ${#govs[@]} in								#array length
 
             0)
-                        logCheckWarning "CPU governors are not set.(SAP Note  ${_sapnote:-})"
+                        logCheckWarning "CPU governors are not set.(SAP Note  ${sapnote:-})"
                         _retval=1
                 ;;
 
             1)
                         if [[ "${govs[0]}" != 'performance' ]];then
-                            logCheckWarning "CPU governors NOT set as recommended (SAP Note ${_sapnote:-}) (is: ${govs[0]}, should be: performance)"
+                            logCheckWarning "CPU governors NOT set as recommended (SAP Note ${sapnote:-}) (is: ${govs[0]}, should be: performance)"
                             _retval=1
                         else
-                            logCheckOk "CPU governors set as recommended (SAP Note ${_sapnote:-}) (is: performance)"
+                            logCheckOk "CPU governors set as recommended (SAP Note ${sapnote:-}) (is: performance)"
                             _retval=0
                         fi
 
                 ;;
 
-            *)		logCheckWarning "CPU governors NOT set as recommended (SAP Note ${_sapnote:-}) (is: multiple, should be: performance)"
+            *)		logCheckWarning "CPU governors NOT set as recommended (SAP Note ${sapnote:-}) (is: multiple, should be: performance)"
                     _retval=1
                 ;;
         esac

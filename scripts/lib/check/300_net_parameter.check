@@ -7,7 +7,7 @@ function check_300_net_parameter {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r _sapnote='#2382421'	# Optimizing the Network Configuration on HANA- and OS-Level for SPS10 and Higher
+    local -r sapnote='#2382421'	# Optimizing the Network Configuration on HANA- and OS-Level for SPS10 and Higher
 
     #                               parameter                       recommended_value
     local -ar _tcp_parameter=(\
@@ -53,12 +53,12 @@ function check_300_net_parameter {
 
     if [[ ${_retval} -eq 99 ]]; then
 
-        logCheckOk "All network sysctl parameter set as recommended (SAP Note ${_sapnote:-})"
+        logCheckOk "All network sysctl parameter set as recommended (SAP Note ${sapnote:-})"
         _retval=0
 
     else
 
-        logCheckWarning "Not All network sysctl parameter set as recommended (SAP Note ${_sapnote:-})"
+        logCheckWarning "Not All network sysctl parameter set as recommended (SAP Note ${sapnote:-})"
 
     fi
 

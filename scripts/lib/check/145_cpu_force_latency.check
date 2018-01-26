@@ -12,8 +12,8 @@ function check_145_cpu_force_latency {
 
     # MODIFICATION SECTION>>
     local -ir _reco_value=70
-    local -r _sapnote_sles='#2205917'			#SLES12.2 only
-    local -r _sapnote_rhel='#2292690'			#SAP HANA DB: Recommended OS settings for RHEL 7
+    local -r sapnote_sles='#2205917'			#SLES12.2 only
+    local -r sapnote_rhel='#2292690'			#SAP HANA DB: Recommended OS settings for RHEL 7
     # MODIFICATION SECTION<<
 
     local sapnote
@@ -34,7 +34,7 @@ function check_145_cpu_force_latency {
                 ;;
 
                 12.[2-3]* )
-                        sapnote="${_sapnote_sles}"
+                        sapnote="${sapnote_sles}"
                     ;;
                 *)
                         logCheckWarning "CHECK does NOT support SLES release (is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
@@ -50,7 +50,7 @@ function check_145_cpu_force_latency {
                         _retval=3
                 ;;
                 7.[3-4]* )
-                        sapnote="${_sapnote_rhel}"
+                        sapnote="${sapnote_rhel}"
                     ;;
                 *)
                         logCheckWarning "CHECK does NOT support RHEL release (is: ${OS_VERSION}) - <${FUNCNAME[0]}>"

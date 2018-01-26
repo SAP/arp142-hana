@@ -12,23 +12,16 @@ function check_060_systemd_version {
     # MODIFICATION SECTION<<
 
     local _goodversion
-    local _sapnote
+    local sapnote
 
 
     case "${OS_VERSION}" in
 
-        12.2*)
-                _goodversion="${sles122[0]}"
-                _sapnote="${sles122[1]}"
-            ;;
+        12.2*)  _goodversion="${sles122[0]}" ; sapnote="${sles122[1]}" ;;
 
-        7.*)
-                _goodversion="${rhel7[0]}"
-                _sapnote="${rhel7[1]}"
-            ;;
+        7.*)    _goodversion="${rhel7[0]}" ; sapnote="${rhel7[1]}" ;;
 
-        *)
-                logCheckSkipped "CHECK not applicable for Linux release (is: ${OS_NAME} ${OS_VERSION}). Skipping check" "<${FUNCNAME[0]}>"
+        *)      logCheckSkipped "CHECK not applicable for Linux release (is: ${OS_NAME} ${OS_VERSION}). Skipping check" "<${FUNCNAME[0]}>"
                 _retval=3
             ;;
     esac
@@ -52,10 +45,10 @@ function check_060_systemd_version {
         LIB_FUNC_COMPARE_VERSIONS "${normalized_fullversion}" "${normalized_goodversion}"
 
         if [[ $? -ne 2 ]]; then
-            logCheckOk "SYSTEMD version seems to be ok (SAP Note ${_sapnote:-}) (is: ${_fullversion})"
+            logCheckOk "SYSTEMD version seems to be ok (SAP Note ${sapnote:-}) (is: ${_fullversion})"
             _retval=0
         else
-            logCheckError "SYSTEMD must be updated (SAP Note ${_sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
+            logCheckError "SYSTEMD must be updated (SAP Note ${sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
             _retval=2
         fi
 

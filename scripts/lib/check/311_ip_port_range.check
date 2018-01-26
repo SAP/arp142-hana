@@ -10,7 +10,7 @@ function check_311_ip_port_range {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r _sapnote='#2382421'	# Optimizing the Network Configuration on HANA- and OS-Level for SPS10 and Higher
+    local -r sapnote='#2382421'	# Optimizing the Network Configuration on HANA- and OS-Level for SPS10 and Higher
 
     local kernel_applicable='4.2'
     LIB_FUNC_IS_RHEL && kernel_applicable='3.10.0-514'
@@ -61,12 +61,12 @@ function check_311_ip_port_range {
 
         if [[ ${_retval} -eq 99 ]]; then
 
-            logCheckOk "sysctl parameter net.ipv4.ip_local_port_range set as recommended (SAP Note ${_sapnote:-})"
+            logCheckOk "sysctl parameter net.ipv4.ip_local_port_range set as recommended (SAP Note ${sapnote:-})"
             _retval=0
 
         else
 
-            logCheckWarning "sysctl parameter net.ipv4.ip_local_port_range NOT set as recommended (SAP Note ${_sapnote:-})"
+            logCheckWarning "sysctl parameter net.ipv4.ip_local_port_range NOT set as recommended (SAP Note ${sapnote:-})"
 
         fi
 
