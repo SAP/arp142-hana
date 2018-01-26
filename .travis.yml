@@ -1,5 +1,5 @@
 sudo: required
-# dist: trusty - not active so far
+dist: trusty
 language: bash
 
 env:
@@ -29,12 +29,16 @@ before_install:
       fi
     - sudo apt-add-repository "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse"
     - sudo apt-get -qq update
-    - sudo apt-get -t trusty-backports install shellcheck
+    #- sudo apt-get -t trusty-backports install shellcheck
     - sudo pip install bashate
 
 script:
   # Run unit tests - runs all the unit tests that can be found, and generates a nice report of the tests
   - bash -c 'cd ./scripts/tests/; ./test_runner'
+  - bash -c 'shopt -s globstar; shellcheck --version'
+  #- bash -c 'shopt -s globstar; shellcheck --external-sources scripts/bin/saphana-*'
+  - bash -c 'shopt -s globstar; shellcheck --external-sources --exclude=SC2154 scripts/**/*.check'
+
   # - bash -c 'shopt -s globstar; bashate scripts/**/*.{sh,check}'
   - bash -c 'shopt -s globstar; bashate -i E006 scripts/bin/saphana* scripts/bin/lib*'
   - bash -c 'shopt -s globstar; bashate -i E006 scripts/**/*.check'
