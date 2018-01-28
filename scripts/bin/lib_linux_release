@@ -14,8 +14,8 @@ umask 022
 # return if library is already loaded
 [[ -n "${LIB_LINUX_RELEASE:-}" ]] && return 0
 
-LIB_LINUX_RELEASE='1.2'
-#LIB_RELEASE_DATE='2018-JAN-21'
+LIB_LINUX_RELEASE='v1.3-b59-g4ee5610a'
+#LIB_RELEASE_DATE='2018-Jan-28'
 
 
 ##################################################
@@ -138,9 +138,9 @@ function __linux_distrib_os_release {
 
     done < "${_os_release_file}"
 
-    _os_version="${_osvers}"
+    _os_version="${_osvers:-}"
 
-    case ${_osname} in
+    case ${_osname:-} in
         'SLES'*)
                 _os_name="${lib_release_sles}"
                 ;;
@@ -164,7 +164,6 @@ function __linux_distrib_suse_release {
     local _suse_release_file="$1"
     shift 1
 
-    local _ostmp
     local _osname
     local _osvers
     local _susepatchl
@@ -175,27 +174,33 @@ function __linux_distrib_suse_release {
 
         logTrace "<${FUNCNAME[0]}> # ${_suse_release_file}:${line}"
 
-        #Enterprise?
-        _ostmp=$(awk '/^SUSE Linux Enterprise/ {match($0, /([0-9]+)/);
-                            print substr($0,RSTART,RLENGTH) }' <<< "${line}")
-        _osname=${_osname:=$_ostmp}
+        case ${line} in
 
-        #11 - version
-        _ostmp=$(awk '/^VERSION = / {match($0, /([0-9]+)/);
-                            print substr($0,RSTART,RLENGTH) }' <<< "${line}")
-        _osvers=${_osvers:=$_ostmp}
+            'SUSE Linux Enterprise'*)
+                    _osname="${lib_release_sles}"
+            ;;
 
-        #2	- patchlevel
-        _ostmp=$(awk '/^PATCHLEVEL = / {match($0, /([0-9]+)/);
-                            print substr($0,RSTART,RLENGTH) }' <<< "${line}")
-        _susepatchl=${_susepatchl:=$_ostmp}
+            'VERSION = '*)
+                    [[ "${line}" =~ ([0-9]+) ]] && _osvers=${BASH_REMATCH[0]}
+            ;;
+
+            'PATCHLEVEL = '*)
+                    if [[ "${line}" =~ ([0-9]+) ]] ; then
+                        _susepatchl=${BASH_REMATCH[0]}
+                    else
+                        _susepatchl=0
+                    fi
+            break
+            ;;
+
+        esac
 
     done < "${_suse_release_file}"
 
-    _os_version="${_osvers}.${_susepatchl}"
+    _os_version="${_osvers:-}.${_susepatchl:-}"
 
-    if [ -n "${_osname}" ] ; then
-        _os_name="${lib_release_sles}"
+    if [ -n "${_osname:-}" ] ; then
+        _os_name="${_osname}"
     else
         _os_name='Linux Suse UNKNOWN'
     fi
@@ -206,31 +211,29 @@ function __linux_distrib_redhat_release {
     local _redhat_release_file="$1"
     shift 1
 
-    local _rhtmp
     local _rhname
     local _rhversion
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-    while read -r line; do
+    read -r line < "${_redhat_release_file}"
 
         logTrace "<${FUNCNAME[0]}> # ${_redhat_release_file}:${line}"
 
-        #Enterprise within string - match any number
-        _rhtmp=$(awk '/^Red Hat Enterprise Linux/ {match($0, /([0-9]+)/);
-                            print substr($0,RSTART,RLENGTH) }' <<< "${line}")
-        _rhname=${_rhname:=$_rhtmp}
+        case ${line} in
+
+            'Red Hat Enterprise Linux'*)
+                    _rhname="${lib_release_rhel}"
+            ;;
+
+        esac
 
         #match 6.4
-        _rhtmp=$(awk '/^Red Hat/ {match($0, /([0-9]+)\.([0-9]+)/);
-                            print substr($0,RSTART,RLENGTH) }' <<< "${line}")
-        _rhversion=${_rhversion:=$_rhtmp}
+        [[ "${line}" =~ ([0-9]+)(\.([0-9]+))* ]] && _rhversion=${BASH_REMATCH[0]}
 
-    done < "${_redhat_release_file}"
+    _os_version=${_rhversion:-}
 
-    _os_version=${_rhversion}
-
-    if [ -n "${_rhname}" ] ; then
+    if [ -n "${_rhname:-}" ] ; then
         _os_name="${lib_release_rhel}"
     else
         _os_name='Linux Redhat UNKNOWN'
@@ -290,7 +293,7 @@ function _lib_linux_release_main {
 }
 
 #Import libraries
-#shellcheck source=bin/saphana-logger
+# shellcheck source=saphana-logger
 source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/saphana-logger" ||
                 { echo 'unable to load saphana-logger library' >&2; exit 1; }
 
