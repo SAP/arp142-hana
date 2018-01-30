@@ -12,12 +12,12 @@ function check_510_pagecache_limit_sles {
 
     if  ! LIB_FUNC_IS_SLES ;	then
 
-        logCheckSkipped 'Linux distribution is not SLES. Skipping check' "<${FUNCNAME[0]}>"
+        logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif [[ ! -e '/proc/sys/vm/pagecache_limit_mb' ]]; then
+    elif [[ ! -f '/proc/sys/vm/pagecache_limit_mb' ]]; then
 
-        logCheckSkipped "Pagecache Limit not configurable (SAP Note ${sapnote:-}). Skipping check" "<${FUNCNAME[0]}>"
+        logCheckSkipped "Pagecache Limit not configurable (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
         _retval=3
 
     else

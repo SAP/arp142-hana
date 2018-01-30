@@ -20,12 +20,12 @@ function check_140_cpu_idle_cstates_intel {
 
     if ! LIB_FUNC_IS_BARE_METAL ; then
 
-        logCheckSkipped 'Running virtualized. Skipping check' "<${FUNCNAME[0]}>"
+        logCheckSkipped 'Running virtualized. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
     elif ! LIB_FUNC_IS_INTEL ; then
 
-        logCheckSkipped 'Not running on Intel CPU. Skipping check' "<${FUNCNAME[0]}>"
+        logCheckSkipped 'Not running on Intel CPU. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
     else

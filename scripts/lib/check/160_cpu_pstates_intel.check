@@ -13,12 +13,12 @@ function check_160_cpu_pstates_intel {
 
     if ! LIB_FUNC_IS_INTEL ; then
 
-        logCheckSkipped 'Not running on Intel CPU. Skipping check' "<${FUNCNAME[0]}>"
+        logCheckSkipped 'Not running on Intel CPU. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
     elif ! LIB_FUNC_IS_BARE_METAL ; then
 
-        logCheckSkipped 'Running virtualized. Skipping check' "<${FUNCNAME[0]}>"
+        logCheckSkipped 'Running virtualized. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
     else
@@ -30,13 +30,13 @@ function check_160_cpu_pstates_intel {
                                 if [[ ${LIB_PLATF_CPU_MODELID} -ge 58 ]]; then
                                     _retval=99
                                 else
-                                    logCheckSkipped 'Not running on intel_pstate supported Intel CPU (>=IvyBridge). Skipping check' "<${FUNCNAME[0]}>"
+                                    logCheckSkipped 'Not running on intel_pstate supported Intel CPU (>=IvyBridge). Skipping' "<${FUNCNAME[0]}>"
                                     _retval=3
                                 fi
             ;;
 
             *)
-                        logCheckSkipped "CHECK not applicable for Linux release (is: ${OS_NAME} ${OS_VERSION}). Skipping check" "<${FUNCNAME[0]}>"
+                        logCheckSkipped "CHECK not applicable for Linux release (is: ${OS_NAME} ${OS_VERSION}). Skipping" "<${FUNCNAME[0]}>"
                         _retval=3
             ;;
 

@@ -23,7 +23,7 @@ function check_005_os_release_kernel_sles {
 
     if  ! LIB_FUNC_IS_SLES ;	then
 
-        logCheckSkipped 'Linux distribution is not SLES. Skipping check' "<${FUNCNAME[0]}>"
+        logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
     else

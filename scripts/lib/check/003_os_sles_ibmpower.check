@@ -15,12 +15,12 @@ function check_003_os_sles_ibmpower {
 
     if  ! LIB_FUNC_IS_IBMPOWER ; then
 
-        logCheckSkipped 'Not running on IBM Power. Skipping check' "<${FUNCNAME[0]}>"
+        logCheckSkipped 'Not running on IBM Power. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
     elif  ! LIB_FUNC_IS_SLES ; then
 
-        logCheckSkipped 'Linux distribution is not SLES. Skipping check' "<${FUNCNAME[0]}>"
+        logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
     else
@@ -86,7 +86,7 @@ function check_003_os_sles_ibmpower {
 
         else
 
-            logCheckError "Platform architecture <${LIB_PLATF_ARCHITECTURE}> NOT supported. Skipping check <${FUNCNAME[0]}>"
+            logCheckError "Platform architecture <${LIB_PLATF_ARCHITECTURE}> NOT supported. Skipping <${FUNCNAME[0]}>"
             _retval=2
         fi
 

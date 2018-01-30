@@ -12,24 +12,23 @@ function check_200_transparent_hugepages_x64 {
 
     if ! LIB_FUNC_IS_X64 ; then
 
-        logCheckSkipped 'Not running on x64 CPU. Skipping check' "<${FUNCNAME[0]}>"
+        logCheckSkipped 'Not running on x64 CPU. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif [[ ! -f  '/sys/kernel/mm/transparent_hugepage/enabled' ]]; then
+
+        #eg: XEN
+        logCheckSkipped "Transparent Hugepages not configurable (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
         _retval=3
 
     else
 
-        if [[ ! -e  '/sys/kernel/mm/transparent_hugepage/enabled' ]]; then
-            #e.g. PowerLinux, XEN
-            logCheckSkipped "Transparent Hugepages not configurable (SAP Note ${sapnote:-}). Skipping check" "<${FUNCNAME[0]}>"
-            _retval=3
+        if grep -q "\[never\]" /sys/kernel/mm/transparent_hugepage/enabled ; then
+            logCheckOk "Transparent Hugepages are disabled (SAP Note ${sapnote:-})"
+            _retval=0
         else
-
-            if grep -q "\[never\]" /sys/kernel/mm/transparent_hugepage/enabled ; then
-                logCheckOk "Transparent Hugepages are disabled (SAP Note ${sapnote:-})"
-                _retval=0
-            else
-                logCheckError "Transparent Hugepages are not disabled (SAP Note ${sapnote:-})"
-                _retval=2
-            fi
+            logCheckError "Transparent Hugepages are not disabled (SAP Note ${sapnote:-})"
+            _retval=2
         fi
 
     fi

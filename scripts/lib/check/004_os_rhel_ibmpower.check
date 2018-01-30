@@ -12,12 +12,12 @@ function check_004_os_rhel_ibmpower {
 
     if  ! LIB_FUNC_IS_IBMPOWER ;	then
 
-        logCheckSkipped 'Not running on IBM Power. Skipping check' "<${FUNCNAME[0]}>"
+        logCheckSkipped 'Not running on IBM Power. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
     elif  ! LIB_FUNC_IS_RHEL ;	then
 
-        logCheckSkipped 'Linux distribution is not RHEL. Skipping check' "<${FUNCNAME[0]}>"
+        logCheckSkipped 'Linux distribution is not RHEL. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
     else

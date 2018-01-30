@@ -20,7 +20,7 @@ function check_145_cpu_force_latency {
 
     if ! LIB_FUNC_IS_BARE_METAL ; then
 
-        logCheckSkipped 'Running virtualized. Skipping check' "<${FUNCNAME[0]}>"
+        logCheckSkipped 'Running virtualized. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
     else
@@ -29,7 +29,7 @@ function check_145_cpu_force_latency {
             case "${OS_VERSION}" in
 
                 11.[3-4]* | 12.1* )
-                        logCheckSkipped 'CHECK not applicable for SLES release' "(is: ${OS_VERSION})." "Skipping check <${FUNCNAME[0]}>"
+                        logCheckSkipped 'CHECK not applicable for SLES release' "(is: ${OS_VERSION})." "Skipping <${FUNCNAME[0]}>"
                         _retval=3
                 ;;
 
@@ -46,7 +46,7 @@ function check_145_cpu_force_latency {
             case "${OS_VERSION}" in
 
                 6.[5-7]* | 7.2* )
-                        logCheckSkipped 'CHECK not applicable for RHEL release' "(is: ${OS_VERSION})." "Skipping check <${FUNCNAME[0]}>"
+                        logCheckSkipped 'CHECK not applicable for RHEL release' "(is: ${OS_VERSION})." "Skipping <${FUNCNAME[0]}>"
                         _retval=3
                 ;;
                 7.[3-4]* )

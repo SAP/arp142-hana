@@ -23,7 +23,7 @@ function check_311_ip_port_range {
 
     LIB_FUNC_COMPARE_VERSIONS "${kernelversion}" "${kernel_applicable}"
     if [[ $? -eq 2 ]]; then
-        logCheckSkipped "CHECK not applicable for Linux kernel (is: ${OS_LEVEL}). Skipping check" "<${FUNCNAME[0]}>"
+        logCheckSkipped "CHECK not applicable for Linux kernel (is: ${OS_LEVEL}). Skipping" "<${FUNCNAME[0]}>"
         _retval=3
     fi
 

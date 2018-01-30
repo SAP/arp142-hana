@@ -16,7 +16,7 @@ function check_045_tunedprofiles-saphana_rhel {
 
     if ! LIB_FUNC_IS_RHEL ; then
 
-        logCheckSkipped 'Linux distribution is not RHEL. Skipping check' "<${FUNCNAME[0]}>"
+        logCheckSkipped 'Linux distribution is not RHEL. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
     else
@@ -24,7 +24,7 @@ function check_045_tunedprofiles-saphana_rhel {
         case "${OS_VERSION}" in
 
                 6.* | 7.[0-2]* )
-                        logCheckSkipped "Not applicable for Linux release (is: ${OS_NAME} ${OS_VERSION}). Skipping check" "<${FUNCNAME[0]}>"
+                        logCheckSkipped "Not applicable for Linux release (is: ${OS_NAME} ${OS_VERSION}). Skipping" "<${FUNCNAME[0]}>"
                         _retval=3
                         ;;
 

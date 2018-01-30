@@ -16,12 +16,12 @@ function check_022_cgroup_pids_max_sles {
 
     if ! LIB_FUNC_IS_SLES ; then
 
-        logCheckSkipped 'Linux distribution is not SLES. Skipping check' "<${FUNCNAME[0]}>"
+        logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
     elif [[ ! -e  '/sys/fs/cgroup/pids/user.slice' ]]; then
 
-        logCheckSkipped 'Cgroups not configured. Skipping check' "<${FUNCNAME[0]}>"
+        logCheckSkipped 'Cgroups not configured. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
     else

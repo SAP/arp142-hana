@@ -13,7 +13,7 @@ function check_150_cpu_perfbias_intel {
 
     if  ! LIB_FUNC_IS_INTEL ; then
 
-        logCheckSkipped 'Not running on Intel CPU. Skipping check' "<${FUNCNAME[0]}>"
+        logCheckSkipped 'Not running on Intel CPU. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
     else

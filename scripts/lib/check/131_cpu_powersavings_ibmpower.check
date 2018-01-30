@@ -12,7 +12,7 @@ function check_131_cpu_powersavings_ibmpower {
 
     if ! LIB_FUNC_IS_IBMPOWER ; then
 
-        logCheckSkipped 'Not running on IBM Power. Skipping check' "<${FUNCNAME[0]}>"
+        logCheckSkipped 'Not running on IBM Power. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
     else
