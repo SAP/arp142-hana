@@ -45,7 +45,20 @@ function check_045_tunedprofiles-saphana_rhel {
         local normalized_goodversion
         local normalized_fullversion
 
-        local -r _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" tuned-profiles-sap-hana)
+        local rc
+        local _fullversion
+        _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" tuned-profiles-sap-hana)
+        rc=$?
+
+        if [[ ${rc} -ne 0 ]]; then
+
+            logCheckWarning "tuned-profiles-sap-hana not installed (SAP Note ${sapnote:-}) (should be: >=${_goodversion})"
+            _retval=1
+        fi
+
+    fi
+
+    if [[ ${_retval} -eq 99 ]]; then
 
         #normalize good version
         LIB_FUNC_NORMALIZE_RPM "${_goodversion}"
