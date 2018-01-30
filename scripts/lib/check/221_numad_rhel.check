@@ -20,11 +20,12 @@ function check_221_numad_rhel {
     else
 
         local sapnote
+        local cmdline
 
         case "${OS_VERSION}" in
 
-            6.*)	sapnote="${sapnote_rhel67}"	;;
-            7.*)	sapnote="${sapnote_rhel7}"	;;
+            6.*)	sapnote="${sapnote_rhel67}"	; cmdline='systemd' ;;
+            7.*)	sapnote="${sapnote_rhel7}"	; cmdline='systemctl' ;;
 
         esac
     fi
@@ -39,7 +40,10 @@ function check_221_numad_rhel {
 
         else
 
-            if systemctl status numad 2> /dev/null | grep -q 'Active: inactive' ; then
+            [[ ${cmdline} == 'systemd' ]] && service numad status 2> /dev/null | grep -q 'numad is started' ; rc=$?
+            [[ ${cmdline} == 'systemctl' ]] && systemctl status numad 2> /dev/null | grep -q 'Active: active' ; rc=$?
+
+            if [[ ${rc} -ne 0 ]] ; then
 
                 logCheckOk "Userspace daemon numad is disabled (SAP Note ${sapnote:-})"
                 _retval=0
