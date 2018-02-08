@@ -7,7 +7,7 @@ env:
     - OCTOKIT_API_ENDPOINT="https://github.wdf.sap.corp/api/v3"
     - SHUNIT_COLOR='always'
     - COMMIT=${TRAVIS_COMMIT::8}
-    - BUILD_COMMIT=b${TRAVIS_BUILD_NUMBER}-g${COMMIT}
+    - BUILD_COMMIT=b${TRAVIS_BUILD_NUMBER}_g${COMMIT}
 
 os:
   - linux
@@ -25,7 +25,8 @@ before_install:
     - if [[ ${MY_RELEASE} -eq 1 ]]; then
         VERSION_BUILD_COMMIT=v${_VERSION}-${BUILD_COMMIT};
       else
-        VERSION_BUILD_COMMIT=v${_VERSION}-dev-${BUILD_COMMIT};
+      _VERSION=${_VERSION}dev
+        VERSION_BUILD_COMMIT=v${_VERSION}-${BUILD_COMMIT};
       fi
     - sudo apt-add-repository "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse"
     - sudo apt-get -qq update
@@ -50,13 +51,13 @@ after_success:
     - cp -rp ./scripts/lib build/saphana-checks
 
     # modifiy VERSION & DATE 
-    - perl ./helperscripts/replace-version.pl build/saphana-checks/bin/saphana-check.sh ${VERSION_BUILD_COMMIT}
+    - perl ./buildscripts/replace-version.pl build/saphana-checks/bin/saphana-check.sh ${VERSION_BUILD_COMMIT}
     - diff build/saphana-checks/bin/saphana-check.sh scripts/bin/saphana-check.sh
 
-    - perl ./helperscripts/replace-version.pl build/saphana-checks/bin/saphana-helper-funcs ${VERSION_BUILD_COMMIT}
+    - perl ./buildscripts/replace-version.pl build/saphana-checks/bin/saphana-helper-funcs ${VERSION_BUILD_COMMIT}
     - diff build/saphana-checks/bin/saphana-helper-funcs scripts/bin/saphana-helper-funcs
 
-    - perl ./helperscripts/replace-version.pl build/saphana-checks/bin/saphana-logger ${VERSION_BUILD_COMMIT}
+    - perl ./buildscripts/replace-version.pl build/saphana-checks/bin/saphana-logger ${VERSION_BUILD_COMMIT}
     - diff build/saphana-checks/bin/saphana-logger scripts/bin/saphana-logger
 
     - ls -R build/
@@ -68,14 +69,10 @@ before_deploy:
     - if [[ ${MY_RELEASE} -eq 1 ]]; then
         TAR_VERSION=v${_VERSION};
       else
-        TAR_VERSION=v${_VERSION}-dev-${BUILD_COMMIT};
+        TAR_VERSION=${VERSION_BUILD_COMMIT};
       fi
-   # Set up git user name and tag this commit
-   # - git config --local user.name "d027354"
-   # - git config --local user.email "peter.pitterling@sap.com"
-   # - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
-   # - git tag "v$_VERSION-b$TRAVIS_BUILD_NUMBER-g$COMMIT"
 
+    # install SAP certificates to be able to upload to Github
     - curl -k https://github.wdf.sap.corp/raw/GitHub/Install-Root-Certificates/master/install-certs-ubuntu-12.04.sh | sudo -E sh
 
     # create zipped tarball
