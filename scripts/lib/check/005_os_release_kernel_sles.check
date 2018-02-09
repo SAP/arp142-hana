@@ -51,7 +51,7 @@ function check_005_os_release_kernel_sles {
             #12.3*)	kernel_low="${sles123[0]}" ; kernel_high="${sles123[1]}" ;;
 
             *)
-                    logCheckWarning 'CHECK does not support SLES release.' "${FUNCNAME[0]} - ${OS_VERSION}"
+                    logCheckWarning 'CHECK does not support SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
                     _retval=1
                 ;;
         esac

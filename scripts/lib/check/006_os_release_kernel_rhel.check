@@ -49,7 +49,7 @@ function check_006_os_release_kernel_rhel {
 
             7.4)	expected_kernel="${rhel74[0]}" ;;
 
-            *)      logCheckWarning 'CHECK does not support RHEL release.' "${FUNCNAME[0]} - ${OS_VERSION}"
+            *)      logCheckWarning 'CHECK does not support RHEL release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
                     _retval=1
                 ;;
         esac

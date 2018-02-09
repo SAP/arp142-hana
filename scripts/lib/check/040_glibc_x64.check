@@ -33,7 +33,7 @@ function check_040_glibc_x64 {
 
                 12.2*)             _goodversion="${sles122[0]}" ; sapnote="${sles122[1]}" ;;
 
-                *)      logCheckWarning "CHECK does not support SLES release (is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                *)      logCheckWarning 'CHECK does not support SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
                         _retval=1
                     ;;
             esac
@@ -45,7 +45,7 @@ function check_040_glibc_x64 {
 
                 7.[3-4]* )  _goodversion="${rhel73[0]}" ; sapnote="${rhel73[1]}" ;;
 
-                *)      logCheckWarning "CHECK does not support RHEL release (is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                *)      logCheckWarning 'CHECK does not support RHEL release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
                         _retval=1
                     ;;
             esac
