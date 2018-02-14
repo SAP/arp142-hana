@@ -5,6 +5,7 @@
 022_cgroup_pids_max_sles
 030_os_clocksource
 041_glibc_ibmpower
+044_sapconf_sles
 060_systemd_version
 062_systemd_pam_config_sles
 131_cpu_powersavings_ibmpower
