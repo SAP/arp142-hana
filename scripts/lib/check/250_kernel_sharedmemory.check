@@ -7,7 +7,7 @@ check_250_kernel_sharedmemory() {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#n/a'
+    local -r sapnote='941735' #941735 v10 - SAP memory management system for 64-bit Linux systems
 
     #                               parameter                       recommended_value
     local -ar _shm_parameter=(\
@@ -21,6 +21,9 @@ check_250_kernel_sharedmemory() {
     local _reco_value
     local _parameter
 
+    # PRECONDITIONS
+
+    # CHECK
     # i+=2 --> every 2nd item
     for ((i=0; i < ${#_shm_parameter[@]}; i+=2)); do
 
@@ -42,12 +45,12 @@ check_250_kernel_sharedmemory() {
 
     if [[ ${_retval} -eq 99 ]]; then
 
-        logCheckOk "All kernel shared-memory sysctl parameter set as recommended (SAP Note ${sapnote:-} to be created)"
+        logCheckOk "All kernel shared-memory sysctl parameter set as recommended (SAP Note ${sapnote:-})"
         _retval=0
 
     else
 
-        logCheckWarning "Not All kernel shared-memory sysctl parameter set as recommended (SAP Note ${sapnote:-} to be created)"
+        logCheckWarning "Not All kernel shared-memory sysctl parameter set as recommended (SAP Note ${sapnote:-})"
 
     fi
 
