@@ -1,7 +1,6 @@
 002_os_kernel_rhel
 004_os_rhel_ibmpower
 006_os_release_kernel_rhel
-020_ulimit_package
 030_os_clocksource
 041_glibc_ibmpower
 045_tunedprofiles-saphana_rhel
