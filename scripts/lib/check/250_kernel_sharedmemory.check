@@ -7,7 +7,9 @@ check_250_kernel_sharedmemory() {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='941735' #941735 v10 - SAP memory management system for 64-bit Linux systems
+    local -r sapnote='#2534844,#941735'
+    #2534844 v12 - Indexserver Crash During Startup due to Insufficient Shared Memory Segment
+    #941735  v10 - SAP memory management system for 64-bit Linux systems
 
     #                               parameter                       recommended_value
     local -ar _shm_parameter=(\
