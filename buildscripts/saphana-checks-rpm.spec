@@ -18,6 +18,10 @@ BuildArch: noarch
 %description
 Linux configuration checks for HANA OS recommendations - running on SLES,RHEL for Intel x64 and IBM Power
 
+%prep
+echo %{buildroot}
+echo $RPM_BUILD_ROOT 
+
 %build
 exit 0
 

@@ -13,13 +13,6 @@ os:
   - linux
 #  - osx
 
-# addons: - section is not valid
-#    apt:
-#     sources:
-#     - debian-sid    # Grab shellcheck from the Debian repo (o_O)
-#      packages:
-#      - shellcheck
-
 before_install:
     #MY_RELEASE is not availalbe within env:global
     - if [[ ${MY_RELEASE} -eq 1 ]]; then
@@ -28,37 +21,41 @@ before_install:
       _VERSION=${_VERSION}dev
         VERSION_BUILD_COMMIT=v${_VERSION}-${BUILD_COMMIT};
       fi
+    - echo "[INFO] _VERSION> $_VERSION ; VERSION_BUILD_COMMIT> $VERSION_BUILD_COMMIT"
     - sudo apt-add-repository "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse"
     - sudo apt-get -qq update
     #- sudo apt-get -t trusty-backports install shellcheck
     - sudo pip install bashate
 
 script:
-  # Run unit tests - runs all the unit tests that can be found, and generates a nice report of the tests
+  # Run unit tests - runs all the unit tests that can be founds
   - bash -c 'cd ./scripts/tests/; ./test_runner'
+
+  # Syntax checking
   - bash -c 'shopt -s globstar; shellcheck --version'
   #- bash -c 'shopt -s globstar; shellcheck --external-sources scripts/bin/saphana-*'
   - bash -c 'shopt -s globstar; shellcheck --external-sources --exclude=SC2154 scripts/**/*.check'
 
+  # Code format checking
   # - bash -c 'shopt -s globstar; bashate scripts/**/*.{sh,check}'
   - bash -c 'shopt -s globstar; bashate -i E006 scripts/bin/saphana* scripts/bin/lib*'
   - bash -c 'shopt -s globstar; bashate -i E006 scripts/**/*.check'
-  
+
 
 after_success:
-    - mkdir -p build/saphana-checks
-    - cp -rp ./scripts/bin build/saphana-checks
-    - cp -rp ./scripts/lib build/saphana-checks
+    - mkdir -p build/opt/sap/saphana-checks
+    - cp -rp ./scripts/bin build/opt/sap/saphana-checks
+    - cp -rp ./scripts/lib build/opt/sap/saphana-checks
 
-    # modifiy VERSION & DATE 
-    - perl ./buildscripts/replace-version.pl build/saphana-checks/bin/saphana-check.sh ${VERSION_BUILD_COMMIT}
-    - diff build/saphana-checks/bin/saphana-check.sh scripts/bin/saphana-check.sh
+    # modifiy VERSION & DATE
+    - perl ./buildscripts/replace-version.pl build/opt/sap/saphana-checks/bin/saphana-check.sh ${VERSION_BUILD_COMMIT}
+    - diff build/opt/sap/saphana-checks/bin/saphana-check.sh scripts/bin/saphana-check.sh
 
-    - perl ./buildscripts/replace-version.pl build/saphana-checks/bin/saphana-helper-funcs ${VERSION_BUILD_COMMIT}
-    - diff build/saphana-checks/bin/saphana-helper-funcs scripts/bin/saphana-helper-funcs
+    - perl ./buildscripts/replace-version.pl build/opt/sap/saphana-checks/bin/saphana-helper-funcs ${VERSION_BUILD_COMMIT}
+    - diff build/opt/sap/saphana-checks/bin/saphana-helper-funcs scripts/bin/saphana-helper-funcs
 
-    - perl ./buildscripts/replace-version.pl build/saphana-checks/bin/saphana-logger ${VERSION_BUILD_COMMIT}
-    - diff build/saphana-checks/bin/saphana-logger scripts/bin/saphana-logger
+    - perl ./buildscripts/replace-version.pl build/opt/sap/saphana-checks/bin/saphana-logger ${VERSION_BUILD_COMMIT}
+    - diff build/opt/sap/saphana-checks/bin/saphana-logger scripts/bin/saphana-logger
 
     - ls -R build/
 
@@ -71,18 +68,28 @@ before_deploy:
       else
         TAR_VERSION=${VERSION_BUILD_COMMIT};
       fi
+    - echo "[INFO] TAR_VERSION> $TAR_VERSION"
+
+    # Prepare Ownership and Permissions
+    - sudo chmod -R 444 build/opt/sap/saphana-checks
+    - sudo chmod 744 build/opt/sap/saphana-checks/bin/saphana-check.sh
+    - sudo chown -R root:root build/opt/sap/saphana-checks
+
+    # create rpm
+    - sudo apt-get install --no-install-recommends -y rpm
+    - echo "[INFO] PWD> $PWD"
+    - echo "[INFO] _VERSION> $_VERSION"
+    - echo "[INFO] BUILD_COMMIT> $BUILD_COMMIT"
+    - sudo rpmbuild -v -bb --buildroot='/home/travis/build/SAP-COE-HPTI/saphana-checks/build' --define "_version ${_VERSION}" --define "_release ${BUILD_COMMIT}" ./buildscripts/saphana-checks-rpm.spec
+
+    # create zipped tarball
+    - sudo tar -czf build/saphana-checks-${TAR_VERSION}.tgz --directory=./build/opt/sap saphana-checks
+    - sudo sha256sum build/saphana-checks-${TAR_VERSION}.tgz > build/saphana-checks-${TAR_VERSION}.tgz.sha256
+    - ls -l build/
+    - tar -tvf build/saphana-checks-*.tgz
 
     # install SAP certificates to be able to upload to Github
     - curl -k https://github.wdf.sap.corp/raw/GitHub/Install-Root-Certificates/master/install-certs-ubuntu-12.04.sh | sudo -E sh
-
-    # create zipped tarball
-    - sudo chmod -R 444 build/saphana-checks
-    - sudo chmod 744 build/saphana-checks/bin/saphana-check.sh
-    - sudo chown -R root:root build/saphana-checks
-    - sudo tar -czf build/saphana-checks-${TAR_VERSION}.tgz --directory=./build saphana-checks
-    - sha256sum build/saphana-checks-${TAR_VERSION}.tgz > build/saphana-checks-${TAR_VERSION}.tgz.sha256
-    - ls -l build/
-    - tar -tvf build/saphana*.tgz
 
 deploy:
   provider: releases
@@ -92,6 +99,7 @@ deploy:
     secure: aQnueMZKDNLrM8J9oLlPItJ+qUMqj1Dm9demLPGwPD0j66jtSUFIV7ioR84FILLqklY0mPDCrfjCN2klYp6NJDGRQuKIQZaNdHQTY1rKUJQyS23MQ03ASf2F0PE3vk4t3fm1XBD2IKjP/4m8BBfx/LV41AXv35CG217I0ryrtluPkU8Mjx8j/bNZZLA9/NeapNcjdMxeV6uTWrmcOYY7dYEuUAXws7UWU4+qY7PzGQQemPJmXpNS8jtlMS0aUVETI/L+Irs8NouoeoMrsfzs876jpc0AH3tG+2q6Foc8EB/ivGC1Amq3pia1asoKQ0CtUOfiDRuPcOAVjnn0+/eAJueOgd3gf6JuG8SWO6HUrpF6eRNE1gk9HP/kKj5CxfR1PqUw08UDok2VMYCS2prFPljaihZ5jCcCzYJN1iDS2ejmI+xf4xFT2opGaH21zEzJlimv8vAlmm0gc3mce3tXawD31cpWariMt5fQdLbM1RnkcJ5OM0am3lyqEUqVmB/rmUwwAXUgFjm6Ng7vnkCW3bPvLptEJ5PUGmbAyl4oAbSUEF0G0JeSrk0VKXIftMmm5TzrRR/8xKLq1jOL00fsFeQIiz6A5sPz2Fs1Wlbb/hBr32HlzZxa83sTWIA/aNfWz0W6B8BlzqC1Fkyp4IGHeM6vVMjXD11vbKb9URG761E=
   file_glob: true
   file: "build/saphana-checks-*.tgz*"
+  file: "~/rpmbuild/RPMS/noarch/saphana-checks-*.rpm"
   skip_cleanup: true
   on:
     repo: SAP-COE-HPTI/saphana-checks
