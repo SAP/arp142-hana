@@ -54,6 +54,7 @@ DEFINE_integer	'loglevel'	4		'notify/silent=0 (always), error=1, warn=2, info=3,
 DEFINE_boolean	'verbose'	false	'enable chk_verbose mode (set loglevel=4)' 'v'
 DEFINE_boolean	'debug'		false	'enable debug mode (set loglevel=5)' 'd'
 DEFINE_boolean	'trace'		false	'enable trace mode (set loglevel=6)' 't'
+DEFINE_boolean	'color'		false	'enable color mode'
 # shellcheck disable=SC2034
 FLAGS_HELP="USAGE: $0 [flags]"
 
@@ -81,6 +82,8 @@ function evaluate_cmdline_options {
     [[ ${FLAGS_debug} -eq ${FLAGS_TRUE} ]] && LOG_VERBOSE_LVL=5
 
     [[ ${FLAGS_trace} -eq ${FLAGS_TRUE} ]] && LOG_VERBOSE_LVL=6
+
+    [[ ${FLAGS_color} -eq ${FLAGS_TRUE} ]] &&LOG_COLOR_CHECK=0
 
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # LOG_VERBOSE_LVL=${LOG_VERBOSE_LVL}"
 }

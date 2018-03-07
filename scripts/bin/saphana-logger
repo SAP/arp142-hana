@@ -43,12 +43,13 @@ logger() {
         local -ir content_width=$((COLUMNS-prefix_length-1))
 
         # Expand escaped characters, wrap at COLUMNS chars, indent wrapped lines
-        #printf "%-24s %s\n" "${datestring} ${logleveltag}" "$*" | fold -w ${COLUMNS} | sed '2~1s/^/                        /' #>&3
+        # use %b instead of %s for colors
+        #printf "%-24b %s\n" "${datestring} ${logleveltag}" "$*" | fold -w ${COLUMNS} | sed '2~1s/^/                        /' #>&3
         if [[ -t 1 ]]; then #FD1 = stdout
             local line
-            printf '%s\n' "$*" | fold -w ${content_width} | { read -r line ; printf "%-${prefix_length}s %s\\n" "${datestring} ${logleveltag}" "${line}" ; while read -r line ; do printf "%-${prefix_length}s %s\\n" " " "${line}" ; done }
+            printf '%s\n' "$*" | fold -w ${content_width} | { read -r line ; printf "%-${prefix_length}b %s\\n" "${datestring} ${logleveltag}" "${line}" ; while read -r line ; do printf "%-${prefix_length}s %s\\n" " " "${line}" ; done }
         else
-            printf "%-${prefix_length}s %s\\n" "${datestring} ${logleveltag}" "$*"
+            printf "%-${prefix_length}b %s\\n" "${datestring} ${logleveltag}" "$*"
         fi
     fi
 }
@@ -56,13 +57,13 @@ logger() {
 
 #ToDo: remove/revise use_colored_output stuff
 use_colored_output() {
-    return 1
+    return ${LOG_COLOR_CHECK}
 }
 
 logCheckError() {
 
     if use_colored_output; then
-        logger 1 '[C]' "${warn}<ERROR>${norm}"	"$@"
+        logger 1 "[C] ${fmt_error}<ERROR>${fmt_reset}"	"$@"
     else
         logger 1 '[C] <ERROR>' "$@"
     fi
@@ -71,7 +72,8 @@ logCheckError() {
 logCheckWarning() {
 
     if use_colored_output; then
-        logger 2 '[C]' "${attn}${blb}<WARN>${norm}"	"$@"
+        #we need the trailing space, because color formatting prevents padding
+        logger 2 "[C] ${fmt_warn}${fmt_blbackgr}<WARN>${fmt_reset} "	"$@"
     else
         logger 2 '[C] <WARN>' "$@"
     fi
@@ -80,7 +82,7 @@ logCheckWarning() {
 logCheckOk() {
 
     if use_colored_output; then
-        logger 3 '[C]' "${done}<OK>${norm}"	"$@"
+        logger 3 "[C] ${fmt_ok}<OK>${fmt_reset}   "	"$@"
     else
         logger 3 '[C] <OK>' "$@"
     fi
@@ -89,7 +91,7 @@ logCheckOk() {
 logCheckInfo() {
 
     if use_colored_output; then
-        logger 4 '[C]' "${done}<INFO>${norm}" "$@"
+        logger 4 "[C] ${fmt_info}<INFO>${fmt_reset} " "$@"
     else
         logger 4 '[C] <INFO>' "$@"
     fi
@@ -97,8 +99,10 @@ logCheckInfo() {
 
 logCheckSkipped() {
 
+    #echo "Caller Check #: <${FUNCNAME[1]:6:3}>"
+
     if use_colored_output; then
-        logger 4 '[C]' "${done}<SKIP>${norm}"	"$@"
+        logger 4 "[C] ${fmt_skip}<SKIP>${fmt_reset} "	"$@"
     else
         logger 4 '[C] <SKIP>' "$@"
     fi
@@ -120,10 +124,18 @@ _lib_logger_main() {
         COLUMNS=$(tput cols)
     fi
 
+    fmt_ok='\033[0;32m' # 1=Bold; 32m=Green
+    fmt_error='\033[1;31m' # Red
+    fmt_warn='\033[0;33m' # Yellow
+    fmt_info='\033[1;37m' # Bold gray
+    fmt_skip='\033[0;37m' # Light gray
+    fmt_blbackgr='\033[40m'    # Black background
+    fmt_reset='\033[0m'   #'\033[m\017'
 }
 
 # Variables to be used by other
 declare -i LOG_VERBOSE_LVL=3 #notify/silent=0 (always), error=1, warn=2, info=3, CHK_verbose=4, debug=5, trace=6
+declare -i LOG_COLOR_CHECK=1 #1=off, 0=on
 
 # ToDo: declare -ix ?? - logging should also work for pipes (grep or less)
 declare -i COLUMNS
