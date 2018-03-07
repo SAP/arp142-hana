@@ -18,8 +18,8 @@ umask 022
 # return if saphana-helper-funcs already loaded
 [[ -n "${HANA_HELPER_PROGVERSION:-}" ]] && return 0
 
-HANA_HELPER_PROGVERSION='0.4-dev'
-#HANA_HELPER_PROGDATE='2017-DEC-05'
+HANA_HELPER_PROGVERSION='0.5dev'
+#HANA_HELPER_PROGDATE='2018-MAR-07'
 
 ##################################################
 # Global functions - to be used in other scripts
