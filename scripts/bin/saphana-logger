@@ -39,17 +39,17 @@ logger() {
         shift 1
 
         local -r  datestring=$(date +'%H:%M:%S.%3N')
-        local -ir prefix_length=$((13+11))	#len("00:04:32.001")+1 && len("[C] <ERROR>")
+        local -ir prefix_length=$((13+17))	#len("00:04:32.001")+1 && len("[C] Lxxxx <ERROR>")
         local -ir content_width=$((COLUMNS-prefix_length-1))
 
         # Expand escaped characters, wrap at COLUMNS chars, indent wrapped lines
         # use %b instead of %s for colors
-        #printf "%-24b %s\n" "${datestring} ${logleveltag}" "$*" | fold -w ${COLUMNS} | sed '2~1s/^/                        /' #>&3
+        #printf "%-30b %s\n" "${datestring} ${logleveltag}" "$*" | fold -w ${COLUMNS} | sed '2~1s/^/                        /' #>&3
         if [[ -t 1 ]]; then #FD1 = stdout
             local line
-            printf '%s\n' "$*" | fold -w ${content_width} | { read -r line ; printf "%-${prefix_length}b %s\\n" "${datestring} ${logleveltag}" "${line}" ; while read -r line ; do printf "%-${prefix_length}s %s\\n" " " "${line}" ; done }
+            printf '%s\n' "$*" | fold -w ${content_width} | { read -r line ; printf '%-*b %s\n' ${prefix_length} "${datestring} ${logleveltag}" "${line}" ; while read -r line ; do printf '%-*s %s\n' ${prefix_length} " " "${line}" ; done }
         else
-            printf "%-${prefix_length}b %s\\n" "${datestring} ${logleveltag}" "$*"
+            printf '%-*b %s\n' ${prefix_length} "${datestring} ${logleveltag}" "$*"
         fi
     fi
 }
@@ -62,49 +62,75 @@ use_colored_output() {
 
 logCheckError() {
 
+    [[ ${LOG_VERBOSE_LVL} -lt 1 ]] && return 1
+
+    local CallerCheck
+    printf -v CallerCheck 'L%-4.4s' "${FUNCNAME[1]:6:3}0"
+
     if use_colored_output; then
-        logger 1 "[C] ${fmt_error}<ERROR>${fmt_reset}"	"$@"
+        logger 1 "[C] ${fmt_error}${CallerCheck} <ERROR>${fmt_reset}"	"$@"
     else
-        logger 1 '[C] <ERROR>' "$@"
+        logger 1 "[C] ${CallerCheck} <ERROR>" "$@"
     fi
 }
 
 logCheckWarning() {
 
+    [[ ${LOG_VERBOSE_LVL} -lt 2 ]] && return 1
+
+    local CallerCheck
+    printf -v CallerCheck 'L%-4.4s' "${FUNCNAME[1]:6:3}0"
+
     if use_colored_output; then
-        #we need the trailing space, because color formatting prevents padding
-        logger 2 "[C] ${fmt_warn}${fmt_blbackgr}<WARN>${fmt_reset} "	"$@"
+        #we need the trailing space after fmt_reset, because color formatting prevents padding
+        logger 2 "[C] ${fmt_warn}${fmt_blbackgr}${CallerCheck} <WARN>${fmt_reset} "	"$@"
     else
-        logger 2 '[C] <WARN>' "$@"
+        logger 2 "[C] ${CallerCheck} <WARN>" "$@"
     fi
 }
 
 logCheckOk() {
 
+    [[ ${LOG_VERBOSE_LVL} -lt 3 ]] && return 1
+
+    local CallerCheck
+    printf -v CallerCheck 'L%-4.4s' "${FUNCNAME[1]:6:3}0"
+
     if use_colored_output; then
-        logger 3 "[C] ${fmt_ok}<OK>${fmt_reset}   "	"$@"
+        #we need the trailing spaces after fmt_reset, because color formatting prevents padding
+        logger 3 "[C] ${fmt_ok}${CallerCheck} <OK>${fmt_reset}   "	"$@"
     else
-        logger 3 '[C] <OK>' "$@"
+        logger 3 "[C] ${CallerCheck} <OK>" "$@"
     fi
 }
 
 logCheckInfo() {
 
+    [[ ${LOG_VERBOSE_LVL} -lt 4 ]] && return 1
+
+    local CallerCheck
+    printf -v CallerCheck 'L%-4.4s' "${FUNCNAME[1]:6:3}0"
+
     if use_colored_output; then
-        logger 4 "[C] ${fmt_info}<INFO>${fmt_reset} " "$@"
+        #we need the trailing space after fmt_reset, because color formatting prevents padding
+        logger 4 "[C] ${fmt_info}${CallerCheck} <INFO>${fmt_reset} " "$@"
     else
-        logger 4 '[C] <INFO>' "$@"
+        logger 4 "[C] ${CallerCheck} <INFO>" "$@"
     fi
 }
 
 logCheckSkipped() {
 
-    #echo "Caller Check #: <${FUNCNAME[1]:6:3}>"
+    [[ ${LOG_VERBOSE_LVL} -lt 4 ]] && return 1
+
+    local CallerCheck
+    printf -v CallerCheck 'L%-4.4s' "${FUNCNAME[1]:6:3}0"
 
     if use_colored_output; then
-        logger 4 "[C] ${fmt_skip}<SKIP>${fmt_reset} "	"$@"
+        #we need the trailing space after fmt_reset, because color formatting prevents padding
+        logger 4 "[C] ${fmt_skip}${CallerCheck} <SKIP>${fmt_reset} "	"$@"
     else
-        logger 4 '[C] <SKIP>' "$@"
+        logger 4 "[C] ${CallerCheck} <SKIP>" "$@"
     fi
 }
 
