@@ -1,0 +1,83 @@
+#!/bin/bash
+
+function check_0440_sapconf_sles {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -ar sles122=( '4.1.10' '#2205917' )   #Version 41 from 14.02.2018
+    # MODIFICATION SECTION<<
+
+    local _goodversion
+    local sapnote
+
+    if ! LIB_FUNC_IS_SLES ; then
+
+        logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+
+        case "${OS_VERSION}" in
+
+                11.* | 12.[0-1]* )
+                        logCheckSkipped 'Not applicable for SLES release' "(is: ${OS_NAME} ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
+                        _retval=3
+                        ;;
+
+                12.* )  _goodversion="${sles122[0]}" ; sapnote="${sles122[1]}" ;;
+
+                *)
+                        logCheckWarning 'CHECK does not support SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                        _retval=1
+                    ;;
+            esac
+
+    fi
+
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local normalized_goodversion
+        local normalized_fullversion
+
+        local rc
+        local _fullversion
+        _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" sapconf)
+        rc=$?
+
+        if [[ ${rc} -ne 0 ]]; then
+
+            logCheckWarning 'sapconf not installed' "(SAP Note ${sapnote:-}) (should be: >=${_goodversion})"
+            _retval=1
+        fi
+
+    fi
+
+    if [[ ${_retval} -eq 99 ]]; then
+
+        #normalize good version
+        LIB_FUNC_NORMALIZE_RPM "${_goodversion}"
+        normalized_goodversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+        #normalize full version - e.g. 4.1.10-33.5.2
+        LIB_FUNC_NORMALIZE_RPM "${_fullversion}"
+        normalized_fullversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+        LIB_FUNC_COMPARE_VERSIONS "${normalized_fullversion}" "${normalized_goodversion}"
+
+        if [[ $? -ne 2 ]]; then
+            logCheckOk 'sapconf version seems to be ok' "(SAP Note ${sapnote:-}) (is: ${_fullversion})"
+            _retval=0
+        else
+            logCheckError 'sapconf must be updated' "(SAP Note ${sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
+            _retval=2
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}

@@ -13,7 +13,7 @@ A: Scripts require root permission in order to read certain kernel parameter val
 
 ## How to run
 
-#### as root user - extract scripts to Linux server & run saphana-check.sh 
+#### as root user - extract scripts to Linux server & run saphana-check.sh
 * [Download v0.4](https://github.wdf.sap.corp/SAP-COE-HPTI/saphana-checks/releases/latest)
 * [Download v0.5-dev](https://github.wdf.sap.corp/SAP-COE-HPTI/saphana-checks/releases/tag/dev0.5-stable)
 
@@ -30,23 +30,20 @@ A: Scripts require root permission in order to read certain kernel parameter val
 
 ## Commandline options
 
-#### no parameter    (execute all checks) 
-
-``` 
+#### no parameter    (execute all checks)
+```
   ./saphana-check.sh
 ```
 
-#### -c    (execute single checks) 
-
-``` 
-  ./saphana-check.sh -c "001_os_kernel_sles 020_ulimit_package"
+#### -c    (execute single checks)
+```
+  ./saphana-check.sh -c "0010_os_kernel_sles 0200_ulimit_package"
 ```
 > checks are located within subfolder lib/check - specify without file extention .check
 
 
-#### -c    (execute checkset) 
-
-``` 
+#### -c    (execute checkset)
+```
   ./saphana-check.sh -C SLESonX64only
 ```
 > checksets are located within subfolder lib/checkset - specify without file extention .checkset
@@ -56,8 +53,8 @@ A: Scripts require root permission in order to read certain kernel parameter val
 ```
 ./saphana-check.sh -h
 
- USAGE: ./saphana-check.sh [flags]  
- flags:  
+ USAGE: ./saphana-check.sh [flags]
+ flags:
  -c,--checks:  <"check1 check2 ...">  A space-separated list of checks that will be performed. (default: '')
  -C,--checkset:  <Checkset>  A textfile containing the various checks to perform. (default: '')
  -l,--loglevel:  notify/silent=0 (always), error=1, warn=2, info=3, debug=5, trace=6 (default: 4)
@@ -66,4 +63,3 @@ A: Scripts require root permission in order to read certain kernel parameter val
  -t,--[no]trace:  enable trace mode (set loglevel=6) (default: false)
  -h,--help:  show this help (default: false)
 ```
-

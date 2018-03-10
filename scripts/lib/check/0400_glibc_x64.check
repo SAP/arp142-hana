@@ -1,0 +1,90 @@
+#!/bin/bash
+
+function check_0400_glibc_x64 {
+
+    #SLES11.2/3/4	- #2263929
+    #Security advise SCN-2016-257 https://listserv.sap.corp/pipermail/cert.linux.suse/2016/000959.html
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -ar sles114=( '2.11.3-17.95.2' '#2263929' )
+    local -ar sles122=( '2.22-51.6' '#2205917' )
+    local -ar rhel72=( '2.17-106.el7_2.9' '#2292690' )
+    local -ar rhel73=( '2.17-157.el7_3.5' '#2292690' )
+    # MODIFICATION SECTION<<
+
+    local _goodversion
+    local sapnote
+
+    if ! LIB_FUNC_IS_X64 ; then
+
+        logCheckSkipped 'Not running on x64 CPU. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+
+        if LIB_FUNC_IS_SLES ; then
+            case "${OS_VERSION}" in
+
+                11.* | 12.[0-1]* ) _goodversion="${sles114[0]}" ; sapnote="${sles114[1]}" ;;
+
+                12.[2-3]*)         _goodversion="${sles122[0]}" ; sapnote="${sles122[1]}" ;;
+
+                *)      logCheckWarning 'CHECK does not support SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                        _retval=1
+                    ;;
+            esac
+
+        elif LIB_FUNC_IS_RHEL ; then
+            case "${OS_VERSION}" in
+
+                7.2* )  _goodversion="${rhel72[0]}" ; sapnote="${rhel72[1]}" ;;
+
+                7.[3-4]* )  _goodversion="${rhel73[0]}" ; sapnote="${rhel73[1]}" ;;
+
+                *)      logCheckWarning 'CHECK does not support RHEL release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                        _retval=1
+                    ;;
+            esac
+
+        else
+                logCheckError "Linux distribution NOT supported (SAP Note #2235581) (is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                _retval=2
+        fi
+
+    fi
+
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local normalized_goodversion
+        local normalized_fullversion
+
+        local -r _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" glibc)
+
+        #normalize good version
+        LIB_FUNC_NORMALIZE_RPM "${_goodversion}"
+        normalized_goodversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+        #normalize full version - e.g. 2.17-157.el7_3.5
+        LIB_FUNC_NORMALIZE_RPM "${_fullversion}"
+        normalized_fullversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+        LIB_FUNC_COMPARE_VERSIONS "${normalized_fullversion}" "${normalized_goodversion}"
+
+        if [[ $? -ne 2 ]]; then
+            logCheckOk "GLIBC version seems to be ok (SAP Note ${sapnote:-}) (is: ${_fullversion})"
+            _retval=0
+        else
+            logCheckError "GLIBC must be updated (SAP Note ${sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
+            _retval=2
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}

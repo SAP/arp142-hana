@@ -1,0 +1,86 @@
+#!/bin/bash
+
+function check_0060_os_release_kernel_rhel {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # Linux kernel should match release
+    # https://access.redhat.com/articles/3078
+
+    # MODIFICATION SECTION>>
+    # array	'expected kernelversion' - must not have *.el suffix
+    local -ar rhel65=( '2.6.32-431' )
+    local -ar rhel66=( '2.6.32-504' )
+    local -ar rhel67=( '2.6.32-573' )
+    local -ar rhel72=( '3.10.0-327' )
+    local -ar rhel73=( '3.10.0-514' )
+    local -ar rhel74=( '3.10.0-693' )
+
+    local -r sapnote='#2235581'	#SAP HANA: Supported Operating Systems
+    # MODIFICATION SECTION<<
+
+    if  ! LIB_FUNC_IS_RHEL ;	then
+
+        logCheckSkipped 'Linux distribution is not RHEL. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+
+        local expected_kernel
+        local sapnote
+
+        case "${OS_VERSION}" in
+
+            6.[0-4] )   logCheckError 'Upgrade to RHEL for SAP Applications 6.5+ (SAP Note #2235581)'
+                        _retval=2
+                ;;
+
+            6.5)	expected_kernel="${rhel65[0]}" ;;
+
+            6.6)	expected_kernel="${rhel66[0]}" ;;
+
+            6.7)	expected_kernel="${rhel67[0]}" ;;
+
+            7.2)	expected_kernel="${rhel72[0]}" ;;
+
+            7.3)	expected_kernel="${rhel73[0]}" ;;
+
+            7.4)	expected_kernel="${rhel74[0]}" ;;
+
+            *)      logCheckWarning 'CHECK does not support RHEL release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                    _retval=1
+                ;;
+        esac
+
+        if [[ ${_retval} -eq 99 ]]; then
+
+            local normalized_kernelversion
+
+            LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
+            normalized_kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_return}"
+            #2.6.32-504.16.2.el6.x86_64	-->	2.6.32-504.16.2
+
+            normalized_kernelversion=${normalized_kernelversion:0:${#expected_kernel}}	#substring - lenght as expected kernel version
+
+            if ! LIB_FUNC_COMPARE_VERSIONS "${normalized_kernelversion}" "${expected_kernel}" ; then
+
+                logCheckError "Linux kernel does NOT match RHEL release and must be changed. (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${OS_LEVEL}, must be: ${expected_kernel}.*)"
+                _retval=2
+
+            else
+
+                logCheckOk "Linux kernel matches RHEL release. (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${expected_kernel})"
+                _retval=0
+
+            fi
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}

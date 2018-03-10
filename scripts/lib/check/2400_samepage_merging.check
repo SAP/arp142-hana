@@ -1,0 +1,39 @@
+#!/bin/bash
+
+function check_2400_samepage_merging {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote_sles='#1944799'	# SAP HANA Guidelines for SLES Operating System Installation
+    # MODIFICATION SECTION<<
+
+    local sapnote="${sapnote_sles}"
+
+    if [[ ! -e '/sys/kernel/mm/ksm/run' ]]; then
+
+        logCheckSkipped "KSM (kernel samepage merging) not configurable (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+
+        if [[ $(< /sys/kernel/mm/ksm/run) -eq 0 ]]; then
+
+            logCheckOk "KSM (kernel samepage merging) is disabled (SAP Note ${sapnote:-})"
+            _retval=0
+
+        else
+
+            logCheckError "KSM (kernel samepage merging) is not disabled (SAP Note ${sapnote:-})"
+            _retval=2
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}

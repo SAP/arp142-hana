@@ -1,0 +1,59 @@
+#!/bin/bash
+
+function check_1500_cpu_perfbias_intel {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote_sles='#2205917'    #SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
+    local -r sapnote_rhel='#2292690'	 #SAP HANA DB: Recommended OS settings for RHEL 7
+    # MODIFICATION SECTION<<
+
+    if  ! LIB_FUNC_IS_INTEL ; then
+
+        logCheckSkipped 'Not running on Intel CPU. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+
+        local sapnote
+        LIB_FUNC_IS_SLES && sapnote=${sapnote_sles}
+        LIB_FUNC_IS_RHEL && sapnote=${sapnote_rhel}
+
+        if [[ ! -x '/usr/bin/cpupower' ]]; then
+
+            logCheckWarning "Energy Performance Bias EPB could not be checked - cpupower not installed (SAP Note ${sapnote:-}) (is: unknown, should be: 0)"
+            _retval=1
+
+        else
+
+            local perf_bias_output
+            perf_bias_output=$(/usr/bin/cpupower info 2>/dev/null | grep perf-bias)
+            perf_bias_output=${perf_bias_output:=-1}	#if null set to -1
+
+            local -ir perf_bias=$(LIB_FUNC_TRIM_LEFT "${perf_bias_output/perf-bias:}")
+
+            if [[ ${perf_bias} -eq 0 ]]; then
+
+                logCheckOk "Energy Performance Bias EPB set to performance (SAP Note ${sapnote:-}) (is: ${perf_bias})"
+                _retval=0
+
+            elif [[ ${perf_bias} -gt 0 ]]; then
+
+                logCheckWarning "Energy Performance Bias EPB not set to performance (SAP Note ${sapnote:-}) (is: ${perf_bias}, should be: 0)"
+                _retval=1
+
+            else
+
+                logCheckWarning "Energy Performance Bias EPB could not be determined (SAP Note ${sapnote:-}) (is: ?, should be: 0)"
+                _retval=1
+
+            fi
+        fi
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+}

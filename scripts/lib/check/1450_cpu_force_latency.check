@@ -1,0 +1,109 @@
+#!/bin/bash
+
+function check_1450_cpu_force_latency {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    #dynamic way to adjust allowed CPU c_states - max_cstate vs cpu_dma_latency
+    #cpu_idle must be loaded; applicable for kernel versions >=4.* - intel and power
+    #tuned profile parameter force_latency finally sets /dev/cpu_dma_latency
+
+    # MODIFICATION SECTION>>
+    local -ir _reco_value=70
+    local -r sapnote_sles='#2205917'			#SLES12.2 only
+    local -r sapnote_rhel='#2292690'			#SAP HANA DB: Recommended OS settings for RHEL 7
+    # MODIFICATION SECTION<<
+
+    local sapnote
+
+    #PRECONDITIONS
+    if ! LIB_FUNC_IS_BARE_METAL ; then
+
+        logCheckSkipped 'Running virtualized. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif LIB_FUNC_IS_SLES ; then
+        case "${OS_VERSION}" in
+
+            11.[3-4]* | 12.1* )
+                    logCheckSkipped 'CHECK not applicable for SLES release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
+                    _retval=3
+            ;;
+
+            12.[2-3]* )
+                    sapnote="${sapnote_sles}"
+                ;;
+            *)
+                    logCheckWarning 'CHECK does NOT support SLES release' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                    _retval=1
+                ;;
+        esac
+
+    elif LIB_FUNC_IS_RHEL ; then
+        case "${OS_VERSION}" in
+
+            6.[5-7]* | 7.2* )
+                    logCheckSkipped 'CHECK not applicable for RHEL release' "(is: ${OS_VERSION})." "Skipping <${FUNCNAME[0]}>"
+                    _retval=3
+            ;;
+            7.[3-4]* )
+                    sapnote="${sapnote_rhel}"
+                ;;
+            *)
+                    logCheckWarning 'CHECK does NOT support RHEL release' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                    _retval=1
+                ;;
+        esac
+
+    else
+            logCheckError 'Linux distribution NOT supported (SAP Note #2235581)' "(is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
+            _retval=2
+    fi
+
+
+    #CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local -r _current_driver="$(</sys/devices/system/cpu/cpuidle/current_driver)"
+        if [[ ${_current_driver} == 'none' ]]; then
+
+            logCheckWarning 'CPU idle driver not active - check BIOS settings for disabled c-states'
+            logCheckWarning 'Disabled c-states inactivate cpu_dma_latency/force_latency settings' "(SAP Note ${sapnote:-})"
+            _retval=1
+
+        else
+
+            #requires root to read from /dev/cpu_dma_latency
+            local -r _curr_value=$(hexdump -e '"%i"' /dev/cpu_dma_latency)
+
+            if [[ ${_curr_value:-} -eq ${_reco_value} ]]; then
+
+                logCheckOk 'CPU latency set as recommended' "(SAP Note ${sapnote:-}) (is: ${_curr_value:-})"
+                _retval=0
+
+            elif [[ ${_curr_value:-} -lt 3 ]]; then
+                #3 = C1
+                logCheckError 'CPU latency set to low - impacting CPU TurboMode features' "(SAP Note ${sapnote:-}) (is: ${_curr_value:-}, should be: ${_reco_value})"
+                _retval=2
+
+            elif [[ ${_curr_value:-} -gt ${_reco_value:-} ]]; then
+
+                logCheckError 'CPU latency set to high - deeper c-states causing longer wakeup times' "(SAP Note ${sapnote:-}) (is: ${_curr_value:-}, should be: ${_reco_value})"
+                _retval=2
+
+            else # 2 < x < reco_value
+                logCheckInfo 'CPU latency could be adjusted' "(SAP Note ${sapnote:-}) (is: ${_curr_value}, should be: ${_reco_value})"
+                _retval=0
+
+            fi
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}

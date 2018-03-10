@@ -1,0 +1,49 @@
+#!/bin/bash
+
+function check_2200_numa_balancing {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote_sles='#2205917'	#SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
+    local -r sapnote_rhel='#2292690'	#SAP HANA DB: Recommended OS settings for RHEL 7
+    # MODIFICATION SECTION<<
+
+    local sapnote
+
+    if LIB_FUNC_IS_SLES ; then
+        sapnote=${sapnote_sles}
+
+    elif LIB_FUNC_IS_RHEL ; then
+        sapnote=${sapnote_rhel}
+
+    else
+        logCheckWarning 'CHECK does not support Linux distribution.' "${FUNCNAME[0]} - ${OS_NAME} ${OS_VERSION}"
+        _retval=1
+    fi
+
+
+    if [[ ! -e '/proc/sys/kernel/numa_balancing' ]]; then
+
+        #e.g. PowerLinux, XEN
+        logCheckSkipped 'AutoNUMA not configurable' "(SAP Note ${sapnote:-}). Skipping <${FUNCNAME[0]}>"
+        _retval=3
+
+    elif [[ $(</proc/sys/kernel/numa_balancing) -eq 0 ]]; then
+
+        logCheckOk 'AutoNUMA is disabled' "(SAP Note ${sapnote:-})"
+        _retval=0
+
+    else
+
+        logCheckError 'AutoNUMA is not disabled' "(SAP Note ${sapnote:-})"
+        _retval=2
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}

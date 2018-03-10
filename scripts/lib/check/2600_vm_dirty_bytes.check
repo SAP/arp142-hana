@@ -1,0 +1,55 @@
+#!/bin/bash
+
+check_2600_vm_dirty_bytes() {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#7010287'
+
+    #                               parameter                       recommended_value
+    local -ar _vm_parameter=(\
+                                    'vm.dirty_bytes'	             629145600 \
+                                    'vm.dirty_background_bytes'      314572800 \
+    )
+    # MODIFICATION SECTION<<
+
+    local _curr_value
+    local _reco_value
+    local _parameter
+
+    # i+=2 --> every 2nd item
+    for ((i=0; i < ${#_vm_parameter[@]}; i+=2)); do
+
+        logTrace "<${FUNCNAME[0]}> # ${_vm_parameter[$i]}>"
+
+        _parameter=${_vm_parameter[$i]}
+        _reco_value=${_vm_parameter[$i+1]}
+
+        _curr_value=$(sysctl -n "${_parameter}")
+
+        if [[ ${_curr_value} -ne ${_reco_value} ]]; then
+            logCheckWarning "sysctl VM parameter ${_parameter} NOT set as recommended (is: ${_curr_value}, should be: ${_reco_value})"
+            _retval=1
+        else
+            logCheckOk "sysctl VM parameter ${_parameter} set as recommended (is: ${_curr_value})"
+        fi
+
+    done
+
+    if [[ ${_retval} -eq 99 ]]; then
+
+        logCheckOk "All virtual memory dirty sysctl parameter set as recommended (SuSE KB ${sapnote:-}, SAP Note to be created)"
+        _retval=0
+
+    else
+
+        logCheckWarning "NOT all virtual memory dirty sysctl parameter set as recommended (SuSE KB ${sapnote:-}, SAP Note to be created)"
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+}

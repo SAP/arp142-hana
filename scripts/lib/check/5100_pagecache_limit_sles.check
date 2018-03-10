@@ -1,0 +1,68 @@
+#!/bin/bash
+
+function check_5100_pagecache_limit_sles {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#1557506'
+    # MODIFICATION SECTION<<
+
+    if  ! LIB_FUNC_IS_SLES ;	then
+
+        logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif [[ ! -f '/proc/sys/vm/pagecache_limit_mb' ]]; then
+
+        logCheckSkipped "Pagecache Limit not configurable (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+
+        # <= 128 GB:    4096	(=recommended limit) (262144 MB)
+        # >= 256 GB:    2% of RAM_GB * 1024 MB
+        local -ir calc_pg_limit=$(( LIB_PLATF_RAM_MiB_AVAILABLE * 2 / 100 ))
+
+        # https://www.gnu.org/software/bash/manual/html_node/Shell-Arithmetic.html#Shell-Arithmetic
+        local -ir set_pg_limit=$(( LIB_PLATF_RAM_MiB_AVAILABLE > 262144 ? calc_pg_limit : 4096 ))
+        local -ri pgcache_limit_mb=$(</proc/sys/vm/pagecache_limit_mb)
+
+        if [[ ${pgcache_limit_mb} -eq 0 ]]; then
+
+            logCheckOk "vm.pagecache_limit_mb is set as recommended (SAP Note ${sapnote:-}) (is: 0)"
+            _retval=0
+
+        else
+
+            logCheckWarning "vm.pagecache_limit_mb is set - should only be set to address a certain issue (SAP Note ${sapnote:-}) (is: ${pgcache_limit_mb}, should be: 0)"
+            _retval=1
+
+            if [[ ${pgcache_limit_mb} -lt ${set_pg_limit} ]]; then
+
+                logCheckError "vm.pagecache_limit_mb is set to low (SAP Note ${sapnote:-}) (is: ${pgcache_limit_mb}, should be: ${set_pg_limit})"
+                _retval=2
+
+            elif [[ ${pgcache_limit_mb} -gt ${set_pg_limit} ]]; then
+
+                logCheckWarning "vm.pagecache_limit_mb is set to high (SAP Note ${sapnote:-}) (is: ${pgcache_limit_mb}, should be: ${set_pg_limit})"
+                _retval=1
+
+            fi
+        fi
+
+    fi
+
+    #pgcache_ignore_dirty
+    if [[ ${_retval} -eq 1 && ${_retval} -eq 2 ]]; then
+
+        local -ri pgcache_ignore_dirty=$(</proc/sys/vm/pagecache_limit_ignore_dirty)
+        logCheckInfo "vm.pagecache_limit_ignore_dirty depends on HANA Data+Log filesystem (is: ${pgcache_ignore_dirty}, should be: 0 for local FS, 1 for NFS)"
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+}

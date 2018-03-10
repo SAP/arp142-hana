@@ -1,0 +1,98 @@
+#!/bin/bash
+
+function check_0030_os_sles_ibmpower {
+# only certain SLES version are supported
+# in case 11.4 kernel - bigmem kernel should be used, must be used >4 TiB systems
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote114='#2240716'	#SAP HANA DB: Recommended OS settings for SLES 11 / SLES for SAP Applications 11 SP4
+    local -r sapnote12x='#2235581'	#SAP HANA: Supported Operating Systems
+    # MODIFICATION SECTION<<
+
+    if  ! LIB_FUNC_IS_IBMPOWER ; then
+
+        logCheckSkipped 'Not running on IBM Power. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif  ! LIB_FUNC_IS_SLES ; then
+
+        logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+
+        if [[ "${LIB_PLATF_ARCHITECTURE}" == 'ppc64' ]]; then
+            #BigEndian
+            case "${OS_VERSION}" in
+
+                11.3)
+                        logCheckError "SLESonPower release is not supported - upgrade to SLES4SAP 11.4 (SAP Note #2235581) (is: ${OS_VERSION})"
+                        _retval=2
+                ;;
+
+                11.4)
+
+                        if [[ "${OS_LEVEL}" != *"bigmem"* ]]; then
+
+                            logCheckInfo "SLESonPower release is supported. (SAP Note ${sapnote114:-}) (is: ${OS_VERSION})"
+
+                            #4 TiB must use the kernel-bigmem
+                            if [[ ${LIB_PLATF_RAM_MiB_PHYS} -le 4194304 ]]; then
+
+                                logCheckWarning "BIGMEM kernel should be used. (SAP Note ${sapnote114:-}) (is: ${OS_LEVEL}, should be: *-bigmem)"
+                                _retval=1
+
+                            else
+
+                                logCheckError "BIGMEM kernel must be used. (SAP Note ${sapnote114:-}) (is: ${OS_LEVEL}, must be: *-bigmem)"
+                                _retval=2
+
+                            fi
+
+                        else
+
+                            logCheckOk "SLESonPower release supported and BIGMEM kernel used (SAP Note ${sapnote114:-}) (is: ${OS_VERSION} - ${OS_LEVEL})"
+                            _retval=0
+
+                        fi
+                ;;
+
+                *)
+                        logCheckError "SLESonPower release with BigEndian architecture is NOT supported (SAP Note #2235581) (is: ${OS_VERSION})"
+                        _retval=2
+                ;;
+
+            esac
+
+        elif [[ "${LIB_PLATF_ARCHITECTURE}" == 'ppc64le' ]]; then
+
+            case "${OS_VERSION}" in
+
+                12.[1-3]*)
+                        logCheckOk "SLESonPower release is supported (SAP Note ${sapnote12x:-}) (is: ${OS_VERSION})"
+                        _retval=0
+                    ;;
+
+                *)
+                        logCheckError "SLESonPower release with LittleEndian architecture is NOT supported (SAP Note #2235581) (is: ${OS_VERSION})"
+                        _retval=2
+                    ;;
+
+            esac
+
+        else
+
+            logCheckError "Platform architecture <${LIB_PLATF_ARCHITECTURE}> NOT supported. Skipping <${FUNCNAME[0]}>"
+            _retval=2
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
