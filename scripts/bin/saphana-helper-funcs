@@ -50,7 +50,7 @@ function LIB_FUNC_IS_BARE_METAL {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-    [[ ${lib_platf_virtualized} -ne 0 ]] &&	_retval=0
+    [[ ( -z "${LIB_PLATF_VIRT_HYPER:-}" ) || ( "${LIB_PLATF_VIRT_HYPER:-}" == 'none' ) ]] && _retval=0
 
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
     return ${_retval}
@@ -361,13 +361,13 @@ function __get_platform_cpu_details {
         ;;
 
         # Virtualization information provieded by lscpu version >=2.25 and only if virtualized
-        # x64:		( VMware - full ) ; ( Xen - none ) ;
+        # x64:		( VMware - full ) ; ( KVM - full ) = RHEV ; ( Xen - none ) ;
         # Power:	( pHyp - para ) ; ( pHyp - none ) ; ( KVM - para ) ; ( none - none ) = PowerNV = bare-metal
 
         "Hypervisor vendor:"*)
-                            if [[ ! -n ${LIB_PLATF_VIRT_VENDOR:-} ]]; then
-                                LIB_PLATF_VIRT_VENDOR=$(LIB_FUNC_TRIM_LEFT "${line/Hypervisor vendor:}")
-                                readonly LIB_PLATF_VIRT_VENDOR
+                            if [[ ! -n ${LIB_PLATF_VIRT_HYPER:-} ]]; then
+                                LIB_PLATF_VIRT_HYPER=$(LIB_FUNC_TRIM_LEFT "${line/Hypervisor vendor:}")
+                                readonly LIB_PLATF_VIRT_HYPER
                             fi
         ;;
 
@@ -464,10 +464,6 @@ function _lib_helper_main {
 
     __get_platform_mem_details
 
-    # ToDo:	verify for AMD processors
-    lib_platf_virtualized=$(grep -q '^flags.*hypervisor' /proc/cpuinfo;echo $?)
-    readonly lib_platf_virtualized
-
 }
 
 ##########################################################
@@ -483,11 +479,10 @@ declare -i	LIB_PLATF_RAM_MiB_AVAILABLE
 declare 	LIB_PLATF_ARCHITECTURE
 declare 	LIB_PLATF_BYTEORDER
 
-declare		LIB_PLATF_VIRT_VENDOR
+declare		LIB_PLATF_VIRT_HYPER
 declare		LIB_PLATF_VIRT_TYPE
 
 #LIB local
-declare -i lib_platf_virtualized
 
 
 #Import libraries
