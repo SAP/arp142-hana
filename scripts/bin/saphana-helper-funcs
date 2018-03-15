@@ -443,24 +443,39 @@ function _lib_helper_main {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-    __get_platform_cpu_details
+    case "$(uname -p)" in
 
-    # ToDo:	Power platform does not provide 'dmidecode or /sys/devices/virtual/dmi/id'
-    if [[ -e '/sys/devices/virtual/dmi/id' ]]; then
+        'ppc64'*)
+                    source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/lib_platf_power" || { echo 'unable to load lib_platf_power library' >&2; exit 1; }
+        ;;
 
-        # Vendor - IBM, Lenovo, ...
-        if [[ ! -n ${LIB_PLATF_VENDOR:-} ]]; then
-            LIB_PLATF_VENDOR="$(</sys/devices/virtual/dmi/id/sys_vendor)"
-            readonly LIB_PLATF_VENDOR
-        fi
 
-        # Platform - "x3950 X6 -[6241ZB5]-", "ProLiant DL785 G6", "VMware Virtual Platform", "RHEV Hypervisor"
-        if [[ ! -n ${LIB_PLATF_NAME:-} ]]; then
-            LIB_PLATF_NAME="$(</sys/devices/virtual/dmi/id/product_name)"
-            readonly LIB_PLATF_NAME
-        fi
+        'x86_64')
+                    __get_platform_cpu_details
 
-    fi
+                    if [[ -e '/sys/devices/virtual/dmi/id' ]]; then
+
+                        # Vendor - IBM, Lenovo, ...
+                        if [[ ! -n ${LIB_PLATF_VENDOR:-} ]]; then
+                            LIB_PLATF_VENDOR="$(</sys/devices/virtual/dmi/id/sys_vendor)"
+                            readonly LIB_PLATF_VENDOR
+                        fi
+
+                        # Platform - "x3950 X6 -[6241ZB5]-", "ProLiant DL785 G6", "VMware Virtual Platform", "RHEV Hypervisor"
+                        if [[ ! -n ${LIB_PLATF_NAME:-} ]]; then
+                            LIB_PLATF_NAME="$(</sys/devices/virtual/dmi/id/product_name)"
+                            readonly LIB_PLATF_NAME
+                        fi
+
+                    fi
+        ;;
+
+        *)          #unsupported platform
+                    logError 'Unsupported platform'
+                    exit 2
+        ;;
+
+    esac
 
     __get_platform_mem_details
 

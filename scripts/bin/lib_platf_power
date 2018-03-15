@@ -1,0 +1,176 @@
+#!/bin/bash
+umask 022
+
+#------------------------------------------------------------------
+# Library - PowerLinux configuration
+#------------------------------------------------------------------
+# (C) Copyright SAP 2018
+# Author: DBS - CoE EMEA HANA Platform & Technical Infrastructure
+#
+# Script name: "lib_platf_power"
+#
+#------------------------------------------------------------------
+
+# return if library is already loaded
+[[ -n "${LIB_PLATF_POWER_RELEASE:-}" ]] && return 0
+
+LIB_PLATF_POWER_RELEASE='1.0dev'
+#LIB_PLATF_POWER_DATE='2018-MAR-11'
+
+
+##########################################################
+# Global functions - to be used in other scripts
+##########################################################
+
+##########################################################
+# Non-global functions - not to be used in other scripts
+##########################################################
+function lib_func_get_hypervisor_details {
+
+    #( pHyp - para ) ; ( pHyp - none ) ; ( KVM - para ) ; ( none - none ) = PowerNV = bare-metal
+
+    # https://github.com/karelzak/util-linux/blob/master/sys-utils/lscpu.c
+    # also used in HWCCT landscapeTest.py
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local hyp_v
+    local hyp_t
+
+    #PowerVM (IBM's proprietary hypervisor, aka pHyp)
+    if [[   -r '/proc/device-tree/ibm,partition-name' && \
+            -e '/proc/device-tree/hmc-managed?' && \
+            ! -e '/proc/device-tree/chosen/qemu,graphic-width' ]]; then
+
+        hyp_v='pHyp' ; hyp_t='para'
+
+        [[ "$(</proc/device-tree/ibm,partition-name)" == 'full' ]] && hyp_t='none'
+
+    elif [[ -r '/proc/device-tree/compatible' ]]; then
+
+        local -r pdt_compatible=$(</proc/device-tree/compatible)
+
+        case "${pdt_compatible}" in
+
+            'qemu,pseries')
+                            hyp_v='KVM' ; hyp_t='para'
+            ;;
+
+            'ibm,powernv')  # PowerNV (POWER Non-Virtualized, bare-metal)
+                            hyp_v='none' ; hyp_t='none'
+            ;;
+
+            *)
+                            hyp_v='NULL' ; hyp_t='NULL'
+            ;;
+
+        esac
+
+    else
+        hyp_v='NULL' ; hyp_t='NULL'
+    fi
+
+    LIB_PLATF_VIRT_HYPER=${hyp_v}
+    LIB_PLATF_VIRT_TYPE=${hyp_t}
+    readonly LIB_PLATF_VIRT_HYPER
+    readonly LIB_PLATF_VIRT_TYPE
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # LIB_PLATF_VIRT_HYPER : ${LIB_PLATF_VIRT_HYPER:-}; LIB_PLATF_VIRT_TYPE ${LIB_PLATF_VIRT_TYPE:-}"
+
+}
+
+function __get_platform_power_cpu_details {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    # get System details
+    local -a platform
+
+    local -r IFS=$'\n';
+    platform=( "$(lscpu)" )
+
+    local line
+    for line in ${platform[*]:-}; do
+
+        logTrace "<${FUNCNAME[0]}> # ${line}>"
+
+        case ${line} in
+
+        "Architecture:"*)
+                            if [[ ! -n ${LIB_PLATF_ARCHITECTURE:-} ]]; then
+                                LIB_PLATF_ARCHITECTURE=$(LIB_FUNC_TRIM_LEFT "${line/Architecture:}")
+                                readonly LIB_PLATF_ARCHITECTURE
+                            fi
+        ;;
+        "Byte Order:"*)
+                            LIB_PLATF_BYTEORDER=$(LIB_FUNC_TRIM_LEFT "${line/Byte Order:}")
+                            readonly LIB_PLATF_BYTEORDER
+                            #break
+        ;;
+
+        # "Thread(s) per core:"*)
+
+        # ;;
+
+        # "Core(s) per socket:"*)
+
+        # ;;
+
+        # "NUMA node(s):"*)
+
+        # ;;
+
+        "Model:"*)			#<Model: IBM,9119-MHE>
+                            LIB_PLATF_NAME=$(LIB_FUNC_TRIM_LEFT "${line/Model:}")
+                            readonly LIB_PLATF_NAME
+
+                            LIB_PLATF_CPU_VENDOR='IBM'
+                            readonly LIB_PLATF_CPU_VENDOR
+
+                            LIB_PLATF_VENDOR='IBM'
+                            readonly LIB_PLATF_VENDOR
+                            break
+
+        ;;
+
+        #Virtualization information will be gathered on more reliable way
+        # "Hypervisor vendor:"*)
+        # "Virtualization type:"*)
+
+        esac
+
+    done
+
+    if [[ ! -n ${LIB_PLATF_CPU:-} ]]; then
+        LIB_PLATF_CPU=$(grep  'cpu' /proc/cpuinfo | sort -u)
+        LIB_PLATF_CPU=$(LIB_FUNC_TRIM_LEFT "${LIB_PLATF_CPU/cpu[[:space:]]*:}")
+        readonly LIB_PLATF_CPU
+    fi
+
+}
+
+
+#============================================================
+# LIB MAIN - initialization
+#============================================================
+function _lib_platf_power_main {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    __get_platform_power_cpu_details
+    lib_func_get_hypervisor_details
+
+    #readonly HANA_RELEASE_REV
+}
+
+#Import libraries
+#shellcheck source=bin/saphana-logger
+source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/saphana-logger" ||
+                { echo 'unable to load saphana-logger library' >&2; exit 1; }
+
+#LIB LOCAL
+
+#GLOBAL
+
+#CALL MAIN
+_lib_platf_power_main
