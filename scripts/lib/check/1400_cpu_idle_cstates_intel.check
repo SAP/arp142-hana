@@ -18,14 +18,15 @@ function check_1400_cpu_idle_cstates_intel {
 
     local sapnote
 
-    if ! LIB_FUNC_IS_BARE_METAL ; then
-
-        logCheckSkipped 'Running virtualized. Skipping' "<${FUNCNAME[0]}>"
-        _retval=3
-
-    elif ! LIB_FUNC_IS_INTEL ; then
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_INTEL ; then
 
         logCheckSkipped 'Not running on Intel CPU. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif ! LIB_FUNC_IS_BARE_METAL ; then
+
+        logCheckSkipped 'Running virtualized. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
     else
@@ -43,6 +44,7 @@ function check_1400_cpu_idle_cstates_intel {
 
         esac
 
+        #CHECK #1
         local -r _current_driver="$(</sys/devices/system/cpu/cpuidle/current_driver)"
 
         if [[ ${_current_driver} != 'none' ]]; then
@@ -81,7 +83,7 @@ function check_1400_cpu_idle_cstates_intel {
 
     fi
 
-
+    #CHECK #2
     # valid cpuidle driver used - check individual settings
     # no cpuidle driver used because of BIOS settings (disabled c-states)
     if [[ ${_retval} -eq 99 ]]; then
