@@ -10,18 +10,19 @@ function check_1300_cpu_governor_x64 {
     local -r sapnote='#1944799'		 #SAP HANA Guidelines for SLES Operating System Installation
     # MODIFICATION SECTION<<
 
-    if ! LIB_FUNC_IS_BARE_METAL ; then
-
-        logCheckSkipped 'Running virtualized. Skipping' "<${FUNCNAME[0]}>"
-        _retval=3
-
-    elif ! LIB_FUNC_IS_X64 ; then
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_X64 ; then
 
         logCheckSkipped 'Not running on x64 CPU. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    else
+    elif ! LIB_FUNC_IS_BARE_METAL ; then
 
+        logCheckSkipped 'Running virtualized. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+        #CHECK
         #unique value within array
         local -r IFS=$'\n'
         local -ar govs=($( (cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor | sort -u) 2>/dev/null) )
