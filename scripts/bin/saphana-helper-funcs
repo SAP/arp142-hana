@@ -291,98 +291,6 @@ function LIB_FUNC_STRINGCONTAIN {
 # Non-global functions - not to be used in other scripts
 ##########################################################
 
-function __get_platform_cpu_details {
-
-    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
-
-    # get System details
-    local -a platform
-
-    local -r IFS=$'\n';
-    platform=( "$(lscpu)" )
-
-    local line
-    for line in ${platform[*]:-}; do
-
-        logTrace "<${FUNCNAME[0]}> # ${line}>"
-
-        case ${line} in
-
-        "Architecture:"*)
-                            if [[ ! -n ${LIB_PLATF_ARCHITECTURE:-} ]]; then
-                                LIB_PLATF_ARCHITECTURE=$(LIB_FUNC_TRIM_LEFT "${line/Architecture:}")
-                                readonly LIB_PLATF_ARCHITECTURE
-                            fi
-        ;;
-        "Byte Order:"*)
-                            LIB_PLATF_BYTEORDER=$(LIB_FUNC_TRIM_LEFT "${line/Byte Order:}")
-                            readonly LIB_PLATF_BYTEORDER
-                            #break
-        ;;
-
-        # "Thread(s) per core:"*)
-
-        # ;;
-
-        # "Core(s) per socket:"*)
-
-        # ;;
-
-        # "NUMA node(s):"*)
-
-        # ;;
-
-        "Vendor ID:"*)		#GenuineIntel; AuthenticAMD
-                            if [[ ! -n ${LIB_PLATF_CPU_VENDOR:-} ]]; then
-                                LIB_PLATF_CPU_VENDOR=$(LIB_FUNC_TRIM_LEFT "${line/Vendor ID:}")
-                                readonly LIB_PLATF_CPU_VENDOR
-                            fi
-        ;;
-
-        "Model:"*)			#on Intel <Model: 63>
-                            LIB_PLATF_CPU_MODELID=$(LIB_FUNC_TRIM_LEFT "${line/Model:}")
-                            readonly LIB_PLATF_CPU_MODELID
-        ;;
-
-        "Model name:"*)		#on x64 only
-                            #<Intel(R) Xeon(R) CPU E7-8880 v3 @ 2.30GHz>; AMD Opteron 23xx (Gen 3 Class Opteron)
-                            if [[ ! -n ${LIB_PLATF_CPU:-} ]]; then
-                                LIB_PLATF_CPU=$(LIB_FUNC_TRIM_LEFT "${line/Model name:}")
-                                readonly LIB_PLATF_CPU
-                            fi
-        ;;
-
-        # Virtualization information provided by lscpu version >=2.19 and only if virtualized, but only 2.25 is correct for Power
-        # x64:		( VMware - full ) ; ( KVM - full ) = RHEV ; ( Xen - none ) ;
-
-        "Hypervisor vendor:"*)
-                            if [[ ! -n ${LIB_PLATF_VIRT_HYPER:-} ]]; then
-                                LIB_PLATF_VIRT_HYPER=$(LIB_FUNC_TRIM_LEFT "${line/Hypervisor vendor:}")
-                                readonly LIB_PLATF_VIRT_HYPER
-                            fi
-        ;;
-
-        "Virtualization type:"*)
-                            if [[ ! -n ${LIB_PLATF_VIRT_TYPE:-} ]]; then
-                                LIB_PLATF_VIRT_TYPE=$(LIB_FUNC_TRIM_LEFT "${line/Virtualization type:}")
-                                readonly LIB_PLATF_VIRT_TYPE
-                            fi
-                            break
-        ;;
-
-        esac
-
-    done
-
-    if [[ ! -n ${LIB_PLATF_CPU:-} ]]; then
-
-        LIB_PLATF_CPU=$(grep  'model name' /proc/cpuinfo | sort -u)
-        LIB_PLATF_CPU=$(LIB_FUNC_TRIM_LEFT "${LIB_PLATF_CPU/model name[[:blank:]]:}")
-
-        readonly LIB_PLATF_CPU
-    fi
-}
-
 function __get_platform_mem_details {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
@@ -430,29 +338,12 @@ function _lib_helper_main {
 
     case "$(uname -p)" in
 
-        'ppc64'*)
-                    source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/lib_platf_power" || { echo 'unable to load lib_platf_power library' >&2; exit 1; }
+        'x86_64')
+                    source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/lib_platf_x86_64" || { echo 'unable to load lib_platf_power library' >&2; exit 1; }
         ;;
 
-
-        'x86_64')
-                    __get_platform_cpu_details
-
-                    if [[ -e '/sys/devices/virtual/dmi/id' ]]; then
-
-                        # Vendor - IBM, Lenovo, ...
-                        if [[ ! -n ${LIB_PLATF_VENDOR:-} ]]; then
-                            LIB_PLATF_VENDOR="$(</sys/devices/virtual/dmi/id/sys_vendor)"
-                            readonly LIB_PLATF_VENDOR
-                        fi
-
-                        # Platform - "x3950 X6 -[6241ZB5]-", "ProLiant DL785 G6", "VMware Virtual Platform", "RHEV Hypervisor"
-                        if [[ ! -n ${LIB_PLATF_NAME:-} ]]; then
-                            LIB_PLATF_NAME="$(</sys/devices/virtual/dmi/id/product_name)"
-                            readonly LIB_PLATF_NAME
-                        fi
-
-                    fi
+        'ppc64'*)
+                    source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/lib_platf_power" || { echo 'unable to load lib_platf_power library' >&2; exit 1; }
         ;;
 
         *)          #unsupported platform
