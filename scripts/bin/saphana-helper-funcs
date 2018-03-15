@@ -339,17 +339,9 @@ function __get_platform_cpu_details {
                             fi
         ;;
 
-        "Model:"*)			#on Power <Model: IBM,9119-MHE> ; on Intel <Model: 63>
-                            if LIB_FUNC_IS_IBMPOWER ; then
-                                LIB_PLATF_NAME=$(LIB_FUNC_TRIM_LEFT "${line/Model:}")
-                                readonly LIB_PLATF_NAME
-                                LIB_PLATF_VENDOR='IBM'
-                                readonly LIB_PLATF_VENDOR
-
-                            elif LIB_FUNC_IS_INTEL || LIB_FUNC_IS_AMD ; then
-                                LIB_PLATF_CPU_MODELID=$(LIB_FUNC_TRIM_LEFT "${line/Model:}")
-                                readonly LIB_PLATF_CPU_MODELID
-                            fi
+        "Model:"*)			#on Intel <Model: 63>
+                            LIB_PLATF_CPU_MODELID=$(LIB_FUNC_TRIM_LEFT "${line/Model:}")
+                            readonly LIB_PLATF_CPU_MODELID
         ;;
 
         "Model name:"*)		#on x64 only
@@ -360,9 +352,8 @@ function __get_platform_cpu_details {
                             fi
         ;;
 
-        # Virtualization information provieded by lscpu version >=2.25 and only if virtualized
+        # Virtualization information provided by lscpu version >=2.19 and only if virtualized, but only 2.25 is correct for Power
         # x64:		( VMware - full ) ; ( KVM - full ) = RHEV ; ( Xen - none ) ;
-        # Power:	( pHyp - para ) ; ( pHyp - none ) ; ( KVM - para ) ; ( none - none ) = PowerNV = bare-metal
 
         "Hypervisor vendor:"*)
                             if [[ ! -n ${LIB_PLATF_VIRT_HYPER:-} ]]; then
@@ -385,14 +376,8 @@ function __get_platform_cpu_details {
 
     if [[ ! -n ${LIB_PLATF_CPU:-} ]]; then
 
-        if LIB_FUNC_IS_X64 ; then
-            LIB_PLATF_CPU=$(grep  'model name' /proc/cpuinfo | sort -u)
-            LIB_PLATF_CPU=$(LIB_FUNC_TRIM_LEFT "${LIB_PLATF_CPU/model name[[:blank:]]:}")
-
-        elif LIB_FUNC_IS_IBMPOWER ; then
-            LIB_PLATF_CPU=$(grep  'cpu' /proc/cpuinfo | sort -u)
-            LIB_PLATF_CPU=$(LIB_FUNC_TRIM_LEFT "${LIB_PLATF_CPU/cpu[[:space:]]*:}")
-        fi
+        LIB_PLATF_CPU=$(grep  'model name' /proc/cpuinfo | sort -u)
+        LIB_PLATF_CPU=$(LIB_FUNC_TRIM_LEFT "${LIB_PLATF_CPU/model name[[:blank:]]:}")
 
         readonly LIB_PLATF_CPU
     fi
