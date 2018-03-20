@@ -46,6 +46,7 @@ PROGRAM_BINDIR="${PROGRAM_DIR}"
 readonly PROGRAM_BINDIR
 
 # configure shflags - define flags
+#shellcheck source=scripts/bin/shflags
 source "${PROGRAM_BINDIR}/shflags" || die 'unable to load shflags library'
 
 DEFINE_string	'checks'	''		'<\"check1 check2 ...\">  A space-separated list of checks that will be performed.'	'c'
@@ -75,15 +76,15 @@ declare -a CHECKFILELIST=()
 #============================================================
 function evaluate_cmdline_options {
 
-    [[ ${FLAGS_loglevel} -lt 7 ]] && LOG_VERBOSE_LVL=${FLAGS_loglevel}
+    [[ ${FLAGS_loglevel:?} -lt 7 ]] && LOG_VERBOSE_LVL=${FLAGS_loglevel}
 
-    [[ ${FLAGS_verbose} -eq ${FLAGS_TRUE} ]] && LOG_VERBOSE_LVL=4
+    [[ ${FLAGS_verbose:?} -eq ${FLAGS_TRUE} ]] && LOG_VERBOSE_LVL=4
 
-    [[ ${FLAGS_debug} -eq ${FLAGS_TRUE} ]] && LOG_VERBOSE_LVL=5
+    [[ ${FLAGS_debug:?} -eq ${FLAGS_TRUE} ]] && LOG_VERBOSE_LVL=5
 
-    [[ ${FLAGS_trace} -eq ${FLAGS_TRUE} ]] && LOG_VERBOSE_LVL=6
+    [[ ${FLAGS_trace:?} -eq ${FLAGS_TRUE} ]] && LOG_VERBOSE_LVL=6
 
-    [[ ${FLAGS_color} -eq ${FLAGS_TRUE} ]] &&LOG_COLOR_CHECK=0
+    [[ ${FLAGS_color:?} -eq ${FLAGS_TRUE} ]] && LOG_COLOR_CHECK=0
 
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # LOG_VERBOSE_LVL=${LOG_VERBOSE_LVL}"
 }
@@ -108,7 +109,7 @@ function generate_checkfilelist_checks {
 
 function generate_checkfilelist_checkset {
 
-    local checksetfile="${PROGRAM_LIBDIR}/checkset/${FLAGS_checkset}.checkset"
+    local checksetfile="${PROGRAM_LIBDIR}/checkset/${FLAGS_checkset:?}.checkset"
     local checkset
 
     if [[ ! -f "${checksetfile}" ]]; then
@@ -129,7 +130,7 @@ function generate_checklist {
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
     # generate checklist
-    if [[ "${FLAGS_checks}" != "" || "${FLAGS_checkset}" != "" ]]; then
+    if [[ "${FLAGS_checks:?}" != "" || "${FLAGS_checkset:?}" != "" ]]; then
 
         [[ "${FLAGS_checks}" != "" ]] && generate_checkfilelist_checks "${FLAGS_checks}"
 
@@ -153,7 +154,7 @@ function generate_checklist {
             continue;
         fi
 
-
+        # shellcheck source=/dev/null
         if ! source "${checkfile}" ; then
             logCheckSkipped "Skipping check ${checkname},
                                         could not load check file ${checkfile}"
@@ -236,6 +237,7 @@ function main {
 }
 
 #Import logger
+#shellcheck source=scripts/bin/saphana-logger
 source "${PROGRAM_BINDIR}/saphana-logger" ||
                             die 'unable to load saphana-logger library'
 
@@ -245,6 +247,7 @@ eval set -- "${FLAGS_ARGV}"
 evaluate_cmdline_options
 
 #Import remaining Libraries - logging is now active
+#shellcheck source=scripts/bin/saphana-helper-funcs
 source "${PROGRAM_BINDIR}/saphana-helper-funcs" ||
                             die 'unable to load saphana-helper-funcs library'
 
