@@ -21,12 +21,14 @@ function check_3110_ip_port_range {
     LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
     kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_return}"
 
+    # PRECONDITIONS
     LIB_FUNC_COMPARE_VERSIONS "${kernelversion}" "${kernel_applicable}"
     if [[ $? -eq 2 ]]; then
         logCheckSkipped "CHECK not applicable for Linux kernel (is: ${OS_LEVEL}). Skipping" "<${FUNCNAME[0]}>"
         _retval=3
     fi
 
+    # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
         local -r port_range=$(sysctl -n net.ipv4.ip_local_port_range)		# 1024 64999

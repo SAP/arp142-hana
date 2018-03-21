@@ -45,7 +45,7 @@ function check_3020_network_memory {
     fi
 
     if [[ "${net_ipv4_tcp_wmem}" != ${reco_net_ipv4_tcp_wmem}* ]]; then
-        logCheckInfo 'sysctl parameter net.core.rmem_max MIN/MID values do not need to be adjusted (is: '"${net_ipv4_tcp_wmem}, should be: ${reco_net_ipv4_tcp_wmem})"
+        logCheckInfo 'sysctl parameter net.core.wmem_max MIN/MID values do not need to be adjusted (is: '"${net_ipv4_tcp_wmem}, should be: ${reco_net_ipv4_tcp_wmem})"
     fi
 
     # Max Values
@@ -60,10 +60,10 @@ function check_3020_network_memory {
     fi
 
     if [[ ${net_core_wmem_max} -lt ${tcp_wmem_max} ]]; then
-        logCheckError "sysctl parameter net.core.rmem_max NOT set as recommended (is: ${net_core_wmem_max}, should be >=: ${tcp_wmem_max})"
+        logCheckError "sysctl parameter net.core.wmem_max NOT set as recommended (is: ${net_core_wmem_max}, should be >=: ${tcp_wmem_max})"
         _retval=2
     else
-        logCheckOk "sysctl parameter net.core.rmem_max set as recommended (is: ${net_core_wmem_max})"
+        logCheckOk "sysctl parameter net.core.wmem_max set as recommended (is: ${net_core_wmem_max})"
     fi
 
 
