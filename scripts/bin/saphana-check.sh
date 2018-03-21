@@ -130,7 +130,7 @@ function generate_checklist {
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
     # generate checklist
-    if [[ "${FLAGS_checks:?}" != "" || "${FLAGS_checkset:?}" != "" ]]; then
+    if [[ "${FLAGS_checks:-}" != "" || "${FLAGS_checkset:-}" != "" ]]; then
 
         [[ "${FLAGS_checks}" != "" ]] && generate_checkfilelist_checks "${FLAGS_checks}"
 
