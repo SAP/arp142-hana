@@ -1,0 +1,84 @@
+#!/bin/bash
+
+function check_3020_network_memory {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2382421'	# Optimizing the Network Configuration on HANA- and OS-Level for SPS10 and Higher
+
+    local reco_net_ipv4_tcp_rmem="4096 87380"
+    local reco_net_ipv4_tcp_wmem="4096 16384"
+
+    if LIB_FUNC_IS_IBMPOWER ; then
+        reco_net_ipv4_tcp_rmem="65536 87380"
+        reco_net_ipv4_tcp_wmem="65536 16384"
+    fi
+    # MODIFICATION SECTION<<
+
+    # PRECONDITIONS
+
+    # #CHECK
+
+    local net_ipv4_tcp_rmem
+    local net_ipv4_tcp_wmem
+
+    net_ipv4_tcp_rmem=$(sysctl -n net.ipv4.tcp_rmem)                # 4096    87380   6291456
+    net_ipv4_tcp_wmem=$(sysctl -n net.ipv4.tcp_wmem)                # 4096    16384   4194304
+
+    shopt -s extglob    #enable extended pattern matching
+    net_ipv4_tcp_rmem=${net_ipv4_tcp_rmem//+([[:space:]])/ }        # 4096 87380 6291456
+    net_ipv4_tcp_wmem=${net_ipv4_tcp_wmem//+([[:space:]])/ }        # 4096 16384 4194304
+    shopt -u extglob    #disable extended pattern matching
+
+    local -ri net_core_rmem_max=$(sysctl -n net.core.rmem_max)              # 212992
+    local -ri net_core_wmem_max=$(sysctl -n net.core.wmem_max)              # 212992
+
+    logTrace "<${FUNCNAME[0]}> # net_core_rmem_max: ${net_core_rmem_max}; net_ipv4_tcp_rmem: ${net_ipv4_tcp_rmem}>"
+    logTrace "<${FUNCNAME[0]}> # net_core_wmem_max: ${net_core_wmem_max}; net_ipv4_tcp_wmem: ${net_ipv4_tcp_wmem}>"
+
+    # Min Mid Values
+    if [[ "${net_ipv4_tcp_rmem}" != ${reco_net_ipv4_tcp_rmem}* ]]; then
+        logCheckInfo 'sysctl parameter net.core.rmem_max MIN/MID values do not need to be adjusted (is: '"${net_ipv4_tcp_rmem}, should be: ${reco_net_ipv4_tcp_rmem})"
+    fi
+
+    if [[ "${net_ipv4_tcp_wmem}" != ${reco_net_ipv4_tcp_wmem}* ]]; then
+        logCheckInfo 'sysctl parameter net.core.rmem_max MIN/MID values do not need to be adjusted (is: '"${net_ipv4_tcp_wmem}, should be: ${reco_net_ipv4_tcp_wmem})"
+    fi
+
+    # Max Values
+    local -r tcp_rmem_max="${net_ipv4_tcp_rmem##*[[:space:]]}"				# BLANKS and TABS --> 6291456
+    local -r tcp_wmem_max="${net_ipv4_tcp_wmem##*[[:space:]]}"				# BLANKS and TABS --> 4194304
+
+    if [[ ${net_core_rmem_max} -lt ${tcp_rmem_max} ]]; then
+        logCheckError "sysctl parameter net.core.rmem_max NOT set as recommended (is: ${net_core_rmem_max}, should be >=: ${tcp_rmem_max})"
+        _retval=2
+    else
+        logCheckOk "sysctl parameter net.core.rmem_max set as recommended (is: ${net_core_rmem_max})"
+    fi
+
+    if [[ ${net_core_wmem_max} -lt ${tcp_wmem_max} ]]; then
+        logCheckError "sysctl parameter net.core.rmem_max NOT set as recommended (is: ${net_core_wmem_max}, should be >=: ${tcp_wmem_max})"
+        _retval=2
+    else
+        logCheckOk "sysctl parameter net.core.rmem_max set as recommended (is: ${net_core_wmem_max})"
+    fi
+
+
+    if [[ ${_retval} -eq 99 ]]; then
+
+        logCheckOk "All network memory sysctl parameter set as recommended (SAP Note ${sapnote:-})"
+        _retval=0
+
+    else
+
+        logCheckError "Not All network memory sysctl parameter set as recommended (SAP Note ${sapnote:-})"
+        _retval=2
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
