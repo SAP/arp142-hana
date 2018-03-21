@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function check_3000_net_parameter {
+function check_3010_network_parameter {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 

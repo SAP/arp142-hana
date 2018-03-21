@@ -16,7 +16,7 @@
 2400_samepage_merging
 2500_kernel_sharedmemory
 2600_vm_dirty_bytes
-3000_net_parameter
+3010_net_parameter
 3110_ip_port_range
 5000_io_parameter
 5100_pagecache_limit_sles
