@@ -201,34 +201,27 @@ function main {
 
     logNotify "## ${_line}"
     logNotify "## SAP HANA OS checks"
-    logNotify "## Scriptversion: ${PROGVERSION} Scriptdate: ${PROGDATE}"
+    logNotify "## Scriptversion:  ${PROGVERSION} Scriptdate: ${PROGDATE}"
     logNotify "## ${_line}"
-    logNotify "## CMD:           ${PROGRAM_DIR}/${PROGRAM_NAME} ${PROGRAM_CMDLINE}"
+    logNotify "## CMD:            ${PROGRAM_DIR}/${PROGRAM_NAME} ${PROGRAM_CMDLINE}"
     logNotify '##'
-    logNotify "## Host:          $(hostname -f)"
-    logNotify "## TimeLOC:       $(date +"%Y-%m-%d %H:%M:%S")"
-    logNotify "## TimeUTC:       $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+    logNotify "## Host:           $(hostname -f)"
+    logNotify "## TimeLOC:        $(date +"%Y-%m-%d %H:%M:%S")"
+    logNotify "## TimeUTC:        $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
     logNotify "## ${_line}"
-    logNotify "## Vendor:        ${LIB_PLATF_VENDOR:-} - Type: ${LIB_PLATF_NAME:-}"
-    logNotify "## Architecture:  ${LIB_PLATF_ARCHITECTURE:-} - Byte Order: ${LIB_PLATF_BYTEORDER:-}"
+    logNotify "## Vendor:         ${LIB_PLATF_VENDOR:-} - Type: ${LIB_PLATF_NAME:-}"
+    logNotify "## Architecture:   ${LIB_PLATF_ARCHITECTURE:-} - Byte Order: ${LIB_PLATF_BYTEORDER:-}"
 
-    if LIB_FUNC_IS_BARE_METAL
-    then
-        logNotify '##                Running on Bare-Metal'
-    else
-        logNotify '##                Running Virtualized'
-    fi
+    logNotify '##'
+    logNotify "## Virtualization: ${LIB_PLATF_VIRT_HYPER:-none} - Type: ${LIB_PLATF_VIRT_TYPE:-none}"
+    logNotify '##'
 
-    if LIB_FUNC_IS_IBMPOWER
-    then
-        logNotify '##                Running on IBM Power'
-    fi
-
-    logNotify "## CPU:           ${LIB_PLATF_CPU:-}"
-    logNotify "## Memory:        $(awk -v RAM_MiB="${LIB_PLATF_RAM_MiB_PHYS}" \
+    logNotify "## CPU:            ${LIB_PLATF_CPU:-}"
+    logNotify "## Memory:         $(awk -v RAM_MiB="${LIB_PLATF_RAM_MiB_PHYS}" \
                 'BEGIN {printf "%.0f GiB (%d MiB)", RAM_MiB/1024, RAM_MiB }')"
     logNotify '##'
-    logNotify "## OS:            ${OS_NAME} ${OS_VERSION} - Kernel: ${OS_LEVEL}"
+    logNotify "## OS:             ${OS_NAME} ${OS_VERSION} - Kernel: ${OS_LEVEL}"
+    logNotify "## ${_line}"
 
     printf '\n'
 
