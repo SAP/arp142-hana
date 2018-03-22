@@ -33,7 +33,7 @@ script:
 
   # Syntax checking
   - bash -c 'shopt -s globstar; shellcheck --version'
-  #- bash -c 'shopt -s globstar; shellcheck --external-sources scripts/bin/saphana-*'
+  - bash -c 'shopt -s globstar; shellcheck --external-sources scripts/bin/saphana-* scripts/bin/lib*'
   - bash -c 'shopt -s globstar; shellcheck --external-sources --exclude=SC2154 scripts/**/*.check'
 
   # Code format checking

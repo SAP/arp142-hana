@@ -63,11 +63,11 @@ logger() {
 }
 
 use_colored_output() {
-    return ${LOG_COLOR_CHECK}
+    return "${LOG_COLOR_CHECK}"
 }
 
 show_timestamp() {
-    return ${LOG_TIMESTAMP}
+    return "${LOG_TIMESTAMP}"
 }
 
 logCheckError() {
