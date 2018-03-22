@@ -38,26 +38,36 @@ logger() {
         local logleveltag="$1"
         shift 1
 
-        local -r  datestring=$(date +'%H:%M:%S.%3N')
-        local -ir prefix_length=$((13+17))	#len("00:04:32.001")+1 && len("[C] Lxxxx <ERROR>")
-        local -ir content_width=$((COLUMNS-prefix_length-1))
+        local datestring
+        local -i prefix_length=17               #len("[C] Lxxxx <ERROR>")
+
+        if show_timestamp; then                 #only debug/trace show timestamp
+
+            datestring=$(date +'%H:%M:%S.%3N ')
+            prefix_length=30	                #len("00:04:32.001")+1 && len("[C] Lxxxx <ERROR>")
+
+        fi
+
+        local -i content_width=$((COLUMNS-prefix_length-1))
 
         # Expand escaped characters, wrap at COLUMNS chars, indent wrapped lines
         # use %b instead of %s for colors
         #printf "%-30b %s\n" "${datestring} ${logleveltag}" "$*" | fold -w ${COLUMNS} | sed '2~1s/^/                        /' #>&3
         if [[ -t 1 ]]; then #FD1 = stdout
             local line
-            printf '%s\n' "$*" | fold -w ${content_width} | { read -r line ; printf '%-*b %s\n' ${prefix_length} "${datestring} ${logleveltag}" "${line}" ; while read -r line ; do printf '%-*s %s\n' ${prefix_length} " " "${line}" ; done }
+            printf '%s\n' "$*" | fold -w ${content_width} | { read -r line ; printf '%-*b %s\n' ${prefix_length} "${datestring:-}${logleveltag}" "${line}" ; while read -r line ; do printf '%-*s %s\n' ${prefix_length} " " "${line}" ; done }
         else
-            printf '%-*b %s\n' ${prefix_length} "${datestring} ${logleveltag}" "$*"
+            printf '%-*b %s\n' ${prefix_length} "${datestring:-}${logleveltag}" "$*"
         fi
     fi
 }
 
-
-#ToDo: remove/revise use_colored_output stuff
 use_colored_output() {
     return ${LOG_COLOR_CHECK}
+}
+
+show_timestamp() {
+    return ${LOG_TIMESTAMP}
 }
 
 logCheckError() {
@@ -162,6 +172,7 @@ _lib_logger_main() {
 # Variables to be used by other
 declare -i LOG_VERBOSE_LVL=3 #notify/silent=0 (always), error=1, warn=2, info=3, CHK_verbose=4, debug=5, trace=6
 declare -i LOG_COLOR_CHECK=1 #1=off, 0=on
+declare -i LOG_TIMESTAMP=1 #1=off, 0=on
 
 # ToDo: declare -ix ?? - logging should also work for pipes (grep or less)
 declare -i COLUMNS

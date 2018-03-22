@@ -148,17 +148,23 @@ function _lib_platf_x86_64_main {
 
     if [[ -e '/sys/devices/virtual/dmi/id' ]]; then
 
+        shopt -s extglob    #enable extended pattern matching
+
         # Vendor - IBM, Lenovo, ...
         if [[ ! -n ${LIB_PLATF_VENDOR:-} ]]; then
             LIB_PLATF_VENDOR="$(</sys/devices/virtual/dmi/id/sys_vendor)"
+            LIB_PLATF_VENDOR=${LIB_PLATF_VENDOR//+([[:space:]])/ }
             readonly LIB_PLATF_VENDOR
         fi
 
         # Platform - "x3950 X6 -[6241ZB5]-", "ProLiant DL785 G6", "VMware Virtual Platform", "RHEV Hypervisor"
         if [[ ! -n ${LIB_PLATF_NAME:-} ]]; then
             LIB_PLATF_NAME="$(</sys/devices/virtual/dmi/id/product_name)"
+            LIB_PLATF_NAME=${LIB_PLATF_NAME//+([[:space:]])/ }
             readonly LIB_PLATF_NAME
         fi
+
+        shopt -u extglob    #disable extended pattern matching
 
     fi
 
