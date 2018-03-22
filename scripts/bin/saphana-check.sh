@@ -27,7 +27,7 @@ function die {
 }
 
 # Make sure only root can run our script
-# [[ ${UID}} -ne 0 ]] && die 'This script must be run as root'
+[[ ${UID} -ne 0 ]] && die 'This script must be run as root'
 
 #set POSIX/C locales - date/time/regex format normalized for all platforms
 LC_ALL=POSIX
@@ -176,13 +176,11 @@ function run_checklist {
     #empty = unbound variable but count works "${#arr[@]}" = 0
     for check in ${CHECKLIST[*]:-}; do
         # printCheckHeader "Checking " $check
-        # if ! isCheckBlacklisted $check ; then
+
             printf '\n'
             ${check}
             #ToDo: count_error, count_warning - removed from logger
-        # else
-        #     logCheckSkipped "Skipping blacklisted check $check."
-        # fi
+
         # printCheckHeader $line
     done
 
