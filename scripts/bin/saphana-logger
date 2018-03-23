@@ -21,14 +21,14 @@ HANA_LOGGER_PROGVERSION='0.5dev'
 #exec 3>&2 # logging stream (file descriptor 3) defaults to STDERR
 
 # notify/silent=0 (always), error=1, warn=2, info=3, CHK_verbose=4, debug=5, trace=6
-logNotify() {		logger 0 '[N]'	"$1"; } # Always prints
-logError() {		logger 1 '[E]'	"$1"; }
-logWarn() {			logger 2 '[W]'	"$1"; }
-logInfo() {			logger 3 '[I]'	"$1"; }
-logDebug() {		logger 5 '[D]'	"$1"; }
-logTrace() {		logger 6 '[T]'	"$1"; }
+logNotify() { logger 0 '[N]'	"$1"; } # Always prints
+logError()  { logger 1 '[E]'	"$1"; }
+logWarn()   { logger 2 '[W]'	"$1"; }
+logInfo()   { logger 3 '[I]'	"$1"; }
+logDebug()  { logger 5 '[D]'	"$1"; }
+logTrace()  { logger 6 '[T]'	"$1"; }
 
-logger() {
+function logger {
 
     local loglevel="$1"
     shift 1
@@ -40,6 +40,7 @@ logger() {
 
         local datestring
         local -i prefix_length=17               #len("[C] Lxxxx <ERROR>")
+        local -i content_width
 
         if show_timestamp; then                 #only debug/trace show timestamp
 
@@ -48,7 +49,7 @@ logger() {
 
         fi
 
-        local -i content_width=$((COLUMNS-prefix_length-1))
+        content_width=$((COLUMNS-prefix_length-1))
 
         # Expand escaped characters, wrap at COLUMNS chars, indent wrapped lines
         # use %b instead of %s for colors
@@ -62,20 +63,20 @@ logger() {
     fi
 }
 
-use_colored_output() {
+function use_colored_output {
     return "${LOG_COLOR_CHECK}"
 }
 
-show_timestamp() {
+function show_timestamp {
     return "${LOG_TIMESTAMP}"
 }
 
-logCheckError() {
+function logCheckError {
 
     [[ ${LOG_VERBOSE_LVL} -lt 1 ]] && return 1
 
     local CallerCheck
-    printf -v CallerCheck 'L%-4.4s' "${FUNCNAME[1]:6:3}0"
+    printf -v CallerCheck 'L%-4.4s' "${FUNCNAME[1]:6:4}"
 
     if use_colored_output; then
         logger 1 "[C] ${fmt_error}${CallerCheck} <ERROR>${fmt_reset}"	"$@"
@@ -84,12 +85,12 @@ logCheckError() {
     fi
 }
 
-logCheckWarning() {
+function logCheckWarning {
 
     [[ ${LOG_VERBOSE_LVL} -lt 2 ]] && return 1
 
     local CallerCheck
-    printf -v CallerCheck 'L%-4.4s' "${FUNCNAME[1]:6:3}0"
+    printf -v CallerCheck 'L%-4.4s' "${FUNCNAME[1]:6:4}"
 
     if use_colored_output; then
         #we need the trailing space after fmt_reset, because color formatting prevents padding
@@ -99,12 +100,12 @@ logCheckWarning() {
     fi
 }
 
-logCheckOk() {
+function logCheckOk {
 
     [[ ${LOG_VERBOSE_LVL} -lt 3 ]] && return 1
 
     local CallerCheck
-    printf -v CallerCheck 'L%-4.4s' "${FUNCNAME[1]:6:3}0"
+    printf -v CallerCheck 'L%-4.4s' "${FUNCNAME[1]:6:4}"
 
     if use_colored_output; then
         #we need the trailing spaces after fmt_reset, because color formatting prevents padding
@@ -114,12 +115,12 @@ logCheckOk() {
     fi
 }
 
-logCheckInfo() {
+function logCheckInfo {
 
     [[ ${LOG_VERBOSE_LVL} -lt 4 ]] && return 1
 
     local CallerCheck
-    printf -v CallerCheck 'L%-4.4s' "${FUNCNAME[1]:6:3}0"
+    printf -v CallerCheck 'L%-4.4s' "${FUNCNAME[1]:6:4}"
 
     if use_colored_output; then
         #we need the trailing space after fmt_reset, because color formatting prevents padding
@@ -129,12 +130,12 @@ logCheckInfo() {
     fi
 }
 
-logCheckSkipped() {
+function logCheckSkipped {
 
     [[ ${LOG_VERBOSE_LVL} -lt 4 ]] && return 1
 
     local CallerCheck
-    printf -v CallerCheck 'L%-4.4s' "${FUNCNAME[1]:6:3}0"
+    printf -v CallerCheck 'L%-4.4s' "${FUNCNAME[1]:6:4}"
 
     if use_colored_output; then
         #we need the trailing space after fmt_reset, because color formatting prevents padding
@@ -148,7 +149,7 @@ logCheckSkipped() {
 #============================================================
 # LIB MAIN - initialization
 #============================================================
-_lib_logger_main() {
+function _lib_logger_main {
 
     COLUMNS=80 # required before 1st logger usage
 

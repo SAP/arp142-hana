@@ -195,7 +195,8 @@ function main {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-    local -r _line='-------------------------------------------------------------------'
+    local _line_formated
+    local -r _line='------------------------------------------------------------------------'
 
     logNotify "## ${_line}"
     logNotify "## SAP HANA OS checks"
@@ -207,18 +208,28 @@ function main {
     logNotify "## TimeLOC:        $(date +"%Y-%m-%d %H:%M:%S")"
     logNotify "## TimeUTC:        $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
     logNotify "## ${_line}"
-    logNotify "## Vendor:         ${LIB_PLATF_VENDOR:-} - Type: ${LIB_PLATF_NAME:-}"
-    logNotify "## Architecture:   ${LIB_PLATF_ARCHITECTURE:-} - Byte Order: ${LIB_PLATF_BYTEORDER:-}"
 
+    printf -v _line_formated '%-17s - Type: %-20s' "${LIB_PLATF_VENDOR:-}" "${LIB_PLATF_NAME:-}"
+    logNotify "## Vendor:         ${_line_formated}"
+    printf -v _line_formated '%-17s - Byte Order: %-20s' "${LIB_PLATF_ARCHITECTURE:-}" "${LIB_PLATF_BYTEORDER:-}"
+    logNotify "## Architecture:   ${_line_formated}"
     logNotify '##'
-    logNotify "## Virtualization: ${LIB_PLATF_VIRT_HYPER:-none} - Type: ${LIB_PLATF_VIRT_TYPE:-none}"
+
+    printf -v _line_formated '%-17s - Type: %-20s' "${LIB_PLATF_VIRT_HYPER:-none}" "${LIB_PLATF_VIRT_TYPE:-none}"
+    logNotify "## Virtualization: ${_line_formated}"
     logNotify '##'
 
     logNotify "## CPU:            ${LIB_PLATF_CPU:-}"
-    logNotify "## Memory:         $(awk -v RAM_MiB="${LIB_PLATF_RAM_MiB_PHYS}" \
-                'BEGIN {printf "%.0f GiB (%d MiB)", RAM_MiB/1024, RAM_MiB }')"
+
+    #need awk - because of float number
+    _line_formated=$(awk -v RAM_MiB="${LIB_PLATF_RAM_MiB_PHYS}" \
+                            'BEGIN {printf "%.0f GiB (%d MiB)", RAM_MiB/1024, RAM_MiB}')
+    logNotify "## Memory:         ${_line_formated}"
     logNotify '##'
-    logNotify "## OS:             ${OS_NAME} ${OS_VERSION} - Kernel: ${OS_LEVEL}"
+
+    printf -v _line_formated '%-17s - Kernel: %-20s' "${OS_NAME} ${OS_VERSION}" "${OS_LEVEL}"
+    logNotify "## OS:             ${_line_formated}"
+
     logNotify "## ${_line}"
 
     printf '\n'
