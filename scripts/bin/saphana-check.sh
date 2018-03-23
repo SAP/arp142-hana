@@ -71,6 +71,13 @@ OS_LEVEL=''
 declare -a CHECKLIST=()
 declare -a CHECKFILELIST=()
 
+NUMBER_CHECKS=0
+NUMBER_CHECKS_SKIPPED=0
+NUMBER_CHECKS_INFO=0
+NUMBER_CHECKS_OK=0
+NUMBER_CHECKS_WARNING=0
+NUMBER_CHECKS_ERROR=0
+NUMBER_CHECKS_UNKNOWN=0
 
 #============================================================
 # utility stuff
@@ -94,6 +101,29 @@ function evaluate_cmdline_options {
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # LOG_VERBOSE_LVL=${LOG_VERBOSE_LVL}"
 }
 
+function update_check_counters {
+
+    local -i _rc="$1"
+    shift 1
+
+    case "${_rc}" in
+            0)  ((NUMBER_CHECKS++))
+                ((NUMBER_CHECKS_OK++)) ;;
+
+            1)  ((NUMBER_CHECKS++))
+                ((NUMBER_CHECKS_WARNING++)) ;;
+
+            2)  ((NUMBER_CHECKS++))
+                ((NUMBER_CHECKS_ERROR++)) ;;
+
+            3)  ((NUMBER_CHECKS_SKIPPED++)) ;;
+
+            99) ((NUMBER_CHECKS_INFO++)) ;;
+
+            *)  ((NUMBER_CHECKS_UNKNOWN++)) ;;
+    esac
+
+}
 #============================================================
 # Check handling
 #============================================================
@@ -173,20 +203,55 @@ function run_checklist {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
+    local -i RC_CHECK
     #empty = unbound variable but count works "${#arr[@]}" = 0
     for check in ${CHECKLIST[*]:-}; do
         # printCheckHeader "Checking " $check
 
             printf '\n'
+
             ${check}
-            #ToDo: count_error, count_warning - removed from logger
+            RC_CHECK=$?
+
+            update_check_counters ${RC_CHECK}
 
         # printCheckHeader $line
     done
 
 }
 
+function print_counters {
 
+    local check_run=$((NUMBER_CHECKS_INFO + NUMBER_CHECKS_OK + NUMBER_CHECKS_WARNING + NUMBER_CHECKS_ERROR))
+    local check_count=$((NUMBER_CHECKS_SKIPPED + check_run))
+    local percent_skipped=0
+    local percent_info=0
+    local percent_ok=0
+    local percent_warning=0
+    local percent_error=0
+
+    if [[ "${check_count}" -gt 0 ]]; then
+        local percent_skipped=$((100*NUMBER_CHECKS_SKIPPED/check_count))
+        if [ "${check_run}" -gt 0 ]; then
+            local percent_info=$((100*NUMBER_CHECKS_INFO/check_count))
+            local percent_ok=$((100*NUMBER_CHECKS_OK/check_count))
+            local percent_warning=$((100*NUMBER_CHECKS_WARNING/check_count))
+            local percent_error=$((100*NUMBER_CHECKS_ERROR/check_count))
+        fi
+    fi
+
+    local _line_formated
+
+    printf -v _line_formated '%-7s|%6s |%8s |%5s |%8s |%6s' 'Status' 'Error' 'Warning' 'OK' 'Skipped' 'Info'
+    logNotify "## ${_line_formated}"
+
+    printf -v _line_formated '%-7s|%6s |%8s |%5s |%8s |%6s' '%' $percent_error $percent_warning $percent_ok $percent_skipped $percent_info
+    logNotify "## ${_line_formated}"
+
+    printf -v _line_formated '%-7s|%6s |%8s |%5s |%8s |%6s' '#' $NUMBER_CHECKS_ERROR $NUMBER_CHECKS_WARNING $NUMBER_CHECKS_OK $NUMBER_CHECKS_SKIPPED $NUMBER_CHECKS_INFO
+    logNotify "## ${_line_formated}"
+
+}
 
 #============================================================
 # main
@@ -209,13 +274,13 @@ function main {
     logNotify "## TimeUTC:        $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
     logNotify "## ${_line}"
 
-    printf -v _line_formated '%-17s - Type: %-20s' "${LIB_PLATF_VENDOR:-}" "${LIB_PLATF_NAME:-}"
+    printf -v _line_formated '%-17s - %-11s %-20s' "${LIB_PLATF_VENDOR:-}" 'Type:' "${LIB_PLATF_NAME:-}"
     logNotify "## Vendor:         ${_line_formated}"
-    printf -v _line_formated '%-17s - Byte Order: %-20s' "${LIB_PLATF_ARCHITECTURE:-}" "${LIB_PLATF_BYTEORDER:-}"
+    printf -v _line_formated '%-17s - %-11s %-20s' "${LIB_PLATF_ARCHITECTURE:-}" 'Byte Order:' "${LIB_PLATF_BYTEORDER:-}"
     logNotify "## Architecture:   ${_line_formated}"
     logNotify '##'
 
-    printf -v _line_formated '%-17s - Type: %-20s' "${LIB_PLATF_VIRT_HYPER:-none}" "${LIB_PLATF_VIRT_TYPE:-none}"
+    printf -v _line_formated '%-17s - %-11s %-20s' "${LIB_PLATF_VIRT_HYPER:-none}" 'Type:' "${LIB_PLATF_VIRT_TYPE:-none}"
     logNotify "## Virtualization: ${_line_formated}"
     logNotify '##'
 
@@ -227,7 +292,7 @@ function main {
     logNotify "## Memory:         ${_line_formated}"
     logNotify '##'
 
-    printf -v _line_formated '%-17s - Kernel: %-20s' "${OS_NAME} ${OS_VERSION}" "${OS_LEVEL}"
+    printf -v _line_formated '%-17s - %-11s %-20s' "${OS_NAME} ${OS_VERSION}" 'Kernel:' "${OS_LEVEL}"
     logNotify "## OS:             ${_line_formated}"
 
     logNotify "## ${_line}"
@@ -236,6 +301,10 @@ function main {
 
     generate_checklist
     run_checklist
+
+    printf '\n'
+    logNotify "## ${_line}"
+    print_counters
 
     printf '\n'
     logNotify '## Exit'
