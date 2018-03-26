@@ -6,6 +6,7 @@
 0450_tunedprofiles-saphana_rhel
 0500_selinux_rhel
 0600_systemd_version
+0810_uuidd
 1310_cpu_powersavings_ibmpower
 1360_cpu_cpufolding_ibmpower
 1450_cpu_force_latency
