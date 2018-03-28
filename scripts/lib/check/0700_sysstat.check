@@ -1,0 +1,56 @@
+#!/bin/bash
+
+function check_0700_sysstat {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote_sles11='#1310037'	# SUSE LINUX Enterprise Server 11: Installation notes
+    local -r sapnote_sles12='#1984787'	# SUSE LINUX Enterprise Server 12: Installation notes
+    local -r sapnote_rhel67='#2247020'	# SAP HANA DB: Recommended OS settings for RHEL 6.7
+    local -r sapnote_rhel7='#2292690'	# SAP HANA DB: Recommended OS settings for RHEL 7
+    # MODIFICATION SECTION<<
+
+    local sapnote
+    local cmdline
+
+    case "${OS_VERSION}" in
+
+        6.*)	sapnote="${sapnote_rhel67}"	; cmdline='systemd' ;;
+        7.*)	sapnote="${sapnote_rhel7}"	; cmdline='systemctl' ;;
+
+        11.*)	sapnote="${sapnote_sles11}"	; cmdline='systemd' ;;
+        12.*)	sapnote="${sapnote_sles12}"	; cmdline='systemctl' ;;
+
+    esac
+
+    if ! rpm -q sysstat &>/dev/null ; then
+
+        logCheckError "sysstat not installed (SAP Note ${sapnote:-})"
+        _retval=2
+
+    else
+
+        [[ ${cmdline} == 'systemd' ]] && cmdline='/etc/init.d/*sysstat status &>/dev/null'
+        [[ ${cmdline} == 'systemctl' ]] && cmdline='systemctl is-active "sysstat.service" --quiet'
+
+        if eval "${cmdline}"; then
+
+            logCheckOk "sysstat is enabled (SAP Note ${sapnote:-})"
+            _retval=0
+
+        else
+
+            logCheckError "sysstat is disabled (SAP Note ${sapnote:-})"
+            _retval=2
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
