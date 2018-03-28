@@ -11,7 +11,7 @@ function check_2210_numad_rhel {
     local -r sapnote_rhel7='#2292690'	# SAP HANA DB: Recommended OS settings for RHEL 7
     # MODIFICATION SECTION<<
 
-
+    # PRECONDITION
     if  ! LIB_FUNC_IS_RHEL ;	then
 
         logCheckSkipped 'Linux distribution is not RHEL. Skipping' "<${FUNCNAME[0]}>"
@@ -30,7 +30,7 @@ function check_2210_numad_rhel {
         esac
     fi
 
-    #check applicable
+    # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
         if  [[ ! -x '/usr/bin/numad' ]]; then
@@ -40,18 +40,18 @@ function check_2210_numad_rhel {
 
         else
 
-            [[ ${cmdline} == 'systemd' ]] && service numad status 2> /dev/null | grep -q 'numad is started' ; rc=$?
-            [[ ${cmdline} == 'systemctl' ]] && systemctl status numad 2> /dev/null | grep -q 'Active: active' ; rc=$?
+            [[ ${cmdline} == 'systemd' ]] && cmdline='service numad status &>/dev/null'
+            [[ ${cmdline} == 'systemctl' ]] && cmdline='systemctl is-active "numad" --quiet'
 
-            if [[ ${rc} -ne 0 ]] ; then
-
-                logCheckOk "Userspace daemon numad is disabled (SAP Note ${sapnote:-})"
-                _retval=0
-
-            else
+            if eval "${cmdline}"; then
 
                 logCheckError "Userspace daemon numad MUST be disabled (SAP Note ${sapnote:-})"
                 _retval=2
+
+            else
+
+                logCheckOk "Userspace daemon numad is disabled (SAP Note ${sapnote:-})"
+                _retval=0
 
             fi
 
