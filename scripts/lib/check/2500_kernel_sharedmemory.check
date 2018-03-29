@@ -1,6 +1,6 @@
 #!/bin/bash
 
-check_2500_kernel_sharedmemory() {
+function check_2500_kernel_sharedmemory {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
@@ -11,36 +11,43 @@ check_2500_kernel_sharedmemory() {
     #2534844 v12 - Indexserver Crash During Startup due to Insufficient Shared Memory Segment
     #941735  v10 - SAP memory management system for 64-bit Linux systems
 
-    #                               parameter                       recommended_value
+    #                               parameter              recommended_value RC
+    # returns 0 if equal, 1 if first is higher, 2 if second is higher
     local -ar _shm_parameter=(\
-                                    'kernel.shmmni'	                   32768 \
-                                    'kernel.shmall'      1152921504606846720 \
-                                    'kernel.shmmax'     18446744073709551615 \
+                                    'kernel.shmmni'	                   32768  0  \
+                                    'kernel.shmall'      1152921504606846720  1  \
+                                    'kernel.shmmax'     18446744073709551615  0  \
     )
     # MODIFICATION SECTION<<
 
     local _curr_value
     local _reco_value
+    local -i _rc_expected
+    local -i _rc_current
     local _parameter
 
     # PRECONDITIONS
 
     # CHECK
-    # i+=2 --> every 2nd item
-    for ((i=0; i < ${#_shm_parameter[@]}; i+=2)); do
+    # i+=3 --> every 3rd item
+    for ((i=0; i < ${#_shm_parameter[@]}; i+=3)); do
 
         logTrace "<${FUNCNAME[0]}> # ${_shm_parameter[$i]}>"
 
         _parameter=${_shm_parameter[$i]}
         _reco_value=${_shm_parameter[$i+1]}
+        _rc_expected=${_shm_parameter[$i+2]}
 
         _curr_value=$(sysctl -n "${_parameter}")
 
-        if ! LIB_COMPARE_TOOBIG_NUMBERS "${_curr_value}" "${_reco_value}" ; then
+        LIB_COMPARE_TOOBIG_NUMBERS "${_curr_value}" "${_reco_value}"
+        _rc_current=$?
+
+        if [[ ${_rc_current} -le ${_rc_expected}  ]] ; then
+            logCheckOk "sysctl KSHM parameter ${_parameter} set as recommended (is: ${_curr_value})"
+        else
             logCheckWarning "sysctl KSHM parameter ${_parameter} NOT set as recommended (is: ${_curr_value}, should be: ${_reco_value})"
             _retval=1
-        else
-            logCheckOk "sysctl KSHM parameter ${_parameter} set as recommended (is: ${_curr_value})"
         fi
 
     done
