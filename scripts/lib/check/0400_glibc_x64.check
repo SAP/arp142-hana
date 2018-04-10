@@ -11,7 +11,9 @@ function check_0400_glibc_x64 {
 
     # MODIFICATION SECTION>>
     local -ar sles114=( '2.11.3-17.95.2' '#2263929' )
-    local -ar sles122=( '2.22-51.6' '#2205917' )
+    local -ar sles121=( '2.19-38.2' '#2205917' )
+    local -ar sles122=( '2.22-61.3' '#2205917' )
+    local -ar rhel6x=( '2.12-1.149.el6_6.4' '#2292690' )
     local -ar rhel72=( '2.17-106.el7_2.9' '#2292690' )
     local -ar rhel73=( '2.17-157.el7_3.5' '#2292690' )
     # MODIFICATION SECTION<<
@@ -29,9 +31,11 @@ function check_0400_glibc_x64 {
         if LIB_FUNC_IS_SLES ; then
             case "${OS_VERSION}" in
 
-                11.* | 12.[0-1]* ) _goodversion="${sles114[0]}" ; sapnote="${sles114[1]}" ;;
+                11.*)           _goodversion="${sles114[0]}" ; sapnote="${sles114[1]}" ;;
 
-                12.[2-3]*)         _goodversion="${sles122[0]}" ; sapnote="${sles122[1]}" ;;
+                12.[0-1]* )     _goodversion="${sles121[0]}" ; sapnote="${sles121[1]}" ;;
+
+                12.[2-3]*)      _goodversion="${sles122[0]}" ; sapnote="${sles122[1]}" ;;
 
                 *)      logCheckWarning 'CHECK does not support SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
                         _retval=1
@@ -40,6 +44,8 @@ function check_0400_glibc_x64 {
 
         elif LIB_FUNC_IS_RHEL ; then
             case "${OS_VERSION}" in
+
+                6.* )  _goodversion="${rhel6x[0]}" ; sapnote="${rhel6x[1]}" ;;
 
                 7.2* )  _goodversion="${rhel72[0]}" ; sapnote="${rhel72[1]}" ;;
 

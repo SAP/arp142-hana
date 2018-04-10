@@ -12,8 +12,8 @@ function check_0020_os_kernel_rhel {
     local -ar rhel66=( '2.6.32-504.16.2' '#2136965' )
     local -ar rhel67=( '2.6.32-573' '#2247020' )		#not known, take release kernel, all should be fine
     local -ar rhel72=( '3.10.0-327.62.4.el7' '#2292690' )
-    local -ar rhel73=( '3.10.0-514.36.5.el7' '#2292690' )
-    local -ar rhel73power=( '3.10.0-514.36.5.el7' '#2292690' )
+    local -ar rhel73=( '3.10.0-514.44.1.el7' '#2292690' )
+    local -ar rhel73power=( '3.10.0-514.44.1.el7' '#2292690' )
     local -ar rhel74=( '3.10.0-693.11.6.el7' '#2292690' )
     local -ar rhel74power=( '3.10.0-693.11.6.el7' '#2292690' )
     # MODIFICATION SECTION<<
