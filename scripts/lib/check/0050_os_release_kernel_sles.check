@@ -61,7 +61,7 @@ function check_0050_os_release_kernel_sles {
             local kernelversion
 
             LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
-            kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_return}"
+            kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
 
             LIB_FUNC_COMPARE_VERSIONS "${kernelversion}" "${kernel_low}"
             if [[ $? -eq 2 ]]; then

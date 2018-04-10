@@ -13,11 +13,11 @@ testNormalizeKernelEqualTo() {
 	do
 		#printf "test[$i]: orig <%s> <%s>\n" "${_test[1]}" "${_test[0]}"
 		LIB_FUNC_NORMALIZE_KERNEL "${_test[0]}"
-		kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_return}"
+		kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
 
 		#printf "test[$i]: norm <%s> <%s>\n"  "${_test[1]}"	"${kernelversion}"
 		assertEquals "EqualTo failure test#$(( i++ ))" "${_test[1]}" "${kernelversion}"
-		
+
 	done <<- EOF
 	3.0.101-0.47.71.7930.0.PTF-default		3.0.101-0.47.71.7930.0.1
 	3.0.101-0.47.71-default           		3.0.101-0.47.71-1
@@ -36,7 +36,7 @@ testNormalizeKernelShouldFail() {
 
 	#The following tests should fail (test the tester)
 	LIB_FUNC_NORMALIZE_KERNEL '3.0.101-0.47.71-default2'
-	kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_return}"
+	kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
 
 	#printf "test[1]: norm <%s> <%s>\n"  '3.0.101-0.47.71-default2' "${kernelversion}"
 	assertNotEquals 'test[1]: testing the tester failed' '3.0.101-0.47.71.1' "${kernelversion}"

@@ -59,7 +59,7 @@ function check_0060_os_release_kernel_rhel {
             local normalized_kernelversion
 
             LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
-            normalized_kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_return}"
+            normalized_kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
             #2.6.32-504.16.2.el6.x86_64	-->	2.6.32-504.16.2
 
             normalized_kernelversion=${normalized_kernelversion:0:${#expected_kernel}}	#substring - lenght as expected kernel version

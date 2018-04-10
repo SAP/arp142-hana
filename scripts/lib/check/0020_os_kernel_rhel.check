@@ -79,11 +79,11 @@ function check_0020_os_kernel_rhel {
             local normalized_goodversion
 
             LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
-            normalized_kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_return}"
+            normalized_kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
             #2.6.32-504.16.2.el6.x86_64	-->	2.6.32-504.16.2
 
             LIB_FUNC_NORMALIZE_KERNEL "${_goodversion}"
-            normalized_goodversion="${LIB_FUNC_NORMALIZE_KERNEL_return}"
+            normalized_goodversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
 
             LIB_FUNC_COMPARE_VERSIONS "${normalized_kernelversion}" "${normalized_goodversion}"
             if [[ $? -eq 2 ]]; then
