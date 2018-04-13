@@ -287,7 +287,7 @@ function main {
     logNotify "## CPU:            ${LIB_PLATF_CPU:-}"
 
     #need awk - because of float number
-    _line_formated=$(awk -v RAM_MiB="${LIB_PLATF_RAM_MiB_PHYS}" \
+    _line_formated=$(awk -v RAM_MiB="${LIB_PLATF_RAM_MIB_PHYS}" \
                             'BEGIN {printf "%.0f GiB (%d MiB)", RAM_MiB/1024, RAM_MiB}')
     logNotify "## Memory:         ${_line_formated}"
     logNotify '##'

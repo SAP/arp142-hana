@@ -298,16 +298,16 @@ function __get_platform_mem_details {
     local collectedby
 
     #dmesg - kernel boot message
-    if [[ ! -n ${LIB_PLATF_RAM_MiB_PHYS:-} && -x "$(command -v dmesg)" ]]; then
+    if [[ ! -n ${LIB_PLATF_RAM_MIB_PHYS:-} && -x "$(command -v dmesg)" ]]; then
 
         local boot_mem_line
         boot_mem_line=$(dmesg | grep "Memory:.*available")
-        LIB_PLATF_RAM_MiB_PHYS=$(awk '/Memory:.*available/ {match($0, /\/([0-9]+?)(K|k)/); printf "%.0f", substr($0,RSTART+1,RLENGTH-2) / 1024 }' <<< "${boot_mem_line}" )
+        LIB_PLATF_RAM_MIB_PHYS=$(awk '/Memory:.*available/ {match($0, /\/([0-9]+?)(K|k)/); printf "%.0f", substr($0,RSTART+1,RLENGTH-2) / 1024 }' <<< "${boot_mem_line}" )
 
         #since 3.11 - reports the total number of physical pages in the system; before max_pfn --> need to substract absent memory
         local -i boot_mem_absent_mb
         boot_mem_absent_mb=$(awk '/Memory:.*available/ {match($0, /([0-9]+?)k absent/); printf "%.0f", substr($0,RSTART,RLENGTH-2) / 1024}' <<< "${boot_mem_line}" )
-        [[ ${boot_mem_absent_mb} -ne 0 ]] && LIB_PLATF_RAM_MiB_PHYS=$(( LIB_PLATF_RAM_MiB_PHYS - boot_mem_absent_mb ))
+        [[ ${boot_mem_absent_mb} -ne 0 ]] && LIB_PLATF_RAM_MIB_PHYS=$(( LIB_PLATF_RAM_MIB_PHYS - boot_mem_absent_mb ))
 
         collectedby='dmesg'
 
@@ -316,17 +316,17 @@ function __get_platform_mem_details {
     #MemTotal in /proc/meminfo - usable memory
     LIB_PLATF_RAM_MiB_AVAILABLE=$(awk '/^MemTotal:/ {match($0, /[0-9]+/); printf "%.0f", substr($0,RSTART,RLENGTH)/1024 }' /proc/meminfo)
 
-    if [[ ! -n ${LIB_PLATF_RAM_MiB_PHYS:-} || ${LIB_PLATF_RAM_MiB_PHYS} -eq 0 ]]; then
+    if [[ ! -n ${LIB_PLATF_RAM_MIB_PHYS:-} || ${LIB_PLATF_RAM_MIB_PHYS} -eq 0 ]]; then
 
-        LIB_PLATF_RAM_MiB_PHYS=${LIB_PLATF_RAM_MiB_AVAILABLE:-}
+        LIB_PLATF_RAM_MIB_PHYS=${LIB_PLATF_RAM_MiB_AVAILABLE:-}
         collectedby='meminfo'
 
     fi
 
-    readonly LIB_PLATF_RAM_MiB_PHYS
+    readonly LIB_PLATF_RAM_MIB_PHYS
     readonly LIB_PLATF_RAM_MiB_AVAILABLE
 
-    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # LIB_PLATF_RAM_MiB_PHYS (${collectedby:-}): ${LIB_PLATF_RAM_MiB_PHYS:-}; LIB_PLATF_RAM_MiB_AVAILABLE ${LIB_PLATF_RAM_MiB_AVAILABLE:-}"
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # LIB_PLATF_RAM_MIB_PHYS (${collectedby:-}): ${LIB_PLATF_RAM_MIB_PHYS:-}; LIB_PLATF_RAM_MiB_AVAILABLE ${LIB_PLATF_RAM_MiB_AVAILABLE:-}"
 }
 
 #============================================================
@@ -364,7 +364,7 @@ declare		LIB_PLATF_NAME
 declare 	LIB_PLATF_CPU_VENDOR
 declare 	LIB_PLATF_CPU
 declare -i	LIB_PLATF_CPU_MODELID
-declare -i	LIB_PLATF_RAM_MiB_PHYS
+declare -i	LIB_PLATF_RAM_MIB_PHYS
 declare -i	LIB_PLATF_RAM_MiB_AVAILABLE
 
 declare 	LIB_PLATF_ARCHITECTURE
