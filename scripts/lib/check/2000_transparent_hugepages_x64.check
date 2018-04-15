@@ -23,7 +23,7 @@ function check_2000_transparent_hugepages_x64 {
 
     else
 
-        if grep -q "\[never\]" /sys/kernel/mm/transparent_hugepage/enabled ; then
+        if grep -q '\[never\]' /sys/kernel/mm/transparent_hugepage/enabled ; then
             logCheckOk "Transparent Hugepages are disabled (SAP Note ${sapnote:-})"
             _retval=0
         else
