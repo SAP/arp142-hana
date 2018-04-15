@@ -8,9 +8,10 @@ function check_1600_cpu_pstates_intel {
 
     # MODIFICATION SECTION>>
     local -r sapnote='n/a'
+
     # MODIFICATION SECTION<<
 
-
+    # PRECONDITIONS
     if ! LIB_FUNC_IS_INTEL ; then
 
         logCheckSkipped 'Not running on Intel CPU. Skipping' "<${FUNCNAME[0]}>"
@@ -44,7 +45,7 @@ function check_1600_cpu_pstates_intel {
 
     fi
 
-    #Check is applicable
+    #CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
         #unique value within array
@@ -77,23 +78,6 @@ function check_1600_cpu_pstates_intel {
                     _retval=2
                 ;;
         esac
-
-    fi
-
-    # valid cpufreq scaling driver used - check individual settings
-    if [[ ${_retval} -eq 99 ]]; then
-
-        local -ri intel_noturbo=$(</sys/devices/system/cpu/*intel_pstate/no_turbo)
-
-        if [[ ${intel_noturbo} -ne 0 ]]; then
-
-            logCheckWarning "CPU scaling driver <intel_pstate> no_turbo setting set (SAP Note ${sapnote:-}) (is: ${intel_noturbo}, should be: 0)"
-            _retval=1
-
-        else
-            logCheckOk "CPU scaling driver <intel_pstate> no_turbo setting as recommended (SAP Note ${sapnote:-}) (is: ${intel_noturbo})"
-            _retval=0
-        fi
 
     fi
 

@@ -1,0 +1,77 @@
+#!/bin/bash
+
+function check_1610_cpu_intelpstates_intel {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='n/a'
+
+    local -ar _intel_pstate_parameter=(\
+                                    'no_turbo'            0 \
+                                    'min_perf_pct'      100 \
+    )
+    # MODIFICATION SECTION<<
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_INTEL ; then
+
+        logCheckSkipped 'Not running on Intel CPU. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif ! LIB_FUNC_IS_BARE_METAL ; then
+
+        logCheckSkipped 'Running virtualized. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif [[ ! -d  '/sys/devices/system/cpu/intel_pstate' ]]; then
+
+        logCheckSkipped 'CPU scaling driver <intel_pstate> NOT active. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+        #CHECK
+        local -i _curr_value
+        local -i _reco_value
+        local    _parameter
+
+        # i+=2 --> every 2nd item
+        for ((i=0; i < ${#_intel_pstate_parameter[@]}; i+=2)); do
+
+            logTrace "<${FUNCNAME[0]}> # ${_intel_pstate_parameter[$i]}>"
+
+            _parameter=${_intel_pstate_parameter[$i]}
+            _reco_value=${_intel_pstate_parameter[$i+1]}
+
+            _curr_value=$(</sys/devices/system/cpu/intel_pstate/"${_parameter}")
+
+            if [[ ${_curr_value} -ne ${_reco_value} ]]; then
+
+                logCheckWarning "CPU scaling driver <intel_pstate> parameter ${_parameter} NOT set as recommended (is: ${_curr_value}, should be: ${_reco_value})"
+                _retval=1
+
+            else
+                logCheckOk "CPU scaling driver <intel_pstate> parameter ${_parameter} set as recommended (is: ${_curr_value})"
+            fi
+
+        done
+
+        if [[ ${_retval} -eq 99 ]]; then
+
+            logCheckOk "All CPU scaling driver parameter set as recommended (SAP Note ${sapnote:-})"
+            _retval=0
+
+        else
+
+            logCheckWarning "NOT all CPU scaling driver parameter set as recommended (SAP Note ${sapnote:-})"
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
