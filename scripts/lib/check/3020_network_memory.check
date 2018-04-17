@@ -41,11 +41,11 @@ function check_3020_network_memory {
 
     # Min Mid Values
     if [[ "${net_ipv4_tcp_rmem}" != ${reco_net_ipv4_tcp_rmem}* ]]; then
-        logCheckInfo 'sysctl parameter net.core.rmem_max MIN/MID values do not need to be adjusted (is: '"${net_ipv4_tcp_rmem}, should be: ${reco_net_ipv4_tcp_rmem})"
+        logCheckInfo 'sysctl parameter net.ipv4.tcp_rmem MIN/MID values do not need to be adjusted (is: '"${net_ipv4_tcp_rmem}, should be: ${reco_net_ipv4_tcp_rmem})"
     fi
 
     if [[ "${net_ipv4_tcp_wmem}" != ${reco_net_ipv4_tcp_wmem}* ]]; then
-        logCheckInfo 'sysctl parameter net.core.wmem_max MIN/MID values do not need to be adjusted (is: '"${net_ipv4_tcp_wmem}, should be: ${reco_net_ipv4_tcp_wmem})"
+        logCheckInfo 'sysctl parameter net.ipv4.tcp_wmem MIN/MID values do not need to be adjusted (is: '"${net_ipv4_tcp_wmem}, should be: ${reco_net_ipv4_tcp_wmem})"
     fi
 
     # Max Values
