@@ -52,6 +52,23 @@ function check_3020_network_memory {
     local -r tcp_rmem_max="${net_ipv4_tcp_rmem##*[[:space:]]}"				# BLANKS and TABS --> 6291456
     local -r tcp_wmem_max="${net_ipv4_tcp_wmem##*[[:space:]]}"				# BLANKS and TABS --> 4194304
 
+    #tcp_rmem_max
+    if [[ ${tcp_rmem_max} -lt 6291456 ]]; then
+        logCheckError "sysctl parameter net.ipv4.tcp_rmem max value NOT set as recommended (is: ${tcp_rmem_max}, should be >=: 6291456)"
+        _retval=2
+    else
+        logCheckOk "sysctl parameter net.ipv4.tcp_rmem max value set as recommended (is: ${tcp_rmem_max})"
+    fi
+
+    #tcp_wmem_max
+    if [[ ${tcp_wmem_max} -lt 4194304 ]]; then
+        logCheckError "sysctl parameter net.ipv4.tcp_wmem max value NOT set as recommended (is: ${tcp_wmem_max}, should be >=: 4194304)"
+        _retval=2
+    else
+        logCheckOk "sysctl parameter net.ipv4.tcp_wmem max value set as recommended (is: ${tcp_wmem_max})"
+    fi
+
+    #net_core_rmem_max
     if [[ ${net_core_rmem_max} -lt ${tcp_rmem_max} ]]; then
         logCheckError "sysctl parameter net.core.rmem_max NOT set as recommended (is: ${net_core_rmem_max}, should be >=: ${tcp_rmem_max})"
         _retval=2
@@ -59,6 +76,7 @@ function check_3020_network_memory {
         logCheckOk "sysctl parameter net.core.rmem_max set as recommended (is: ${net_core_rmem_max})"
     fi
 
+    #net_core_wmem_max
     if [[ ${net_core_wmem_max} -lt ${tcp_wmem_max} ]]; then
         logCheckError "sysctl parameter net.core.wmem_max NOT set as recommended (is: ${net_core_wmem_max}, should be >=: ${tcp_wmem_max})"
         _retval=2
