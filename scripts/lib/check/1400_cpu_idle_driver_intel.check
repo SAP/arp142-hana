@@ -1,0 +1,124 @@
+#!/bin/bash
+
+function check_1400_cpu_idle_driver_intel {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote_sles113='#1954788'		# SAP HANA DB: Recommended OS settings for SLES 11.3
+    local -r sapnote_sles114='#2240716'		# SAP HANA DB: Recommended OS settings for SLES 11.4
+    local -r sapnote_sles12='#2205917'		# SAP HANA DB: Recommended OS settings for SLES 12
+    local -r sapnote_rhel65='#2013638'		# SAP HANA DB: Recommended OS settings for RHEL 6.5
+    local -r sapnote_rhel66='#2136965'		# SAP HANA DB: Recommended OS settings for RHEL 6.6
+    local -r sapnote_rhel67='#2247020'		# SAP HANA DB: Recommended OS settings for RHEL 6.7
+    local -r sapnote_rhel7='#2292690'		# SAP HANA DB: Recommended OS settings for RHEL 7
+    # MODIFICATION SECTION<<
+
+    local sapnote
+    local expected_driver
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_INTEL ; then
+
+        logCheckSkipped 'Not running on Intel CPU. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif ! LIB_FUNC_IS_BARE_METAL ; then
+
+        logCheckSkipped 'Running virtualized. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif LIB_FUNC_IS_SLES ; then
+        case "${OS_VERSION}" in
+
+            11.3)	sapnote="${sapnote_sles113}" expected_driver='acpi_idle';;
+            11.4)	sapnote="${sapnote_sles114}" expected_driver='acpi_idle';;
+            12.*)	sapnote="${sapnote_sles12}"	 expected_driver='intel_idle';;
+            15.*)	sapnote="${sapnote_sles12}"	 expected_driver='intel_idle';;
+
+            *)
+                    logCheckWarning 'CHECK does NOT support SLES release' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                    _retval=1
+                ;;
+        esac
+
+    elif LIB_FUNC_IS_RHEL ; then
+        case "${OS_VERSION}" in
+
+            6.5)	sapnote="${sapnote_rhel65}"	expected_driver='acpi_idle';;
+            6.6)	sapnote="${sapnote_rhel66}"	expected_driver='acpi_idle';;
+            6.7)	sapnote="${sapnote_rhel67}"	expected_driver='acpi_idle';;
+            7.*)	sapnote="${sapnote_rhel7}"	expected_driver='intel_idle';;
+            *)
+                    logCheckWarning 'CHECK does NOT support RHEL release' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                    _retval=1
+                ;;
+        esac
+
+    else
+            logCheckError 'Linux distribution NOT supported (SAP Note #2235581)' "(is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
+            _retval=2
+    fi
+
+    #CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local -r _current_driver="$(</sys/devices/system/cpu/cpuidle/current_driver)"
+
+        case ${_current_driver} in
+
+            'acpi_idle')
+
+                case "${expected_driver}" in
+
+                    'acpi_idle')
+                                    logCheckOk "Recommended CPU idle driver active (SAP Note ${sapnote:-}) (is: acpi_idle)"
+                                    _retval=0;;
+
+                    'intel_idle')
+
+                                    logCheckInfo "intel_idle CPU idle driver should be used instead (SAP Note ${sapnote:-}) (is: ${_current_driver}, should be: intel_idle)"
+                                    _retval=0;;
+                esac
+
+            ;;
+
+            'intel_idle')
+
+                case "${expected_driver}" in
+
+                    'intel_idle')
+                                    logCheckOk "Recommended CPU idle driver active (SAP Note ${sapnote:-}) (is: intel_idle)"
+                                    _retval=0;;
+
+                    'acpi_idle')
+
+                                    logCheckError "Wrong CPU idle driver active (SAP Note ${sapnote:-}) (is: ${_current_driver}, should be: acpi_idle)"
+                                    _retval=2
+                esac
+
+            ;;
+
+            'none')	# no cpuidle driver used because of BIOS settings (disabled c-states)
+                    # impacts TurboMode, BIOS cannot be seen by OS, recommendations changes cannot be easily applied
+
+                    logCheckWarning 'CPU idle driver not active - check BIOS settings for disabled c-states'
+                    logCheckWarning "Disabled c-states impact CPU TurboMode features (SAP Note ${sapnote:-})"
+                    _retval=1
+            ;;
+
+            *)		#unknown driver
+                    logCheckError "CPU idle driver unknown (SAP Note ${sapnote:-}) (is: ${_current_driver})"
+                    _retval=2
+            ;;
+
+        esac
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
