@@ -14,8 +14,8 @@ A: Scripts require root permission in order to read certain kernel parameter val
 ## How to run
 
 #### as root user - extract scripts to Linux server & run saphana-check.sh
-* [Download v0.4](https://github.wdf.sap.corp/SAP-COE-HPTI/saphana-checks/releases/latest)
-* [Download v0.5-dev](https://github.wdf.sap.corp/SAP-COE-HPTI/saphana-checks/releases/tag/dev0.5-stable)
+* [Download v0.5](https://github.wdf.sap.corp/SAP-COE-HPTI/saphana-checks/releases/latest)
+* [Download v0.6-dev](https://github.wdf.sap.corp/SAP-COE-HPTI/saphana-checks/releases/tag/dev0.6-stable)
 
 ##### Option A) RPM installation
 * rpm -Uvh ./saphana-checks-*.rpm
