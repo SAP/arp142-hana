@@ -22,3 +22,4 @@
 3110_ip_port_range
 5000_io_parameter
 5100_pagecache_limit_sles
+5200_fstrim-service_sles
