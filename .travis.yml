@@ -17,7 +17,9 @@ before_install:
     #MY_RELEASE is not availalbe within env:global
     - |
       if [ ${MY_RELEASE} -ne 1 ]; then
-        _VERSION=${_VERSION}dev
+        BUILD_COMMIT=0.beta.${BUILD_COMMIT}  #beta release
+      else
+        BUILD_COMMIT=1.${BUILD_COMMIT}  #final release
       fi
     - VERSION_BUILD_COMMIT=${_VERSION}-${BUILD_COMMIT}
 
