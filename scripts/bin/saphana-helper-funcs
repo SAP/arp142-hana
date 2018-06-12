@@ -379,7 +379,7 @@ declare		LIB_PLATF_VIRT_TYPE
 #Import libraries
 #shellcheck source=scripts/bin/saphana-logger
 source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/saphana-logger" || { echo 'unable to load saphana-logger library' >&2; exit 1; }
-#shellcheck source=scripts/bin/saphana-helper-funcs
+#shellcheck source=scripts/bin/lib_linux_release
 source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/lib_linux_release" || { echo 'unable to load lib_linux_release library' >&2; exit 1; }
 
 _lib_helper_main

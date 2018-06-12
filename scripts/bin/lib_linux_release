@@ -101,9 +101,7 @@ function __lib_func_get_linux_distrib {
     OS_VERSION="${_os_version}"
     OS_LEVEL=$(uname -r)
 
-    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> #
-                                    ${OS_NAME} ; ${OS_VERSION} ; ${OS_LEVEL}"
-
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # ${OS_NAME} ; ${OS_VERSION} ; ${OS_LEVEL}"
 }
 
 function __linux_distrib_os_release {
