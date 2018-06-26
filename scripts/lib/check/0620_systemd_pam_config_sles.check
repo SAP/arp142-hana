@@ -8,7 +8,7 @@ function check_0620_systemd_pam_config_sles {
 
     # MODIFICATION SECTION>>
     local -r reco_regex='session[[:blank:]]+optional[[:blank:]]+pam_systemd.so'
-    local -r sapnote
+    local -r susekb='#7022001'	#"cgroup: fork rejected by pids controller in..." found in system log
     # MODIFICATION SECTION<<
 
 
@@ -31,12 +31,13 @@ function check_0620_systemd_pam_config_sles {
 
         if grep -q -E "${reco_regex}" /etc/pam.d/common-session ; then
 
-            logCheckOk "PAM common-session has expected <pam_systemd.so> entry (SAP Note ${sapnote:-})"
+            logCheckOk "PAM common-session has expected <pam_systemd.so> entry (SUSE KB ${susekb:-}"
             _retval=0
 
         else
 
-            logCheckError "PAM common-session does NOT have expected <pam_systemd.so> entry (SAP Note ${sapnote:-})"
+            logCheckError "PAM common-session does NOT have expected <pam_systemd.so> entry (SUSE KB ${susekb:-})"
+            logCheckError "more information - https://www.suse.com/de-de/support/kb/doc/?id=7022001"
             _retval=2
 
         fi
