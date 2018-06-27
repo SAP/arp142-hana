@@ -35,6 +35,7 @@ function check_5200_fstrim-service_sles {
         if systemctl is-active "fstrim.timer" --quiet; then
 
             logCheckError "systemd service fstrim.timer is enabled (SUSE KB ${susekb:-})"
+            logCheckError 'more information - https://www.suse.com/de-de/support/kb/doc/?id=7022921'
             _retval=2
 
         else
