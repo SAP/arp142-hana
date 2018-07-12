@@ -56,6 +56,19 @@ function LIB_FUNC_IS_BARE_METAL {
     return ${_retval}
 }
 
+# Returns 0 on MS HyperV, 1 others
+function LIB_FUNC_IS_VIRT_MICROSOFT {
+
+    local -i _retval=1
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    [[ ( "${LIB_PLATF_VIRT_HYPER:-}" == 'Microsoft' ) ]] && _retval=0
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+}
+
 # Returns 0 on Intel, 1 on other
 function LIB_FUNC_IS_INTEL {
 
