@@ -8,16 +8,23 @@ function check_1500_cpu_perfbias_intel {
 
     # MODIFICATION SECTION>>
     local -r sapnote_sles='#2205917'    #SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
-    local -r sapnote_rhel='#2292690'	 #SAP HANA DB: Recommended OS settings for RHEL 7
+    local -r sapnote_rhel='#2292690'    #SAP HANA DB: Recommended OS settings for RHEL 7
     # MODIFICATION SECTION<<
 
+    # PRECONDITIONS
     if  ! LIB_FUNC_IS_INTEL ; then
 
         logCheckSkipped 'Not running on Intel CPU. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
+    elif ! LIB_FUNC_IS_BARE_METAL ; then
+
+        logCheckSkipped 'Running virtualized. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
     else
 
+        #CHECK
         local sapnote
         LIB_FUNC_IS_SLES && sapnote=${sapnote_sles}
         LIB_FUNC_IS_RHEL && sapnote=${sapnote_rhel}
