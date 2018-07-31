@@ -7,7 +7,8 @@ function check_5200_fstrim-service_sles {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r susekb='#7022921'	#SUSE-KB XFS metadata corruption and invalid checksum's on SAP Hana servers
+    local -r sapnote='#2205917'	    #SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12	- SLES12.2 only
+                                    #SUSE-KB 7022921 XFS metadata corruption and invalid checksum's on SAP Hana servers
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS
@@ -34,13 +35,12 @@ function check_5200_fstrim-service_sles {
 
         if systemctl is-active "fstrim.timer" --quiet; then
 
-            logCheckError "systemd service fstrim.timer is enabled (SUSE KB ${susekb:-})"
-            logCheckError 'more information - https://www.suse.com/de-de/support/kb/doc/?id=7022921'
+            logCheckError "systemd service fstrim.timer is enabled (SAP Note ${sapnote:-})"
             _retval=2
 
         else
 
-            logCheckOk "systemd service fstrim.service is disabled (SUSE KB ${susekb:-})"
+            logCheckOk "systemd service fstrim.service is disabled (SAP Note ${sapnote:-})"
             _retval=0
 
         fi
