@@ -7,8 +7,13 @@ function check_1300_cpu_governor_x64 {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#1944799'		 #SAP HANA Guidelines for SLES Operating System Installation
+    local -r sapnote_sles='#1944799'		# SAP HANA Guidelines for SLES Operating System Installation
+    local -r sapnote_sles12='#2205917'		# SAP HANA DB: Recommended OS settings for SLES 12
+    local -r sapnote_rhel='#2247020'        # SAP HANA DB: Recommended OS settings for RHEL 6.7
+    local -r sapnote_rhel7='#2292690'		# SAP HANA DB: Recommended OS settings for RHEL 7
     # MODIFICATION SECTION<<
+
+    local sapnote
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_X64 ; then
@@ -21,8 +26,30 @@ function check_1300_cpu_governor_x64 {
         logCheckSkipped 'Running virtualized. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
+    elif LIB_FUNC_IS_SLES ; then
+        case "${OS_VERSION}" in
+
+            12.*)	sapnote="${sapnote_sles12}" ;;
+            15.*)	sapnote="${sapnote_sles12}" ;;
+
+            *)      sapnote="${sapnote_sles}" ;;
+        esac
+
+    elif LIB_FUNC_IS_RHEL ; then
+        case "${OS_VERSION}" in
+
+            7.*)	sapnote="${sapnote_rhel7}";;
+            *)      sapnote="${sapnote_rhel}" ;;
+        esac
+
     else
-        #CHECK
+            logCheckError 'Linux distribution NOT supported (SAP Note #2235581)' "(is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
+            _retval=2
+    fi
+
+    #CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
         #unique value within array
         local -r IFS=$'\n'
         local -ar govs=($( (cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor | sort -u) 2>/dev/null) )
