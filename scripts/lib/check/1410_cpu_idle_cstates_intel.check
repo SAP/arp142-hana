@@ -6,6 +6,10 @@ function check_1410_cpu_idle_cstates_intel {
 
     local -i _retval=99
 
+    #dynamic way to adjust allowed CPU c_states - max_cstate vs cpu_dma_latency
+    #cpu_idle must be loaded; applicable for kernel versions >=4.* - intel and power
+    #tuned profile parameter force_latency finally sets /dev/cpu_dma_latency
+
     # MODIFICATION SECTION>>
     local -r sapnote_sles113='#1954788'		# SAP HANA DB: Recommended OS settings for SLES 11.3
     local -r sapnote_sles114='#2240716'		# SAP HANA DB: Recommended OS settings for SLES 11.4
@@ -14,9 +18,12 @@ function check_1410_cpu_idle_cstates_intel {
     local -r sapnote_rhel66='#2136965'		# SAP HANA DB: Recommended OS settings for RHEL 6.6
     local -r sapnote_rhel67='#2247020'		# SAP HANA DB: Recommended OS settings for RHEL 6.7
     local -r sapnote_rhel7='#2292690'		# SAP HANA DB: Recommended OS settings for RHEL 7
+
+    local -ir _reco_forcelatency=70
     # MODIFICATION SECTION<<
 
     local sapnote
+    local force_latency_prefered
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_INTEL ; then
@@ -29,22 +36,50 @@ function check_1410_cpu_idle_cstates_intel {
         logCheckSkipped 'Running virtualized. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    else
-
+    elif LIB_FUNC_IS_SLES ; then
         case "${OS_VERSION}" in
-
-            6.5)	sapnote="${sapnote_rhel65}"	;;
-            6.6)	sapnote="${sapnote_rhel66}"	;;
-            6.7)	sapnote="${sapnote_rhel67}"	;;
-            7.*)	sapnote="${sapnote_rhel7}"	;;
 
             11.3)	sapnote="${sapnote_sles113}";;
             11.4)	sapnote="${sapnote_sles114}";;
-            12.*)	sapnote="${sapnote_sles12}"	;;
+            12.[0-1]*)	sapnote="${sapnote_sles12}";;
 
+            12.[2-4]* | 15.* )
+                    sapnote="${sapnote_sles12}"
+                    force_latency_prefered='TRUE'
+                ;;
+
+            *)
+                    logCheckWarning 'CHECK does NOT support SLES release' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                    _retval=1
+                ;;
         esac
 
-        #CHECK
+    elif LIB_FUNC_IS_RHEL ; then
+        case "${OS_VERSION}" in
+
+            6.5)	sapnote="${sapnote_rhel65}";;
+            6.6)	sapnote="${sapnote_rhel66}";;
+            6.7)	sapnote="${sapnote_rhel67}";;
+            7.2)	sapnote="${sapnote_rhel7}";;
+
+            7.[3-4]* )
+                    sapnote="${sapnote_rhel7}"
+                    force_latency_prefered='TRUE'
+                ;;
+            *)
+                    logCheckWarning 'CHECK does NOT support RHEL release' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                    _retval=1
+                ;;
+        esac
+
+    else
+            logCheckError 'Linux distribution NOT supported (SAP Note #2235581)' "(is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
+            _retval=2
+    fi
+
+    #CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
         local -r _current_driver="$(</sys/devices/system/cpu/cpuidle/current_driver)"
 
         case ${_current_driver} in
@@ -54,22 +89,60 @@ function check_1410_cpu_idle_cstates_intel {
                     local -i _acpi_mcstate
 
                     if ! _acpi_mcstate=$(grep 'ACPI: processor limited to max C-state' /var/log/boot.msg 2>/dev/null | grep -E -o '[0-9]+$'); then
+
                         logCheckWarning 'CPU idle driver -acpi_idle- max_cstate could not be determined (is: unknown, should be: 0)'
                         _retval=1
-                    else
-                        if [[ ${_acpi_mcstate} -gt 0 ]]; then
+
+                    elif [[ ${_acpi_mcstate} -gt 0 ]]; then
+
                             logCheckError "CPU idle driver <acpi_idle> max_cstate set to high (SAP Note ${sapnote:-}) (is: ${_acpi_mcstate}, should be: 0)"
                             _retval=2
-                        else
+
+                    else
+
                             logCheckOk "CPU idle driver max_cstate setting ok (SAP Note ${sapnote:-}) (is: ${_acpi_mcstate})"
                             _retval=0
-                        fi
                     fi
             ;;
 
-            'intel_idle')	#check max_cstate value <=1
+            'intel_idle')
 
-                    local -ri _intel_mcstate=$(</sys/module/intel_idle/parameters/max_cstate)
+                local -ri _intel_mcstate=$(</sys/module/intel_idle/parameters/max_cstate)
+
+                #check cpu_dma_latency first = 70 or max_cstate value <=1
+                if [[ ${force_latency_prefered:-} == 'TRUE' ]]; then
+
+                    #requires root to read from /dev/cpu_dma_latency
+                    local -r _curr_forcelatency=$(hexdump -e '"%i"' /dev/cpu_dma_latency)
+
+                    if [[ ${_curr_forcelatency:-} -eq ${_reco_forcelatency} ]]; then
+
+                        logCheckOk 'CPU latency set as recommended' "(SAP Note ${sapnote:-}) (is: ${_curr_forcelatency:-})"
+                        _retval=0
+
+                    elif [[ ${_curr_forcelatency:-} -lt 3 ]]; then
+                        #3 = C1
+                        logCheckError 'CPU latency set to low - impacting CPU TurboMode features' "(SAP Note ${sapnote:-}) (is: ${_curr_forcelatency:-}, should be: ${_reco_forcelatency})"
+                        _retval=2
+
+                    elif [[ ${_curr_forcelatency:-} -gt ${_reco_forcelatency:-} ]]; then
+
+                        logCheckError 'CPU latency set to high - deeper c-states causing longer wakeup times' "(SAP Note ${sapnote:-}) (is: ${_curr_forcelatency:-}, should be: ${_reco_forcelatency})"
+                        _retval=2
+
+                    else # 2 < x < reco_value
+                        logCheckInfo 'CPU latency could be adjusted' "(SAP Note ${sapnote:-}) (is: ${_curr_forcelatency}, should be: ${_reco_forcelatency})"
+                        _retval=0
+
+                    fi
+
+                    if [[ ${_intel_mcstate} -lt 9 ]]; then
+                        logCheckError "CPU latency <intel_idle> max_cstate prevents latency control (is: ${_intel_mcstate}, should be: 9)"
+                        _retval=2
+                    fi
+
+                else
+                    # only max_ctate = 1
                     if [[ ${_intel_mcstate} -gt 1 ]]; then
                         logCheckError "CPU idle driver <intel_idle> max_cstate set to high (SAP Note ${sapnote:-}) (is: ${_intel_mcstate}, should be: 1)"
                         _retval=2
@@ -77,6 +150,7 @@ function check_1410_cpu_idle_cstates_intel {
                         logCheckOk "CPU idle driver max_cstate setting ok (SAP Note ${sapnote:-}) (is: ${_intel_mcstate})"
                         _retval=0
                     fi
+                fi
             ;;
 
             'none')	#no cpuidle driver used because of BIOS settings (disabled c-states)

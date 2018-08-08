@@ -9,7 +9,6 @@
 0810_uuidd
 1310_cpu_powersavings_ibmpower
 1360_cpu_cpufolding_ibmpower
-1450_cpu_force_latency
 2200_numa_balancing
 2210_numad_rhel
 2300_vm_max_map_count

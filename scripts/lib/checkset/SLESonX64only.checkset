@@ -11,7 +11,6 @@
 1300_cpu_governor_x64
 1400_cpu_idle_driver_intel
 1410_cpu_idle_cstates_intel
-1450_cpu_force_latency
 1500_cpu_perfbias_intel
 1600_cpu_pstates_intel
 1610_cpu_intelpstates_intel
