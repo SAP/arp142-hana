@@ -8,7 +8,7 @@
 0440_sapconf_sles
 0600_systemd_version
 0620_systemd_pam_config_sles
-0810_uuidd
+0700_sysstat
 1310_cpu_powersavings_ibmpower
 1360_cpu_cpufolding_ibmpower
 2200_numa_balancing
