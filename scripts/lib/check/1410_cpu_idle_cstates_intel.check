@@ -62,7 +62,7 @@ function check_1410_cpu_idle_cstates_intel {
             6.7)	sapnote="${sapnote_rhel67}";;
             7.2)	sapnote="${sapnote_rhel7}";;
 
-            7.[3-4]* )
+            7.[3-5]* )
                     sapnote="${sapnote_rhel7}"
                     force_latency_prefered='TRUE'
                 ;;

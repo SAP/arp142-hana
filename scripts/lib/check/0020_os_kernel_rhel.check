@@ -16,6 +16,8 @@ function check_0020_os_kernel_rhel {
     local -ar rhel73power=( '3.10.0-514.44.1.el7' '#2292690' )
     local -ar rhel74=( '3.10.0-693.11.6.el7' '#2292690' )
     local -ar rhel74power=( '3.10.0-693.11.6.el7' '#2292690' )
+    local -ar rhel75=( '3.10.0-862.el7' '#2292690' )
+    local -ar rhel75power=( '3.10.0-862.el7' '#2292690' )
     # MODIFICATION SECTION<<
 
     if  ! LIB_FUNC_IS_RHEL ;	then
@@ -48,6 +50,8 @@ function check_0020_os_kernel_rhel {
 
                 7.4)	_goodversion="${rhel74[0]}" ; sapnote="${rhel74[1]}" ;;
 
+                7.5)	_goodversion="${rhel75[0]}" ; sapnote="${rhel75[1]}" ;;
+
                 *)		logCheckError "RHEL version is not supported (SAP Note #2235581) (is: ${OS_VERSION})"
                         _retval=2
                     ;;
@@ -60,6 +64,8 @@ function check_0020_os_kernel_rhel {
                 7.3)	_goodversion="${rhel73power[0]}" ; sapnote="${rhel73power[1]}" ;;
 
                 7.4)	_goodversion="${rhel74power[0]}" ; sapnote="${rhel74power[1]}" ;;
+
+                7.5)	_goodversion="${rhel75power[0]}" ; sapnote="${rhel75power[1]}" ;;
 
                 *)		logCheckError "RHEL version is not supported (SAP Note #2235581) (is: ${OS_VERSION})"
                         _retval=2
