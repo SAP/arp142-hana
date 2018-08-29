@@ -60,43 +60,59 @@ function __get_platform_x86_64_cpu_details {
 
         case ${line} in
 
-        "Architecture:"*)
+        'Architecture:'*)
                             if [[ ! -n ${LIB_PLATF_ARCHITECTURE:-} ]]; then
                                 LIB_PLATF_ARCHITECTURE=$(LIB_FUNC_TRIM_LEFT "${line/Architecture:}")
                                 readonly LIB_PLATF_ARCHITECTURE
                             fi
         ;;
-        "Byte Order:"*)
+        'Byte Order:'*)
                             LIB_PLATF_BYTEORDER=$(LIB_FUNC_TRIM_LEFT "${line/Byte Order:}")
                             readonly LIB_PLATF_BYTEORDER
                             #break
         ;;
 
-        # "Thread(s) per core:"*)
+        'Thread(s) per core:'*)
+                            if [[ ! -n ${LIB_PLATF_CPU_THREADSPERCORE:-} ]]; then
+                                LIB_PLATF_CPU_THREADSPERCORE=$(LIB_FUNC_TRIM_LEFT "${line/Thread(s) per core:}")
+                                readonly LIB_PLATF_CPU_THREADSPERCORE
+                            fi
+        ;;
 
-        # ;;
+        'Core(s) per socket:'*)
+                            if [[ ! -n ${LIB_PLATF_CPU_CORESPERSOCKET:-} ]]; then
+                                LIB_PLATF_CPU_CORESPERSOCKET=$(LIB_FUNC_TRIM_LEFT "${line/Core(s) per socket:}")
+                                readonly LIB_PLATF_CPU_CORESPERSOCKET
+                            fi
+        ;;
 
-        # "Core(s) per socket:"*)
+        'Socket(s):'*)
+                            if [[ ! -n ${LIB_PLATF_CPU_SOCKETS:-} ]]; then
+                                LIB_PLATF_CPU_SOCKETS=$(LIB_FUNC_TRIM_LEFT "${line/Socket(s):}")
+                                readonly LIB_PLATF_CPU_SOCKETS
+                            fi
+        ;;
 
-        # ;;
+        'NUMA node(s):'*)
+                            if [[ ! -n ${LIB_PLATF_CPU_NUMANODES:-} ]]; then
+                                LIB_PLATF_CPU_NUMANODES=$(LIB_FUNC_TRIM_LEFT "${line/NUMA node(s):}")
+                                readonly LIB_PLATF_CPU_NUMANODES
+                            fi
+        ;;
 
-        # "NUMA node(s):"*)
-
-        # ;;
-
-        "Vendor ID:"*)		#GenuineIntel; AuthenticAMD
+        'Vendor ID:'*)		#GenuineIntel; AuthenticAMD
                             if [[ ! -n ${LIB_PLATF_CPU_VENDOR:-} ]]; then
                                 LIB_PLATF_CPU_VENDOR=$(LIB_FUNC_TRIM_LEFT "${line/Vendor ID:}")
                                 readonly LIB_PLATF_CPU_VENDOR
                             fi
         ;;
 
-        "Model:"*)			#on Intel <Model: 63>
+        'Model:'*)			#on Intel <Model: 63>
                             LIB_PLATF_CPU_MODELID=$(LIB_FUNC_TRIM_LEFT "${line/Model:}")
                             readonly LIB_PLATF_CPU_MODELID
         ;;
 
-        "Model name:"*)		#on x64 only
+        'Model name:'*)		#on x64 only
                             #<Intel(R) Xeon(R) CPU E7-8880 v3 @ 2.30GHz>; AMD Opteron 23xx (Gen 3 Class Opteron)
                             if [[ ! -n ${LIB_PLATF_CPU:-} ]]; then
                                 LIB_PLATF_CPU=$(LIB_FUNC_TRIM_LEFT "${line/Model name:}")
@@ -107,14 +123,14 @@ function __get_platform_x86_64_cpu_details {
         # Virtualization information provided by lscpu version >=2.19 and only if virtualized, but only 2.25 is correct for Power
         # x64:		( VMware - full ) ; ( KVM - full ) = RHEV ; ( Xen - none ) ;
 
-        "Hypervisor vendor:"*)
+        'Hypervisor vendor:'*)
                             if [[ ! -n ${LIB_PLATF_VIRT_HYPER:-} ]]; then
                                 LIB_PLATF_VIRT_HYPER=$(LIB_FUNC_TRIM_LEFT "${line/Hypervisor vendor:}")
                                 readonly LIB_PLATF_VIRT_HYPER
                             fi
         ;;
 
-        "Virtualization type:"*)
+        'Virtualization type:'*)
                             if [[ ! -n ${LIB_PLATF_VIRT_TYPE:-} ]]; then
                                 LIB_PLATF_VIRT_TYPE=$(LIB_FUNC_TRIM_LEFT "${line/Virtualization type:}")
                                 readonly LIB_PLATF_VIRT_TYPE
