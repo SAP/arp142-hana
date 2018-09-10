@@ -6,6 +6,7 @@
 0500_selinux_rhel
 0600_systemd_version
 0700_sysstat
+1210_cpu_subnuma_intel
 1300_cpu_governor_x64
 1400_cpu_idle_driver_intel
 1410_cpu_idle_cstates_intel

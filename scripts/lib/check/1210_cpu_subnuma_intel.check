@@ -1,0 +1,68 @@
+#!/bin/bash
+
+function check_1210_cpu_subnuma_intel {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote_sles12='#2205917'		# SAP HANA DB: Recommended OS settings for SLES 12
+    local -r sapnote_rhel7='#2292690'		# SAP HANA DB: Recommended OS settings for RHEL 7
+    # MODIFICATION SECTION<<
+
+    local sapnote
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_INTEL ; then
+
+        logCheckSkipped 'Not running on Intel CPU. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif ! LIB_FUNC_IS_BARE_METAL ; then
+
+        logCheckSkipped 'Running virtualized. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif [[ ! -n ${LIB_PLATF_CPU_NUMANODES:-} ]]; then
+
+        logCheckWarning '# NUMA nodes unknown. Skipping' "<${FUNCNAME[0]}>"
+        _retval=1
+
+    elif [[ ! -n ${LIB_PLATF_CPU_SOCKETS:-} ]]; then
+
+        logCheckWarning '# CPU Sockets unknown. Skipping' "<${FUNCNAME[0]}>"
+        _retval=1
+
+    elif LIB_FUNC_IS_SLES ; then
+
+        sapnote="${sapnote_sles12}"
+
+    elif LIB_FUNC_IS_RHEL ; then
+
+        sapnote="${sapnote_rhel7}"
+
+    else
+        logCheckError 'Linux distribution NOT supported (SAP Note #2235581)' "(is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
+        _retval=2
+    fi
+
+    #CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        if [[ ${LIB_PLATF_CPU_NUMANODES:-} -gt ${LIB_PLATF_CPU_SOCKETS:-} ]]; then
+
+            logCheckError "Intel's <SubNUMA/CoD> NOT disabled. (SAP Note ${sapnote:-})"
+            _retval=2
+
+        else
+            logCheckOk "Intel's <SubNUMA/CoD> is disabled. (SAP Note ${sapnote:-})"
+            _retval=0
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
