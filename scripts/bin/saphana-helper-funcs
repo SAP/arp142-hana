@@ -351,11 +351,11 @@ function _lib_helper_main {
 
     case "$(uname -p)" in
 
-        'x86_64')   #shellcheck source=scripts/bin/lib_platf_x86_64
+        'x86_64')   #shellcheck source=./lib_platf_x86_64
                     source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/lib_platf_x86_64" || { echo 'unable to load lib_platf_power library' >&2; exit 1; }
         ;;
 
-        'ppc64'*)   #shellcheck source=scripts/bin/lib_platf_power
+        'ppc64'*)   #shellcheck source=./lib_platf_power
                     source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/lib_platf_power" || { echo 'unable to load lib_platf_power library' >&2; exit 1; }
         ;;
 
@@ -394,9 +394,9 @@ declare		LIB_PLATF_VIRT_TYPE
 
 
 #Import libraries
-#shellcheck source=scripts/bin/saphana-logger
+#shellcheck source=./saphana-logger
 source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/saphana-logger" || { echo 'unable to load saphana-logger library' >&2; exit 1; }
-#shellcheck source=scripts/bin/lib_linux_release
+#shellcheck source=./lib_linux_release
 source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/lib_linux_release" || { echo 'unable to load lib_linux_release library' >&2; exit 1; }
 
 _lib_helper_main

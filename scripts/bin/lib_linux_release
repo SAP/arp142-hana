@@ -291,7 +291,7 @@ function _lib_linux_release_main {
 }
 
 #Import libraries
-#shellcheck source=scripts/bin/saphana-logger
+#shellcheck source=./saphana-logger
 source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/saphana-logger" ||
                 { echo 'unable to load saphana-logger library' >&2; exit 1; }
 

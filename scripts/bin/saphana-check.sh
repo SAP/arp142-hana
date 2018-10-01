@@ -46,7 +46,7 @@ PROGRAM_BINDIR="${PROGRAM_DIR}"
 readonly PROGRAM_BINDIR
 
 # configure shflags - define flags
-#shellcheck source=scripts/bin/shflags
+#shellcheck source=./shflags
 source "${PROGRAM_BINDIR}/shflags" || die 'unable to load shflags library'
 
 DEFINE_string	'checks'	''		'<\"check1 check2 ...\">  A space-separated list of checks that will be performed.'	'c'
@@ -313,7 +313,7 @@ function main {
 }
 
 #Import logger
-#shellcheck source=scripts/bin/saphana-logger
+#shellcheck source=./saphana-logger
 source "${PROGRAM_BINDIR}/saphana-logger" ||
                             die 'unable to load saphana-logger library'
 
@@ -323,7 +323,7 @@ eval set -- "${FLAGS_ARGV}"
 evaluate_cmdline_options
 
 #Import remaining Libraries - logging is now active
-#shellcheck source=scripts/bin/saphana-helper-funcs
+#shellcheck source=./saphana-helper-funcs
 source "${PROGRAM_BINDIR}/saphana-helper-funcs" ||
                             die 'unable to load saphana-helper-funcs library'
 

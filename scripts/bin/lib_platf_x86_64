@@ -190,10 +190,10 @@ function _lib_platf_x86_64_main {
 }
 
 #Import libraries
-#shellcheck source=scripts/bin/saphana-logger
+#shellcheck source=./saphana-logger
 source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/saphana-logger" ||
                 { echo 'unable to load saphana-logger library' >&2; exit 1; }
-#shellcheck source=scripts/bin/saphana-helper-funcs
+#shellcheck source=./saphana-helper-funcs
 source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/saphana-helper-funcs" ||
                 { echo 'unable to load saphana-helper-funcs library' >&2; exit 1; }
 #LIB LOCAL

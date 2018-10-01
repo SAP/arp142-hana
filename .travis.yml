@@ -38,8 +38,8 @@ script:
 
   # Syntax checking
   - bash -c 'shopt -s globstar; shellcheck --version'
-  - bash -c 'shopt -s globstar; shellcheck --external-sources scripts/bin/saphana-* scripts/bin/lib*'
-  - bash -c 'shopt -s globstar; shellcheck --external-sources --exclude=SC2154 scripts/**/*.check'
+  - bash -c 'shopt -s globstar; cd scripts/bin; shellcheck --external-sources ./saphana-* ./lib*'
+  - bash -c 'shopt -s globstar; shellcheck --exclude=SC2154 scripts/**/*.check'
 
   # Code format checking
   # - bash -c 'shopt -s globstar; bashate scripts/**/*.{sh,check}'
