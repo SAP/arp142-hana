@@ -7,13 +7,13 @@ function check_5000_io_parameter {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#1999930'	# 1999930 - FAQ: SAP HANA I/O Analysis
+    local -r sapnote='#2600030'	# Parameter Recommendations in SAP HANA Environments
 
     #                               parameter                  recommended_value           SAPNote
     local -ar _io_parameter=(\
                                     'fs.aio-max-nr'            18446744073709551615         '#1868829'     \
+                                    'fs.file-max'              20000000                     '#2600030' \
     )
-    # 1868829 - Startup Issues Because Number of Active I/O Requests to Queue Exceeds aio-max-nr Limit
 
     # MODIFICATION SECTION<<
 
