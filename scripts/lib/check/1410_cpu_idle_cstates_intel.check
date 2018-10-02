@@ -90,17 +90,17 @@ function check_1410_cpu_idle_cstates_intel {
 
                     if ! _acpi_mcstate=$(grep 'ACPI: processor limited to max C-state' /var/log/boot.msg 2>/dev/null | grep -E -o '[0-9]+$'); then
 
-                        logCheckWarning 'CPU idle driver -acpi_idle- max_cstate could not be determined (is: unknown, should be: 0)'
+                        logCheckWarning 'CPUidle driver <acpi_idle> max_cstate could not be determined (is: unknown, should be: 0)'
                         _retval=1
 
                     elif [[ ${_acpi_mcstate} -gt 0 ]]; then
 
-                            logCheckError "CPU idle driver <acpi_idle> max_cstate set to high (SAP Note ${sapnote:-}) (is: ${_acpi_mcstate}, should be: 0)"
+                            logCheckError "CPUidle driver <acpi_idle> max_cstate set to high (SAP Note ${sapnote:-}) (is: ${_acpi_mcstate}, should be: 0)"
                             _retval=2
 
                     else
 
-                            logCheckOk "CPU idle driver max_cstate setting ok (SAP Note ${sapnote:-}) (is: ${_acpi_mcstate})"
+                            logCheckOk "CPUidle driver <acpi_idle> max_cstate setting ok (SAP Note ${sapnote:-}) (is: ${_acpi_mcstate})"
                             _retval=0
                     fi
             ;;
@@ -112,6 +112,8 @@ function check_1410_cpu_idle_cstates_intel {
                 #check cpu_dma_latency first = 70 or max_cstate value <=1
                 if [[ ${force_latency_prefered:-} == 'TRUE' ]]; then
 
+                    logCheckInfo "CPUidle driver <intel_idle>: prefer modern latency setting instead of setting fixed cstates (SAP Note ${sapnote:-})"
+
                     #requires root to read from /dev/cpu_dma_latency
                     local -r _curr_forcelatency=$(hexdump -e '"%i"' /dev/cpu_dma_latency)
 
@@ -120,34 +122,38 @@ function check_1410_cpu_idle_cstates_intel {
                         logCheckOk 'CPU latency set as recommended' "(SAP Note ${sapnote:-}) (is: ${_curr_forcelatency:-})"
                         _retval=0
 
-                    elif [[ ${_curr_forcelatency:-} -lt 3 ]]; then
-                        #3 = C1
-                        logCheckError 'CPU latency set to low - impacting CPU TurboMode features' "(SAP Note ${sapnote:-}) (is: ${_curr_forcelatency:-}, should be: ${_reco_forcelatency})"
-                        _retval=2
+                    elif [[ ${_curr_forcelatency:-} -lt ${_reco_forcelatency:-} ]]; then
+                        #2 = C1; #10 = C1E
+                        logCheckWarning 'CPU latency set to low - limiting CPU TurboMode features' "(SAP Note ${sapnote:-}) (is: ${_curr_forcelatency:-}, should be: ${_reco_forcelatency})"
+                        _retval=1
 
                     elif [[ ${_curr_forcelatency:-} -gt ${_reco_forcelatency:-} ]]; then
 
                         logCheckError 'CPU latency set to high - deeper c-states causing longer wakeup times' "(SAP Note ${sapnote:-}) (is: ${_curr_forcelatency:-}, should be: ${_reco_forcelatency})"
                         _retval=2
 
-                    else # 2 < x < reco_value
-                        logCheckInfo 'CPU latency could be adjusted' "(SAP Note ${sapnote:-}) (is: ${_curr_forcelatency}, should be: ${_reco_forcelatency})"
-                        _retval=0
-
                     fi
 
-                    if [[ ${_intel_mcstate} -lt 9 ]]; then
-                        logCheckError "CPU latency <intel_idle> max_cstate prevents latency control (is: ${_intel_mcstate}, should be: 9)"
+                    if [[ ${_intel_mcstate} -lt 3 ]]; then
+                        logCheckError "CPUidle driver <intel_idle> max_cstate prevents latency control (is: ${_intel_mcstate}, should be: 9)"
                         _retval=2
+                    elif [[ ${_intel_mcstate} -lt 9 ]]; then
+                        logCheckWarning "CPUidle driver <intel_idle> max_cstate limits latency control (is: ${_intel_mcstate}, should be: 9)"
+
+                        #keep higher return values
+                        [[ ${_retval} -eq 0 ]] && _retval=1
                     fi
 
                 else
+
+                    logCheckInfo "CPUidle driver <intel_idle>: use traditional fixed cstates (SAP Note ${sapnote:-})"
+
                     # only max_ctate = 1
                     if [[ ${_intel_mcstate} -gt 1 ]]; then
-                        logCheckError "CPU idle driver <intel_idle> max_cstate set to high (SAP Note ${sapnote:-}) (is: ${_intel_mcstate}, should be: 1)"
+                        logCheckError "CPUidle driver <intel_idle> max_cstate set to high (SAP Note ${sapnote:-}) (is: ${_intel_mcstate}, should be: 1)"
                         _retval=2
                     else
-                        logCheckOk "CPU idle driver max_cstate setting ok (SAP Note ${sapnote:-}) (is: ${_intel_mcstate})"
+                        logCheckOk "CPUidle driver <intel_idle> max_cstate setting ok (SAP Note ${sapnote:-}) (is: ${_intel_mcstate})"
                         _retval=0
                     fi
                 fi
@@ -156,7 +162,7 @@ function check_1410_cpu_idle_cstates_intel {
             'none')	#no cpuidle driver used because of BIOS settings (disabled c-states)
                     # impacts TurboMode, BIOS cannot be seen by OS, recommendations changes cannot be easily applied
 
-                    logCheckWarning 'CPU idle driver not active - check BIOS settings for disabled c-states'
+                    logCheckWarning 'CPUidle driver not active - check BIOS settings for disabled c-states'
                     logCheckWarning "Disabled c-states impact CPU TurboMode features (SAP Note ${sapnote:-})"
                     _retval=1
             ;;
