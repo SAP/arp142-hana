@@ -96,31 +96,48 @@ function __get_platform_power_cpu_details {
 
         case ${line} in
 
-        "Architecture:"*)
+        'Architecture:'*)
                             if [[ ! -n ${LIB_PLATF_ARCHITECTURE:-} ]]; then
                                 LIB_PLATF_ARCHITECTURE=$(LIB_FUNC_TRIM_LEFT "${line/Architecture:}")
                                 readonly LIB_PLATF_ARCHITECTURE
                             fi
         ;;
-        "Byte Order:"*)
+
+        'Byte Order:'*)
                             LIB_PLATF_BYTEORDER=$(LIB_FUNC_TRIM_LEFT "${line/Byte Order:}")
                             readonly LIB_PLATF_BYTEORDER
                             #break
         ;;
 
-        # "Thread(s) per core:"*)
+        'Thread(s) per core:'*)
+                            if [[ ! -n ${LIB_PLATF_CPU_THREADSPERCORE:-} ]]; then
+                                LIB_PLATF_CPU_THREADSPERCORE=$(LIB_FUNC_TRIM_LEFT "${line/Thread(s) per core:}")
+                                readonly LIB_PLATF_CPU_THREADSPERCORE
+                            fi
+        ;;
 
-        # ;;
+        'Core(s) per socket:'*)
+                            if [[ ! -n ${LIB_PLATF_CPU_CORESPERSOCKET:-} ]]; then
+                                LIB_PLATF_CPU_CORESPERSOCKET=$(LIB_FUNC_TRIM_LEFT "${line/Core(s) per socket:}")
+                                readonly LIB_PLATF_CPU_CORESPERSOCKET
+                            fi
+        ;;
 
-        # "Core(s) per socket:"*)
+        'Socket(s):'*)
+                            if [[ ! -n ${LIB_PLATF_CPU_SOCKETS:-} ]]; then
+                                LIB_PLATF_CPU_SOCKETS=$(LIB_FUNC_TRIM_LEFT "${line/Socket(s):}")
+                                readonly LIB_PLATF_CPU_SOCKETS
+                            fi
+        ;;
 
-        # ;;
+        'NUMA node(s):'*)
+                            if [[ ! -n ${LIB_PLATF_CPU_NUMANODES:-} ]]; then
+                                LIB_PLATF_CPU_NUMANODES=$(LIB_FUNC_TRIM_LEFT "${line/NUMA node(s):}")
+                                readonly LIB_PLATF_CPU_NUMANODES
+                            fi
+        ;;
 
-        # "NUMA node(s):"*)
-
-        # ;;
-
-        "Model:"*)			#<Model: IBM,9119-MHE>
+        'Model:'*)			#<Model: IBM,9119-MHE>
                             LIB_PLATF_NAME=$(LIB_FUNC_TRIM_LEFT "${line/Model:}")
                             readonly LIB_PLATF_NAME
 
