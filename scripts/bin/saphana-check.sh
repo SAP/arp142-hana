@@ -285,6 +285,12 @@ function main {
     logNotify '##'
 
     logNotify "## CPU:            ${LIB_PLATF_CPU:-}"
+    logNotify '##'
+    printf -v _line_formated '%-17s - %-11s %-20s' "${LIB_PLATF_CPU_SOCKETS:-}" 'Cores:' "${LIB_PLATF_CPU_CORESPERSOCKET:-}"
+    logNotify "## Sockets:        ${_line_formated}"
+    printf -v _line_formated '%-17s - %-11s %-20s' "${LIB_PLATF_CPU_NUMANODES:-}" 'Threads:' "${LIB_PLATF_CPU_THREADSPERCORE:-}"
+    logNotify "## Numa nodes:     ${_line_formated}"
+    logNotify '##'
 
     #need awk - because of float number
     _line_formated=$(awk -v RAM_MiB="${LIB_PLATF_RAM_MIB_PHYS}" \
