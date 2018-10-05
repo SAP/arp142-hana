@@ -11,7 +11,7 @@ function check_0620_systemd_pam_config_sles {
     local -r susekb='#7022001'	#"cgroup: fork rejected by pids controller in..." found in system log
     # MODIFICATION SECTION<<
 
-
+    # PRECONDITIONS
     if ! LIB_FUNC_IS_SLES ; then
 
         logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
@@ -27,7 +27,10 @@ function check_0620_systemd_pam_config_sles {
         logCheckSkipped 'PAM common-session does not exist. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    else
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
 
         if grep -q -E "${reco_regex}" /etc/pam.d/common-session ; then
 

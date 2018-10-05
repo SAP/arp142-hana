@@ -91,29 +91,31 @@ function check_0010_os_kernel_sles {
 
         fi
 
-        if [[ ${_retval} -eq 99 ]]; then
+    fi
 
-            local normalized_kernelversion
-            local normalized_goodversion
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
 
-            LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
-            normalized_kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
+        local normalized_kernelversion
+        local normalized_goodversion
 
-            LIB_FUNC_NORMALIZE_KERNEL "${_goodversion}"
-            normalized_goodversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
+        LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
+        normalized_kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
 
-            LIB_FUNC_COMPARE_VERSIONS "${normalized_kernelversion}" "${normalized_goodversion}"
-            if [[ $? -eq 2 ]]; then
-                logCheckError "Linux kernel must be upgraded. (SAP Note ${sapnote:-}) (is: ${OS_LEVEL}, should be: >=${_goodversion})"
-                _retval=2
-            else
-                logCheckOk "Linux kernel version is at required level. (SAP Note ${sapnote:-}) (is: ${OS_LEVEL})"
-                _retval=0
-            fi
+        LIB_FUNC_NORMALIZE_KERNEL "${_goodversion}"
+        normalized_goodversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
 
+        LIB_FUNC_COMPARE_VERSIONS "${normalized_kernelversion}" "${normalized_goodversion}"
+        if [[ $? -eq 2 ]]; then
+            logCheckError "Linux kernel must be upgraded. (SAP Note ${sapnote:-}) (is: ${OS_LEVEL}, should be: >=${_goodversion})"
+            _retval=2
+        else
+            logCheckOk "Linux kernel version is at required level. (SAP Note ${sapnote:-}) (is: ${OS_LEVEL})"
+            _retval=0
         fi
 
     fi
+
 
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
     return ${_retval}

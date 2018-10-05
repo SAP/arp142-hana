@@ -55,7 +55,10 @@ function check_1500_cpu_perfbias_intel {
     else
             logCheckError 'Linux distribution NOT supported (SAP Note #2235581)' "(is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
             _retval=2
+    fi
 
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
 
         if [[ ! -x '/usr/bin/cpupower' ]]; then
 

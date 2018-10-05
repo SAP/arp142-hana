@@ -32,7 +32,7 @@ function check_1610_cpu_intelpstates_intel {
         _retval=3
 
     else
-        #CHECK
+        # CHECK
         local -i _curr_value
         local -i _reco_value
         local    _parameter

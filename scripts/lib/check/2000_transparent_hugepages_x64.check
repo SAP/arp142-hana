@@ -10,6 +10,7 @@ function check_2000_transparent_hugepages_x64 {
     local -r sapnote='#2131662'		# Transparent Huge Pages (THP) on SAP HANA Servers
     # MODIFICATION SECTION<<
 
+    # PRECONDITIONS
     if ! LIB_FUNC_IS_X64 ; then
 
         logCheckSkipped 'Not running on x64 CPU. Skipping' "<${FUNCNAME[0]}>"
@@ -22,6 +23,7 @@ function check_2000_transparent_hugepages_x64 {
         _retval=3
 
     else
+        # CHECK
 
         if grep -q '\[never\]' /sys/kernel/mm/transparent_hugepage/enabled ; then
             logCheckOk "Transparent Hugepages are disabled (SAP Note ${sapnote:-})"

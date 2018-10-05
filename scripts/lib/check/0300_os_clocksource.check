@@ -14,11 +14,12 @@ function check_0300_os_clocksource {
     local -r reco_clocksource_mshyperv='hyperv_clocksource_tsc_page'
     # MODIFICATION SECTION<<
 
+    # PRECONDITIONS
     LIB_FUNC_IS_IBMPOWER && reco_clocksource="${reco_clocksource_power}"
     LIB_FUNC_IS_VIRT_MICROSOFT && reco_clocksource="${reco_clocksource_mshyperv}"
     readonly reco_clocksource
 
-
+    # CHECK
     local -r curr_clocksource=$(</sys/devices/system/clocksource/clocksource0/current_clocksource)
 
     if [[ "${curr_clocksource}" != "${reco_clocksource}" ]]; then

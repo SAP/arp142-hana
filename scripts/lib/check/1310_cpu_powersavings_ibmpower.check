@@ -13,6 +13,7 @@ function check_1310_cpu_powersavings_ibmpower {
     local -r sapnote_rhel7='#2292690'		# SAP HANA DB: Recommended OS settings for RHEL 7
     # MODIFICATION SECTION<<
 
+    # PRECONDITIONS
     if ! LIB_FUNC_IS_IBMPOWER ; then
 
         logCheckSkipped 'Not running on IBM Power. Skipping' "<${FUNCNAME[0]}>"
@@ -35,6 +36,10 @@ function check_1310_cpu_powersavings_ibmpower {
     else
             logCheckError 'Linux distribution NOT supported (SAP Note #2235581)' "(is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
             _retval=2
+    fi
+
+    #CHECK
+    if [[ ${_retval} -eq 99 ]]; then
 
         #unique value within array
         local -r IFS=$'\n'

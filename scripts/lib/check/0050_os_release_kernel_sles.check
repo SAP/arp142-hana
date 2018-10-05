@@ -22,6 +22,7 @@ function check_0050_os_release_kernel_sles {
     local -r sapnote='#2235581'	#SAP HANA: Supported Operating Systems
     # MODIFICATION SECTION<<
 
+    # PRECONDITIONS
     if  ! LIB_FUNC_IS_SLES ;	then
 
         logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
@@ -35,7 +36,7 @@ function check_0050_os_release_kernel_sles {
         case "${OS_VERSION}" in
 
             11.[0-2] )
-                logCheckError "Upgrade to SLES for SAP Applications 11 SP4 (SAP Note #2235581) (is: ${OS_VERSION})"
+                logCheckError "Upgrade to SLES 11 SP4 (SAP Note #2235581) (is: ${OS_VERSION})"
                 _retval=2
                 ;;
 
@@ -59,33 +60,34 @@ function check_0050_os_release_kernel_sles {
                 ;;
         esac
 
-        if [[ ${_retval} -eq 99 ]]; then
+    fi
 
-            local kernelversion
+    #CHECK
+    if [[ ${_retval} -eq 99 ]]; then
 
-            LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
-            kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
+        local kernelversion
 
-            LIB_FUNC_COMPARE_VERSIONS "${kernelversion}" "${kernel_low}"
-            if [[ $? -eq 2 ]]; then
+        LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
+        kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
 
-                logCheckError "Linux kernel does NOT match SLES release and must be changed. (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${OS_LEVEL}, must be >= ${kernel_low}.*)"
-                _retval=2
+        LIB_FUNC_COMPARE_VERSIONS "${kernelversion}" "${kernel_low}"
+        if [[ $? -eq 2 ]]; then
+
+            logCheckError "Linux kernel does NOT match SLES release and must be changed. (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${OS_LEVEL}, must be >= ${kernel_low}.*)"
+            _retval=2
+
+        else
+
+            LIB_FUNC_COMPARE_VERSIONS "${kernelversion}" "${kernel_high}"
+            if [[ $? -eq 1 ]]; then
+
+            logCheckError "Linux kernel does NOT match SLES release and must be changed. (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${OS_LEVEL}, must be <= ${kernel_high}.*)"
+            _retval=2
 
             else
 
-                LIB_FUNC_COMPARE_VERSIONS "${kernelversion}" "${kernel_high}"
-                if [[ $? -eq 1 ]]; then
-
-                logCheckError "Linux kernel does NOT match SLES release and must be changed. (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${OS_LEVEL}, must be <= ${kernel_high}.*)"
-                _retval=2
-
-                else
-
-                    logCheckOk "Linux kernel matches SLES release. (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${OS_LEVEL})"
-                    _retval=0
-
-                fi
+                logCheckOk "Linux kernel matches SLES release. (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${OS_LEVEL})"
+                _retval=0
 
             fi
 

@@ -13,6 +13,7 @@ function check_0030_os_sles_ibmpower {
     local -r sapnote12x='#2235581'	#SAP HANA: Supported Operating Systems
     # MODIFICATION SECTION<<
 
+    # PRECONDITIONS
     if  ! LIB_FUNC_IS_IBMPOWER ; then
 
         logCheckSkipped 'Not running on IBM Power. Skipping' "<${FUNCNAME[0]}>"
@@ -23,7 +24,10 @@ function check_0030_os_sles_ibmpower {
         logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    else
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
 
         if [[ "${LIB_PLATF_ARCHITECTURE}" == 'ppc64' ]]; then
             #BigEndian

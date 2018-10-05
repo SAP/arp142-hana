@@ -14,6 +14,7 @@ function check_2200_numa_balancing {
 
     local sapnote
 
+    # PRECONDITIONS
     if LIB_FUNC_IS_SLES ; then
         case "${OS_VERSION}" in
 
@@ -30,7 +31,7 @@ function check_2200_numa_balancing {
         _retval=1
     fi
 
-
+    # CHECK
     if [[ ! -e '/proc/sys/kernel/numa_balancing' ]]; then
 
         #e.g. PowerLinux, XEN

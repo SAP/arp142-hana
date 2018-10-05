@@ -15,7 +15,7 @@ function check_0600_systemd_version {
     local _goodversion
     local sapnote
 
-
+    # PRECONDITIONS
     case "${OS_VERSION}" in
 
         12.[2-3]*)  _goodversion="${sles122[0]}" ; sapnote="${sles122[1]}" ;;
@@ -29,7 +29,7 @@ function check_0600_systemd_version {
             ;;
     esac
 
-
+    # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
         local normalized_goodversion

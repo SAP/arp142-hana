@@ -7,7 +7,7 @@ function check_5200_fstrim-service_sles {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#2205917'	    #SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12	- SLES12.2 only
+    local -r sapnote='#2205917'	    #SAP HANA DB: Recommended OS settings for SLES 12 - SLES12.2 only
                                     #SUSE-KB 7022921 XFS metadata corruption and invalid checksum's on SAP Hana servers
     # MODIFICATION SECTION<<
 

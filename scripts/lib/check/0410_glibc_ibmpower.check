@@ -17,6 +17,7 @@ function check_0410_glibc_ibmpower {
     local _goodversion
     local sapnote
 
+    # PRECONDITIONS
     if  ! LIB_FUNC_IS_IBMPOWER ;	then
 
         logCheckSkipped 'Not running on IBM Power. Skipping' "<${FUNCNAME[0]}>"
@@ -57,6 +58,7 @@ function check_0410_glibc_ibmpower {
 
     fi
 
+    # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
         local normalized_goodversion

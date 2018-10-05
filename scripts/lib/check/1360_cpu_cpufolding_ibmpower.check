@@ -10,6 +10,7 @@ function check_1360_cpu_cpufolding_ibmpower {
     local -r sapnote='#2055470'	# HANA on POWER Planning and Installation Specifics
     # MODIFICATION SECTION<<
 
+    # PRECONDITIONS
     if ! LIB_FUNC_IS_IBMPOWER ; then
 
         logCheckSkipped 'Not running on IBM Power. Skipping' "<${FUNCNAME[0]}>"
@@ -17,6 +18,7 @@ function check_1360_cpu_cpufolding_ibmpower {
 
     else
 
+    # CHECK
         if rpm -q pseries-energy > /dev/null ; then
             logCheckError "pseries-energy RPM is installed. Remove this RPM (SAP Note ${sapnote:-})"
             _retval=2

@@ -10,6 +10,7 @@ function check_5100_pagecache_limit_sles {
     local -r sapnote='#1557506'
     # MODIFICATION SECTION<<
 
+    # PRECONDITIONS
     if  ! LIB_FUNC_IS_SLES ;	then
 
         logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
@@ -21,6 +22,7 @@ function check_5100_pagecache_limit_sles {
         _retval=3
 
     else
+        # CHECK
 
         # <= 128 GB:    4096	(=recommended limit) (262144 MB)
         # >= 256 GB:    2% of RAM_GB * 1024 MB
