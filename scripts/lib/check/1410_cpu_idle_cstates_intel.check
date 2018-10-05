@@ -14,6 +14,7 @@ function check_1410_cpu_idle_cstates_intel {
     local -r sapnote_sles113='#1954788'		# SAP HANA DB: Recommended OS settings for SLES 11.3
     local -r sapnote_sles114='#2240716'		# SAP HANA DB: Recommended OS settings for SLES 11.4
     local -r sapnote_sles12='#2205917'		# SAP HANA DB: Recommended OS settings for SLES 12
+    local -r sapnote_sles15='#2684254'		# SAP HANA DB: Recommended OS settings for SLES 15
     local -r sapnote_rhel65='#2013638'		# SAP HANA DB: Recommended OS settings for RHEL 6.5
     local -r sapnote_rhel66='#2136965'		# SAP HANA DB: Recommended OS settings for RHEL 6.6
     local -r sapnote_rhel67='#2247020'		# SAP HANA DB: Recommended OS settings for RHEL 6.7
@@ -43,8 +44,13 @@ function check_1410_cpu_idle_cstates_intel {
             11.4)	sapnote="${sapnote_sles114}";;
             12.[0-1]*)	sapnote="${sapnote_sles12}";;
 
-            12.[2-4]* | 15.* )
+            12.[2-4]*)
                     sapnote="${sapnote_sles12}"
+                    force_latency_prefered='TRUE'
+                ;;
+
+            15.*)
+                    sapnote="${sapnote_sles15}"
                     force_latency_prefered='TRUE'
                 ;;
 

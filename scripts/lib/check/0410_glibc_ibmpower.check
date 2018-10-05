@@ -10,6 +10,7 @@ function check_0410_glibc_ibmpower {
     local -ar sles114=( '2.11.3-17.95.2' '#2263929' )
     local -ar sles121=( '2.19-38.2' '#2263929' )
     local -ar sles122=( '2.22-61.3' '#2205917' )
+    local -ar sles150=( '2.22-61.3' '#2684254' )
     local -ar rhel73=( '2.17-157.el7_3.5' '#2292690' )
     # MODIFICATION SECTION<<
 
@@ -31,6 +32,8 @@ function check_0410_glibc_ibmpower {
                 12.1*)      _goodversion="${sles121[0]}" ; sapnote="${sles121[1]}" ;;
 
                 12.[2-3]*)  _goodversion="${sles122[0]}" ; sapnote="${sles122[1]}" ;;
+
+                15.*)       _goodversion="${sles150[0]}" ; sapnote="${sles150[1]}" ;;
 
                 *)          logCheckWarning 'CHECK does not support SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
                             _retval=1

@@ -7,9 +7,17 @@ function check_1500_cpu_perfbias_intel {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote_sles='#2205917'    #SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
-    local -r sapnote_rhel='#2292690'    #SAP HANA DB: Recommended OS settings for RHEL 7
+    local -r sapnote_sles113='#1954788'		# SAP HANA DB: Recommended OS settings for SLES 11.3
+    local -r sapnote_sles114='#2240716'		# SAP HANA DB: Recommended OS settings for SLES 11.4
+    local -r sapnote_sles12='#2205917'		# SAP HANA DB: Recommended OS settings for SLES 12
+    local -r sapnote_sles15='#2684254'		# SAP HANA DB: Recommended OS settings for SLES 15
+    local -r sapnote_rhel65='#2013638'		# SAP HANA DB: Recommended OS settings for RHEL 6.5
+    local -r sapnote_rhel66='#2136965'		# SAP HANA DB: Recommended OS settings for RHEL 6.6
+    local -r sapnote_rhel67='#2247020'		# SAP HANA DB: Recommended OS settings for RHEL 6.7
+    local -r sapnote_rhel7='#2292690'		# SAP HANA DB: Recommended OS settings for RHEL 7
     # MODIFICATION SECTION<<
+
+    local sapnote
 
     # PRECONDITIONS
     if  ! LIB_FUNC_IS_INTEL ; then
@@ -22,12 +30,32 @@ function check_1500_cpu_perfbias_intel {
         logCheckSkipped 'Running virtualized. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    else
+    elif LIB_FUNC_IS_SLES ; then
+        case "${OS_VERSION}" in
 
-        #CHECK
-        local sapnote
-        LIB_FUNC_IS_SLES && sapnote=${sapnote_sles}
-        LIB_FUNC_IS_RHEL && sapnote=${sapnote_rhel}
+            11.3 )	sapnote="${sapnote_sles113}";;
+            11.4 )	sapnote="${sapnote_sles114}";;
+            12.* )	sapnote="${sapnote_sles12}" ;;
+            15.* )	sapnote="${sapnote_sles15}" ;;
+
+            *)      logCheckWarning 'CHECK does not support SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>" ;;
+        esac
+
+    elif LIB_FUNC_IS_RHEL ; then
+        case "${OS_VERSION}" in
+
+            6.5 )	sapnote="${sapnote_rhel65}";;
+            6.6 )	sapnote="${sapnote_rhel66}";;
+            6.7 )	sapnote="${sapnote_rhel67}";;
+            7.* )	sapnote="${sapnote_rhel7}";;
+
+            *)      logCheckWarning 'CHECK does not support RHEL release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>" ;;
+        esac
+
+    else
+            logCheckError 'Linux distribution NOT supported (SAP Note #2235581)' "(is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
+            _retval=2
+
 
         if [[ ! -x '/usr/bin/cpupower' ]]; then
 

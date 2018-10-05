@@ -11,7 +11,8 @@ function check_0220_cgroup_pids_max_sles {
 
     # MODIFICATION SECTION>>
     local -r _reco_value='max'
-    local -r sapnote='#2205917'			#SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12	- SLES12.2 only
+    local -r sapnote12='#2205917'			#SAP HANA DB: Recommended OS settings for SLES 12 - SLES12.2 only
+    local -r sapnote15='#2684254'           #SAP HANA DB: Recommended OS settings for SLES 15
     # MODIFICATION SECTION<<
 
     if ! LIB_FUNC_IS_SLES ; then
@@ -26,6 +27,18 @@ function check_0220_cgroup_pids_max_sles {
 
     else
 
+        local sapnote
+
+        case "${OS_VERSION}" in
+
+            12.0*)	sapnote="${sapnote12}" ;;
+            15.0*)	sapnote="${sapnote15}" ;;
+
+            *)
+                    logCheckWarning 'CHECK does not support SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                ;;
+
+        esac
         #unique value within array
 
         #ToDo: restrict to HANA <sid>adm

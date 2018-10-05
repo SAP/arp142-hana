@@ -8,6 +8,7 @@ function check_1210_cpu_subnuma_intel {
 
     # MODIFICATION SECTION>>
     local -r sapnote_sles12='#2205917'		# SAP HANA DB: Recommended OS settings for SLES 12
+    local -r sapnote_sles15='#2684254'		# SAP HANA DB: Recommended OS settings for SLES 15
     local -r sapnote_rhel7='#2292690'		# SAP HANA DB: Recommended OS settings for RHEL 7
     # MODIFICATION SECTION<<
 
@@ -36,7 +37,16 @@ function check_1210_cpu_subnuma_intel {
 
     elif LIB_FUNC_IS_SLES ; then
 
-        sapnote="${sapnote_sles12}"
+        case "${OS_VERSION}" in
+
+                12.*)    sapnote="${sapnote_sles12}" ;;
+
+                15.*)    sapnote="${sapnote_sles15}" ;;
+
+                *)      logCheckWarning 'CHECK does not support SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                    ;;
+
+        esac
 
     elif LIB_FUNC_IS_RHEL ; then
 
