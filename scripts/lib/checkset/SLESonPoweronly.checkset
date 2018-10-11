@@ -11,6 +11,7 @@
 0700_sysstat
 1310_cpu_powersavings_ibmpower
 1360_cpu_cpufolding_ibmpower
+2000_transparent_hugepages
 2200_numa_balancing
 2300_vm_max_map_count
 2400_samepage_merging

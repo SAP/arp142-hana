@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function check_2000_transparent_hugepages_x64 {
+function check_2000_transparent_hugepages {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
@@ -11,12 +11,7 @@ function check_2000_transparent_hugepages_x64 {
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS
-    if ! LIB_FUNC_IS_X64 ; then
-
-        logCheckSkipped 'Not running on x64 CPU. Skipping' "<${FUNCNAME[0]}>"
-        _retval=3
-
-    elif [[ ! -f  '/sys/kernel/mm/transparent_hugepage/enabled' ]]; then
+    if [[ ! -f  '/sys/kernel/mm/transparent_hugepage/enabled' ]]; then
 
         #eg: XEN
         logCheckSkipped "Transparent Hugepages not configurable (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
