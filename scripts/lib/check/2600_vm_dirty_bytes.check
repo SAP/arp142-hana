@@ -16,37 +16,49 @@ function check_2600_vm_dirty_bytes {
     )
     # MODIFICATION SECTION<<
 
-    local _curr_value
-    local _reco_value
-    local _parameter
+    # PRECONDITIONS
+    if  ! LIB_FUNC_IS_SLES ;	then
 
-    # i+=2 --> every 2nd item
-    for ((i=0; i < ${#_vm_parameter[@]}; i+=2)); do
-
-        logTrace "<${FUNCNAME[0]}> # ${_vm_parameter[$i]}>"
-
-        _parameter=${_vm_parameter[$i]}
-        _reco_value=${_vm_parameter[$i+1]}
-
-        _curr_value=$(sysctl -n "${_parameter}")
-
-        if [[ ${_curr_value} -ne ${_reco_value} ]]; then
-            logCheckWarning "sysctl VM parameter ${_parameter} NOT set as recommended (is: ${_curr_value}, should be: ${_reco_value})"
-            _retval=1
-        else
-            logCheckOk "sysctl VM parameter ${_parameter} set as recommended (is: ${_curr_value})"
-        fi
-
-    done
-
-    if [[ ${_retval} -eq 99 ]]; then
-
-        logCheckOk "All virtual memory dirty sysctl parameter set as recommended (SUSE KB ${sapnote:-}, SAP Note to be created)"
-        _retval=0
+        logCheckSkipped 'Linux distribution is not RHEL. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
 
     else
 
-        logCheckWarning "NOT all virtual memory dirty sysctl parameter set as recommended (SUSE KB ${sapnote:-}, SAP Note to be created)"
+    # CHECK
+
+        local _curr_value
+        local _reco_value
+        local _parameter
+
+        # i+=2 --> every 2nd item
+        for ((i=0; i < ${#_vm_parameter[@]}; i+=2)); do
+
+            logTrace "<${FUNCNAME[0]}> # ${_vm_parameter[$i]}>"
+
+            _parameter=${_vm_parameter[$i]}
+            _reco_value=${_vm_parameter[$i+1]}
+
+            _curr_value=$(sysctl -n "${_parameter}")
+
+            if [[ ${_curr_value} -ne ${_reco_value} ]]; then
+                logCheckWarning "sysctl VM parameter ${_parameter} NOT set as recommended (is: ${_curr_value}, should be: ${_reco_value})"
+                _retval=1
+            else
+                logCheckOk "sysctl VM parameter ${_parameter} set as recommended (is: ${_curr_value})"
+            fi
+
+        done
+
+        if [[ ${_retval} -eq 99 ]]; then
+
+            logCheckOk "All virtual memory dirty sysctl parameter set as recommended (SUSE KB ${sapnote:-}, SAP Note to be created)"
+            _retval=0
+
+        else
+
+            logCheckWarning "NOT all virtual memory dirty sysctl parameter set as recommended (SUSE KB ${sapnote:-}, SAP Note to be created)"
+
+        fi
 
     fi
 

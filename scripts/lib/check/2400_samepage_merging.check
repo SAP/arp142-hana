@@ -8,10 +8,22 @@ function check_2400_samepage_merging {
 
     # MODIFICATION SECTION>>
     local -r sapnote_sles='#1944799'	# SAP HANA Guidelines for SLES Operating System Installation
+    local -r sapnote_rhel='#2292690'    # SAP HANA DB: Recommended OS settings for RHEL 7
     # MODIFICATION SECTION<<
 
-    local sapnote="${sapnote_sles}"
+    # PRECONDITIONS
+    if LIB_FUNC_IS_SLES ; then
+        local sapnote="${sapnote_sles}"
 
+    elif LIB_FUNC_IS_RHEL ; then
+        sapnote=${sapnote_rhel}
+
+    else
+        logCheckWarning 'CHECK does not support Linux distribution.' "${FUNCNAME[0]} - ${OS_NAME} ${OS_VERSION}"
+        _retval=1
+    fi
+
+    # CHECK
     if [[ ! -e '/sys/kernel/mm/ksm/run' ]]; then
 
         logCheckSkipped "KSM (kernel samepage merging) not configurable (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
