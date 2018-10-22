@@ -10,6 +10,7 @@ function check_0040_os_rhel_ibmpower {
     local -r sapnote7x='#2235581'	#SAP HANA: Supported Operating Systems
     # MODIFICATION SECTION<<
 
+    # PRECONDITIONS
     if  ! LIB_FUNC_IS_IBMPOWER ;	then
 
         logCheckSkipped 'Not running on IBM Power. Skipping' "<${FUNCNAME[0]}>"
@@ -21,7 +22,7 @@ function check_0040_os_rhel_ibmpower {
         _retval=3
 
     else
-
+        # CHECK
         if [[ "${LIB_PLATF_ARCHITECTURE}" == 'ppc64le' ]] ; then
 
             case "${OS_VERSION}" in

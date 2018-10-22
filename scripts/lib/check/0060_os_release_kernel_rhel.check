@@ -22,6 +22,7 @@ function check_0060_os_release_kernel_rhel {
     local -r sapnote='#2235581'	#SAP HANA: Supported Operating Systems
     # MODIFICATION SECTION<<
 
+    # PRECONDITIONS
     if  ! LIB_FUNC_IS_RHEL ;	then
 
         logCheckSkipped 'Linux distribution is not RHEL. Skipping' "<${FUNCNAME[0]}>"
@@ -34,7 +35,7 @@ function check_0060_os_release_kernel_rhel {
 
         case "${OS_VERSION}" in
 
-            6.[0-4] )   logCheckError 'Upgrade to RHEL for SAP Applications 6.5+ (SAP Note #2235581)'
+            6.[0-4] )   logCheckError 'Upgrade to RHEL for SAP Solutions/HANA 6.5+ (SAP Note #2235581)'
                         _retval=2
                 ;;
 
@@ -57,6 +58,7 @@ function check_0060_os_release_kernel_rhel {
                 ;;
         esac
 
+        # CHECK
         if [[ ${_retval} -eq 99 ]]; then
 
             local normalized_kernelversion

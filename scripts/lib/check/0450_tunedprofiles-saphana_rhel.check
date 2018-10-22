@@ -14,6 +14,7 @@ function check_0450_tunedprofiles-saphana_rhel {
     local _goodversion
     local sapnote
 
+    # PRECONDITIONS
     if ! LIB_FUNC_IS_RHEL ; then
 
         logCheckSkipped 'Linux distribution is not RHEL. Skipping' "<${FUNCNAME[0]}>"
@@ -40,6 +41,7 @@ function check_0450_tunedprofiles-saphana_rhel {
 
     fi
 
+    # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
         local normalized_goodversion

@@ -28,10 +28,8 @@ function check_2210_numad_rhel {
             7.*)	sapnote="${sapnote_rhel7}"	; cmdline='systemctl' ;;
 
         esac
-    fi
 
     # CHECK
-    if [[ ${_retval} -eq 99 ]]; then
 
         if  [[ ! -x '/usr/bin/numad' ]]; then
 
