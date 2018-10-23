@@ -44,7 +44,10 @@ function lib_func_get_hypervisor_details {
 
         hyp_v='pHyp' ; hyp_t='para'
 
-        [[ "$(</proc/device-tree/ibm,partition-name)" == 'full' ]] && hyp_t='none'
+        #use read instead of <(); bash version 4.4 complains if file contains \0
+        local partname
+        IFS= read -r -d '' -n4 partname </proc/device-tree/ibm,partition-name;
+        [[ "${partname}" == 'full' ]] && hyp_t='none'
 
     elif [[ -r '/proc/device-tree/compatible' ]]; then
 
