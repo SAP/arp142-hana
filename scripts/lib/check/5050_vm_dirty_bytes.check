@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function check_2600_vm_dirty_bytes {
+function check_5050_vm_dirty_bytes {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
