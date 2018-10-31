@@ -1,0 +1,59 @@
+#!/bin/bash
+
+function check_1250_cpu_hyperthreading_intel {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2711650'		# SAP HANA on Intel server systems with more than 8 CPU´s / sockets
+    # MODIFICATION SECTION<<
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_INTEL ; then
+
+        logCheckSkipped 'Not running on Intel CPU. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif ! LIB_FUNC_IS_BARE_METAL ; then
+
+        logCheckSkipped 'Running virtualized. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif [[ ! -n ${LIB_PLATF_CPU_SOCKETS:-} ]]; then
+
+        logCheckWarning '# CPU Sockets unknown. Skipping' "<${FUNCNAME[0]}>"
+        _retval=1
+
+    elif [[ ${LIB_PLATF_CPU_SOCKETS} -le 8 ]]; then
+
+        logCheckSkipped 'Check not applicable - # CPU Sockets <= 8. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif [[ ! -n ${LIB_PLATF_CPU_THREADSPERCORE:-} ]]; then
+
+        logCheckWarning '# CPU Hyperthreads unknown. Skipping' "<${FUNCNAME[0]}>"
+        _retval=1
+
+    fi
+
+    #CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        if [[ ${LIB_PLATF_CPU_THREADSPERCORE:-} -gt 1 ]]; then
+
+            logCheckError "Intel's Hyperthreading on 8+ Socket system NOT disabled. (SAP Note ${sapnote:-})"
+            _retval=2
+
+        else
+            logCheckOk "Intel's Hyperthreading on 8+ Socket system disabled. (SAP Note ${sapnote:-})"
+            _retval=0
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
