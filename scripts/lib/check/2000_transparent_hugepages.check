@@ -28,6 +28,17 @@ function check_2000_transparent_hugepages {
             _retval=2
         fi
 
+        #THP in use?
+        local nr_anon_thp
+        nr_anon_thp=$(grep 'nr_anon_transparent_hugepages' /proc/vmstat)
+        nr_anon_thp=$(LIB_FUNC_TRIM_LEFT "${nr_anon_thp/nr_anon_transparent_hugepages}")
+
+        if [[ ${nr_anon_thp} -gt 0 ]] ; then
+            logCheckWarning "Transparent Hugepages are currently allocated and in use (is: ${nr_anon_thp}, should be: 0)"
+            #keep higher return values
+            [[ ${_retval} -eq 0 ]] && _retval=1
+        fi
+
     fi
 
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
