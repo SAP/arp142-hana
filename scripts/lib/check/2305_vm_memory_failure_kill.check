@@ -1,0 +1,33 @@
+#!/bin/bash
+
+function check_2305_vm_memory_failure_kill {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#1980196'		#Setting /proc/sys/vm/vm.memory_failure_early_kill on HANA systems
+    # MODIFICATION SECTION<<
+
+
+    local -ir _reco_mfek=1
+
+    #CHECK
+    local -ir _curr_mfek=$(</proc/sys/vm/memory_failure_early_kill)
+
+    if [[ ${_curr_mfek} -ne ${_reco_mfek} ]]; then
+
+        logCheckError "Parameter vm.memory_failure_early_kill NOT set as recommended (SAP Note ${sapnote:-}) (is: ${_curr_mfek}, should be: ${_reco_mfek})"
+        _retval=2
+
+    else
+        logCheckOk "Parameter vm.memory_failure_early_kill set as recommended (SAP Note ${sapnote:-}) (is: ${_curr_mfek})"
+        _retval=0
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
