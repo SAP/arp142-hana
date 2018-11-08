@@ -85,6 +85,8 @@ testCompareTooBigNumbersShouldFail() {
 
 #Import Libraries
 # - order is important - sourcing shunit triggers testing
-# - thats also the reason, why it could not be done during oneTimeSetup
+# - that's also the reason, why it could not be done during oneTimeSetup
+#shellcheck source=../bin/saphana-helper-funcs
 source "${PROGRAM_DIR}/../bin/saphana-helper-funcs"
+#shellcheck source=./shunit2
 source "${PROGRAM_DIR}/shunit2"

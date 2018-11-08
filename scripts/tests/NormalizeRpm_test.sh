@@ -17,7 +17,7 @@ testNormalizeRpmEqualTo() {
 
 		#printf "test[$i]: norm <%s> <%s>\n" "${_test[1]}" "${rpmversion}"
 		assertEquals "EqualTo failure test#$(( i++ ))" "${_test[1]}" "${rpmversion}"
-		
+
 	done <<- EOF
 	2.17-106.el7_2.9			2.17-106.0.9
 	2.17-157.el7_3.5			2.17-157.0.5
@@ -45,8 +45,10 @@ testNormalizeRpmShouldFail() {
 # setUp
 # tearDown
 
-#Import Libraries 
+#Import Libraries
 # - order is important - sourcing shunit triggers testing
-# - thats also the reason, why it could not be done during oneTimeSetup
+# - that's also the reason, why it could not be done during oneTimeSetup
+#shellcheck source=../bin/saphana-helper-funcs
 source "${PROGRAM_DIR}/../bin/saphana-helper-funcs"
+#shellcheck source=./shunit2
 source "${PROGRAM_DIR}/shunit2"
