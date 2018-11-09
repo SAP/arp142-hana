@@ -15,9 +15,11 @@ function check_0010_os_kernel_sles {
     local -ar sles121=( '3.12.74-60.64.57.1' '#2205917' )
     local -ar sles122=( '4.4.120-92.70.1' '#2205917' )
     local -ar sles123=( '4.4.120-94.17.1' '#2205917' )
+    local -ar sles124=( '4.12.14-94.38.1' '#2205917' )
     local -ar sles121power=( '3.12.74-60.64.57.1' '#2205917' )
     local -ar sles122power=( '4.4.120-92.70.1' '#2205917' )
     local -ar sles123power=( '4.4.120-94.17.1' '#2205917' )
+    local -ar sles124power=( '4.12.14-94.38.1' '#2205917' )
     local -ar sles150=( '4.12.14-23.1' '#2684254' )
     local -ar sles150power=( '4.12.14-23.1' '#2684254' )
     # MODIFICATION SECTION<<
@@ -49,6 +51,8 @@ function check_0010_os_kernel_sles {
 
             12.3*)	_goodversion="${sles123power[0]}" ; sapnote="${sles123power[1]}" ;;
 
+            12.4*)	_goodversion="${sles124power[0]}" ; sapnote="${sles124power[1]}" ;;
+
             15.0*)	_goodversion="${sles150power[0]}" ; sapnote="${sles150power[1]}" ;;
 
             *)		logCheckError "SLESonPower version is not supported (SAP Note #2235581) (is: ${OS_VERSION})"
@@ -76,6 +80,8 @@ function check_0010_os_kernel_sles {
                 12.2*)	_goodversion="${sles122[0]}" ; sapnote="${sles122[1]}" ;;
 
                 12.3*)	_goodversion="${sles123[0]}" ; sapnote="${sles123[1]}" ;;
+
+                12.4*)	_goodversion="${sles124[0]}" ; sapnote="${sles124[1]}" ;;
 
                 15.0*)	_goodversion="${sles150[0]}" ; sapnote="${sles150[1]}" ;;
 
