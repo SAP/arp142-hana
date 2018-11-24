@@ -1,6 +1,6 @@
 0020_os_kernel_rhel
 0060_os_release_kernel_rhel
-0300_os_clocksource
+0300_timer_and_clocksource
 0400_glibc_x64
 0450_tunedprofiles-saphana_rhel
 0500_selinux_rhel

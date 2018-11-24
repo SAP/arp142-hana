@@ -1,7 +1,7 @@
 0020_os_kernel_rhel
 0040_os_rhel_ibmpower
 0060_os_release_kernel_rhel
-0300_os_clocksource
+0300_timer_and_clocksource
 0410_glibc_ibmpower
 0450_tunedprofiles-saphana_rhel
 0500_selinux_rhel
