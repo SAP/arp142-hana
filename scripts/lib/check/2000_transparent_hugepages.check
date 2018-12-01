@@ -33,7 +33,7 @@ function check_2000_transparent_hugepages {
         nr_anon_thp=$(grep 'nr_anon_transparent_hugepages' /proc/vmstat)
         nr_anon_thp=$(LIB_FUNC_TRIM_LEFT "${nr_anon_thp/nr_anon_transparent_hugepages}")
 
-        if [[ ${nr_anon_thp} -gt 0 ]] ; then
+        if [[ ${nr_anon_thp} -ge 10 ]] ; then
             logCheckWarning "Transparent Hugepages are currently allocated and in use (is: ${nr_anon_thp}, should be: 0)"
             #keep higher return values
             [[ ${_retval} -eq 0 ]] && _retval=1
