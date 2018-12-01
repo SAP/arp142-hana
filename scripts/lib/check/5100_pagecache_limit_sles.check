@@ -7,7 +7,7 @@ function check_5100_pagecache_limit_sles {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#1557506'
+    local -r sapnote='#1557506'    #1557506 - Linux paging improvements
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS
@@ -24,12 +24,13 @@ function check_5100_pagecache_limit_sles {
     else
         # CHECK
 
-        # <= 128 GB:    4096	(=recommended limit) (262144 MB)
-        # >= 256 GB:    2% of RAM_GB * 1024 MB
+        # shellcheck disable=SC2154
         local -ir calc_pg_limit=$(( LIB_PLATF_RAM_MiB_AVAILABLE * 2 / 100 ))
 
+        # <  256 GB:    4096	            (=recommended limit) (262144 MB)
+        # >= 256 GB:    2% of RAM_MiB
         # https://www.gnu.org/software/bash/manual/html_node/Shell-Arithmetic.html#Shell-Arithmetic
-        local -ir set_pg_limit=$(( LIB_PLATF_RAM_MiB_AVAILABLE > 262144 ? calc_pg_limit : 4096 ))
+        local -ir reco_pgcache_limit=$(( LIB_PLATF_RAM_MiB_AVAILABLE > 262144 ? calc_pg_limit : 4096 ))
         local -ri pgcache_limit_mb=$(</proc/sys/vm/pagecache_limit_mb)
 
         if [[ ${pgcache_limit_mb} -eq 0 ]]; then
@@ -42,14 +43,18 @@ function check_5100_pagecache_limit_sles {
             logCheckWarning "vm.pagecache_limit_mb is set - should only be set to address a certain issue (SAP Note ${sapnote:-}) (is: ${pgcache_limit_mb}, should be: 0)"
             _retval=1
 
-            if [[ ${pgcache_limit_mb} -lt ${set_pg_limit} ]]; then
+            # to avoid errors of small difference
+            local -ir pg_fuzzy_lower=$(( pgcache_limit_mb + 50 ))
+            local -ir pg_fuzzy_upper=$(( pgcache_limit_mb - 50 ))
 
-                logCheckError "vm.pagecache_limit_mb is set to low (SAP Note ${sapnote:-}) (is: ${pgcache_limit_mb}, should be: ${set_pg_limit})"
+            if [[ ${pg_fuzzy_lower} -lt ${reco_pgcache_limit} ]]; then
+
+                logCheckError "vm.pagecache_limit_mb is set to low (SAP Note ${sapnote:-}) (is: ${pgcache_limit_mb}, should be: ${reco_pgcache_limit})"
                 _retval=2
 
-            elif [[ ${pgcache_limit_mb} -gt ${set_pg_limit} ]]; then
+            elif [[ ${pg_fuzzy_upper} -gt ${reco_pgcache_limit} ]]; then
 
-                logCheckWarning "vm.pagecache_limit_mb is set to high (SAP Note ${sapnote:-}) (is: ${pgcache_limit_mb}, should be: ${set_pg_limit})"
+                logCheckWarning "vm.pagecache_limit_mb is set to high (SAP Note ${sapnote:-}) (is: ${pgcache_limit_mb}, should be: ${reco_pgcache_limit})"
                 _retval=1
 
             fi
