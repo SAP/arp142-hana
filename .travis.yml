@@ -1,6 +1,7 @@
 sudo: required
 dist: trusty
 language: bash
+cache: pip
 
 env:
   global:
@@ -27,6 +28,7 @@ before_install:
     - sudo apt-add-repository "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse"
     - sudo apt-get -qq update
     #- sudo apt-get -t trusty-backports install shellcheck
+    - sudo -H pip install --upgrade pip
     - sudo -H pip install bashate
 
 script:
@@ -79,10 +81,11 @@ before_deploy:
     - echo "[INFO] _VERSION> $_VERSION"
     - echo "[INFO] BUILD_COMMIT> $BUILD_COMMIT"
     - sudo rpmbuild -v -bb --buildroot='/home/travis/build/SAP-COE-HPTI/saphana-checks/build' --define "_version ${_VERSION}" --define "_release ${BUILD_COMMIT}" ./buildscripts/saphana-checks-rpm.spec
+    - bash -c "cd /home/travis/rpmbuild/RPMS/noarch; rpm -Kv saphana-checks-${VERSION_BUILD_COMMIT}.noarch.rpm > /home/travis/build/SAP-COE-HPTI/saphana-checks/build/saphana-checks-${VERSION_BUILD_COMMIT}.noarch.rpm.digest"
 
     # create zipped tarball
     - sudo tar -czf build/saphana-checks-${VERSION_BUILD_COMMIT}.tgz --directory=./build/opt/sap saphana-checks
-    - sudo sha256sum build/saphana-checks-${VERSION_BUILD_COMMIT}.tgz > build/saphana-checks-${VERSION_BUILD_COMMIT}.tgz.sha256
+    - sha256sum build/saphana-checks-${VERSION_BUILD_COMMIT}.tgz > build/saphana-checks-${VERSION_BUILD_COMMIT}.tgz.sha256
     - ls -l build/
     - tar -tvf build/saphana-checks-*.tgz
 
@@ -98,7 +101,8 @@ deploy:
   file_glob: true
   file:
     - "build/saphana-checks-*.tgz*"
-    - "/home/travis/rpmbuild/RPMS/noarch/saphana-checks-*.noarch.rpm"
+    - "/home/travis/rpmbuild/RPMS/noarch/saphana-checks-*.noarch.rpm*"
+    - "build/saphana-checks-*.noarch.rpm.digest"
   skip_cleanup: true
   on:
     repo: SAP-COE-HPTI/saphana-checks
