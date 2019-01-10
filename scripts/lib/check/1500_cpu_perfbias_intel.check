@@ -14,6 +14,7 @@ function check_1500_cpu_perfbias_intel {
     local -r sapnote_rhel65='#2013638'		# SAP HANA DB: Recommended OS settings for RHEL 6.5
     local -r sapnote_rhel66='#2136965'		# SAP HANA DB: Recommended OS settings for RHEL 6.6
     local -r sapnote_rhel67='#2247020'		# SAP HANA DB: Recommended OS settings for RHEL 6.7
+    local -r sapnote_rhel610='#2694292'		# SAP HANA DB: Recommended OS settings for RHEL 6.10
     local -r sapnote_rhel7='#2292690'		# SAP HANA DB: Recommended OS settings for RHEL 7
     # MODIFICATION SECTION<<
 
@@ -47,6 +48,7 @@ function check_1500_cpu_perfbias_intel {
             6.5 )	sapnote="${sapnote_rhel65}";;
             6.6 )	sapnote="${sapnote_rhel66}";;
             6.7 )	sapnote="${sapnote_rhel67}";;
+            6.10)	sapnote="${sapnote_rhel610}";;
             7.* )	sapnote="${sapnote_rhel7}";;
 
             *)      logCheckWarning 'CHECK does not support RHEL release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>" ;;

@@ -11,6 +11,7 @@ function check_0020_os_kernel_rhel {
     local -ar rhel65=( '2.6.32-431.29.2' '#2013638' )
     local -ar rhel66=( '2.6.32-504.16.2' '#2136965' )
     local -ar rhel67=( '2.6.32-573' '#2247020' )		#not known, take release kernel, all should be fine
+    local -ar rhel610=( '2.6.32-754.3.5' '#2694292' )
     local -ar rhel72=( '3.10.0-327.62.4.el7' '#2292690' )
     local -ar rhel73=( '3.10.0-514.44.1.el7' '#2292690' )
     local -ar rhel73power=( '3.10.0-514.44.1.el7' '#2292690' )
@@ -44,6 +45,12 @@ function check_0020_os_kernel_rhel {
                 6.6)	_goodversion="${rhel66[0]}" ; sapnote="${rhel66[1]}" ;;
 
                 6.7)	_goodversion="${rhel67[0]}" ; sapnote="${rhel67[1]}" ;;
+
+                6.[8-9] )   logCheckError 'RHEL 6.8 and 6.9 are not supported. Please upgrade to RHEL 6.10+ (SAP Note #2235581)'
+                            _retval=2
+                    ;;
+
+                6.10)	_goodversion="${rhel610[0]}" ; sapnote="${rhel610[1]}" ;;
 
                 7.2)	_goodversion="${rhel72[0]}" ; sapnote="${rhel72[1]}" ;;
 

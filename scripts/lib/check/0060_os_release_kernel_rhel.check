@@ -14,6 +14,7 @@ function check_0060_os_release_kernel_rhel {
     local -ar rhel65=( '2.6.32-431' )
     local -ar rhel66=( '2.6.32-504' )
     local -ar rhel67=( '2.6.32-573' )
+    local -ar rhel610=( '2.6.32-754' )
     local -ar rhel72=( '3.10.0-327' )
     local -ar rhel73=( '3.10.0-514' )
     local -ar rhel74=( '3.10.0-693' )
@@ -44,6 +45,12 @@ function check_0060_os_release_kernel_rhel {
             6.6)	expected_kernel="${rhel66[0]}" ;;
 
             6.7)	expected_kernel="${rhel67[0]}" ;;
+
+            6.[8-9] )   logCheckError 'RHEL 6.8 and 6.9 are not supported. Please upgrade to RHEL 6.10+ (SAP Note #2235581)'
+                        _retval=2
+                ;;
+
+            6.10)	expected_kernel="${rhel610[0]}" ;;
 
             7.2)	expected_kernel="${rhel72[0]}" ;;
 
