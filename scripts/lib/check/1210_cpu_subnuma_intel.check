@@ -25,12 +25,12 @@ function check_1210_cpu_subnuma_intel {
         logCheckSkipped 'Running virtualized. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif [[ ! -n ${LIB_PLATF_CPU_NUMANODES:-} ]]; then
+    elif [[ -z ${LIB_PLATF_CPU_NUMANODES:-} ]]; then
 
         logCheckWarning '# NUMA nodes unknown. Skipping' "<${FUNCNAME[0]}>"
         _retval=1
 
-    elif [[ ! -n ${LIB_PLATF_CPU_SOCKETS:-} ]]; then
+    elif [[ -z ${LIB_PLATF_CPU_SOCKETS:-} ]]; then
 
         logCheckWarning '# CPU Sockets unknown. Skipping' "<${FUNCNAME[0]}>"
         _retval=1

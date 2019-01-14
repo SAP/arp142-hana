@@ -98,7 +98,7 @@ function __get_platform_power_cpu_details {
         case ${line} in
 
         'Architecture:'*)
-                            if [[ ! -n ${LIB_PLATF_ARCHITECTURE:-} ]]; then
+                            if [[ -z ${LIB_PLATF_ARCHITECTURE:-} ]]; then
                                 LIB_PLATF_ARCHITECTURE=$(LIB_FUNC_TRIM_LEFT "${line/Architecture:}")
                                 readonly LIB_PLATF_ARCHITECTURE
                             fi
@@ -111,28 +111,28 @@ function __get_platform_power_cpu_details {
         ;;
 
         'Thread(s) per core:'*)
-                            if [[ ! -n ${LIB_PLATF_CPU_THREADSPERCORE:-} ]]; then
+                            if [[ -z ${LIB_PLATF_CPU_THREADSPERCORE:-} ]]; then
                                 LIB_PLATF_CPU_THREADSPERCORE=$(LIB_FUNC_TRIM_LEFT "${line/Thread(s) per core:}")
                                 readonly LIB_PLATF_CPU_THREADSPERCORE
                             fi
         ;;
 
         'Core(s) per socket:'*)
-                            if [[ ! -n ${LIB_PLATF_CPU_CORESPERSOCKET:-} ]]; then
+                            if [[ -z ${LIB_PLATF_CPU_CORESPERSOCKET:-} ]]; then
                                 LIB_PLATF_CPU_CORESPERSOCKET=$(LIB_FUNC_TRIM_LEFT "${line/Core(s) per socket:}")
                                 readonly LIB_PLATF_CPU_CORESPERSOCKET
                             fi
         ;;
 
         'Socket(s):'*)
-                            if [[ ! -n ${LIB_PLATF_CPU_SOCKETS:-} ]]; then
+                            if [[ -z ${LIB_PLATF_CPU_SOCKETS:-} ]]; then
                                 LIB_PLATF_CPU_SOCKETS=$(LIB_FUNC_TRIM_LEFT "${line/Socket(s):}")
                                 readonly LIB_PLATF_CPU_SOCKETS
                             fi
         ;;
 
         'NUMA node(s):'*)
-                            if [[ ! -n ${LIB_PLATF_CPU_NUMANODES:-} ]]; then
+                            if [[ -z ${LIB_PLATF_CPU_NUMANODES:-} ]]; then
                                 LIB_PLATF_CPU_NUMANODES=$(LIB_FUNC_TRIM_LEFT "${line/NUMA node(s):}")
                                 readonly LIB_PLATF_CPU_NUMANODES
                             fi
@@ -159,7 +159,7 @@ function __get_platform_power_cpu_details {
 
     done
 
-    if [[ ! -n ${LIB_PLATF_CPU:-} ]]; then
+    if [[ -z ${LIB_PLATF_CPU:-} ]]; then
         LIB_PLATF_CPU=$(grep  'cpu' /proc/cpuinfo | sort -u)
         LIB_PLATF_CPU=$(LIB_FUNC_TRIM_LEFT "${LIB_PLATF_CPU/cpu[[:space:]]*:}")
         readonly LIB_PLATF_CPU

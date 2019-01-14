@@ -21,7 +21,7 @@ function check_1250_cpu_hyperthreading_intel {
         logCheckSkipped 'Running virtualized. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif [[ ! -n ${LIB_PLATF_CPU_SOCKETS:-} ]]; then
+    elif [[ -z ${LIB_PLATF_CPU_SOCKETS:-} ]]; then
 
         logCheckWarning '# CPU Sockets unknown. Skipping' "<${FUNCNAME[0]}>"
         _retval=1
@@ -31,7 +31,7 @@ function check_1250_cpu_hyperthreading_intel {
         logCheckSkipped 'Check not applicable - # CPU Sockets <= 8. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif [[ ! -n ${LIB_PLATF_CPU_THREADSPERCORE:-} ]]; then
+    elif [[ -z ${LIB_PLATF_CPU_THREADSPERCORE:-} ]]; then
 
         logCheckWarning '# CPU Hyperthreads unknown. Skipping' "<${FUNCNAME[0]}>"
         _retval=1

@@ -59,7 +59,7 @@ function __get_platform_x86_64_cpu_details {
         case ${line} in
 
         'Architecture:'*)
-                            if [[ ! -n ${LIB_PLATF_ARCHITECTURE:-} ]]; then
+                            if [[ -z ${LIB_PLATF_ARCHITECTURE:-} ]]; then
                                 LIB_PLATF_ARCHITECTURE=$(LIB_FUNC_TRIM_LEFT "${line/Architecture:}")
                                 readonly LIB_PLATF_ARCHITECTURE
                             fi
@@ -71,35 +71,35 @@ function __get_platform_x86_64_cpu_details {
         ;;
 
         'Thread(s) per core:'*)
-                            if [[ ! -n ${LIB_PLATF_CPU_THREADSPERCORE:-} ]]; then
+                            if [[ -z ${LIB_PLATF_CPU_THREADSPERCORE:-} ]]; then
                                 LIB_PLATF_CPU_THREADSPERCORE=$(LIB_FUNC_TRIM_LEFT "${line/Thread(s) per core:}")
                                 readonly LIB_PLATF_CPU_THREADSPERCORE
                             fi
         ;;
 
         'Core(s) per socket:'*)
-                            if [[ ! -n ${LIB_PLATF_CPU_CORESPERSOCKET:-} ]]; then
+                            if [[ -z ${LIB_PLATF_CPU_CORESPERSOCKET:-} ]]; then
                                 LIB_PLATF_CPU_CORESPERSOCKET=$(LIB_FUNC_TRIM_LEFT "${line/Core(s) per socket:}")
                                 readonly LIB_PLATF_CPU_CORESPERSOCKET
                             fi
         ;;
 
         'Socket(s):'*)
-                            if [[ ! -n ${LIB_PLATF_CPU_SOCKETS:-} ]]; then
+                            if [[ -z ${LIB_PLATF_CPU_SOCKETS:-} ]]; then
                                 LIB_PLATF_CPU_SOCKETS=$(LIB_FUNC_TRIM_LEFT "${line/Socket(s):}")
                                 readonly LIB_PLATF_CPU_SOCKETS
                             fi
         ;;
 
         'NUMA node(s):'*)
-                            if [[ ! -n ${LIB_PLATF_CPU_NUMANODES:-} ]]; then
+                            if [[ -z ${LIB_PLATF_CPU_NUMANODES:-} ]]; then
                                 LIB_PLATF_CPU_NUMANODES=$(LIB_FUNC_TRIM_LEFT "${line/NUMA node(s):}")
                                 readonly LIB_PLATF_CPU_NUMANODES
                             fi
         ;;
 
         'Vendor ID:'*)		#GenuineIntel; AuthenticAMD
-                            if [[ ! -n ${LIB_PLATF_CPU_VENDOR:-} ]]; then
+                            if [[ -z ${LIB_PLATF_CPU_VENDOR:-} ]]; then
                                 LIB_PLATF_CPU_VENDOR=$(LIB_FUNC_TRIM_LEFT "${line/Vendor ID:}")
                                 readonly LIB_PLATF_CPU_VENDOR
                             fi
@@ -112,7 +112,7 @@ function __get_platform_x86_64_cpu_details {
 
         'Model name:'*)		#on x64 only
                             #<Intel(R) Xeon(R) CPU E7-8880 v3 @ 2.30GHz>; AMD Opteron 23xx (Gen 3 Class Opteron)
-                            if [[ ! -n ${LIB_PLATF_CPU:-} ]]; then
+                            if [[ -z ${LIB_PLATF_CPU:-} ]]; then
                                 LIB_PLATF_CPU=$(LIB_FUNC_TRIM_LEFT "${line/Model name:}")
                                 readonly LIB_PLATF_CPU
                             fi
@@ -122,14 +122,14 @@ function __get_platform_x86_64_cpu_details {
         # x64:		( VMware - full ) ; ( KVM - full ) = RHEV ; ( Xen - none ) ;
 
         'Hypervisor vendor:'*)
-                            if [[ ! -n ${LIB_PLATF_VIRT_HYPER:-} ]]; then
+                            if [[ -z ${LIB_PLATF_VIRT_HYPER:-} ]]; then
                                 LIB_PLATF_VIRT_HYPER=$(LIB_FUNC_TRIM_LEFT "${line/Hypervisor vendor:}")
                                 readonly LIB_PLATF_VIRT_HYPER
                             fi
         ;;
 
         'Virtualization type:'*)
-                            if [[ ! -n ${LIB_PLATF_VIRT_TYPE:-} ]]; then
+                            if [[ -z ${LIB_PLATF_VIRT_TYPE:-} ]]; then
                                 LIB_PLATF_VIRT_TYPE=$(LIB_FUNC_TRIM_LEFT "${line/Virtualization type:}")
                                 readonly LIB_PLATF_VIRT_TYPE
                             fi
@@ -140,7 +140,7 @@ function __get_platform_x86_64_cpu_details {
 
     done
 
-    if [[ ! -n ${LIB_PLATF_CPU:-} ]]; then
+    if [[ -z ${LIB_PLATF_CPU:-} ]]; then
 
         LIB_PLATF_CPU=$(grep  'model name' /proc/cpuinfo | sort -u)
         LIB_PLATF_CPU=$(LIB_FUNC_TRIM_LEFT "${LIB_PLATF_CPU/model name[[:blank:]]:}")
@@ -165,14 +165,14 @@ function _lib_platf_x86_64_main {
         shopt -s extglob    #enable extended pattern matching
 
         # Vendor - IBM, Lenovo, ...
-        if [[ ! -n ${LIB_PLATF_VENDOR:-} ]]; then
+        if [[ -z ${LIB_PLATF_VENDOR:-} ]]; then
             LIB_PLATF_VENDOR="$(</sys/devices/virtual/dmi/id/sys_vendor)"
             LIB_PLATF_VENDOR=${LIB_PLATF_VENDOR//+([[:space:]])/ }
             readonly LIB_PLATF_VENDOR
         fi
 
         # Platform - "x3950 X6 -[6241ZB5]-", "ProLiant DL785 G6", "VMware Virtual Platform", "RHEV Hypervisor"
-        if [[ ! -n ${LIB_PLATF_NAME:-} ]]; then
+        if [[ -z ${LIB_PLATF_NAME:-} ]]; then
             LIB_PLATF_NAME="$(</sys/devices/virtual/dmi/id/product_name)"
             LIB_PLATF_NAME=${LIB_PLATF_NAME//+([[:space:]])/ }
             readonly LIB_PLATF_NAME

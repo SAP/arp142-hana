@@ -310,7 +310,7 @@ function __get_platform_mem_details {
     local collectedby
 
     #dmesg - kernel boot message
-    if [[ ! -n ${LIB_PLATF_RAM_MIB_PHYS:-} && -x "$(command -v dmesg)" ]]; then
+    if [[ -z ${LIB_PLATF_RAM_MIB_PHYS:-} && -x "$(command -v dmesg)" ]]; then
 
         local boot_mem_line
         boot_mem_line=$(dmesg | grep "Memory:.*available")
@@ -328,7 +328,7 @@ function __get_platform_mem_details {
     #MemTotal in /proc/meminfo - usable memory
     LIB_PLATF_RAM_MiB_AVAILABLE=$(awk '/^MemTotal:/ {match($0, /[0-9]+/); printf "%.0f", substr($0,RSTART,RLENGTH)/1024 }' /proc/meminfo)
 
-    if [[ ! -n ${LIB_PLATF_RAM_MIB_PHYS:-} || ${LIB_PLATF_RAM_MIB_PHYS} -eq 0 ]]; then
+    if [[ -z ${LIB_PLATF_RAM_MIB_PHYS:-} || ${LIB_PLATF_RAM_MIB_PHYS} -eq 0 ]]; then
 
         LIB_PLATF_RAM_MIB_PHYS=${LIB_PLATF_RAM_MiB_AVAILABLE:-}
         collectedby='meminfo'
