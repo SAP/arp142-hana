@@ -27,6 +27,6 @@
 3020_network_memory
 3110_ip_port_range
 5000_io_parameter
-5050_vm_dirty_bytes
+5050_vm_dirty_bytes_sles
 5100_pagecache_limit_sles
 5200_fstrim-service_sles
