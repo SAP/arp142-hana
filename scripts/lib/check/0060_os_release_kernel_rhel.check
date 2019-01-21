@@ -19,6 +19,7 @@ function check_0060_os_release_kernel_rhel {
     local -ar rhel73=( '3.10.0-514' )
     local -ar rhel74=( '3.10.0-693' )
     local -ar rhel75=( '3.10.0-862' )
+    local -ar rhel76=( '3.10.0-957' )
 
     local -r sapnote='#2235581'	#SAP HANA: Supported Operating Systems
     # MODIFICATION SECTION<<
@@ -52,13 +53,15 @@ function check_0060_os_release_kernel_rhel {
 
             6.10)	expected_kernel="${rhel610[0]}" ;;
 
+            7.[0-1] )   logCheckError 'RHEL 7.0 and 7.1 are not supported. Please upgrade to RHEL 7.2+ (SAP Note #2235581)'
+                        _retval=2
+                ;;
+
             7.2)	expected_kernel="${rhel72[0]}" ;;
-
             7.3)	expected_kernel="${rhel73[0]}" ;;
-
             7.4)	expected_kernel="${rhel74[0]}" ;;
-
             7.5)	expected_kernel="${rhel75[0]}" ;;
+            7.6)	expected_kernel="${rhel76[0]}" ;;
 
             *)      logCheckWarning 'CHECK does not support RHEL release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
                     _retval=1
