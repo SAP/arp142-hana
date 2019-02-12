@@ -21,6 +21,7 @@
 2305_vm_memory_failure_kill
 2400_samepage_merging
 2500_kernel_sharedmemory
+2600_vm_dentry_unused
 3010_network_parameter
 3020_network_memory
 3110_ip_port_range
