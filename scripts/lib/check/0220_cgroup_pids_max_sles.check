@@ -52,12 +52,8 @@ function check_0220_cgroup_pids_max_sles {
         #ToDo: restrict to HANA <sid>adm
         #grep -E '^\w{3}adm' /etc/passwd | cut -d: -f1
 
-        #bash4
+        #bash4 only
         mapfile -t pids_max < <(sort -u /sys/fs/cgroup/pids/user.slice/user-*.slice/pids.max 2>/dev/null)
-
-        #bash3 alternative
-        #local -r IFS=$'\n'
-        #local -ar pids_max=( $( sort -u /sys/fs/cgroup/pids/user.slice/user-*.slice/pids.max 2>/dev/null ) )
 
         #array length
         if [[ ${#pids_max[@]} -eq 0 ]]; then
