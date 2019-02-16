@@ -24,10 +24,10 @@
 2500_kernel_sharedmemory
 2600_vm_dentry_unused
 3010_network_parameter
-3115_ip_port_range_lower
 3011_network_tcp_tw_parameter
 3020_network_memory
-3110_ip_port_range
+3100_ip_port_range_width
+3110_ip_port_range_parity
 5000_io_parameter
 5050_vm_dirty_bytes_sles
 5100_pagecache_limit_sles

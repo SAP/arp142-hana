@@ -20,8 +20,6 @@ function check_3010_network_parameter {
     )
     # MODIFICATION SECTION<<
 
-    #ignore at the moment
-    #local -ar _ip_prange=( 'net.ipv4.ip_local_port_range' "1024 64999" )
     #to change - On SAP HANA 1.0 database Revisions <= 122.14 and on all SAP HANA 2.0 database Revisions of SPS00 only
     #net.ipv4.tcp_syn_retries = 8
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function check_3110_ip_port_range {
+function check_3110_ip_port_range_parity {
 
 # Starting with kernel version 4.2 the upper value of net.ipv4.ip_local_port_range should be an uneven number,
 # an example setting could be: net.ipv4.ip_local_port_range = “1024 64999”
@@ -41,34 +41,34 @@ function check_3110_ip_port_range {
 
         if [[ $((port_range_lower_last_digit%2)) -eq 0 ]]; then
             #even?
-            logCheckOk "sysctl parameter net.ipv4.ip_local_port_range's lower value set as recommended. (is: ${port_range_lower} = even)"
+            logCheckOk "sysctl parameter net.ipv4.ip_local_port_range's lower value parity set as recommended. (is: ${port_range_lower} = even)"
 
         else
 
-            logCheckWarning "sysctl parameter net.ipv4.ip_local_port_range's lower value NOT set as recommended. (is: ${port_range_lower}, should be: even)"
+            logCheckWarning "sysctl parameter net.ipv4.ip_local_port_range's lower value parity NOT set as recommended. (is: ${port_range_lower}, should be: even)"
             _retval=1
 
         fi
 
         if [[ $((port_range_upper_last_digit%2)) -ne 0 ]]; then
             #uneven?
-            logCheckOk "sysctl parameter net.ipv4.ip_local_port_range's upper value set as recommended. (is: ${port_range_upper} = uneven)"
+            logCheckOk "sysctl parameter net.ipv4.ip_local_port_range's upper value parity set as recommended. (is: ${port_range_upper} = odd)"
 
         else
 
-            logCheckWarning "sysctl parameter net.ipv4.ip_local_port_range's upper value NOT set as recommended. (is: ${port_range_upper}, should be: uneven)"
+            logCheckWarning "sysctl parameter net.ipv4.ip_local_port_range's upper value parity NOT set as recommended. (is: ${port_range_upper}, should be: odd)"
             _retval=1
 
         fi
 
         if [[ ${_retval} -eq 99 ]]; then
 
-            logCheckOk "sysctl parameter net.ipv4.ip_local_port_range set as recommended (SAP Note ${sapnote:-})"
+            logCheckOk "sysctl parameter net.ipv4.ip_local_port_range parity set as recommended (SAP Note ${sapnote:-})"
             _retval=0
 
         else
 
-            logCheckWarning "sysctl parameter net.ipv4.ip_local_port_range NOT set as recommended (SAP Note ${sapnote:-})"
+            logCheckWarning "sysctl parameter net.ipv4.ip_local_port_range parity NOT set as recommended (SAP Note ${sapnote:-})"
 
         fi
 

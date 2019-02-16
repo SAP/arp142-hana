@@ -1,0 +1,68 @@
+#!/bin/bash
+
+function check_3100_ip_port_range_width {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2600030,#401162'	# Parameter Recommendations in SAP HANA Environments; SHA
+    local -ri pr_lower_expected=40000
+    local -ri pr_upper_expected=64999
+    # MODIFICATION SECTION<<
+
+    #SAP Note #401162 - SAP Hostagent (SHA) Patchlevel 36 sets the range even wider
+    #'net.ipv4.ip_local_port_range' "9000 65499"
+
+    # PRECONDITIONS
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local port_range
+        port_range=$(sysctl -n net.ipv4.ip_local_port_range)		# 40000 64999
+        readonly port_range
+
+        local -ri port_range_lower="${port_range%%[[:space:]]*}"	        # BLANKS and TABS --> 40000
+        local -ri port_range_upper="${port_range##*[[:space:]]}"	        # BLANKS and TABS --> 64999
+
+        if [[ ${port_range_lower} -le ${pr_lower_expected} ]]; then
+
+            logCheckOk "sysctl parameter net.ipv4.ip_local_port_range's lower value set as recommended (is: ${port_range_lower})"
+
+        else
+
+            logCheckWarning "sysctl parameter net.ipv4.ip_local_port_range's lower value NOT set as recommended (is: ${port_range_lower}, should be: <= ${pr_lower_expected})"
+            _retval=1
+
+        fi
+
+        if [[ ${port_range_upper} -ge ${pr_upper_expected} ]]; then
+
+            logCheckOk "sysctl parameter net.ipv4.ip_local_port_range's upper value set as recommended (is: ${port_range_upper})"
+
+        else
+
+            logCheckWarning "sysctl parameter net.ipv4.ip_local_port_range's upper value NOT set as recommended (is: ${port_range_upper}, should be: >= ${pr_upper_expected})"
+            _retval=1
+
+        fi
+
+    fi
+
+    if [[ ${_retval} -eq 99 ]]; then
+
+        logCheckOk "sysctl parameter net.ipv4.ip_local_port_range width set as recommended (SAP Note ${sapnote:-})"
+        _retval=0
+
+    else
+
+        logCheckWarning "sysctl parameter net.ipv4.ip_local_port_range width NOT set as recommended (SAP Note ${sapnote:-})"
+        _retval=1
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
