@@ -1,0 +1,71 @@
+#!/bin/bash
+
+function check_3011_network_tcp_tw_parameter {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2382421'	# Optimizing the Network Configuration on HANA- and OS-Level for SPS10 and Higher
+
+    #                               parameter                       recommended_value
+    local -ar _tcp_parameter=(\
+                                    'net.ipv4.tcp_tw_reuse'            1 \
+                                    'net.ipv4.tcp_tw_recycle'          1 \
+    )
+    # MODIFICATION SECTION<<
+
+    #local -ar _tcp_reuse=( 'net.ipv4.tcp_tw_reuse' 1 )
+    #local -ar _tcp_recycle=( 'net.ipv4.tcp_tw_recycle' 1 )
+    #Starting from SLES 12 SP4 and SLES 15 GA  *tw_recycle configuration is removed without substitution.
+
+    local -i _curr_value
+    local -i _reco_value
+    local    _parameter
+    local    _parameter_normalized
+
+    # i+=2 --> every 2nd item
+    for ((i=0; i < ${#_tcp_parameter[@]}; i+=2)); do
+
+        logTrace "<${FUNCNAME[0]}> # ${_tcp_parameter[$i]}>"
+
+        _parameter=${_tcp_parameter[$i]}
+        _parameter_normalized=${_parameter##*\.}
+        logTrace "<${FUNCNAME[0]}> # ${_parameter_normalized}>"
+
+        _reco_value=${_tcp_parameter[$i+1]}
+
+        if [[ ! -f "/proc/sys/net/ipv4/${_parameter_normalized}" ]]; then
+
+            logCheckInfo "sysctl parameter ${_parameter} not available"
+
+        else
+
+            _curr_value=$(<"/proc/sys/net/ipv4/${_parameter_normalized}")
+
+            if [[ ${_curr_value} -ne ${_reco_value} ]]; then
+                logCheckInfo "sysctl parameter ${_parameter} (is: ${_curr_value}, could be: ${_reco_value})"
+                _retval=1
+            else
+                logCheckInfo "sysctl parameter ${_parameter} set (is: ${_curr_value})"
+            fi
+        fi
+
+    done
+
+    if [[ ${_retval} -eq 99 ]]; then
+
+        logCheckInfo "All sysctl parameter net.ipv4.tcp_tw* set (SAP Note ${sapnote:-})"
+    else
+        logCheckInfo "Consider sysctl parameters net.ipv4.tcp_tw* to be set (SAP Note ${sapnote:-})"
+        _retval=99 #reset to info
+    fi
+
+    logCheckWarning 'Please note that these setting MUST NOT be applied, if the HANA node '
+    logCheckWarning "needs to communicate with hosts behind a NAT firewall (SAP Note ${sapnote:-})"
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}

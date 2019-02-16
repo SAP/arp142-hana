@@ -22,11 +22,6 @@ function check_3010_network_parameter {
 
     #ignore at the moment
     #local -ar _ip_prange=( 'net.ipv4.ip_local_port_range' "1024 64999" )
-    #local -ar _tcp_reuse=( 'net.ipv4.tcp_tw_reuse' 1 )
-
-    #local -ar _tcp_recycle=( 'net.ipv4.tcp_tw_recycle' 1 )
-    #Starting from SUSE Linux Enterprise Server (SLES) 12 SP4 and SLES 15 GA this configuration is removed without substitution.
-
     #to change - On SAP HANA 1.0 database Revisions <= 122.14 and on all SAP HANA 2.0 database Revisions of SPS00 only
     #net.ipv4.tcp_syn_retries = 8
 
@@ -61,7 +56,7 @@ function check_3010_network_parameter {
     else
 
         logCheckWarning "Not All network sysctl parameter set as recommended (SAP Note ${sapnote:-})"
-
+        _retval=1
     fi
 
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
