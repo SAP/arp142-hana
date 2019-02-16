@@ -14,7 +14,7 @@ function check_2600_vm_dentry_unused {
     # PRECONDITIONS
     if [[ ! -f  '/proc/sys/fs/dentry-state' ]]; then
 
-        logCheckSkipped "dentry-state statistics not readable (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+        logCheckSkipped "dentry-state statistics not readable (SAP KBA ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
         _retval=3
 
     else
@@ -30,11 +30,11 @@ function check_2600_vm_dentry_unused {
 
         if [[ ${dentry_unused} -lt ${dentry_unused_expected} ]]; then
 
-            logCheckOk "Linux VFS dentry-unused value within uncritical range (SAP Note ${sapnote:-}) (is: ${dentry_unused})"
-
+            logCheckOk "Linux VFS dentry-unused value within uncritical range (SAP KBA ${sapnote:-}) (is: ${dentry_unused})"
+            _retval=0
         else
 
-            logCheckWarning "Linux VFS dentry-unused value above critical limit (SAP Note ${sapnote:-}) (is: ${dentry_unused}, should be: <= ${dentry_unused_expected})"
+            logCheckWarning "Linux VFS dentry-unused value above critical limit (SAP KBA ${sapnote:-}) (is: ${dentry_unused}, should be: <= ${dentry_unused_expected})"
             _retval=1
 
         fi
@@ -45,16 +45,16 @@ function check_2600_vm_dentry_unused {
 
             #SLES 12.4, 15.0+
             drop_fd_dentries="$(</proc/sys/fs/procfs-drop-fd-dentries)"
-            logCheckInfo "Linux VFS procfs-drop-fd-dentries kernel tunable available (SAP Note ${sapnote:-}) (is: ${drop_fd_dentries})"
+            logCheckInfo "Linux VFS procfs-drop-fd-dentries kernel tunable available (SAP KBA ${sapnote:-}) (is: ${drop_fd_dentries})"
 
         elif [[ -f  '/proc/sys/vm/procfs-drop-fd-dentries' ]]; then
 
             #SLES 12.1-12.3
             drop_fd_dentries="$(</proc/sys/vm/procfs-drop-fd-dentries)"
-            logCheckInfo "Linux VFS procfs-drop-fd-dentries kernel tunable available (SAP Note ${sapnote:-}) (is: ${drop_fd_dentries})"
+            logCheckInfo "Linux VFS procfs-drop-fd-dentries kernel tunable available (SAP KBA ${sapnote:-}) (is: ${drop_fd_dentries})"
 
         else
-            logCheckInfo "Linux VFS procfs-drop-fd-dentries kernel tunable NOT available (SAP Note ${sapnote:-})"
+            logCheckInfo "Linux VFS procfs-drop-fd-dentries kernel tunable NOT available (SAP KBA ${sapnote:-})"
         fi
 
     fi
