@@ -165,11 +165,13 @@ function generate_checklist {
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
     # generate checklist
-    if [[ "${FLAGS_checks:-}" != "" || "${FLAGS_checkset:-}" != "" ]]; then
+    if [[ "${FLAGS_checks:-}" != "" ]]; then
 
-        [[ "${FLAGS_checks}" != "" ]] && generate_checkfilelist_checks "${FLAGS_checks}"
+        generate_checkfilelist_checks "${FLAGS_checks}"
 
-        [[ "${FLAGS_checkset}" != "" ]] && generate_checkfilelist_checkset
+    elif [[ "${FLAGS_checkset}" != "" ]]; then
+
+        generate_checkfilelist_checkset
 
     else
         CHECKFILELIST=( "$(ls -1 "${PROGRAM_LIBDIR}"/check/*.check)" )
@@ -181,21 +183,21 @@ function generate_checklist {
 
     for checkfile in ${CHECKFILELIST[*]:-}; do
 
-        checkname=${checkfile##*/}
-        checkname="check_${checkname%.check}"
+        checkfileshort=${checkfile##*/}
 
         if ! safetycheck=$(LIB_FUNC_CHECK_CHECK_SECURITY "$checkfile") ; then
-            logCheckSkipped "Skipping check ${checkname}. Reason: ${safetycheck}"
+            logCheckSkipped "Skipping check ${checkfileshort}. Reason: ${safetycheck}"
             continue;
         fi
 
-        # shellcheck source=/dev/null
-        if ! source "${checkfile}" ; then
-            logCheckSkipped "Skipping check ${checkname},
-                                        could not load check file ${checkfile}"
+        if !  [[ -r "${checkfile}" && -w "${checkfile}" ]] ; then
+            logCheckSkipped "Skipping check ${checkfileshort},
+                                        could not read check file ${checkfile}"
+            continue;
         else
-            CHECKLIST+=("${checkname}")
+            CHECKLIST+=("${checkfile}")
         fi
+
     done
 }
 
@@ -204,15 +206,29 @@ function run_checklist {
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
     local -i RC_CHECK
-    #empty = unbound variable but count works "${#arr[@]}" = 0
-    for check in ${CHECKLIST[*]:-}; do
+    for checkfile in ${CHECKLIST[*]:-}; do
+
+        checkfileshort=${checkfile##*/}
+        checkname="check_${checkfileshort%.check}"
+
         # printCheckHeader "Checking " $check
 
             printf '\n'
 
-            ${check}
-            RC_CHECK=$?
+            ( #run Subshell to forget sourcing
 
+                # shellcheck source=/dev/null
+                if ! source "${checkfile}"; then
+                    logCheckSkipped "Skipping check ${checkfileshort},
+                                        could not load check file ${checkfile}"
+                    return 3;
+                else
+                    ${checkname}
+                    return $?
+                fi
+            )
+
+            RC_CHECK=$?
             update_check_counters ${RC_CHECK}
 
         # printCheckHeader $line
