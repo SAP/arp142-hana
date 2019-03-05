@@ -9,6 +9,12 @@ function check_5200_fstrim-service_sles {
     # MODIFICATION SECTION>>
     local -r sapnote='#2205917'	    #SAP HANA DB: Recommended OS settings for SLES 12 - SLES12.2 only
                                     #SUSE-KB 7022921 XFS metadata corruption and invalid checksum's on SAP Hana servers
+    local -ar _ptfversions=(\
+                            '4.4.120-92.70.1' \
+                            '4.4.121-92.73.1' \
+                            '4.4.121-92.85.1' \
+                            '4.4.121-92.92.1' \
+    )
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS
@@ -22,11 +28,33 @@ function check_5200_fstrim-service_sles {
         case "${OS_VERSION}" in
 
             12.2)	_retval=99	;;
-            *)
-                    logCheckSkipped 'Not applicable for SLES release' "(is: ${OS_NAME} ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
+
+            *)      logCheckSkipped 'Not applicable for SLES release' "(is: ${OS_NAME} ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
                     _retval=3 ;;
 
         esac
+
+        local normalized_kernelversion
+        local normalized_goodversion
+
+        LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
+        normalized_kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
+
+        for _goodversion in ${_ptfversions[*]}; do
+
+            LIB_FUNC_NORMALIZE_KERNEL "${_goodversion}"
+            normalized_goodversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
+
+            #only exact PTF is accepted, higher kernel versions don't include fix
+            #4.4.120-92.70.1.15108.1.TEST.1086194-default
+            #4.4.120-92.70.1
+            if LIB_FUNC_STRINGCONTAIN "${normalized_kernelversion}" "${normalized_goodversion}"; then
+                logCheckOk "Linux kernel PTF version with fstrim fix running. (SAP Note ${sapnote:-}) (is: ${OS_LEVEL})"
+                _retval=0
+                break
+            fi
+
+        done
 
     fi
 
