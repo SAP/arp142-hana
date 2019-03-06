@@ -49,7 +49,9 @@ function lib_func_get_hypervisor_details {
 
     elif [[ -r '/proc/device-tree/compatible' ]]; then
 
-        local -r pdt_compatible=$(</proc/device-tree/compatible)
+        local pdt_compatible
+        pdt_compatible=$(</proc/device-tree/compatible)
+        readonly pdt_compatible
 
         case "${pdt_compatible}" in
 

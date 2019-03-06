@@ -1,6 +1,6 @@
 #!/bin/bash
 umask 022
-set -u 		# treat unset variables as an error
+set -u # treat unset variables as an error
 
 #------------------------------------------------------------------
 # SAP HANA OS checks
@@ -39,7 +39,7 @@ readonly PROGRAM_NAME
 PROGRAM_CMDLINE="$*"
 readonly PROGRAM_CMDLINE
 
-PROGRAM_DIR="$( cd "${BASH_SOURCE[0]%/*}" && pwd )"
+PROGRAM_DIR="$(cd "${BASH_SOURCE[0]%/*}" && pwd)"
 readonly PROGRAM_DIR
 
 PROGRAM_BINDIR="${PROGRAM_DIR}"
@@ -60,8 +60,7 @@ DEFINE_boolean  'timestamp' false   'show timestamp (default for debug/trace)'
 # shellcheck disable=SC2034
 FLAGS_HELP="USAGE: $0 [flags]"
 
-
-PROGRAM_LIBDIR="$( cd "${PROGRAM_BINDIR}/../lib" && pwd )"
+PROGRAM_LIBDIR="$(cd "${PROGRAM_BINDIR}/../lib" && pwd)"
 readonly PROGRAM_LIBDIR
 
 OS_NAME=''
@@ -107,20 +106,32 @@ function update_check_counters {
     shift 1
 
     case "${_rc}" in
-            0)  ((NUMBER_CHECKS++))
-                ((NUMBER_CHECKS_OK++)) ;;
+    0)
+        ((NUMBER_CHECKS++))
+        ((NUMBER_CHECKS_OK++))
+        ;;
 
-            1)  ((NUMBER_CHECKS++))
-                ((NUMBER_CHECKS_WARNING++)) ;;
+    1)
+        ((NUMBER_CHECKS++))
+        ((NUMBER_CHECKS_WARNING++))
+        ;;
 
-            2)  ((NUMBER_CHECKS++))
-                ((NUMBER_CHECKS_ERROR++)) ;;
+    2)
+        ((NUMBER_CHECKS++))
+        ((NUMBER_CHECKS_ERROR++))
+        ;;
 
-            3)  ((NUMBER_CHECKS_SKIPPED++)) ;;
+    3)
+        ((NUMBER_CHECKS_SKIPPED++))
+        ;;
 
-            99) ((NUMBER_CHECKS_INFO++)) ;;
+    99)
+        ((NUMBER_CHECKS_INFO++))
+        ;;
 
-            *)  ((NUMBER_CHECKS_UNKNOWN++)) ;;
+    *)
+        ((NUMBER_CHECKS_UNKNOWN++))
+        ;;
     esac
 
 }
@@ -152,7 +163,7 @@ function generate_checkfilelist_checkset {
         exit 1
     fi
 
-    if ! checkset=$(<"${checksetfile}") ; then
+    if ! checkset=$(<"${checksetfile}"); then
         logError "Could not load checkset file ${checksetfile}"
         exit 1
     fi
@@ -174,7 +185,7 @@ function generate_checklist {
         generate_checkfilelist_checkset
 
     else
-        CHECKFILELIST=( "$(ls -1 "${PROGRAM_LIBDIR}"/check/*.check)" )
+        CHECKFILELIST=("$(ls -1 "${PROGRAM_LIBDIR}"/check/*.check)")
     fi
 
     local checkfile
@@ -185,15 +196,15 @@ function generate_checklist {
 
         checkfileshort=${checkfile##*/}
 
-        if ! safetycheck=$(LIB_FUNC_CHECK_CHECK_SECURITY "$checkfile") ; then
+        if ! safetycheck=$(LIB_FUNC_CHECK_CHECK_SECURITY "$checkfile"); then
             logCheckSkipped "Skipping check ${checkfileshort}. Reason: ${safetycheck}"
-            continue;
+            continue
         fi
 
-        if !  [[ -r "${checkfile}" && -w "${checkfile}" ]] ; then
+        if ! [[ -r "${checkfile}" && -w "${checkfile}" ]]; then
             logCheckSkipped "Skipping check ${checkfileshort},
                                         could not read check file ${checkfile}"
-            continue;
+            continue
         else
             CHECKLIST+=("${checkfile}")
         fi
@@ -213,23 +224,23 @@ function run_checklist {
 
         # printCheckHeader "Checking " $check
 
-            printf '\n'
+        printf '\n'
 
-            ( #run Subshell to forget sourcing
+        (#run Subshell to forget sourcing
 
-                # shellcheck source=/dev/null
-                if ! source "${checkfile}"; then
-                    logCheckSkipped "Skipping check ${checkfileshort},
+            # shellcheck source=/dev/null
+            if ! source "${checkfile}"; then
+                logCheckSkipped "Skipping check ${checkfileshort},
                                         could not load check file ${checkfile}"
-                    return 3;
-                else
-                    ${checkname}
-                    return $?
-                fi
-            )
+                return 3
+            else
+                ${checkname}
+                return $?
+            fi
+        )
 
-            RC_CHECK=$?
-            update_check_counters ${RC_CHECK}
+        RC_CHECK=$?
+        update_check_counters ${RC_CHECK}
 
         # printCheckHeader $line
     done
@@ -238,21 +249,24 @@ function run_checklist {
 
 function print_counters {
 
-    local check_run=$((NUMBER_CHECKS_INFO + NUMBER_CHECKS_OK + NUMBER_CHECKS_WARNING + NUMBER_CHECKS_ERROR))
-    local check_count=$((NUMBER_CHECKS_SKIPPED + check_run))
+    local -i check_run
+    local -i check_count
     local percent_skipped=0
     local percent_info=0
     local percent_ok=0
     local percent_warning=0
     local percent_error=0
 
+    check_run=$((NUMBER_CHECKS_INFO + NUMBER_CHECKS_OK + NUMBER_CHECKS_WARNING + NUMBER_CHECKS_ERROR))
+    check_count=$((NUMBER_CHECKS_SKIPPED + check_run))
+
     if [[ "${check_count}" -gt 0 ]]; then
-        local percent_skipped=$((100*NUMBER_CHECKS_SKIPPED/check_count))
+        percent_skipped=$((100 * NUMBER_CHECKS_SKIPPED / check_count))
         if [ "${check_run}" -gt 0 ]; then
-            local percent_info=$((100*NUMBER_CHECKS_INFO/check_count))
-            local percent_ok=$((100*NUMBER_CHECKS_OK/check_count))
-            local percent_warning=$((100*NUMBER_CHECKS_WARNING/check_count))
-            local percent_error=$((100*NUMBER_CHECKS_ERROR/check_count))
+            percent_info=$((100 * NUMBER_CHECKS_INFO / check_count))
+            percent_ok=$((100 * NUMBER_CHECKS_OK / check_count))
+            percent_warning=$((100 * NUMBER_CHECKS_WARNING / check_count))
+            percent_error=$((100 * NUMBER_CHECKS_ERROR / check_count))
         fi
     fi
 
@@ -310,7 +324,7 @@ function main {
 
     #need awk - because of float number
     _line_formated=$(awk -v RAM_MiB="${LIB_PLATF_RAM_MIB_PHYS}" \
-                            'BEGIN {printf "%.0f GiB (%d MiB)", RAM_MiB/1024, RAM_MiB}')
+        'BEGIN {printf "%.0f GiB (%d MiB)", RAM_MiB/1024, RAM_MiB}')
     logNotify "## Memory:         ${_line_formated}"
     logNotify '##'
 
@@ -337,7 +351,7 @@ function main {
 #Import logger
 #shellcheck source=./saphana-logger
 source "${PROGRAM_BINDIR}/saphana-logger" ||
-                            die 'unable to load saphana-logger library'
+    die 'unable to load saphana-logger library'
 
 # parse the command-line - shflags
 FLAGS "$@" || exit 1
@@ -347,7 +361,7 @@ evaluate_cmdline_options
 #Import remaining Libraries - logging is now active
 #shellcheck source=./saphana-helper-funcs
 source "${PROGRAM_BINDIR}/saphana-helper-funcs" ||
-                            die 'unable to load saphana-helper-funcs library'
+    die 'unable to load saphana-helper-funcs library'
 
 # call main
 main "$@"

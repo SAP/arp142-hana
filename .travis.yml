@@ -45,7 +45,8 @@ script:
 
   # Code format checking
   # - bash -c 'shopt -s globstar; bashate scripts/**/*.{sh,check}'
-  - bash -c 'shopt -s globstar; bashate -i E006 scripts/bin/saphana* scripts/bin/lib*'
+  - bash -c 'shopt -s globstar; bashate -i E006,E043 scripts/bin/saphana*'
+  - bash -c 'shopt -s globstar; bashate -i E006 scripts/bin/lib*'
   - bash -c 'shopt -s globstar; bashate -i E006 scripts/**/*.check'
 
 
