@@ -38,44 +38,56 @@ function check_1310_cpu_powersavings_ibmpower {
             _retval=2
     fi
 
+    if [[ -z ${LIB_PLATF_POWER_POWERMODE:-} ]]; then
+
+            logCheckError "Power Savings Mode NOT known. (SAP Note ${sapnote:-}) (is: Unknown, should be: None)"
+            _retval=2
+    fi
+
     #CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-        #unique value within array
-        local -r IFS=$'\n'
-        local -ar output=($(/usr/sbin/ppc64_cpu --frequency -t 1))	#measurement for 1s
+        # The power mode result is defined as
+        # XXXX XXXX XXXX XXXX
+        # XXXX                   : System Power Mode
+        #                XXXX    : Partition Power Mode
+        # The mode is the first 4 bytes of the value reported in the lparcfg file.
 
-        # Power Savings Mode: None
+        #e.g. 0002000000020002
+        local pwr_system_mode
+        pwr_system_mode="${LIB_PLATF_POWER_POWERMODE:0:4}"
+        local pwr_partition_mode
+        pwr_partition_mode="${LIB_PLATF_POWER_POWERMODE: -4}"
 
-        for ((i=0; i < ${#output[@]}; ++i)); do
+        # 0x0001: "Dynamic, Favor Performance"
+        # 0x0002: "None"
+        # 0x0003: "Static"
+        # 0x00ff: "Dynamic, Favor Power"
+        # default: "Unknown"
+        local pwr_system_txt
 
-            logTrace "<${FUNCNAME[0]}> # ${output[$i]}>"
+        if [[ "${pwr_system_mode}" != "${pwr_partition_mode}" ]]; then
 
-            case ${output[$i]} in
+            local pwr_partition_txt
+            pwr_partition_txt=$(LIB_FUNC_TRANSFORM_POWER_POWERMODE "${pwr_partition_mode}")
+            pwr_system_txt=$(LIB_FUNC_TRANSFORM_POWER_POWERMODE "${pwr_system_mode}")
 
-                "Power Savings Mode:"*)
+            logCheckInfo "Power Savings Mode different for System and Partition. (System: ${pwr_system_txt:-}, Partition: ${pwr_partition_txt:-})"
 
-                                    local -r savmode=$(LIB_FUNC_TRIM_LEFT "${output[$i]/Power Savings Mode:}")
-                break
-                ;;
+        fi
 
-            esac
-
-        done
-
-        shopt -s nocasematch
-        if [[ "${savmode}" == "None" ]]; then
+        if [[ "${pwr_system_mode}" == '0002' ]]; then
 
             logCheckOk "Power Savings Mode set as recommended. (SAP Note ${sapnote:-}) (is: None)"
             _retval=0
 
         else
 
-            logCheckError "Power Savings Mode NOT set as recommended. (SAP Note ${sapnote:-}) (is: ${savmode}, should be: None)"
+            pwr_system_txt=$(LIB_FUNC_TRANSFORM_POWER_POWERMODE "${pwr_system_mode}")
+            logCheckError "Power Savings Mode NOT set as recommended. (SAP Note ${sapnote:-}) (is: ${pwr_system_txt}, should be: None)"
             _retval=2
 
         fi
-        shopt -u nocasematch
 
     fi
 
