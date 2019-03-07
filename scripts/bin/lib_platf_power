@@ -14,16 +14,35 @@ umask 022
 # return if library is already loaded
 [[ -n "${LIB_PLATF_POWER_RELEASE:-}" ]] && return 0
 
-LIB_PLATF_POWER_RELEASE='1811.0-dev'
+LIB_PLATF_POWER_RELEASE='1903.0-dev'
 
 ##########################################################
-# Global functions - to be used in other scripts
+# Global functions - to be used in other functions
 ##########################################################
+# Returns 0 on SLES, 1 on other
+function LIB_FUNC_TRANSFORM_POWER_POWERMODE {
+
+    local powermode="$1"
+    shift 1
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    case "${powermode}" in
+        '0001')  powermode='Dynamic, Favor Performance' ;;
+        '0002')  powermode='None' ;;
+        '0003')  powermode='Static' ;;
+        '00ff')  powermode='Dynamic, Favor Power' ;;
+        *)       powermode='Unknown';;
+    esac
+
+    printf '%s' "${powermode}"
+
+}
 
 ##########################################################
 # Non-global functions - not to be used in other scripts
 ##########################################################
-function lib_func_get_hypervisor_details {
+function __lib_func_get_hypervisor_details {
 
     #( pHyp - para ) ; ( pHyp - none ) ; ( KVM - para ) ; ( none - none ) = PowerNV = bare-metal
 
@@ -80,6 +99,72 @@ function lib_func_get_hypervisor_details {
 
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # LIB_PLATF_VIRT_HYPER : ${LIB_PLATF_VIRT_HYPER:-}; LIB_PLATF_VIRT_TYPE ${LIB_PLATF_VIRT_TYPE:-}"
 
+}
+
+function __lib_func_get_lpar_details {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    #https://manpages.debian.org/testing/powerpc-ibm-utils/lparcfg.5.en.html
+    local -r lparcfgfile='/proc/ppc64/lparcfg'
+
+    while read -r line; do
+
+        logTrace "<${FUNCNAME[0]}> # ${lparcfgfile}:${line}"
+
+        case ${line} in
+
+            'capped'*)
+                            if [[ -z ${LIB_PLATF_POWER_CPUCAP:-} ]]; then
+                                _temp=$(LIB_FUNC_TRIM_LEFT "${line/capped=}")
+                                [[ ${_temp} = 1 ]] && _temp='CAPPED' || _temp='UNCAPPED'
+                                LIB_PLATF_POWER_CPUCAP="${_temp}"
+                                readonly LIB_PLATF_POWER_CPUCAP
+                            fi
+            ;;
+
+            'entitled_memory_pool_number'*)
+                            #65535 = Dedicated .. else Shared
+                            if [[ -z ${LIB_PLATF_POWER_MEMMODE:-} ]]; then
+                                _temp=$(LIB_FUNC_TRIM_LEFT "${line/entitled_memory_pool_number=}")
+                                [[ ${_temp} = 65535 ]] && _temp='DEDICATED' || _temp='SHARED'
+                                LIB_PLATF_POWER_MEMMODE="${_temp}"
+                                readonly LIB_PLATF_POWER_MEMMODE
+                            fi
+            ;;
+
+            'cmo_enabled'*)
+                            if [[ -z ${LIB_PLATF_POWER_MEMAMS:-} ]]; then
+                                _temp=$(LIB_FUNC_TRIM_LEFT "${line/cmo_enabled=}")
+                                [[ ${_temp} = 0 ]] && _temp='DISABLED' || _temp='ENABLED'
+                                LIB_PLATF_POWER_MEMAMS="${_temp}"
+                                readonly LIB_PLATF_POWER_MEMAMS
+                            fi
+            ;;
+
+            'shared_processor_mode'*)
+                            #DedDonMode=Dedicated Donating Mode
+                            if [[ -z ${LIB_PLATF_POWER_CPUMODE:-} ]]; then
+                                _temp=$(LIB_FUNC_TRIM_LEFT "${line/shared_processor_mode=}")
+                                [[ ${_temp} = 1 ]] && _temp='SHARED' || _temp='DEDICATED'
+                                LIB_PLATF_POWER_CPUMODE="${_temp}"
+                                readonly LIB_PLATF_POWER_CPUMODE
+                            fi
+            ;;
+
+            'power_mode_data'*)
+                            if [[ -z ${LIB_PLATF_POWER_POWERMODE:-} ]]; then
+                                #e.g. 0002000000020002
+                                LIB_PLATF_POWER_POWERMODE=$(LIB_FUNC_TRIM_LEFT "${line/power_mode_data=}")
+                                readonly LIB_PLATF_POWER_POWERMODE
+                            fi
+            ;;
+
+        esac
+
+    done < "${lparcfgfile}"
+
+    #logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # LIB_PLATF_POWER_POWERMODE : ${LIB_PLATF_POWER_POWERMODE:-}"
 }
 
 function __get_platform_power_cpu_details {
@@ -178,10 +263,21 @@ function _lib_platf_power_main {
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
     __get_platform_power_cpu_details
-    lib_func_get_hypervisor_details
+    __lib_func_get_hypervisor_details
+    __lib_func_get_lpar_details
 
     #readonly <AnyVariable>
 }
+
+#LIB LOCAL
+
+#GLOBAL
+# don't use declare here ... file is sourced within function, which would restrict visibility
+# LIB_PLATF_POWER_CPUCAP
+# LIB_PLATF_POWER_MEMMODE
+# LIB_PLATF_POWER_MEMAMS
+# LIB_PLATF_POWER_CPUMODE
+# LIB_PLATF_POWER_POWERMODE
 
 #Import libraries
 #shellcheck source=./saphana-logger
@@ -190,10 +286,6 @@ source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/saphana-logger" ||
 #shellcheck source=./saphana-helper-funcs
 source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/saphana-helper-funcs" ||
                 { echo 'unable to load saphana-helper-funcs library' >&2; exit 1; }
-
-#LIB LOCAL
-
-#GLOBAL
 
 #CALL MAIN
 _lib_platf_power_main
