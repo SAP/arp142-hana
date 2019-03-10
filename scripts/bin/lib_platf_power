@@ -143,12 +143,21 @@ function __lib_func_get_lpar_details {
             ;;
 
             'shared_processor_mode'*)
-                            #DedDonMode=Dedicated Donating Mode
                             if [[ -z ${LIB_PLATF_POWER_CPUMODE:-} ]]; then
                                 _temp=$(LIB_FUNC_TRIM_LEFT "${line/shared_processor_mode=}")
                                 [[ ${_temp} = 1 ]] && _temp='SHARED' || _temp='DEDICATED'
                                 LIB_PLATF_POWER_CPUMODE="${_temp}"
                                 readonly LIB_PLATF_POWER_CPUMODE
+                            fi
+            ;;
+
+            'DedDonMode'*)
+                            #DedDonMode=Dedicated Donating Mode
+                            if [[ -z ${LIB_PLATF_POWER_CPUMODE:-} ]]; then
+                                _temp=$(LIB_FUNC_TRIM_LEFT "${line/DedDonMode=}")
+                                [[ ${_temp} = 1 ]] && _temp='DONATING' || _temp='DEDICATED'
+                                LIB_PLATF_POWER_CPUMODE_DEDDON="${_temp}"
+                                readonly LIB_PLATF_POWER_CPUMODE_DEDDON
                             fi
             ;;
 
@@ -277,6 +286,7 @@ function _lib_platf_power_main {
 # LIB_PLATF_POWER_MEMMODE
 # LIB_PLATF_POWER_MEMAMS
 # LIB_PLATF_POWER_CPUMODE
+# LIB_PLATF_POWER_CPUMODE_DEDDON
 # LIB_PLATF_POWER_POWERMODE
 
 #Import libraries

@@ -1,0 +1,51 @@
+#!/bin/bash
+
+function check_1200_shared_processor_mode_ibmpower {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2230704'		# SAP HANA on IBM Power Systems with multiple - LPARs per physical host
+    # MODIFICATION SECTION<<
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_IBMPOWER ; then
+
+        logCheckSkipped 'Not running on IBM Power. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif [[ -z ${LIB_PLATF_POWER_CPUMODE:-} ]]; then
+
+            logCheckError "Shared Processor Mode configuration NOT known. (SAP Note ${sapnote:-}) (is: Unknown, should be: DEDICATED*)"
+            _retval=2
+    fi
+
+    #CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        if [[ "${LIB_PLATF_POWER_CPUMODE}" == 'DEDICATED' ]]; then
+
+            logCheckOk "Shared Processor Mode configuration set as recommended. (SAP Note ${sapnote:-}) (is: DEDICATED)"
+            _retval=0
+
+            if [[ "${LIB_PLATF_POWER_CPUMODE_DEDDON:-}" != 'DONATING' ]]; then
+
+                logCheckInfo 'Shared Processor Mode configuration could be set as <Dedicated Donating>.'
+
+            fi
+
+        else
+
+            logCheckError "Shared Processor Mode configuration NOT set as recommended. (SAP Note ${sapnote:-}) (is: SHARED, should be: DEDICATED*)"
+            _retval=2
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}

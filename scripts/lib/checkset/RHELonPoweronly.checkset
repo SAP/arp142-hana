@@ -7,6 +7,7 @@
 0500_selinux_rhel
 0600_systemd_version
 0700_sysstat
+1200_shared_processor_mode_ibmpower
 1310_cpu_powersavings_ibmpower
 1360_cpu_cpufolding_ibmpower
 2000_transparent_hugepages
