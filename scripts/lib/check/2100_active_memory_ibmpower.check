@@ -1,0 +1,49 @@
+#!/bin/bash
+
+function check_2100_active_memory_sharing_ibmpower {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2055470'		# HANA on POWER Planning and Installation Specifics - Central Note
+    # MODIFICATION SECTION<<
+
+    # Detailed IBM Documentation can be found on IBM Techdocs in the
+    # "SAP HANA on IBM Power Systems and IBM System Storage - Guides"
+    # (http://www.ibm.com/support/techdocs/atsmastr.nsf/WebIndex/WP102502).
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_IBMPOWER ; then
+
+        logCheckSkipped 'Not running on IBM Power. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif [[ -z ${LIB_PLATF_POWER_MEMAMS:-} ]]; then
+
+            logCheckError "ActiveMemory Sharing configuration NOT known. (SAP Note ${sapnote:-}) (is: Unknown, should be: Off)"
+            _retval=2
+    fi
+
+    #CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        if [[ "${LIB_PLATF_POWER_MEMAMS}" == 'DISABLED' ]]; then
+
+            logCheckOk "ActiveMemory Sharing set as recommended. (SAP Note ${sapnote:-}) (is: DISABLED)"
+            _retval=0
+
+        else
+
+            logCheckError "ActiveMemory Sharing NOT set as recommended. (SAP Note ${sapnote:-}) (is: ENABLED, should be: DISABLED)"
+            _retval=2
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
