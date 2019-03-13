@@ -8,23 +8,23 @@ function check_0020_os_kernel_rhel {
 
     # MODIFICATION SECTION>>
     # array	'goodnormalized_kernelversion'	'sap note'
-    local -ar rhel65=( '2.6.32-431.29.2' '#2013638' )
-    local -ar rhel66=( '2.6.32-504.16.2' '#2136965' )
-    local -ar rhel67=( '2.6.32-573' '#2247020' )		#not known, take release kernel, all should be fine
-    local -ar rhel610=( '2.6.32-754.3.5' '#2694292' )
-    local -ar rhel72=( '3.10.0-327.64.1.el7' '#2292690' )
-    local -ar rhel73=( '3.10.0-514.44.1.el7' '#2292690' )
-    local -ar rhel73power=( '3.10.0-514.44.1.el7' '#2292690' )
-    local -ar rhel74=( '3.10.0-693.11.6.el7' '#2292690' )
-    local -ar rhel74power=( '3.10.0-693.11.6.el7' '#2292690' )
-    local -ar rhel75=( '3.10.0-862.el7' '#2292690' )
-    local -ar rhel75power=( '3.10.0-862.el7' '#2292690' )
-    local -ar rhel76=( '3.10.0-957.1.3.el7' '#2292690' )
-    local -ar rhel76power=( '3.10.0-957.1.3.el7' '#2292690' )
+    local -ar rhel65=('2.6.32-431.29.2' '#2013638')
+    local -ar rhel66=('2.6.32-504.16.2' '#2136965')
+    local -ar rhel67=('2.6.32-573' '#2247020') #not known, take release kernel, all should be fine
+    local -ar rhel610=('2.6.32-754.3.5' '#2694292')
+    local -ar rhel72=('3.10.0-327.64.1.el7' '#2292690')
+    local -ar rhel73=('3.10.0-514.44.1.el7' '#2292690')
+    local -ar rhel73power=('3.10.0-514.44.1.el7' '#2292690')
+    local -ar rhel74=('3.10.0-693.11.6.el7' '#2292690')
+    local -ar rhel74power=('3.10.0-693.11.6.el7' '#2292690')
+    local -ar rhel75=('3.10.0-862.el7' '#2292690')
+    local -ar rhel75power=('3.10.0-862.el7' '#2292690')
+    local -ar rhel76=('3.10.0-957.1.3.el7' '#2292690')
+    local -ar rhel76power=('3.10.0-957.1.3.el7' '#2292690')
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS
-    if  ! LIB_FUNC_IS_RHEL ;	then
+    if ! LIB_FUNC_IS_RHEL; then
 
         logCheckSkipped 'Linux distribution is not RHEL. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
@@ -34,49 +34,51 @@ function check_0020_os_kernel_rhel {
         local _goodversion
         local sapnote
 
-        if LIB_FUNC_IS_INTEL ; then
+        if LIB_FUNC_IS_INTEL; then
 
             case "${OS_VERSION}" in
 
-                6.[0-4] )   logCheckError 'Upgrade to RHEL for SAP Solutions/HANA 6.5+ (SAP Note #2235581)'
-                            _retval=2
+            6.[0-4] )
+                    logCheckError 'Upgrade to RHEL for SAP Solutions/HANA 6.5+ (SAP Note #2235581)'
+                    _retval=2
                     ;;
 
-                6.5)	_goodversion="${rhel65[0]}" ; sapnote="${rhel65[1]}" ;;
+            6.5)    _goodversion="${rhel65[0]}" ; sapnote="${rhel65[1]}" ;;
+            6.6)    _goodversion="${rhel66[0]}" ; sapnote="${rhel66[1]}" ;;
+            6.7)    _goodversion="${rhel67[0]}" ; sapnote="${rhel67[1]}" ;;
 
-                6.6)	_goodversion="${rhel66[0]}" ; sapnote="${rhel66[1]}" ;;
-
-                6.7)	_goodversion="${rhel67[0]}" ; sapnote="${rhel67[1]}" ;;
-
-                6.[8-9] )   logCheckError 'RHEL 6.8 and 6.9 are not supported. Please upgrade to RHEL 6.10+ (SAP Note #2235581)'
-                            _retval=2
+            6.[8-9] )
+                    logCheckError 'RHEL 6.8 and 6.9 are not supported. Please upgrade to RHEL 6.10+ (SAP Note #2235581)'
+                    _retval=2
                     ;;
 
-                6.10)	_goodversion="${rhel610[0]}" ; sapnote="${rhel610[1]}" ;;
+            6.10)	_goodversion="${rhel610[0]}" ; sapnote="${rhel610[1]}" ;;
 
-                7.2)	_goodversion="${rhel72[0]}" ; sapnote="${rhel72[1]}" ;;
-                7.3)	_goodversion="${rhel73[0]}" ; sapnote="${rhel73[1]}" ;;
-                7.4)	_goodversion="${rhel74[0]}" ; sapnote="${rhel74[1]}" ;;
-                7.5)	_goodversion="${rhel75[0]}" ; sapnote="${rhel75[1]}" ;;
-                7.6)	_goodversion="${rhel76[0]}" ; sapnote="${rhel76[1]}" ;;
+            7.2)    _goodversion="${rhel72[0]}" ; sapnote="${rhel72[1]}" ;;
+            7.3)    _goodversion="${rhel73[0]}" ; sapnote="${rhel73[1]}" ;;
+            7.4)    _goodversion="${rhel74[0]}" ; sapnote="${rhel74[1]}" ;;
+            7.5)    _goodversion="${rhel75[0]}" ; sapnote="${rhel75[1]}" ;;
+            7.6)    _goodversion="${rhel76[0]}" ; sapnote="${rhel76[1]}" ;;
 
-                *)		logCheckError "RHEL version is not supported (SAP Note #2235581) (is: ${OS_VERSION})"
-                        _retval=2
-                    ;;
+            *)
+                logCheckError "RHEL version is not supported (SAP Note #2235581) (is: ${OS_VERSION})"
+                _retval=2
+                ;;
             esac
 
-        elif LIB_FUNC_IS_IBMPOWER ; then
+        elif LIB_FUNC_IS_IBMPOWER; then
 
             case "${OS_VERSION}" in
 
-                7.3)	_goodversion="${rhel73power[0]}" ; sapnote="${rhel73power[1]}" ;;
-                7.4)	_goodversion="${rhel74power[0]}" ; sapnote="${rhel74power[1]}" ;;
-                7.5)	_goodversion="${rhel75power[0]}" ; sapnote="${rhel75power[1]}" ;;
-                7.6)	_goodversion="${rhel76power[0]}" ; sapnote="${rhel76power[1]}" ;;
+            7.3) _goodversion="${rhel73power[0]}" ; sapnote="${rhel73power[1]}" ;;
+            7.4) _goodversion="${rhel74power[0]}" ; sapnote="${rhel74power[1]}" ;;
+            7.5) _goodversion="${rhel75power[0]}" ; sapnote="${rhel75power[1]}" ;;
+            7.6) _goodversion="${rhel76power[0]}" ; sapnote="${rhel76power[1]}" ;;
 
-                *)		logCheckError "RHEL version is not supported (SAP Note #2235581) (is: ${OS_VERSION})"
-                        _retval=2
-                    ;;
+            *)
+                logCheckError "RHEL version is not supported (SAP Note #2235581) (is: ${OS_VERSION})"
+                _retval=2
+                ;;
             esac
 
         else

@@ -197,6 +197,7 @@ source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/saphana-helper-funcs" ||
 #LIB LOCAL
 
 #GLOBAL
+#don't use declare here ... file is sourced within function, which would restrict visibility
 
 #CALL MAIN
 _lib_platf_x86_64_main

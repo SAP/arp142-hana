@@ -7,17 +7,17 @@ function check_0700_sysstat {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#2376233'	# How To collect SAR / SYSSTAT information to debug high load or hang situations
+    local -r sapnote='#2376233' # How To collect SAR / SYSSTAT information to debug high load or hang situations
     # MODIFICATION SECTION<<
 
     #PRECONDITION
-    if ! rpm -q sysstat &>/dev/null ; then
+    if ! rpm -q sysstat &>/dev/null; then
 
         logCheckError "sysstat not installed (SAP Note ${sapnote:-})"
         _retval=2
 
     else
-    #CHECK
+        #CHECK
 
         #finally all ends up with this file - /etc/cron.d/sysstat
         #RHEL creates this file, SLES is creating a link to /etc/sysstat/sysstat.cron (SLES12+ dynamically by systemd sysstat.service)
