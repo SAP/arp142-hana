@@ -38,7 +38,7 @@ function check_1310_cpu_powersavings_ibmpower {
             _retval=2
     fi
 
-    if [[ -z ${LIB_PLATF_POWER_POWERMODE:-} ]]; then
+    if [[ ${_retval} -eq 99 && -z ${LIB_PLATF_POWER_POWERMODE:-} ]]; then
 
             logCheckError "Power Savings Mode NOT known. (SAP Note ${sapnote:-}) (is: Unknown, should be: None)"
             _retval=2
