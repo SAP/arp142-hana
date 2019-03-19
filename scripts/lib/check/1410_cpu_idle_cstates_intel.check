@@ -88,7 +88,8 @@ function check_1410_cpu_idle_cstates_intel {
     #CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-        local -r _current_driver="$(</sys/devices/system/cpu/cpuidle/current_driver)"
+        local _current_driver
+        _current_driver="$(</sys/devices/system/cpu/cpuidle/current_driver)"
 
         case ${_current_driver} in
 
@@ -115,7 +116,8 @@ function check_1410_cpu_idle_cstates_intel {
 
             'intel_idle')
 
-                local -ri _intel_mcstate=$(</sys/module/intel_idle/parameters/max_cstate)
+                local -i _intel_mcstate
+                _intel_mcstate=$(</sys/module/intel_idle/parameters/max_cstate)
 
                 #check cpu_dma_latency first = 70 or max_cstate value <=1
                 if [[ ${force_latency_prefered:-} == 'TRUE' ]]; then
@@ -123,7 +125,8 @@ function check_1410_cpu_idle_cstates_intel {
                     logCheckInfo "CPUidle driver <intel_idle>: prefer modern latency setting instead of setting fixed cstates (SAP Note ${sapnote:-})"
 
                     #requires root to read from /dev/cpu_dma_latency
-                    local -r _curr_forcelatency=$(hexdump -e '"%i"' /dev/cpu_dma_latency)
+                    local _curr_forcelatency
+                    _curr_forcelatency=$(hexdump -e '"%i"' /dev/cpu_dma_latency)
 
                     if [[ ${_curr_forcelatency:-} -eq ${_reco_forcelatency} ]]; then
 

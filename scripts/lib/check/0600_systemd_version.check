@@ -35,7 +35,8 @@ function check_0600_systemd_version {
         local normalized_goodversion
         local normalized_fullversion
 
-        local -r _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" systemd)
+        local _fullversion
+        _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" systemd)
 
         #normalize good version
         LIB_FUNC_NORMALIZE_RPM "${_goodversion}"

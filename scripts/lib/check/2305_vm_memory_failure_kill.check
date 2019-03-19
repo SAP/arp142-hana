@@ -21,7 +21,8 @@ function check_2305_vm_memory_failure_kill {
     else
         #CHECK
 
-        local -ir _curr_mfek=$(</proc/sys/vm/memory_failure_early_kill)
+        local -i _curr_mfek
+        _curr_mfek=$(</proc/sys/vm/memory_failure_early_kill)
 
         if [[ ${_curr_mfek} -ne ${_reco_mfek} ]]; then
 

@@ -29,14 +29,17 @@ function check_5100_pagecache_limit_sles {
     else
         # CHECK
 
+        local -i calc_pg_limit
         # shellcheck disable=SC2154
-        local -ir calc_pg_limit=$(( LIB_PLATF_RAM_MiB_AVAILABLE * 2 / 100 ))
+        calc_pg_limit=$(( LIB_PLATF_RAM_MiB_AVAILABLE * 2 / 100 ))
 
         # <  256 GB:    4096	            (=recommended limit) (262144 MB)
         # >= 256 GB:    2% of RAM_MiB
         # https://www.gnu.org/software/bash/manual/html_node/Shell-Arithmetic.html#Shell-Arithmetic
-        local -ir reco_pgcache_limit=$(( LIB_PLATF_RAM_MiB_AVAILABLE > 262144 ? calc_pg_limit : 4096 ))
-        local -ri pgcache_limit_mb=$(</proc/sys/vm/pagecache_limit_mb)
+        local -i reco_pgcache_limit
+        reco_pgcache_limit=$(( LIB_PLATF_RAM_MiB_AVAILABLE > 262144 ? calc_pg_limit : 4096 ))
+        local -i pgcache_limit_mb
+        pgcache_limit_mb=$(</proc/sys/vm/pagecache_limit_mb)
 
         if [[ ${pgcache_limit_mb} -eq 0 ]]; then
 
@@ -49,8 +52,10 @@ function check_5100_pagecache_limit_sles {
             _retval=1
 
             # to avoid errors of small difference
-            local -ir pg_fuzzy_lower=$(( pgcache_limit_mb + 50 ))
-            local -ir pg_fuzzy_upper=$(( pgcache_limit_mb - 50 ))
+            local -i pg_fuzzy_lower
+            pg_fuzzy_lower=$(( pgcache_limit_mb + 50 ))
+            local -i pg_fuzzy_upper
+            pg_fuzzy_upper=$(( pgcache_limit_mb - 50 ))
 
             if [[ ${pg_fuzzy_lower} -lt ${reco_pgcache_limit} ]]; then
 
@@ -70,7 +75,8 @@ function check_5100_pagecache_limit_sles {
     #pgcache_ignore_dirty
     if [[ ${_retval} -eq 1 && ${_retval} -eq 2 ]]; then
 
-        local -ri pgcache_ignore_dirty=$(</proc/sys/vm/pagecache_limit_ignore_dirty)
+        local -i pgcache_ignore_dirty
+        pgcache_ignore_dirty=$(</proc/sys/vm/pagecache_limit_ignore_dirty)
         logCheckInfo "vm.pagecache_limit_ignore_dirty depends on HANA Data+Log filesystem (is: ${pgcache_ignore_dirty}, should be: 0 for local FS, 1 for NFS)"
 
     fi

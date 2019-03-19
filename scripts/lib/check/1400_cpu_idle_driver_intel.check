@@ -68,7 +68,8 @@ function check_1400_cpu_idle_driver_intel {
     #CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-        local -r _current_driver="$(</sys/devices/system/cpu/cpuidle/current_driver)"
+        local _current_driver
+        _current_driver="$(</sys/devices/system/cpu/cpuidle/current_driver)"
 
         case ${_current_driver} in
 

@@ -17,7 +17,8 @@ function check_2300_vm_max_map_count {
     local -ir _maximum_mmcount=2147483647
 
     #CHECK
-    local -ir _curr_mmcount=$(</proc/sys/vm/max_map_count)
+    local -i _curr_mmcount
+    _curr_mmcount=$(</proc/sys/vm/max_map_count)
 
     if [[ ${_curr_mmcount} -lt ${_maximum_mmcount} ]]; then
 

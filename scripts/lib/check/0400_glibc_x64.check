@@ -76,7 +76,8 @@ function check_0400_glibc_x64 {
         local normalized_goodversion
         local normalized_fullversion
 
-        local -r _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" glibc)
+        local _fullversion
+        _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" glibc)
 
         #normalize good version
         LIB_FUNC_NORMALIZE_RPM "${_goodversion}"

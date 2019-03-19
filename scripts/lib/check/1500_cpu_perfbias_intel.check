@@ -73,7 +73,8 @@ function check_1500_cpu_perfbias_intel {
             perf_bias_output=$(/usr/bin/cpupower info 2>/dev/null | grep perf-bias)
             perf_bias_output=${perf_bias_output:=-1}	#if null set to -1
 
-            local -ir perf_bias=$(LIB_FUNC_TRIM_LEFT "${perf_bias_output/perf-bias:}")
+            local -i perf_bias
+            perf_bias=$(LIB_FUNC_TRIM_LEFT "${perf_bias_output/perf-bias:}")
 
             if [[ ${perf_bias} -eq 0 ]]; then
 
