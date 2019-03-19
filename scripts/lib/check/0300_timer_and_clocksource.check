@@ -7,7 +7,7 @@ function check_0300_timer_and_clocksource {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    #local -r _sapnote='#'		#TSC and OS clocksoure
+    local -r sapnote='#2753418'		# Performance Degradation Due to Timer Fallback
 
     local reco_clocksource='tsc'
     local -r reco_clocksource_power='timebase'
@@ -24,31 +24,31 @@ function check_0300_timer_and_clocksource {
         LIB_FUNC_IS_VIRT_MICROSOFT && reco_clocksource="${reco_clocksource_mshyperv}"
         readonly reco_clocksource
 
-    # CHECK - Intel TSC
+        # CHECK - Intel TSC
 
-        local -r IFS=$'\n'
-        local -ar tsc_flags=($( (grep -e '^flags' /proc/cpuinfo | uniq | tr ' ' '\n' | grep tsc) ) )
+        local -a tsc_flags
 
-        local tsc_flag
-        local -i tsc_flag_tsc
+        # read tsc flags into array (mapfile = bash4+)
+        if [[ ${BASH_VERSINFO[0]:-} -ge 4 ]] ; then
+            mapfile -t tsc_flags < <(grep -e '^flags' /proc/cpuinfo | uniq | tr ' ' '\n' | grep tsc)
+        else
+            while IFS=$'\n' read -r line; do tsc_flags+=("$line"); done < <(grep -e '^flags' /proc/cpuinfo | uniq | tr ' ' '\n' | grep tsc)
+        fi
+
         local -i tsc_flag_constant
         local -i tsc_flag_nonstop
+        local -i tsc_flag_rdtscp
 
         for tsc_flag in "${tsc_flags[@]}"; do
 
             case ${tsc_flag} in
 
-                'tsc')          tsc_flag_tsc=0 ;;
-                'constant_tsc') tsc_flag_constant=0 ;;
-                'nonstop_tsc')  tsc_flag_nonstop=0 ;;
+                'constant_tsc') tsc_flag_constant=0 ;;      # HANA1 and HANA2
+                'nonstop_tsc')  tsc_flag_nonstop=0 ;;       # HANA1 and HANA2
+                'rdtscp')       tsc_flag_rdtscp=0 ;;        # HANA2 >= SP04
 
             esac
         done
-
-        if [[ ! ${tsc_flag_tsc:-} ]] ; then
-            logCheckError 'Time Stamp Counter flag <tsc> NOT detected'
-            _retval=2
-        fi
 
         if [[ ! ${tsc_flag_constant:-} ]] ; then
             logCheckError 'Time Stamp Counter flag <tsc_constant> NOT detected'
@@ -60,13 +60,27 @@ function check_0300_timer_and_clocksource {
             _retval=2
         fi
 
+        if [[ ! ${tsc_flag_rdtscp:-} ]] ; then
+            logCheckWarning 'Time Stamp Counter flag <rdtscp> NOT detected - required for HANA2 SP4+'
+            [[ ${_retval} -eq 99 ]] && _retval=1
+        fi
+
+
+
         if [[ ${_retval} -eq 99 ]]; then
 
-            logCheckOk "All Time Stamp Counter flags detected - fast TSC timer active"
+            logCheckOk "All Time Stamp Counter flags detected - fast TSC timer active (SAP Note ${sapnote:-})"
             _retval=0
+
+        elif [[ ${_retval} -eq 1 ]]; then
+
+            logCheckWarning "RDTSCP NOT detected - fallback to slower system clocksource for HANA2 SP4+ (SAP Note ${sapnote:-})"
+            logCheckWarning 'Check indexserver trace files for <Fallback to system call for HR timer> messages'
+
         else
-            logCheckError "NOT all Time Stamp Counter flags detected - fallback to slower system clocksource"
-            logCheckError "Check indexserver trace files for <Fallback to system call for HR timer> messages"
+
+            logCheckError "NOT all Time Stamp Counter flags detected - fallback to slower system clocksource (SAP Note ${sapnote:-})"
+            logCheckError 'Check indexserver trace files for <Fallback to system call for HR timer> messages'
         fi
     fi
 
@@ -81,7 +95,7 @@ function check_0300_timer_and_clocksource {
             #fallback
             if [[ "${curr_clocksource}" != "${reco_clocksource}" ]]; then
 
-                logCheckError "Fallback OS clocksource is NOT using fastest timer - (is: ${curr_clocksource}, should be: ${reco_clocksource})"
+                logCheckError "Fallback OS clocksource is NOT using fastest timer (is: ${curr_clocksource}, should be: ${reco_clocksource})"
 
             else
 
@@ -94,12 +108,12 @@ function check_0300_timer_and_clocksource {
             #non INTEL
             if [[ "${curr_clocksource}" != "${reco_clocksource}" ]]; then
 
-                logCheckError "OS clocksource is NOT using fast timer - (is: ${curr_clocksource}, should be: ${reco_clocksource})"
+                logCheckError "OS clocksource is NOT using fast timer (SAP Note ${sapnote:-}) (is: ${curr_clocksource}, should be: ${reco_clocksource})"
                 _retval=2
 
             else
 
-                logCheckOk "OS clocksource is using fast timer (is: ${curr_clocksource})"
+                logCheckOk "OS clocksource is using fast timer (SAP Note ${sapnote:-}) (is: ${curr_clocksource})"
                 _retval=0
 
             fi
