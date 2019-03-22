@@ -18,11 +18,17 @@ function check_0010_os_kernel_sles {
     local -ar sles124=('4.12.14-94.38.1' '#2205917')
     local -ar sles121power=('3.12.74-60.64.57.1' '#2205917')
     local -ar sles122power=('4.4.120-92.70.1' '#2205917')
-    local -ar sles123power=('4.4.120-94.17.1' '#2205917')
+    local -ar sles123power=('4.4.162-94.72.1' '#1943937') #LandscapeTest_2018_11_15.py
     local -ar sles124power=('4.12.14-94.38.1' '#2205917')
     local -ar sles150=('4.12.14-23.1' '#2684254')
-    local -ar sles150power=('4.12.14-23.1' '#2684254')
+    local -ar sles150power=('4.12.14-25.1' '#1943937') #LandscapeTest_2018_11_15.py
     # MODIFICATION SECTION<<
+
+    #2339544 - NFSv4 bug in SUSE kernel 3.0.101-0.47.79.1 (BUG: Bad page map in process)
+    #2240716 - SAP HANA DB: Recommended OS settings for SLES 11 / SLES for SAP Applications 11 SP4
+    #2205917 - SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
+    #1943937 - Hardware Configuration Check Tool - Central Note
+    #2684254 - SAP HANA DB: Recommended OS settings for SLES 15 / SLES for SAP Applications 15
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_SLES; then
