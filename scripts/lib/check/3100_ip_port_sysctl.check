@@ -1,0 +1,57 @@
+#!/bin/bash
+
+function check_3100_ip_port_sysctl {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2382421'
+    # MODIFICATION SECTION<<
+
+    #SAP Note 2382421 - Optimizing the Network Configuration on HANA- and OS-Level
+
+    # PRECONDITIONS
+
+    # CHECK
+    if ! grep 'net.ipv4.ip_local_port_range' -q -r /etc/sysctl* --include "*.conf" ; then
+
+        logCheckOk 'sysctl parameter net.ipv4.ip_local_port_range set as recommended'
+
+    else
+
+        logCheckWarning 'sysctl parameter net.ipv4.ip_local_port_range set within sysctl.conf'
+        _retval=1
+
+    fi
+
+
+    if ! grep 'net.ipv4.ip_local_reserved_ports' -q -r /etc/sysctl* --include "*.conf" ; then
+
+        logCheckOk 'sysctl parameter net.ipv4.ip_local_reserved_ports set as recommended'
+
+    else
+
+        logCheckWarning 'sysctl parameter net.ipv4.ip_local_reserved_ports set within sysctl.conf'
+        _retval=1
+
+    fi
+
+
+
+    if [[ ${_retval} -eq 99 ]]; then
+
+        logCheckOk "sysctl parameters net.ipv4.ip_local_* set as recommended and should be handled by SAP Host Agent (SAP Note ${sapnote:-})"
+        _retval=0
+
+    else
+
+        logCheckWarning "sysctl parameter net.ipv4.ip_local_* NOT set as recommended and therefore NOT handled by SAP Host Agent (SAP Note ${sapnote:-})"
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}

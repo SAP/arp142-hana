@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function check_3100_ip_port_range_width {
+function check_3105_ip_port_range_width {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
