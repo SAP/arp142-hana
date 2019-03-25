@@ -17,7 +17,7 @@ function check_3100_ip_port_sysctl {
     # CHECK
     if ! grep 'net.ipv4.ip_local_port_range' -q -r /etc/sysctl* --include "*.conf" ; then
 
-        logCheckOk 'sysctl parameter net.ipv4.ip_local_port_range set as recommended'
+        logCheckOk 'sysctl parameter net.ipv4.ip_local_port_range not configured'
 
     else
 
@@ -29,7 +29,7 @@ function check_3100_ip_port_sysctl {
 
     if ! grep 'net.ipv4.ip_local_reserved_ports' -q -r /etc/sysctl* --include "*.conf" ; then
 
-        logCheckOk 'sysctl parameter net.ipv4.ip_local_reserved_ports set as recommended'
+        logCheckOk 'sysctl parameter net.ipv4.ip_local_reserved_ports not configured'
 
     else
 

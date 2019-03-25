@@ -1,0 +1,69 @@
+#!/bin/bash
+
+function check_3120_ip_port_hostagent {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#401162'
+    # MODIFICATION SECTION<<
+
+    #SAP Note 401162 - Linux: Avoiding TCP/IP port conflicts and start problems
+
+    # PRECONDITIONS
+    if [[ ! -f '/usr/sap/hostctrl/exe/host_profile' ]]; then
+
+        logCheckSkipped "SAP Host Agent configuration file not found (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+        # CHECK
+        local product_list
+        local instance_list
+        product_list=$(grep -E 'reserved_port/product_list' '/usr/sap/hostctrl/exe/host_profile')
+        instance_list=$(grep -E 'reserved_port/instance_list' '/usr/sap/hostctrl/exe/host_profile')
+
+        if [[ -n ${product_list:-} ]] ; then
+
+            product_list=$(LIB_FUNC_TRIM_LEFT "${product_list/*=}")
+            logCheckOk "SHA parameter reserved_port/product_list set (is: ${product_list})"
+
+        else
+
+            logCheckWarning 'SHA parameter reserved_port/product_list NOT set'
+            _retval=1
+
+        fi
+
+
+        if [[ -n ${instance_list:-} ]] ; then
+
+            instance_list=$(LIB_FUNC_TRIM_LEFT "${instance_list/*=}")
+            logCheckOk "SHA parameter reserved_port/instance_list set (is: ${instance_list})"
+
+        else
+
+            logCheckWarning 'SHA parameter reserved_port/instance_list NOT set'
+            _retval=1
+
+        fi
+
+    fi
+
+    if [[ ${_retval} -eq 99 ]]; then
+
+        logCheckOk "SAP Host Agent parameter product_list/instance_list set as recommended (SAP Note ${sapnote:-})"
+        _retval=0
+
+    else
+
+        logCheckWarning "SAP Host Agent product_list/instance_list NOT set as recommended - too many reserved ip ports (SAP Note ${sapnote:-})"
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
