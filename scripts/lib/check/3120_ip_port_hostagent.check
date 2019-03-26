@@ -18,8 +18,13 @@ function check_3120_ip_port_hostagent {
         logCheckSkipped "SAP Host Agent configuration file not found (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
         _retval=3
 
+    elif grep -E 'reserved_port/enable.*=.*false' -q '/usr/sap/hostctrl/exe/host_profile'; then
+
+        logCheckSkipped "SAP Host Agent ip port reservation disabled (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+        _retval=3
+
     else
-        # CHECK
+    # CHECK
         local product_list
         local instance_list
         product_list=$(grep -E 'reserved_port/product_list' '/usr/sap/hostctrl/exe/host_profile')
@@ -37,7 +42,6 @@ function check_3120_ip_port_hostagent {
 
         fi
 
-
         if [[ -n ${instance_list:-} ]] ; then
 
             instance_list=$(LIB_FUNC_TRIM_LEFT "${instance_list/*=}")
@@ -50,16 +54,16 @@ function check_3120_ip_port_hostagent {
 
         fi
 
-    fi
+        if [[ ${_retval} -eq 99 ]]; then
 
-    if [[ ${_retval} -eq 99 ]]; then
+            logCheckOk "SAP Host Agent parameter product_list/instance_list set as recommended (SAP Note ${sapnote:-})"
+            _retval=0
 
-        logCheckOk "SAP Host Agent parameter product_list/instance_list set as recommended (SAP Note ${sapnote:-})"
-        _retval=0
+        else
 
-    else
+            logCheckWarning "SAP Host Agent product_list/instance_list NOT set as recommended - too many reserved ip ports (SAP Note ${sapnote:-})"
 
-        logCheckWarning "SAP Host Agent product_list/instance_list NOT set as recommended - too many reserved ip ports (SAP Note ${sapnote:-})"
+        fi
 
     fi
 
