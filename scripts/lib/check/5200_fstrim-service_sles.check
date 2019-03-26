@@ -15,6 +15,7 @@ function check_5200_fstrim-service_sles {
                             '4.4.121-92.85.1' \
                             '4.4.121-92.92.1' \
     )
+    local -r _fixedkernel='4.4.121-92.101'
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS
@@ -34,32 +35,51 @@ function check_5200_fstrim-service_sles {
 
         esac
 
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
         local normalized_kernelversion
         local normalized_goodversion
 
         LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
         normalized_kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
 
-        for _goodversion in ${_ptfversions[*]}; do
+        LIB_FUNC_NORMALIZE_KERNEL "${_fixedkernel}"
+        normalized_goodversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
 
-            LIB_FUNC_NORMALIZE_KERNEL "${_goodversion}"
-            normalized_goodversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
+        LIB_FUNC_COMPARE_VERSIONS "${normalized_kernelversion}" "${normalized_goodversion}"
+        if [[ $? -lt 2 ]]; then
 
-            #only exact PTF is accepted, higher kernel versions don't include fix
-            #4.4.120-92.70.1.15108.1.TEST.1086194-default
-            #4.4.120-92.70.1
-            if LIB_FUNC_STRINGCONTAIN "${normalized_kernelversion}" "${normalized_goodversion}"; then
-                logCheckOk "Linux kernel PTF version with fstrim fix running. (SAP Note ${sapnote:-}) (is: ${OS_LEVEL})"
-                _retval=0
-                break
-            fi
+            logCheckOk "Linux kernel with fstrim fix running. (SAP Note ${sapnote:-})"
+            _retval=0
 
-        done
+        else
 
+            for _goodversion in ${_ptfversions[*]}; do
+
+                LIB_FUNC_NORMALIZE_KERNEL "${_goodversion}"
+                normalized_goodversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
+
+                #only exact PTF is accepted, higher kernel versions don't include fix
+                #4.4.120-92.70.1.15108.1.TEST.1086194-default
+                #4.4.120-92.70.1
+                if LIB_FUNC_STRINGCONTAIN "${normalized_kernelversion}" "${normalized_goodversion}"; then
+                    logCheckWarning "Standard Linux kernel with fstrim fix available (>=: ${_fixedkernel})"
+                    logCheckOk "Linux kernel PTF version with fstrim fix running (SAP Note ${sapnote:-})"
+                    _retval=0
+                    break
+                fi
+
+            done
+        fi
     fi
 
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
+
+        logCheckWarning "Linux kernel with fstrim bug running. Fixed kernel available (Fix>=: ${_fixedkernel})"
 
         if systemctl is-active "fstrim.timer" --quiet; then
 
