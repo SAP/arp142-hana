@@ -197,12 +197,12 @@ function generate_checklist {
         checkfileshort=${checkfile##*/}
 
         if ! safetycheck=$(LIB_FUNC_CHECK_CHECK_SECURITY "$checkfile"); then
-            logCheckSkipped "Skipping check ${checkfileshort}. Reason: ${safetycheck}"
+            logWarn "Skipping check ${checkfileshort}. Reason: ${safetycheck}"
             continue
         fi
 
         if ! [[ -r "${checkfile}" && -w "${checkfile}" ]]; then
-            logCheckSkipped "Skipping check ${checkfileshort},
+            logWarn "Skipping check ${checkfileshort},
                                         could not read check file ${checkfile}"
             continue
         else
@@ -230,7 +230,7 @@ function run_checklist {
 
             # shellcheck source=/dev/null
             if ! source "${checkfile}"; then
-                logCheckSkipped "Skipping check ${checkfileshort},
+                logWarn "Skipping check ${checkfileshort},
                                         could not load check file ${checkfile}"
                 return 3
             else
@@ -337,6 +337,11 @@ function main {
 
     generate_checklist
     run_checklist
+
+    if [[ ${#CHECKLIST[@]} -eq 0 ]] ; then
+        logError "## NOTHING to EXECUTE - revise check/checkset parameter !!!"
+        exit 1
+    fi
 
     printf '\n'
     logNotify "## ${_line}"
