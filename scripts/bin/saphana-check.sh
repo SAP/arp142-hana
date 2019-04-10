@@ -1,5 +1,5 @@
 #!/bin/bash
-umask 022
+umask 0027
 set -u # treat unset variables as an error
 
 #------------------------------------------------------------------
