@@ -4,6 +4,7 @@
 0200_ulimit_package_sles
 0220_cgroup_pids_max_sles
 0300_timer_and_clocksource
+0350_timesync
 0410_glibc_ibmpower
 0440_sapconf_sles
 0600_systemd_version

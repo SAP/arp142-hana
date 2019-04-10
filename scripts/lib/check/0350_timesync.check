@@ -1,0 +1,91 @@
+#!/bin/bash
+
+function check_0350_timesync {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote_sles='#1944799'
+    local -r sapnote_rhel='#2009879'
+    # MODIFICATION SECTION<<
+
+    #1944799 - SAP HANA Guidelines for SLES Operating System Installation
+    #2009879 - SAP HANA Guidelines for Red Hat Enterprise Linux (RHEL) Operating System
+
+    local sapnote
+    local cmdline
+
+    # PRECONDITION
+    if  LIB_FUNC_IS_SLES ;	then
+
+        sapnote="${sapnote_sles}"
+
+        case "${OS_VERSION}" in
+
+            11.*)	cmdline='systemd' ;;
+            *)	    cmdline='systemctl' ;;
+
+        esac
+
+    elif LIB_FUNC_IS_RHEL ;	then
+
+        sapnote="${sapnote_rhel}"
+
+        case "${OS_VERSION}" in
+
+            6.*)	cmdline='systemd' ;;
+            *)	    cmdline='systemctl' ;;
+
+        esac
+
+    else
+
+        logCheckError "Linux distribution NOT supported (SAP Note #2235581) (is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
+        _retval=2
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        if [[ ${cmdline} == 'systemd' ]]; then
+
+            cmdline='service ntpd status &>/dev/null'
+
+            if eval "${cmdline}"; then
+                _retval=0
+            fi
+
+        elif [[ ${cmdline} == 'systemctl' ]]; then
+
+            cmdline_ntp='systemctl is-active "ntpd" --quiet'
+            cmdline_chrony='systemctl is-active "chronyd" --quiet'
+
+            if eval "${cmdline_ntp}"; then
+                _retval=0
+
+            elif eval "${cmdline_chrony}"; then
+                _retval=0
+
+            fi
+        fi
+
+    fi
+
+    #time sync active?
+    if [[ ${_retval} -eq 0 ]]; then
+
+        logCheckOk "Network time synchronization is active (SAP Note ${sapnote:-})"
+
+    else
+
+        logCheckError "Network time synchronization MUST be active (SAP Note ${sapnote:-})"
+        _retval=2
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}

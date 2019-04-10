@@ -3,6 +3,7 @@
 0200_ulimit_package_sles
 0220_cgroup_pids_max_sles
 0300_timer_and_clocksource
+0350_timesync
 0400_glibc_x64
 0440_sapconf_sles
 0600_systemd_version
