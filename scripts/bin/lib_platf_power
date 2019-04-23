@@ -114,6 +114,14 @@ function __lib_func_get_lpar_details {
 
         case ${line} in
 
+            'system_type'*)
+                            #<Model: IBM,9119-MHE>
+                            if [[ -z ${LIB_PLATF_NAME:-} ]]; then
+                                LIB_PLATF_NAME=$(LIB_FUNC_TRIM_LEFT "${line/system_type=}")
+                                readonly LIB_PLATF_NAME
+                            fi
+            ;;
+
             'capped'*)
                             if [[ -z ${LIB_PLATF_POWER_CPUCAP:-} ]]; then
                                 _temp=$(LIB_FUNC_TRIM_LEFT "${line/capped=}")
@@ -235,32 +243,43 @@ function __get_platform_power_cpu_details {
         ;;
 
         'Model:'*)			#<Model: IBM,9119-MHE>
-                            LIB_PLATF_NAME=$(LIB_FUNC_TRIM_LEFT "${line/Model:}")
-                            readonly LIB_PLATF_NAME
+                            if [[ -z ${LIB_PLATF_NAME:-} ]]; then
+                                LIB_PLATF_NAME=$(LIB_FUNC_TRIM_LEFT "${line/Model:}")
+                                readonly LIB_PLATF_NAME
+                            fi
 
-                            LIB_PLATF_CPU_VENDOR='IBM'
-                            readonly LIB_PLATF_CPU_VENDOR
-
-                            LIB_PLATF_VENDOR='IBM'
-                            readonly LIB_PLATF_VENDOR
-                            break
 
         ;;
 
+        'Model name:'*)		#Model name: POWER8 (architected), altivec supported
+                            LIB_PLATF_CPU=$(LIB_FUNC_TRIM_LEFT "${line/Model name:}")
+                            readonly LIB_PLATF_CPU
+        ;;
+
+        "Hypervisor vendor:"*) break ;;
         #Virtualization information will be gathered on more reliable way
-        # "Hypervisor vendor:"*)
-        # "Virtualization type:"*)
 
         esac
 
     done
 
+    # information not provided by lscpu 'Model name'
     if [[ -z ${LIB_PLATF_CPU:-} ]]; then
         LIB_PLATF_CPU=$(grep  'cpu' /proc/cpuinfo | sort -u)
         LIB_PLATF_CPU=$(LIB_FUNC_TRIM_LEFT "${LIB_PLATF_CPU/cpu[[:space:]]*:}")
         readonly LIB_PLATF_CPU
     fi
 
+    # have to be revised in case of any NON-IBM Power platform vendor
+    if [[ -z ${LIB_PLATF_CPU_VENDOR:-} ]]; then
+        LIB_PLATF_CPU_VENDOR='IBM'
+        readonly LIB_PLATF_CPU_VENDOR
+    fi
+
+    if [[ -z ${LIB_PLATF_VENDOR:-} ]]; then
+        LIB_PLATF_VENDOR='IBM'
+        readonly LIB_PLATF_VENDOR
+    fi
 }
 
 
@@ -271,9 +290,9 @@ function _lib_platf_power_main {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
+    __lib_func_get_lpar_details
     __get_platform_power_cpu_details
     __lib_func_get_hypervisor_details
-    __lib_func_get_lpar_details
 
     #readonly <AnyVariable>
 }
