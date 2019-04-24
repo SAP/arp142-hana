@@ -248,12 +248,14 @@ function __get_platform_power_cpu_details {
                                 readonly LIB_PLATF_NAME
                             fi
 
-
         ;;
 
-        'Model name:'*)		#Model name: POWER8 (architected), altivec supported
-                            LIB_PLATF_CPU=$(LIB_FUNC_TRIM_LEFT "${line/Model name:}")
-                            readonly LIB_PLATF_CPU
+        'Model name:'*)
+                            #Model name: POWER8 (architected), altivec supported
+                            if [[ -z ${LIB_PLATF_CPU:-} ]]; then
+                                LIB_PLATF_CPU=$(LIB_FUNC_TRIM_LEFT "${line/Model name:}")
+                                readonly LIB_PLATF_CPU
+                            fi
         ;;
 
         "Hypervisor vendor:"*) break ;;
