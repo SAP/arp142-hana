@@ -14,8 +14,8 @@ umask 0027
 # return if library is already loaded
 [[ -n "${LIB_LINUX_RELEASE:-}" ]] && return 0
 
-LIB_LINUX_RELEASE='v1.3-b59-g4ee5610a'
-#LIB_RELEASE_DATE='2018-Jan-28'
+LIB_LINUX_RELEASE='2.0-1.b17_g7758cad8'
+#LIB_RELEASE_DATE='2019-APR-25'
 
 
 ##################################################
@@ -120,7 +120,7 @@ function __linux_distrib_os_release {
 
         case ${line} in
 
-            'NAME='*)
+            'ID='*)
                     [[ "${line}" =~ \"(.*)\" ]] && _osname=${BASH_REMATCH[1]}
             ;;
 
@@ -129,7 +129,10 @@ function __linux_distrib_os_release {
                     [[ "${line}" =~ ([0-9]+)(\.([0-9]+))* ]] && _osvers=${BASH_REMATCH[0]}
 
                     [[ -n "${_osvers##*.*}" ]] && _osvers="${_osvers}.0"  #15 --> 15.0
-            break
+            ;;
+
+            'CPE_NAME='*)
+                break
             ;;
 
         esac
@@ -139,15 +142,19 @@ function __linux_distrib_os_release {
     _os_version="${_osvers:-}"
 
     case ${_osname:-} in
-        'SLES'*)
+        'sles')
                 _os_name="${lib_release_sles}"
                 ;;
 
-        'Red Hat Enterprise Linux Server')
+        'sles_sap')
+                _os_name="${lib_release_sles}"
+                ;;
+
+        'rhel')
                 _os_name="${lib_release_rhel}"
                 ;;
 
-        'Oracle Linux Server')
+        'ol')
                 _os_name="${lib_release_ols}"
                 ;;
 
