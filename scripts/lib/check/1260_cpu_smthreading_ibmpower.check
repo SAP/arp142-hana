@@ -1,0 +1,80 @@
+#!/bin/bash
+
+function check_1260_cpu_smthreading_ibmpower {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2055470,2188482'
+    # MODIFICATION SECTION<<
+
+    #2055470 - HANA on POWER Planning and Installation Specifics - Central Note
+    #2188482 - SAP HANA on IBM Power Systems: Allowed Hardware
+
+    local -i exp_threadspercore=8
+
+    local -i highCores_Power8=96
+    local -i highCores_Power9=48
+
+    local -i HighCores_threadspercore=4
+
+    local -i highCoresTotal
+    highCoresTotal=${highCores_Power9}
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_IBMPOWER ; then
+
+        logCheckSkipped 'Not running on IBM Power. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif [[ -z ${LIB_PLATF_CPU_SOCKETS:-} ]]; then
+
+        logCheckError "#Sockets NOT known. (SAP Note ${sapnote:-})"
+        _retval=2
+
+    elif [[ -z ${LIB_PLATF_CPU_CORESPERSOCKET:-} ]]; then
+
+        logCheckError "#Cores per Socket NOT known. (SAP Note ${sapnote:-})"
+        _retval=2
+
+    elif [[ -z ${LIB_PLATF_CPU_THREADSPERCORE:-} ]]; then
+
+        logCheckError "#Threads per Core NOT known. (SAP Note ${sapnote:-})"
+        _retval=2
+
+    elif LIB_FUNC_STRINGCONTAIN "${LIB_PLATF_CPU}" 'Power8'; then
+
+        highCoresTotal=${highCores_Power8}
+
+    fi
+
+    #CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local -i cores_total
+        cores_total=$((LIB_PLATF_CPU_SOCKETS*LIB_PLATF_CPU_CORESPERSOCKET))
+
+        [[ ${cores_total} -ge ${highCoresTotal} ]] && exp_threadspercore=${HighCores_threadspercore}
+
+        logCheckInfo "${LIB_PLATF_CPU:0:7} - Sockets:<${LIB_PLATF_CPU_SOCKETS}>, CoresPerSocket:<${LIB_PLATF_CPU_CORESPERSOCKET}>, TotalCores:<${cores_total}>"
+
+        if [[ ${LIB_PLATF_CPU_THREADSPERCORE} -eq ${exp_threadspercore} ]]; then
+
+            logCheckOk "Simultaneous Multithreading mode set as recommended.(SAP Note ${sapnote:-}) (is: ${LIB_PLATF_CPU_THREADSPERCORE})"
+            _retval=0
+
+        else
+
+            logCheckWarning "Only valid for OLTP & Mixed scenarios - Simultaneous Multithreading mode NOT set as recommended.(SAP Note ${sapnote:-}) (is: SMT-${LIB_PLATF_CPU_THREADSPERCORE}, should be: <= SMT-${exp_threadspercore})"
+            _retval=1
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}

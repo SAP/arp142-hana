@@ -12,6 +12,7 @@
 0700_sysstat
 0800_sap_host_agent
 1200_shared_processor_mode_ibmpower
+1260_cpu_smthreading_ibmpower
 1310_cpu_powersavings_ibmpower
 1360_cpu_cpufolding_ibmpower
 2000_transparent_hugepages
