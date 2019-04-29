@@ -146,10 +146,15 @@ function generate_checkfilelist_checks {
     local check
 
     for check in ${checklist}; do
-        if [[ -f "${PROGRAM_LIBDIR}/check/${check}.check" ]]; then
 
-            CHECKFILELIST+=("${PROGRAM_LIBDIR}/check/${check}.check")
-        fi
+        #allows globbing - specify full check name or just check number
+        for file in "${PROGRAM_LIBDIR}"/check/"${check}"*.check; do
+
+            if [[ -f "${file}" ]];  then
+                CHECKFILELIST+=("${file}")
+            fi
+
+        done
     done
 }
 
