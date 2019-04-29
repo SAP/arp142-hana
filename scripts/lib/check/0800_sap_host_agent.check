@@ -12,7 +12,7 @@ function check_0800_sap_host_agent {
     local -r sapnoteFIX='#2498706'
     local -r sapnoteLATEST='#2240028'
 
-    local -r hostagent_version_exp='721.41'
+    local -r hostagent_version_exp='721.42'
     local -ar hostagent_buggy=( '721.26' '721.28' )
 
     # MODIFICATION SECTION<<
