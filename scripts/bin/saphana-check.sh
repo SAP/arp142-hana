@@ -147,8 +147,11 @@ function generate_checkfilelist_checks {
 
     for check in ${checklist}; do
 
-        #allows globbing - specify full check name or just check number
-        for file in "${PROGRAM_LIBDIR}"/check/"${check}"*.check; do
+        [[ ${#check} -eq 4 ]] && check+='*'
+
+        #specify full check name or only complete check number or part of it with * appended
+        #${check} must not be quoted !!!
+        for file in "${PROGRAM_LIBDIR}"/check/${check}.check; do
 
             if [[ -f "${file}" ]];  then
                 CHECKFILELIST+=("${file}")
