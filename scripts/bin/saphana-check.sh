@@ -324,9 +324,9 @@ function main {
 
     logNotify "## CPU:            ${LIB_PLATF_CPU:-}"
     logNotify '##'
-    printf -v _line_formated '%-17s - %-11s %-20s' "${LIB_PLATF_CPU_SOCKETS:-}" 'Cores:' "${LIB_PLATF_CPU_CORESPERSOCKET:-}"
+    printf -v _line_formated '%-17s - %-11s %-20s' "${LIB_PLATF_CPU_SOCKETS:-}" 'CoresPerSocket:' "${LIB_PLATF_CPU_CORESPERSOCKET:-}"
     logNotify "## Sockets:        ${_line_formated}"
-    printf -v _line_formated '%-17s - %-11s %-20s' "${LIB_PLATF_CPU_NUMANODES:-}" 'Threads:' "${LIB_PLATF_CPU_THREADSPERCORE:-}"
+    printf -v _line_formated '%-17s - %-11s %-20s' "${LIB_PLATF_CPU_NUMANODES:-}" 'ThreadsPerCore:' "${LIB_PLATF_CPU_THREADSPERCORE:-}"
     logNotify "## Numa nodes:     ${_line_formated}"
     logNotify '##'
 
