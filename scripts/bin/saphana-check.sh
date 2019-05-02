@@ -49,8 +49,8 @@ readonly PROGRAM_BINDIR
 #shellcheck source=./shflags
 source "${PROGRAM_BINDIR}/shflags" || die 'unable to load shflags library'
 
-DEFINE_string	'checks'	''		'<\"check1 check2 ...\">  A space-separated list of checks that will be performed.'	'c'
-DEFINE_string	'checkset'	''		'<Checkset>  A textfile containing the various checks to perform.'	'C'
+DEFINE_string	'checks'	''		'<\"check1,check2,...\"> a comma-separated list of checks that will be performed.'	'c'
+DEFINE_string	'checkset'	''		'<Checkset> a textfile stored within lib/checkset containing the various checks to perform.'	'C'
 DEFINE_integer	'loglevel'	4		'notify/silent=0 (always), error=1, warn=2, info=3, debug=5, trace=6'	'l'
 DEFINE_boolean	'verbose'	false	'enable chk_verbose mode (set loglevel=4)' 'v'
 DEFINE_boolean	'debug'		false	'enable debug mode (set loglevel=5)' 'd'
@@ -58,7 +58,22 @@ DEFINE_boolean	'trace'		false	'enable trace mode (set loglevel=6)' 't'
 DEFINE_boolean	'color'		false	'enable color mode'
 DEFINE_boolean  'timestamp' false   'show timestamp (default for debug/trace)'
 # shellcheck disable=SC2034
-FLAGS_HELP="USAGE: $0 [flags]"
+IFS='' read -r -d '' FLAGS_HELP <<< "
+USAGE: ${PROGRAM_NAME} [flags]
+
+examples:
+
+    ${PROGRAM_NAME}                         (all checks)
+    ${PROGRAM_NAME} -c 0800_sap_host_agent  (single check - fully specified checkname)
+    ${PROGRAM_NAME} -c 0800                 (single check - fully specified checkid)
+    ${PROGRAM_NAME} -c 08*                  (multiple checks - beginning with 08)
+    ${PROGRAM_NAME} -c 0*                   (multiple checks - all checks from category 0)
+    ${PROGRAM_NAME} -c 0010,0020            (multiple checks - ids seperated by comma)
+    ${PROGRAM_NAME} -c 0010,5*              (combination of above examples)
+
+
+    ${PROGRAM_NAME} -C RHELonPoweronly      (only checks relevant for RHEL on Power )"
+
 
 PROGRAM_LIBDIR="$(cd "${PROGRAM_BINDIR}/../lib" && pwd)"
 readonly PROGRAM_LIBDIR
@@ -145,7 +160,7 @@ function generate_checkfilelist_checks {
 
     local check
 
-    for check in ${checklist}; do
+    for check in ${checklist//,/ }; do
 
         [[ ${#check} -eq 4 ]] && check+='*'
 
