@@ -96,9 +96,10 @@ before_deploy:
 deploy:
   provider: releases
   prerelease: true
-  body: Travis build on [${TRAVIS_BRANCH}](https://travis-ci.mo.sap.corp/SAP-COE-HPTI/saphana-checks/builds/${TRAVIS_BUILD_ID})
+  draft: true
+  body: Travis build on [${TRAVIS_BRANCH}](https://travis-ci.cloud.sap.corp/SAP-COE-HPTI/saphana-checks/builds/${TRAVIS_BUILD_ID})
   api_key:
-    secure: "aQnueMZKDNLrM8J9oLlPItJ+qUMqj1Dm9demLPGwPD0j66jtSUFIV7ioR84FILLqklY0mPDCrfjCN2klYp6NJDGRQuKIQZaNdHQTY1rKUJQyS23MQ03ASf2F0PE3vk4t3fm1XBD2IKjP/4m8BBfx/LV41AXv35CG217I0ryrtluPkU8Mjx8j/bNZZLA9/NeapNcjdMxeV6uTWrmcOYY7dYEuUAXws7UWU4+qY7PzGQQemPJmXpNS8jtlMS0aUVETI/L+Irs8NouoeoMrsfzs876jpc0AH3tG+2q6Foc8EB/ivGC1Amq3pia1asoKQ0CtUOfiDRuPcOAVjnn0+/eAJueOgd3gf6JuG8SWO6HUrpF6eRNE1gk9HP/kKj5CxfR1PqUw08UDok2VMYCS2prFPljaihZ5jCcCzYJN1iDS2ejmI+xf4xFT2opGaH21zEzJlimv8vAlmm0gc3mce3tXawD31cpWariMt5fQdLbM1RnkcJ5OM0am3lyqEUqVmB/rmUwwAXUgFjm6Ng7vnkCW3bPvLptEJ5PUGmbAyl4oAbSUEF0G0JeSrk0VKXIftMmm5TzrRR/8xKLq1jOL00fsFeQIiz6A5sPz2Fs1Wlbb/hBr32HlzZxa83sTWIA/aNfWz0W6B8BlzqC1Fkyp4IGHeM6vVMjXD11vbKb9URG761E="
+    secure: wPg4c35U+PF+qRtPZQ34kXktOGSawRxwzccS/OzMKmf9ihFAlV6NESpZBwvvGq7ujyJFoqpglwpFl6WJOyS3U7+BeSu7GCpQElV+3/Ize1yJCTstLoJOiG5NPdH52oRM/B/I9bWcnbqkj2sKMNQrWTlhpuRWgqZ05Se0QFu7Lm9ZVmfFEhct9ApbNWEHfRRLgruLADgVZwBL5zbOt7dZFLD9i79zpzf9K72mE0SZd44/JHNUca7lknIb7wzVgf9LG7s3PCSVNhrXJZ6t6MEg+Z+RvcljxQ4J3Fpr4Knq6L60di5OTspqZC9O7vtnXhbxGk8GG/GCwtRsLOGDnKkSlxkzAkYrYOKCGv/YUYrrs9RXp0EAGmYJPHmv0m2RGQerjWgzKF3wNzAsOnllEY8or3f+q4AjAiMKCi/KCk+u92hy1PMLr+PSKKJ1FCFId0S6egwa+0TZyNSCMUtmAk9TxQpOm0xayhPs4paGSgeMMJ3mfnDkK4EjXAmFuDwWQKDN7AOZTUjqqaXOXF+zOG/UEtfG9TSBITpQvaZII3zr/iKY9FAmwKkKkjdaymS8Z+pOxpk8x41RSPx2dq+BZZehMwekVLKnHJxXhZQt/cw0vDSSPfF+OAaFck/LIczUv1yDib1pkTb9h6b8trHK8bEw4VpMiYYVkSmKAaDrmvpAljg=
   file_glob: true
   file:
     - "build/saphana-checks-*.tgz*"
@@ -109,18 +110,3 @@ deploy:
     repo: SAP-COE-HPTI/saphana-checks
     all_branches: true
     tags: true
-
-  # provider: releases
-  # prerelease: false
-  # draft: true
-  # body: Travis build on [RELEASE] - https://travis-ci.mo.sap.corp/SAP-COE-HPTI/saphana-checks/builds/${TRAVIS_BUILD_ID}
-  # api_key:
-  #   secure: "aQnueMZKDNLrM8J9oLlPItJ+qUMqj1Dm9demLPGwPD0j66jtSUFIV7ioR84FILLqklY0mPDCrfjCN2klYp6NJDGRQuKIQZaNdHQTY1rKUJQyS23MQ03ASf2F0PE3vk4t3fm1XBD2IKjP/4m8BBfx/LV41AXv35CG217I0ryrtluPkU8Mjx8j/bNZZLA9/NeapNcjdMxeV6uTWrmcOYY7dYEuUAXws7UWU4+qY7PzGQQemPJmXpNS8jtlMS0aUVETI/L+Irs8NouoeoMrsfzs876jpc0AH3tG+2q6Foc8EB/ivGC1Amq3pia1asoKQ0CtUOfiDRuPcOAVjnn0+/eAJueOgd3gf6JuG8SWO6HUrpF6eRNE1gk9HP/kKj5CxfR1PqUw08UDok2VMYCS2prFPljaihZ5jCcCzYJN1iDS2ejmI+xf4xFT2opGaH21zEzJlimv8vAlmm0gc3mce3tXawD31cpWariMt5fQdLbM1RnkcJ5OM0am3lyqEUqVmB/rmUwwAXUgFjm6Ng7vnkCW3bPvLptEJ5PUGmbAyl4oAbSUEF0G0JeSrk0VKXIftMmm5TzrRR/8xKLq1jOL00fsFeQIiz6A5sPz2Fs1Wlbb/hBr32HlzZxa83sTWIA/aNfWz0W6B8BlzqC1Fkyp4IGHeM6vVMjXD11vbKb9URG761E="
-  # file_glob: true
-  # file: "build/saphana-checks-*.tgz*"
-  # skip_cleanup: true
-  # on:
-  #   repo: SAP-COE-HPTI/saphana-checks
-  #   all_branches: true
-  #   tags: true
-  #   condition: $MY_RELEASE = true
