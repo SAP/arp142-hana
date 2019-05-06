@@ -51,16 +51,21 @@ function check_0350_timesync {
 
         if [[ ${cmdline} == 'systemd' ]]; then
 
-            cmdline='service ntpd status &>/dev/null'
+            local cmdline_ntp='service ntp status &>/dev/null'
+            local cmdline_ntpd='service ntpd status &>/dev/null'
 
-            if eval "${cmdline}"; then
+            if eval "${cmdline_ntp}"; then
                 _retval=0
+
+            elif eval "${cmdline_ntpd}"; then
+                _retval=0
+
             fi
 
         elif [[ ${cmdline} == 'systemctl' ]]; then
 
-            cmdline_ntp='systemctl is-active "ntpd" --quiet'
-            cmdline_chrony='systemctl is-active "chronyd" --quiet'
+            local cmdline_ntp='systemctl is-active "ntpd" --quiet'
+            local cmdline_chrony='systemctl is-active "chronyd" --quiet'
 
             if eval "${cmdline_ntp}"; then
                 _retval=0
