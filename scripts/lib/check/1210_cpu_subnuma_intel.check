@@ -39,12 +39,9 @@ function check_1210_cpu_subnuma_intel {
 
         case "${OS_VERSION}" in
 
-                12.*)    sapnote="${sapnote_sles12}" ;;
-
                 15.*)    sapnote="${sapnote_sles15}" ;;
 
-                *)      logCheckWarning 'CHECK does not support SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
-                    ;;
+                *)      sapnote="${sapnote_sles12}" ;;
 
         esac
 
