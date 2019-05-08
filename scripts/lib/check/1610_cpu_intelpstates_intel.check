@@ -7,13 +7,18 @@ function check_1610_cpu_intelpstates_intel {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='n/a'
+    local -r sapnote='#1275776,#2684254'
 
     local -ar _intel_pstate_parameter=(\
                                     'no_turbo'            0 \
                                     'min_perf_pct'      100 \
+                                    'max_perf_pct'      100 \
     )
     # MODIFICATION SECTION<<
+
+    #set by sapconf/saptune
+    #1275776 - Linux: Preparing SLES for SAP environments
+    #2684254 - SAP HANA DB: Recommended OS settings for SLES 15 / SLES for SAP Applications 15
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_INTEL ; then
