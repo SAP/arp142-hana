@@ -1,0 +1,124 @@
+#!/bin/bash
+
+function check_0301_timer_and_clocksource_hyperv {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2753418'
+    local -r sapnote_vdso='#2791572'
+
+    local -r reco_clocksource='hyperv_clocksource_tsc_page'
+    local -r kernel_vdso_hyperv='4.12'
+    # MODIFICATION SECTION<<
+
+    #2791572 - Performance Degradation Because of Missing VDSO Support For HyperV in Azure
+    #2753418 - Performance Degradation Due to Timer Fallback
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_VIRT_MICROSOFT; then
+
+        logCheckSkipped 'Not running on Microsoft Hyper-V. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+        # read Intel TSC
+        local -a tsc_flags
+
+        # read tsc flags into array (mapfile = bash4+)
+        if [[ ${BASH_VERSINFO[0]:-} -ge 4 ]] ; then
+            mapfile -t tsc_flags < <(grep -e '^flags' /proc/cpuinfo | uniq | tr ' ' '\n' | grep tsc)
+        else
+            while IFS=$'\n' read -r line; do tsc_flags+=("$line"); done < <(grep -e '^flags' /proc/cpuinfo | uniq | tr ' ' '\n' | grep tsc)
+        fi
+
+        local -i tsc_flag_constant
+        local -i tsc_flag_nonstop
+        local -i tsc_flag_rdtscp
+
+        for tsc_flag in "${tsc_flags[@]}"; do
+
+            case ${tsc_flag} in
+
+                'constant_tsc') tsc_flag_constant=0 ;;      # HANA1 and HANA2
+                'nonstop_tsc')  tsc_flag_nonstop=0 ;;       # HANA1 and HANA2
+                'rdtscp')       tsc_flag_rdtscp=0 ;;        # HANA2 >= SP04
+
+            esac
+        done
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        if [[ ! ${tsc_flag_constant:-} ]] ; then
+            logCheckError 'Time Stamp Counter flag <tsc_constant> NOT detected'
+            _retval=2
+        fi
+
+        if [[ ! ${tsc_flag_nonstop:-} ]] ; then
+            logCheckError 'Time Stamp Counter flag <tsc_nonstop> NOT detected'
+            _retval=2
+        fi
+
+        if [[ ! ${tsc_flag_rdtscp:-} ]] ; then
+            logCheckWarning 'Time Stamp Counter flag <rdtscp> NOT detected - required for HANA2 SP4+'
+            [[ ${_retval} -eq 99 ]] && _retval=1
+        fi
+
+
+        #evaluate RC
+        if [[ ${_retval} -eq 99 ]]; then
+
+            logCheckOk "All Time Stamp Counter flags detected - fast TSC timer active (SAP Note ${sapnote:-})"
+            _retval=0
+
+        elif [[ ${_retval} -eq 1 ]]; then
+
+            logCheckWarning "RDTSCP NOT detected - fallback to slower system clocksource for HANA2 SP4+ (SAP Note ${sapnote:-})"
+            logCheckWarning 'Check indexserver trace files for <Fallback to system call for HR timer> messages'
+
+        else
+
+            logCheckError "NOT all Time Stamp Counter flags detected - fallback to slower system clocksource (SAP Note ${sapnote:-})"
+            logCheckError 'Check indexserver trace files for <Fallback to system call for HR timer> messages'
+        fi
+    fi
+
+    #FALLBACK
+    if [[ ${_retval} -ne 0 && ${_retval} -ne 3 ]]; then
+
+        #kernel clocksource
+        local curr_clocksource
+        curr_clocksource=$(</sys/devices/system/clocksource/clocksource0/current_clocksource)
+
+        if [[ "${curr_clocksource}" != "${reco_clocksource}" ]]; then
+
+            logCheckError "Fallback OS clocksource is NOT set as recommended (is: ${curr_clocksource}, should be: ${reco_clocksource})"
+            _retval=2
+
+        else
+
+            logCheckInfo "Fallback OS clocksource is set as recommended (is: ${curr_clocksource})"
+
+            #Azure - Hyper-V - VDSO support
+            LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
+            kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
+
+            LIB_FUNC_COMPARE_VERSIONS "${kernelversion}" "${kernel_vdso_hyperv}"
+            if [[ $? -eq 2 ]]; then
+
+                logCheckError "Fallback OS clocksoure has NO vDSO support !!! (SAP Note ${sapnote_vdso:-})"
+                _retval=2
+
+            fi
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}

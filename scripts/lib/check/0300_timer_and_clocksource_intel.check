@@ -1,31 +1,30 @@
 #!/bin/bash
 
-function check_0300_timer_and_clocksource {
+function check_0300_timer_and_clocksource_intel {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#2753418'		# Performance Degradation Due to Timer Fallback
+    local -r sapnote='#2753418'		    #2753418 - Performance Degradation Due to Timer Fallback
 
     local reco_clocksource='tsc'
-    local -r reco_clocksource_power='timebase'
-    local -r reco_clocksource_mshyperv='hyperv_clocksource_tsc_page'
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS
-    if LIB_FUNC_IS_IBMPOWER ; then
-        reco_clocksource="${reco_clocksource_power}"
-        readonly reco_clocksource
+    if ! LIB_FUNC_IS_INTEL ; then
 
-    elif LIB_FUNC_IS_INTEL ; then
+        logCheckSkipped 'Not running on Intel CPU. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
 
-        LIB_FUNC_IS_VIRT_MICROSOFT && reco_clocksource="${reco_clocksource_mshyperv}"
-        readonly reco_clocksource
+    elif LIB_FUNC_IS_VIRT_MICROSOFT; then
 
-        # CHECK - Intel TSC
+        logCheckSkipped 'Running Hyper-V virtualized. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
 
+    else
+        # read Intel TSC
         local -a tsc_flags
 
         # read tsc flags into array (mapfile = bash4+)
@@ -49,6 +48,10 @@ function check_0300_timer_and_clocksource {
 
             esac
         done
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
 
         if [[ ! ${tsc_flag_constant:-} ]] ; then
             logCheckError 'Time Stamp Counter flag <tsc_constant> NOT detected'
@@ -66,7 +69,7 @@ function check_0300_timer_and_clocksource {
         fi
 
 
-
+        #evaluate RC
         if [[ ${_retval} -eq 99 ]]; then
 
             logCheckOk "All Time Stamp Counter flags detected - fast TSC timer active (SAP Note ${sapnote:-})"
@@ -84,42 +87,24 @@ function check_0300_timer_and_clocksource {
         fi
     fi
 
-    #e.g. non INTEL or FALLBACK
-    if [[ ${_retval} -ne 0 ]]; then
+    #FALLBACK
+    if [[ ${_retval} -ne 0 && ${_retval} -ne 3 ]]; then
 
         #kernel clocksource
         local curr_clocksource
         curr_clocksource=$(</sys/devices/system/clocksource/clocksource0/current_clocksource)
 
-        if [[ ${_retval} -eq 2 ]]; then
+        if [[ "${curr_clocksource}" != "${reco_clocksource}" ]]; then
 
-            #fallback
-            if [[ "${curr_clocksource}" != "${reco_clocksource}" ]]; then
-
-                logCheckError "Fallback OS clocksource is NOT using fastest timer (is: ${curr_clocksource}, should be: ${reco_clocksource})"
-
-            else
-
-                logCheckInfo "Fallback OS clocksource is using fastest timer (is: ${curr_clocksource})"
-
-            fi
+            logCheckError "Fallback OS clocksource is NOT set as recommended (is: ${curr_clocksource}, should be: ${reco_clocksource})"
+            _retval=2
 
         else
 
-            #non INTEL
-            if [[ "${curr_clocksource}" != "${reco_clocksource}" ]]; then
-
-                logCheckError "OS clocksource is NOT using fast timer (SAP Note ${sapnote:-}) (is: ${curr_clocksource}, should be: ${reco_clocksource})"
-                _retval=2
-
-            else
-
-                logCheckOk "OS clocksource is using fast timer (SAP Note ${sapnote:-}) (is: ${curr_clocksource})"
-                _retval=0
-
-            fi
+            logCheckInfo "Fallback OS clocksource is set as recommended (is: ${curr_clocksource})"
 
         fi
+
     fi
 
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"

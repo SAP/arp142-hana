@@ -1,0 +1,45 @@
+#!/bin/bash
+
+function check_0310_clocksource_ibmpower {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2753418'		    #2753418 - Performance Degradation Due to Timer Fallback
+
+    local -r reco_clocksource='timebase'
+    # MODIFICATION SECTION<<
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_IBMPOWER ; then
+
+        logCheckSkipped 'Not running on IBM Power. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+    # CHECK
+
+        #kernel clocksource
+        local curr_clocksource
+        curr_clocksource=$(</sys/devices/system/clocksource/clocksource0/current_clocksource)
+
+        if [[ "${curr_clocksource}" != "${reco_clocksource}" ]]; then
+
+            logCheckError "OS clocksource is NOT using fast timer (SAP Note ${sapnote:-}) (is: ${curr_clocksource}, should be: ${reco_clocksource})"
+            _retval=2
+
+        else
+
+            logCheckOk "OS clocksource is using fast timer (SAP Note ${sapnote:-}) (is: ${curr_clocksource})"
+            _retval=0
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
