@@ -83,8 +83,8 @@ function check_1400_cpu_idle_driver_intel {
 
                     'intel_idle')
 
-                                    logCheckInfo "intel_idle CPU idle driver should be used instead (SAP Note ${sapnote:-}) (is: ${_current_driver}, should be: intel_idle)"
-                                    _retval=0;;
+                                    logCheckWarning "CPUidle <intel_idle> driver should be used instead (SAP Note ${sapnote:-}) (is: ${_current_driver}, should be: intel_idle)"
+                                    _retval=1;;
                 esac
 
             ;;
@@ -99,7 +99,7 @@ function check_1400_cpu_idle_driver_intel {
 
                     'acpi_idle')
 
-                                    logCheckError "Wrong CPU idle driver active (SAP Note ${sapnote:-}) (is: ${_current_driver}, should be: acpi_idle)"
+                                    logCheckError "Wrong CPUidle driver active (SAP Note ${sapnote:-}) (is: ${_current_driver}, should be: acpi_idle)"
                                     _retval=2
                 esac
 
@@ -108,13 +108,13 @@ function check_1400_cpu_idle_driver_intel {
             'none')	# no cpuidle driver used because of BIOS settings (disabled c-states)
                     # impacts TurboMode, BIOS cannot be seen by OS, recommendations changes cannot be easily applied
 
-                    logCheckWarning 'CPU idle driver not active - check BIOS settings for disabled c-states'
+                    logCheckWarning 'CPUidle driver not active - check BIOS settings for disabled c-states'
                     logCheckWarning "Disabled c-states impact CPU TurboMode features (SAP Note ${sapnote:-})"
                     _retval=1
             ;;
 
             *)		#unknown driver
-                    logCheckError "CPU idle driver unknown (SAP Note ${sapnote:-}) (is: ${_current_driver})"
+                    logCheckError "CPUidle driver unknown (SAP Note ${sapnote:-}) (is: ${_current_driver})"
                     _retval=2
             ;;
 
