@@ -32,4 +32,5 @@
 3105_ip_port_range_width
 3110_ip_port_range_parity
 3120_ip_port_hostagent
+4500_ibm-gpfs_version_intel
 5000_io_parameter
