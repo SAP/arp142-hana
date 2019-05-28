@@ -8,28 +8,28 @@ function check_0010_os_kernel_sles {
 
     # MODIFICATION SECTION>>
     # array	'goodnormalized_kernelversion'	'sap note'
-    local -ar sles113=('3.0.101-0.47.86.1' '#2339544') #1954788
-    local -ar sles114=('3.0.101-108.7.1' '#2240716')   #2240716-v21
-    local -ar sles114power=('3.0.101-108.7.1' '#2240716')
-    local -ar sles120=('3.12.61-52.89.1' '#2205917')
-    local -ar sles121=('3.12.74-60.64.57.1' '#2205917')
+    local -ar sles113=('3.0.101-0.47.106.22.1' '#2588395')
+    local -ar sles114=('3.0.101-108.38.1' '#2588395')
+    local -ar sles114power=('3.0.101-108.38.1' '#2588395')
+    local -ar sles120=('3.12.61-52.125.1' '#2588395')
+    local -ar sles121=('3.12.74-60.64.85.1' '#2588395')
     local -ar sles122=('4.4.120-92.70.1' '#2205917')
     local -ar sles123=('4.4.120-94.17.1' '#2205917')
     local -ar sles124=('4.12.14-94.38.1' '#2205917')
     local -ar sles121power=('3.12.74-60.64.57.1' '#2205917')
-    local -ar sles122power=('4.4.121-92.109.2' '#2684254')
-    local -ar sles123power=('4.4.178-94.91.2' '#2684254')
-    local -ar sles124power=('4.12.14-95.13.1' '#2205917')
+    local -ar sles122power=('4.4.121-92.109.2' '#2774105')
+    local -ar sles123power=('4.4.178-94.91.2' '#2774105')
+    local -ar sles124power=('4.12.14-95.13.1' '#2774105')
     local -ar sles150=('4.12.14-23.1' '#2684254')
-    local -ar sles150power=('4.12.14-150.14.1' '#2684254')
+    local -ar sles150power=('4.12.14-150.14.1' '#2774105')
     # MODIFICATION SECTION<<
 
-    #2339544 - NFSv4 bug in SUSE kernel 3.0.101-0.47.79.1 (BUG: Bad page map in process)
     #2240716 - SAP HANA DB: Recommended OS settings for SLES 11 / SLES for SAP Applications 11 SP4
     #2205917 - SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
     #1943937 - Hardware Configuration Check Tool - Central Note
     #2684254 - SAP HANA DB: Recommended OS settings for SLES 15 / SLES for SAP Applications 15
     #2774105 - Kernel Panic With Hardware Transactional Memory on Linux on Power
+    #2588395 - Erroneous Accounting of Shared Memory in Multitenant Database Container Systems Running in High Isolation Level on Linux
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_SLES; then

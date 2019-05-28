@@ -8,20 +8,27 @@ function check_0020_os_kernel_rhel {
 
     # MODIFICATION SECTION>>
     # array	'goodnormalized_kernelversion'	'sap note'
-    local -ar rhel65=('2.6.32-431.29.2' '#2013638')
-    local -ar rhel66=('2.6.32-504.16.2' '#2136965')
-    local -ar rhel67=('2.6.32-573' '#2247020') #not known, take release kernel, all should be fine
+    local -ar rhel65=('2.6.32-431.29.2' '#2013638')             #Patch for NFSv4 locking problem
+    local -ar rhel66=('2.6.32-504.16.2' '#2136965')             #not known, take release kernel
+    local -ar rhel67=('2.6.32-573' '#2247020')                  #not known, take release kernel
     local -ar rhel610=('2.6.32-754.3.5' '#2694292')
     local -ar rhel72=('3.10.0-327.64.1.el7' '#2292690')
     local -ar rhel73=('3.10.0-514.44.1.el7' '#2292690')
     local -ar rhel73power=('3.10.0-514.44.1.el7' '#2292690')
     local -ar rhel74=('3.10.0-693.11.6.el7' '#2292690')
     local -ar rhel74power=('3.10.0-693.11.6.el7' '#2292690')
-    local -ar rhel75=('3.10.0-862.el7' '#2292690')
+    local -ar rhel75=('3.10.0-862.el7' '#2292690')              #not known, take release kernel
     local -ar rhel75power=('3.10.0-862.el7' '#2292690')
     local -ar rhel76=('3.10.0-957.1.3.el7' '#2292690')
     local -ar rhel76power=('3.10.0-957.1.3.el7' '#2292690')
     # MODIFICATION SECTION<<
+
+    #2013638 - SAP HANA DB: Recommended OS settings for RHEL 6.5
+    #2136965 - SAP HANA DB: Recommended OS settings for RHEL 6.6
+    #2247020 - SAP HANA DB: Recommended OS settings for RHEL 6.7
+    #2694292 - SAP HANA DB: Recommended OS settings for RHEL 6.10
+    #2292690 - SAP HANA DB: Recommended OS settings for RHEL 7
+    #2588395 - Erroneous Accounting of Shared Memory in Multitenant Database Container Systems Running in High Isolation Level on Linux
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_RHEL; then
