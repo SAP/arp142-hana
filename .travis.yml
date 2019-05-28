@@ -91,7 +91,7 @@ before_deploy:
     - tar -tvf build/saphana-checks-*.tgz
 
     # install SAP certificates to be able to upload to Github
-    - curl -k https://github.wdf.sap.corp/raw/GitHub/Install-Root-Certificates/master/install-certs-ubuntu-12.04.sh | sudo -E sh
+    - curl -k -L https://github.wdf.sap.corp/GitHub/Install-Root-Certificates/raw/master/install-certs-ubuntu-12.04.sh | sudo -E sh
 
 deploy:
   provider: releases
