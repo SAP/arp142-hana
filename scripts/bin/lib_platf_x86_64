@@ -23,23 +23,48 @@ LIB_PLATF_x86_64_RELEASE='1811.0-dev'
 ##########################################################
 # Non-global functions - not to be used in other scripts
 ##########################################################
-# function lib_func_get_hypervisor_details {
+function __get_platform_x86_64_vendor_details {
 
-#     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-#     local hyp_v
-#     local hyp_t
+    if [[ -e '/sys/devices/virtual/dmi/id' ]]; then
 
-#     #ToDo?
+        shopt -s extglob    #enable extended pattern matching
 
-#     LIB_PLATF_VIRT_HYPER=${hyp_v}
-#     LIB_PLATF_VIRT_TYPE=${hyp_t}
-#     readonly LIB_PLATF_VIRT_HYPER
-#     readonly LIB_PLATF_VIRT_TYPE
+        # Vendor - IBM, Lenovo, "Microsoft Corporation" , "Xen" , "Google" , "Cisco Systems Inc"
+        if [[ -z ${LIB_PLATF_VENDOR:-} ]]; then
+            LIB_PLATF_VENDOR="$(</sys/devices/virtual/dmi/id/sys_vendor)"
+            LIB_PLATF_VENDOR=${LIB_PLATF_VENDOR//+([[:space:]])/ }
 
-#     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # LIB_PLATF_VIRT_HYPER : ${LIB_PLATF_VIRT_HYPER:-}; LIB_PLATF_VIRT_TYPE ${LIB_PLATF_VIRT_TYPE:-}"
+            if [[ "${LIB_PLATF_VENDOR}" == 'Xen' ]]; then
+                #special Amazon EC2 handling
 
-# }
+                local __bios_version
+                __bios_version="$(</sys/devices/virtual/dmi/id/bios_version)"
+
+                LIB_FUNC_STRINGCONTAIN "${__bios_version}" 'amazon' && LIB_PLATF_VENDOR='Amazon EC2'
+
+            elif [[ "${LIB_PLATF_VENDOR}" == 'Microsoft Corporation' ]]; then
+
+                LIB_PLATF_VENDOR='Microsoft Azure'
+            fi
+
+            readonly LIB_PLATF_VENDOR
+        fi
+
+        # Platform - "x3950 X6 -[6241ZB5]-", "ProLiant DL785 G6",
+        #          - "VMware Virtual Platform", "RHEV Hypervisor" , "Virtual Machine" , "Google Compute Engine" , "HVM domU"
+        if [[ -z ${LIB_PLATF_NAME:-} ]]; then
+            LIB_PLATF_NAME="$(</sys/devices/virtual/dmi/id/product_name)"
+            LIB_PLATF_NAME=${LIB_PLATF_NAME//+([[:space:]])/ }
+            readonly LIB_PLATF_NAME
+        fi
+
+        shopt -u extglob    #disable extended pattern matching
+
+    fi
+
+}
 
 function __get_platform_x86_64_cpu_details {
 
@@ -118,8 +143,8 @@ function __get_platform_x86_64_cpu_details {
                             fi
         ;;
 
-        # Virtualization information provided by lscpu version >=2.19 and only if virtualized, but only 2.25 is correct for Power
-        # x64:		( VMware - full ) ; ( KVM - full ) = RHEV ; ( Xen - none ) ;
+        # Virtualization information provided by lscpu version >=2.19 and only if virtualized
+        # x64:  ( VMware - full ) ; ( KVM - full ) = RHEV ; ( Xen - none ) ; ( Xen - full ) = Amazon EC2
 
         'Hypervisor vendor:'*)
                             if [[ -z ${LIB_PLATF_VIRT_HYPER:-} ]]; then
@@ -159,30 +184,7 @@ function _lib_platf_x86_64_main {
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
     __get_platform_x86_64_cpu_details
-
-    if [[ -e '/sys/devices/virtual/dmi/id' ]]; then
-
-        shopt -s extglob    #enable extended pattern matching
-
-        # Vendor - IBM, Lenovo, ...
-        if [[ -z ${LIB_PLATF_VENDOR:-} ]]; then
-            LIB_PLATF_VENDOR="$(</sys/devices/virtual/dmi/id/sys_vendor)"
-            LIB_PLATF_VENDOR=${LIB_PLATF_VENDOR//+([[:space:]])/ }
-            readonly LIB_PLATF_VENDOR
-        fi
-
-        # Platform - "x3950 X6 -[6241ZB5]-", "ProLiant DL785 G6", "VMware Virtual Platform", "RHEV Hypervisor"
-        if [[ -z ${LIB_PLATF_NAME:-} ]]; then
-            LIB_PLATF_NAME="$(</sys/devices/virtual/dmi/id/product_name)"
-            LIB_PLATF_NAME=${LIB_PLATF_NAME//+([[:space:]])/ }
-            readonly LIB_PLATF_NAME
-        fi
-
-        shopt -u extglob    #disable extended pattern matching
-
-    fi
-
-    #lib_func_get_hypervisor_details
+    __get_platform_x86_64_vendor_details
 
     #readonly <AnyVariable>
 }
