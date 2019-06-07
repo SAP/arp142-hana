@@ -32,35 +32,38 @@ function __get_platform_x86_64_vendor_details {
         shopt -s extglob    #enable extended pattern matching
 
         # Vendor - IBM, Lenovo, "Microsoft Corporation" , "Xen" , "Google" , "Cisco Systems Inc"
-        if [[ -z ${LIB_PLATF_VENDOR:-} ]]; then
-            LIB_PLATF_VENDOR="$(</sys/devices/virtual/dmi/id/sys_vendor)"
-            LIB_PLATF_VENDOR=${LIB_PLATF_VENDOR//+([[:space:]])/ }
-
-            if [[ "${LIB_PLATF_VENDOR}" == 'Xen' ]]; then
-                #special Amazon EC2 handling
-
-                local __bios_version
-                __bios_version="$(</sys/devices/virtual/dmi/id/bios_version)"
-
-                LIB_FUNC_STRINGCONTAIN "${__bios_version}" 'amazon' && LIB_PLATF_VENDOR='Amazon EC2'
-
-            elif [[ "${LIB_PLATF_VENDOR}" == 'Microsoft Corporation' ]]; then
-
-                LIB_PLATF_VENDOR='Microsoft Azure'
-            fi
-
-            readonly LIB_PLATF_VENDOR
-        fi
+        LIB_PLATF_VENDOR="$(</sys/devices/virtual/dmi/id/sys_vendor)"
+        LIB_PLATF_VENDOR=${LIB_PLATF_VENDOR//+([[:space:]])/ }
 
         # Platform - "x3950 X6 -[6241ZB5]-", "ProLiant DL785 G6",
         #          - "VMware Virtual Platform", "RHEV Hypervisor" , "Virtual Machine" , "Google Compute Engine" , "HVM domU"
-        if [[ -z ${LIB_PLATF_NAME:-} ]]; then
-            LIB_PLATF_NAME="$(</sys/devices/virtual/dmi/id/product_name)"
-            LIB_PLATF_NAME=${LIB_PLATF_NAME//+([[:space:]])/ }
-            readonly LIB_PLATF_NAME
+        LIB_PLATF_NAME="$(</sys/devices/virtual/dmi/id/product_name)"
+        LIB_PLATF_NAME=${LIB_PLATF_NAME//+([[:space:]])/ }
+
+
+        if [[ "${LIB_PLATF_VENDOR}" == 'Xen' ]]; then
+            #special Amazon EC2 handling for Xen images
+
+            local __bios_version
+            __bios_version="$(</sys/devices/virtual/dmi/id/bios_version)"
+
+            if LIB_FUNC_STRINGCONTAIN "${__bios_version}" 'amazon'; then
+
+                LIB_PLATF_VENDOR='Amazon EC2'
+                LIB_PLATF_VIRT_TYPE="${LIB_PLATF_NAME}" #HVM domU
+                LIB_PLATF_NAME=$(curl -s http://169.254.169.254/latest/meta-data/instance-type)
+
+            fi
+
+        elif [[ "${LIB_PLATF_VENDOR}" == 'Microsoft Corporation' ]]; then
+
+            LIB_PLATF_VENDOR='Microsoft Azure'
         fi
 
         shopt -u extglob    #disable extended pattern matching
+
+        readonly LIB_PLATF_VENDOR
+        readonly LIB_PLATF_NAME
 
     fi
 
@@ -154,10 +157,15 @@ function __get_platform_x86_64_cpu_details {
         ;;
 
         'Virtualization type:'*)
+                            local _lib_platform_virt_type
+                            _lib_platform_virt_type=$(LIB_FUNC_TRIM_LEFT "${line/Virtualization type:}")
+
                             if [[ -z ${LIB_PLATF_VIRT_TYPE:-} ]]; then
-                                LIB_PLATF_VIRT_TYPE=$(LIB_FUNC_TRIM_LEFT "${line/Virtualization type:}")
-                                readonly LIB_PLATF_VIRT_TYPE
+                                LIB_PLATF_VIRT_TYPE=${_lib_platform_virt_type}
+                            else
+                                LIB_PLATF_VIRT_TYPE="${_lib_platform_virt_type} (${LIB_PLATF_VIRT_TYPE})"
                             fi
+                            readonly LIB_PLATF_VIRT_TYPE
                             break
         ;;
 
@@ -183,8 +191,8 @@ function _lib_platf_x86_64_main {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-    __get_platform_x86_64_cpu_details
     __get_platform_x86_64_vendor_details
+    __get_platform_x86_64_cpu_details
 
     #readonly <AnyVariable>
 }
