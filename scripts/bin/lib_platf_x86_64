@@ -31,36 +31,85 @@ function __get_platform_x86_64_vendor_details {
 
         shopt -s extglob    #enable extended pattern matching
 
-        # Vendor - IBM, Lenovo, "Microsoft Corporation" , "Xen" , "Google" , "Cisco Systems Inc"
-        LIB_PLATF_VENDOR="$(</sys/devices/virtual/dmi/id/sys_vendor)"
-        LIB_PLATF_VENDOR=${LIB_PLATF_VENDOR//+([[:space:]])/ }
+        #SYS_VENDOR
+        if [[ -e /sys/devices/virtual/dmi/id/sys_vendor ]]; then
+            # Vendor - IBM, Lenovo, "Microsoft Corporation" , "Xen" , "Google" , "Cisco Systems Inc"
+            local _lib_platf_vendor
+            _lib_platf_vendor="$(</sys/devices/virtual/dmi/id/sys_vendor)"
+            _lib_platf_vendor=${_lib_platf_vendor//+([[:space:]])/ }
+        fi
 
-        # Platform - "x3950 X6 -[6241ZB5]-", "ProLiant DL785 G6",
-        #          - "VMware Virtual Platform", "RHEV Hypervisor" , "Virtual Machine" , "Google Compute Engine" , "HVM domU"
-        LIB_PLATF_NAME="$(</sys/devices/virtual/dmi/id/product_name)"
-        LIB_PLATF_NAME=${LIB_PLATF_NAME//+([[:space:]])/ }
+        #PRODUCT_NAME
+        if [[ -e /sys/devices/virtual/dmi/id/product_name ]]; then
+            # Platform - "x3950 X6 -[6241ZB5]-", "ProLiant DL785 G6",
+            #          - "VMware Virtual Platform", "RHEV Hypervisor" , "Virtual Machine" , "Google Compute Engine" , "HVM domU"
+            local _lib_platf_name
+            _lib_platf_name="$(</sys/devices/virtual/dmi/id/product_name)"
+            _lib_platf_name=${_lib_platf_name//+([[:space:]])/ }
+        fi
 
+        #CHASSIS_ASSET_TAG
+        if [[ -e /sys/devices/virtual/dmi/id/chassis_asset_tag ]]; then
+            local _chassis_asset_tag
+            _chassis_asset_tag="$(</sys/devices/virtual/dmi/id/chassis_asset_tag)"
+            _chassis_asset_tag=${_chassis_asset_tag//+([[:space:]])/ }
+        fi
 
-        if [[ "${LIB_PLATF_VENDOR}" == 'Xen' ]]; then
+        shopt -u extglob    #disable extended pattern matching
+
+        if [[ "${_lib_platf_vendor:-}" == 'Xen' ]]; then
             #special Amazon EC2 handling for Xen images
 
-            local __bios_version
-            __bios_version="$(</sys/devices/virtual/dmi/id/bios_version)"
+            local _bios_version
+            _bios_version="$(</sys/devices/virtual/dmi/id/bios_version)"
 
-            if LIB_FUNC_STRINGCONTAIN "${__bios_version}" 'amazon'; then
+            if LIB_FUNC_STRINGCONTAIN "${_bios_version}" 'amazon'; then
 
                 LIB_PLATF_VENDOR='Amazon EC2'
-                LIB_PLATF_VIRT_TYPE="${LIB_PLATF_NAME}" #HVM domU
+                LIB_PLATF_VIRT_TYPE="${_lib_platf_name}" #HVM domU
                 LIB_PLATF_NAME=$(curl -s http://169.254.169.254/latest/meta-data/instance-type)
 
             fi
 
-        elif [[ "${LIB_PLATF_VENDOR}" == 'Microsoft Corporation' ]]; then
+        elif [[ "${_lib_platf_name:-}" == 'Google Compute Engine' ]]; then
+
+            LIB_PLATF_VENDOR='Google GCP'
+            _lib_platf_name=$(curl -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/machine-type)
+            #projects/[NUMERIC_PROJECT_ID]/machineTypes/[MACHINE_TYPE]
+            LIB_PLATF_NAME=${_lib_platf_name//*machineTypes\//}
+
+        elif [[ "${_chassis_asset_tag:-}" == '7783-7084-3265-9085-8269-3286-77' ]]; then
 
             LIB_PLATF_VENDOR='Microsoft Azure'
-        fi
+            LIB_PLATF_NAME=$(curl -H "Metadata:true" "http://169.254.169.254/metadata/instance/compute/vmSize?api-version=2017-04-02&format=text")
 
-        shopt -u extglob    #disable extended pattern matching
+        elif [[ "${_lib_platf_name:-}" == 'Alibaba Cloud ECS' ]]; then
+
+            LIB_PLATF_VENDOR='Alibaba Cloud ECS'
+            LIB_PLATF_NAME="${_lib_platf_name}"     #todo
+
+        elif [[ "${_chassis_asset_tag:-}" == 'HUAWEICLOUD' ]]; then
+
+            LIB_PLATF_VENDOR='Huawei Cloud'
+            LIB_PLATF_NAME=$(curl -s http://169.254.169.254/latest/meta-data/instance-type)
+
+        elif [[ "${_chassis_asset_tag:-}" == 'HuaweiFusionSphere' ]]; then
+
+            LIB_PLATF_VENDOR='Huawei'
+            LIB_PLATF_NAME='FusionSphere'
+
+        elif [[ "${_chassis_asset_tag:-}" == 'IBM SoftLayer' ]]; then
+
+            LIB_PLATF_VENDOR='IBM Cloud'
+            LIB_PLATF_NAME="${_lib_platf_name}"     #todo
+
+        else
+
+            #all others - Amazon EC2 KVM, Bare-Metal, etc.
+            LIB_PLATF_VENDOR="${_lib_platf_vendor}"
+            LIB_PLATF_NAME="${_lib_platf_name}"
+
+        fi
 
         readonly LIB_PLATF_VENDOR
         readonly LIB_PLATF_NAME
