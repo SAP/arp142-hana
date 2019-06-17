@@ -1,0 +1,73 @@
+#!/bin/bash
+
+function check_3012_network_parameter_defaults {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2382421'	# Optimizing the Network Configuration on HANA- and OS-Level for SPS10 and Higher
+
+    # LIB_COMPARE_TOOBIG_NUMBERS returns 0 if equal, 1 if first is higher, 2 if second is higher
+    # returns 0 if equal, 1 if first is higher, 2 if second is higher
+
+    #                               parameter                               recommended_value   RC_expected
+    local -ar _tcp_parameter=(\
+                                    'net.ipv4.tcp_moderate_rcvbuf'          1                   0   \
+                                    'net.ipv4.tcp_fack'                     1                   0   \
+                                    'net.ipv4.tcp_sack'                     1                   0   \
+    )
+    # MODIFICATION SECTION<<
+
+    local -i _curr_value
+    local -i _reco_value
+    local -i _rc_expected
+    local -i _rc_current
+    local    _parameter
+
+    # PRECONDITIONS
+
+    # CHECK
+    # i+=3 --> every 3rd item
+    for ((i=0; i < ${#_tcp_parameter[@]}; i+=3)); do
+
+        logTrace "<${FUNCNAME[0]}> # ${_tcp_parameter[$i]}>"
+
+        _parameter=${_tcp_parameter[$i]}
+        _reco_value=${_tcp_parameter[$i+1]}
+        _rc_expected=${_tcp_parameter[$i+2]}
+
+        _curr_value=$(sysctl -n "${_parameter}")
+
+        LIB_COMPARE_TOOBIG_NUMBERS "${_curr_value}" "${_reco_value}"
+        _rc_current=$?
+
+        if [[ ${_rc_current} -le ${_rc_expected} ]]; then
+
+            logCheckOk "sysctl parameter ${_parameter} set to default (is: ${_curr_value})"
+
+        else
+
+            logCheckWarning "sysctl parameter ${_parameter} NOT set to default (is: ${_curr_value}, should be: ${_reco_value})"
+            _retval=1
+
+        fi
+
+    done
+
+    if [[ ${_retval} -eq 99 ]]; then
+
+        logCheckOk "Network sysctl parameter set to defaults (SAP Note ${sapnote:-})"
+        _retval=0
+
+    else
+
+        logCheckWarning "Not All network sysctl parameter set to defaults (SAP Note ${sapnote:-})"
+        _retval=1
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
