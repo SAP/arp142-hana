@@ -105,7 +105,7 @@ function __get_platform_x86_64_vendor_details {
 
         elif [[ "${_chassis_asset_tag:-}" == 'OpenTelekomCloud' ]]; then
 
-            LIB_PLATF_VENDOR='Telekom OpenCloud'
+            LIB_PLATF_VENDOR='Open Telekom Cloud'
             LIB_PLATF_NAME="${_lib_platf_name}"     #todo
 
         else
