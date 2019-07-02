@@ -32,7 +32,7 @@ function __get_platform_x86_64_vendor_details {
         shopt -s extglob    #enable extended pattern matching
 
         #SYS_VENDOR
-        if [[ -e /sys/devices/virtual/dmi/id/sys_vendor ]]; then
+        if [[ -r '/sys/devices/virtual/dmi/id/sys_vendor' ]]; then
             # Vendor - IBM, Lenovo, "Microsoft Corporation" , "Xen" , "Google" , "Cisco Systems Inc"
             local _lib_platf_vendor
             _lib_platf_vendor="$(</sys/devices/virtual/dmi/id/sys_vendor)"
@@ -40,7 +40,7 @@ function __get_platform_x86_64_vendor_details {
         fi
 
         #PRODUCT_NAME
-        if [[ -e /sys/devices/virtual/dmi/id/product_name ]]; then
+        if [[ -r '/sys/devices/virtual/dmi/id/product_name' ]]; then
             # Platform - "x3950 X6 -[6241ZB5]-", "ProLiant DL785 G6",
             #          - "VMware Virtual Platform", "RHEV Hypervisor" , "Virtual Machine" , "Google Compute Engine" , "HVM domU"
             local _lib_platf_name
@@ -49,7 +49,7 @@ function __get_platform_x86_64_vendor_details {
         fi
 
         #CHASSIS_ASSET_TAG
-        if [[ -e /sys/devices/virtual/dmi/id/chassis_asset_tag ]]; then
+        if [[ -r '/sys/devices/virtual/dmi/id/chassis_asset_tag' ]]; then
             local _chassis_asset_tag
             _chassis_asset_tag="$(</sys/devices/virtual/dmi/id/chassis_asset_tag)"
             _chassis_asset_tag=${_chassis_asset_tag//+([[:space:]])/ }
