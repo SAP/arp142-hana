@@ -18,6 +18,7 @@
 2000_transparent_hugepages
 2100_active_memory_sharing_ibmpower
 2200_numa_balancing
+2220_numa_topology_updates_ibmpower
 2300_vm_max_map_count
 2305_vm_memory_failure_kill
 2400_samepage_merging
