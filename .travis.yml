@@ -97,7 +97,7 @@ deploy:
   provider: releases
   prerelease: true
   draft: true
-  body: Travis build on [${TRAVIS_BRANCH}](${$TRAVIS_BUILD_WEB_URL})
+  body: Travis build on [${TRAVIS_BRANCH}](${TRAVIS_BUILD_WEB_URL})
   api_key:
     secure: ReXcT4pYLK+ynD6udR8bU/gUK9sJuLt9IlYM3DmsoA7lQrqqqjQ45xyFYGi8YvlVpkyTjPkjQ0lb9iBxj6mTjaA8Ct3GD9y8eKs34eJIX6TXDxoSmpqIQ0seDzy6HhUBl6krNpivHmrOLhtdFUvU90whON9lex/9lGnGjIKNuEsLy1OZk05g50Yb+uW2qQzDrHPJLo5R5ShDu4kypm+M6K/Mw5nZE3PhPhn4UCv30I7K6aqTsVuo7KNCOh5ZfFulhzz58NmF6843WFAihHcspefuNMPokRZkNjPWh5Q5tZ+B51/xSCAFWGhYy7pVuzLfNzi8TQ5WLWuIuEarhNP1+EqwBs2G3Lng4NJr5wlaMcQHCKa+JFseuB7Ay3TNjSLJx+M7Rf9bauhW9nTp4JALZbPK1RbTM3otnfSfssEuLCYZFvIV/SBJydFJHowV9K8QNT2MLrY2PtSOIg+tBLvgSxx8IU4Y7sfYT96tcaDSeUgfqrYW6jf+jHGyHNe9HQzylJPKRvqQZ2xZfRxCtnPCyYqmdErYYcChjFfHNnsOmn5n/PKFLU68zaDQPjMzjka4Bi+c8H9wJywJFbdVaR9u2BM9AZkaGEjzwxIgnca7jAobb4GxLe/F5EpCf3pN1AEgAGgOWEvv3UmITScHCMf0TUxDUh4HUbLongiNHx+xUUc=
   file_glob: true
