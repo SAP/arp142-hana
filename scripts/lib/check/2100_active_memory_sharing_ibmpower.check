@@ -22,8 +22,8 @@ function check_2100_active_memory_sharing_ibmpower {
 
     elif [[ -z ${LIB_PLATF_POWER_MEMAMS:-} ]]; then
 
-            logCheckError "ActiveMemory Sharing configuration NOT known. (SAP Note ${sapnote:-}) (is: Unknown, should be: Off)"
-            _retval=2
+        logCheckError "ActiveMemory Sharing configuration NOT known. (SAP Note ${sapnote:-}) (is: Unknown, should be: Off)"
+        _retval=2
     fi
 
     #CHECK
