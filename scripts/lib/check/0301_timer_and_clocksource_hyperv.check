@@ -11,8 +11,8 @@ function check_0301_timer_and_clocksource_hyperv {
     local -r sapnote_vdso='#2791572'
 
     local -r reco_clocksource='hyperv_clocksource_tsc_page'
-    local -r kernel_sles124_vdso_hyperv='4.12'
     local -r kernel_sles123_vdso_hyperv='4.4.178-94.91'
+    local -r kernel_rhel75_vdso_hyperv='3.10.0-709.el7'
     # MODIFICATION SECTION<<
 
     #2791572 - Performance Degradation Because of Missing VDSO Support For HyperV in Azure
@@ -106,13 +106,15 @@ function check_0301_timer_and_clocksource_hyperv {
 
             #Azure - Hyper-V - VDSO support
             local kernel_vdso_hyperv
-            case "${OS_VERSION}" in
 
-                12.3*)  kernel_vdso_hyperv="${kernel_sles123_vdso_hyperv}" ;;
+            if ! LIB_FUNC_IS_SLES; then
 
-                *)      kernel_vdso_hyperv="${kernel_sles124_vdso_hyperv}" ;;
+                    kernel_vdso_hyperv="${kernel_sles123_vdso_hyperv}"
 
-            esac
+            elif ! LIB_FUNC_IS_RHEL; then
+
+                    kernel_vdso_hyperv="${kernel_rhel75_vdso_hyperv}"
+            fi
 
             LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
             kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
