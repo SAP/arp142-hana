@@ -265,12 +265,13 @@ function LIB_FUNC_NORMALIZE_KERNEL {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-    kernelversion=${kernelversion/PTF-default*/1}	#3.0.101-0.47.71.7930.0.PTF-default
-    kernelversion=${kernelversion/default*/1}		#3.0.101-0.47.71-default
-    kernelversion=${kernelversion/bigsmp*/1}			#3.0.101-0.47-bigsmp
-    kernelversion=${kernelversion/bigmem*/1}			#3.0.101-88-bigmem
-    kernelversion=${kernelversion/ppc64*/1}			#3.0.101-71-ppc64
-    kernelversion=${kernelversion/.el[[:digit:]]*/}		# Remove trailing ".el6.x86_64" or ".el7.ppc64le"
+    kernelversion=${kernelversion/PTF-default*/1}   #3.0.101-0.47.71.7930.0.PTF-default
+    kernelversion=${kernelversion/default*/1}       #3.0.101-0.47.71-default
+    kernelversion=${kernelversion/bigsmp*/1}        #3.0.101-0.47-bigsmp
+    kernelversion=${kernelversion/bigmem*/1}        #3.0.101-88-bigmem
+    kernelversion=${kernelversion/ppc64*/1}         #3.0.101-71-ppc64
+    kernelversion=${kernelversion/azure/1}          #4.12.14-6.12-azure"
+    kernelversion=${kernelversion/.el[[:digit:]]*/}	# Remove trailing ".el6.x86_64" or ".el7.ppc64le"
 
     LIB_FUNC_NORMALIZE_KERNEL_RETURN="${kernelversion}"	#variable is available to caller
 }
