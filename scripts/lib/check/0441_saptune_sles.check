@@ -1,0 +1,75 @@
+#!/bin/bash
+
+function check_0441_saptune_sles {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#1275776'         #1275776 - Linux: Preparing SLES for SAP environments
+    local -ar sles124='2.0.0-3.131.1'   #Version 31 from 19.07.2019
+    local -ar sles150='2.0.1-4.6.1'
+    # MODIFICATION SECTION<<
+
+    local _goodversion
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_SLES ; then
+
+        logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif ! rpm -q saptune > /dev/null ; then
+
+        logCheckSkipped 'saptune not installed' "(SAP Note ${sapnote:-}). Skipping <${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+
+        case "${OS_VERSION}" in
+
+                12.* )  _goodversion="${sles124}" ;;
+                15.* )  _goodversion="${sles150}" ;;
+
+                *)
+                        logCheckSkipped 'Not applicable for SLES release' "(SAP Note ${sapnote:-}). Skipping <${FUNCNAME[0]}>"
+                        _retval=3
+                    ;;
+            esac
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local normalized_goodversion
+        local normalized_fullversion
+
+        local _fullversion
+        _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" saptune)
+
+        #normalize good version
+        LIB_FUNC_NORMALIZE_RPM "${_goodversion}"
+        normalized_goodversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+        #normalize full version - e.g. 4.1.10-33.5.2
+        LIB_FUNC_NORMALIZE_RPM "${_fullversion}"
+        normalized_fullversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+        LIB_FUNC_COMPARE_VERSIONS "${normalized_fullversion}" "${normalized_goodversion}"
+
+        if [[ $? -ne 2 ]]; then
+            logCheckOk 'saptune version seems to be ok' "(SAP Note ${sapnote:-}) (is: ${_fullversion})"
+            _retval=0
+        else
+            logCheckWarning 'saptune should be updated' "(SAP Note ${sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
+            _retval=1
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
