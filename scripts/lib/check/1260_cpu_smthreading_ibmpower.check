@@ -11,17 +11,13 @@ function check_1260_cpu_smthreading_ibmpower {
     # MODIFICATION SECTION<<
 
     #2055470 - HANA on POWER Planning and Installation Specifics - Central Note
-    #2188482 - SAP HANA on IBM Power Systems: Allowed Hardware
+    #2188482 - SAP HANA on IBM Power Systems: Allowed Hardware - (Version 56 from 23.07.2019)
 
     local -i exp_threadspercore=8
 
-    local -i highCores_Power8=96
-    local -i highCores_Power9=48
-
     local -i HighCores_threadspercore=4
 
-    local -i highCoresTotal
-    highCoresTotal=${highCores_Power9}
+    local -i highCoresTotal=96
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_IBMPOWER ; then
@@ -43,10 +39,6 @@ function check_1260_cpu_smthreading_ibmpower {
 
         logCheckError "#Threads per Core NOT known. (SAP Note ${sapnote:-})"
         _retval=2
-
-    elif LIB_FUNC_STRINGCONTAIN "${LIB_PLATF_CPU}" 'POWER8'; then
-
-        highCoresTotal=${highCores_Power8}
 
     fi
 
