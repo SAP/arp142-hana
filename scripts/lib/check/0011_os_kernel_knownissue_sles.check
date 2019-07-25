@@ -1,0 +1,106 @@
+#!/bin/bash
+
+function check_0011_os_kernel_knownissue_sles {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    # array	'release' 'lower boundary' 'upper boundary' 'SAP Note'
+    local -ar _sles_common=(\
+                        '11.4' '3.0.101-108.95.2'       '3.0.101-108.97.1'  '#2812427' \
+                        '12.1' '3.12.74-60.64.115.1'    '3.12.74-60.64.117.1' '#2812427' \
+                        '12.2' '4.4.121-92.114.1'       '4.4.121-92.116.1'  '#2812427' \
+                        '12.3' '4.4.180-94.97.1'        '4.4.180-94.99.1'   '#2812427' \
+                        '12.4' '4.12.14-95.19.1'        '4.12.14-95.23.1'   '#2812427' \
+                        '15.0' '4.12.14-150.22.1'       '4.12.14-150.26.1'  '#2812427' \
+                        '15.1' '4.12.14-197.4.1'        '4.12.14-197.9.1'   '#2812427' \
+                        )
+
+    local -ar _sles_azure=(\
+                        '12.4' '4.12.14-6.12-azure'    '4.12.14-6.12-azure' '#2812427' \
+                        '12.4' '4.12.14-95.16.1'       '4.12.14-95.16.1'    '#2812427' \
+                        '15.0' '4.12.14-150.22.1'      '4.12.14-95.16.1'    '#2812427' \
+                    )
+
+    local -a _sles_all
+
+    # MODIFICATION SECTION<<
+
+    #2812427 - Timeout or connection failure in SAP process after Linux kernel update
+    #2814271 - SAP HANA Backup fails on Azure with Checksum Error
+
+    local _sles_release
+    local _kernel_lower
+    local _kernel_higher
+    local sapnote
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_SLES; then
+
+        logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif LIB_FUNC_IS_VIRT_MICROSOFT; then
+
+        _sles_all+=("${_sles_common[@]}" "${_sles_azure[@]}")
+
+    else
+
+        _sles_all+=("${_sles_common[@]}")
+
+    fi
+
+    #CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local kernelversion
+
+        LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
+        kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
+
+        # i+=4 --> every 4th item
+        for ((i=0; i < ${#_sles_all[@]}; i+=4)); do
+
+            logTrace "<${FUNCNAME[0]}> # ${_sles_all[$i]}>"
+
+            _sles_release="${_sles_all[$i]}"
+
+            [[ "${_sles_release}" != "${OS_VERSION}" ]] && continue
+
+            _kernel_lower="${_sles_all[$i+1]}"
+            _kernel_higher="${_sles_all[$i+2]}"
+            _sapnote="${_sles_all[$i+3]}"
+
+            # returns 0 if equal, 1 if first is higher, 2 if second is higher
+            LIB_FUNC_COMPARE_VERSIONS "${kernelversion}" "${_kernel_higher}"
+            if [[ $? -ne 1 ]]; then
+
+                #kernel is NOT higher than blacklisted high boundary - check lower value if in blacklist range
+
+                LIB_FUNC_COMPARE_VERSIONS "${kernelversion}" "${_kernel_lower}"
+                if [[ $? -le 1 ]]; then
+
+                    logCheckError "Linux kernel has known serious issues and should be avoided (SAP Note ${_sapnote:-}) (is: ${OS_LEVEL}, should be > ${_kernel_higher}.*)"
+                    _retval=2
+
+                fi
+
+            fi
+
+        done
+
+        if [[ ${_retval} -eq 99 ]]; then
+
+            logCheckOk "Linux kernel has no known serious issues (SAP Note ${sapnote:-}) (is: ${OS_LEVEL})"
+            _retval=0
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
