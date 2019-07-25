@@ -1,0 +1,92 @@
+#!/bin/bash
+
+function check_0021_os_kernel_knownissues_rhel {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    # array	'release' 'lower boundary' 'upper boundary' 'SAP Note'
+    local -ar _rhel_common=(\
+                        '6.10'  '2.6.32-754.17.1.el6'       '2.6.32-754.17.1.el6'   '#2812427' \
+                        '7.4'   '3.10.0-693.50.3.el7'       '3.10.0-693.50.3.el7'   '#2812427' \
+                        '7.5'   '3.10.0-862.37.1.el7'       '3.10.0-862.37.1.el7'   '#2812427' \
+                        '7.6'   '3.10.0-957.21.3.el7'       '3.10.0-957.21.3.el7'   '#2812427' \
+                        )
+
+    local -a _rhel_all
+
+    # MODIFICATION SECTION<<
+
+    #2812427 - Timeout or connection failure in SAP process after Linux kernel update
+
+    local _rhel_release
+    local _kernel_lower
+    local _kernel_higher
+    local sapnote
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_RHEL; then
+
+        logCheckSkipped 'Linux distribution is not RHEL. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+
+        _rhel_all+=("${_rhel_common[@]}")
+
+    fi
+
+    #CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local kernelversion
+
+        LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
+        kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
+
+        # i+=4 --> every 4th item
+        for ((i=0; i < ${#_rhel_all[@]}; i+=4)); do
+
+            logTrace "<${FUNCNAME[0]}> # ${_rhel_all[$i]}>"
+
+            _rhel_release="${_rhel_all[$i]}"
+
+            [[ "${_rhel_release}" != "${OS_VERSION}" ]] && continue
+
+            _kernel_lower="${_rhel_all[$i+1]}"
+            _kernel_higher="${_rhel_all[$i+2]}"
+            _sapnote="${_rhel_all[$i+3]}"
+
+            # returns 0 if equal, 1 if first is higher, 2 if second is higher
+            LIB_FUNC_COMPARE_VERSIONS "${kernelversion}" "${_kernel_higher}"
+            if [[ $? -ne 1 ]]; then
+
+                #kernel is NOT higher than blacklisted high boundary - check lower value if in blacklist range
+
+                LIB_FUNC_COMPARE_VERSIONS "${kernelversion}" "${_kernel_lower}"
+                if [[ $? -le 1 ]]; then
+
+                    logCheckError "Linux kernel has known serious issues and should be avoided (SAP Note ${_sapnote:-}) (is: ${OS_LEVEL}, should be > ${_kernel_higher}.*)"
+                    _retval=2
+
+                fi
+
+            fi
+
+        done
+
+        if [[ ${_retval} -eq 99 ]]; then
+
+            logCheckOk "Linux kernel has no known serious issues (SAP Note ${sapnote:-}) (is: ${OS_LEVEL})"
+            _retval=0
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}

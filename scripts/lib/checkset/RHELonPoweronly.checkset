@@ -1,4 +1,5 @@
 0020_os_kernel_rhel
+0021_os_kernel_knownissues_rhel
 0040_os_rhel_ibmpower
 0060_os_release_kernel_rhel
 0310_clocksource_ibmpower
