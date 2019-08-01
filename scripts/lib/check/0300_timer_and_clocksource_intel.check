@@ -104,7 +104,7 @@ function check_0300_timer_and_clocksource_intel {
         elif [[ ${_retval} -eq 88 ]]; then
 
             logCheckInfo 'All required Time Stamp Counter flags detected'
-            logCheckInfo 'Fast TSC timer active for HANA2 SP3 and lower'
+            logCheckInfo 'HANA internal timer active for HANA2 SP3 and lower'
             logCheckWarning "OS clocksource is NOT set as required for HANA2 SP4+ (is: ${current_clocksource}, must be: tsc)"
             logCheckWarning 'Check indexserver trace files for <Fallback to system call for HR timer> messages'
             logCheckWarning "HANA might NOT use internal timer and falls back to OS clocksource (SAP Note ${sapnote:-})"
@@ -113,7 +113,7 @@ function check_0300_timer_and_clocksource_intel {
         elif [[ ${_retval} -eq 77 ]]; then
 
             logCheckInfo 'All required Time Stamp Counter flags detected'
-            logCheckInfo 'Fast TSC timer active for HANA2 SP3 and lower'
+            logCheckInfo 'HANA internal timer active for HANA2 SP3 and lower'
             logCheckWarning "Available OS clocksource does NOT offer <tsc> as required for HANA2 SP4+ (is: ${available_clocksource})"
             logCheckWarning 'Check indexserver trace files for <Fallback to system call for HR timer> messages'
             logCheckWarning "HANA might NOT use internal timer and falls back to OS clocksource (SAP Note ${sapnote:-})"
@@ -122,11 +122,10 @@ function check_0300_timer_and_clocksource_intel {
         elif [[ ${_retval} -eq 1 ]]; then
 
             logCheckInfo 'Invariant Time Stamp Counter flags detected (nonstop,constant)'
-            logCheckInfo 'Fast TSC timer active for HANA2 SP3 and lower'
+            logCheckInfo 'HANA internal timer active for HANA2 SP3 and lower'
             logCheckWarning 'RDTSCP NOT detected as required for HANA2 SP4+'
             logCheckWarning 'Check indexserver trace files for <Fallback to system call for HR timer> messages'
             logCheckWarning "HANA might NOT use internal timer and falls back to OS clocksource (SAP Note ${sapnote:-})"
-
 
         elif [[ ${_retval} -eq 2 ]]; then
 

@@ -10,7 +10,7 @@ function check_0301_timer_and_clocksource_hyperv {
     local -r sapnote='#2753418'
     local -r sapnote_vdso='#2791572'
 
-    local -r reco_clocksource='hyperv_clocksource_tsc_page'
+    local -r recommended_clocksource='hyperv_clocksource_tsc_page'
     local -r kernel_sles123_vdso_hyperv='4.4.178-94.91'
     local -r kernel_rhel75_vdso_hyperv='3.10.0-709.el7'
     # MODIFICATION SECTION<<
@@ -35,74 +35,120 @@ function check_0301_timer_and_clocksource_hyperv {
             while IFS=$'\n' read -r line; do tsc_flags+=("$line"); done < <(grep -e '^flags' /proc/cpuinfo | uniq | tr ' ' '\n' | grep tsc)
         fi
 
-        local -i tsc_flag_constant
-        local -i tsc_flag_nonstop
-        local -i tsc_flag_rdtscp
+        local -i cpu_flag_constant_tsc
+        local -i cpu_flag_nonstop_tsc
+        local -i cpu_flag_rdtscp
+        # there is no rdtsc flag
+        # constant_tsc + nonstop_tsc = invariant tsc
 
         for tsc_flag in "${tsc_flags[@]}"; do
 
             case ${tsc_flag} in
 
-                'constant_tsc') tsc_flag_constant=0 ;;      # HANA1 and HANA2
-                'nonstop_tsc')  tsc_flag_nonstop=0 ;;       # HANA1 and HANA2
-                'rdtscp')       tsc_flag_rdtscp=0 ;;        # HANA2 >= SP04
+                'constant_tsc') cpu_flag_constant_tsc=0 ;;      # HANA1 and HANA2
+                'nonstop_tsc')  cpu_flag_nonstop_tsc=0 ;;       # HANA1 and HANA2
+                'rdtscp')       cpu_flag_rdtscp=0 ;;            # HANA2 >= SP04
 
             esac
         done
+
+        #kernel clocksource
+        local current_clocksource
+        local available_clocksource
+        current_clocksource=$(</sys/devices/system/clocksource/clocksource0/current_clocksource)
+        available_clocksource=$(</sys/devices/system/clocksource/clocksource0/available_clocksource)
+
     fi
 
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-        if [[ ! ${tsc_flag_constant:-} ]] ; then
-            logCheckError 'Time Stamp Counter flag <tsc_constant> NOT detected'
+        if [[ ! ${cpu_flag_constant_tsc:-} ]] ; then
+
+            logCheckError 'Time Stamp Counter flag <constant>_tsc NOT detected'
             _retval=2
+
         fi
 
-        if [[ ! ${tsc_flag_nonstop:-} ]] ; then
-            logCheckError 'Time Stamp Counter flag <tsc_nonstop> NOT detected'
+        if [[ ! ${cpu_flag_nonstop_tsc:-} ]] ; then
+
+            logCheckError 'Time Stamp Counter flag <nonstop_tsc> NOT detected'
             _retval=2
+
         fi
 
-        if [[ ! ${tsc_flag_rdtscp:-} ]] ; then
-            logCheckWarning 'Time Stamp Counter flag <rdtscp> NOT detected - required for HANA2 SP4+'
+        if [[ ! ${cpu_flag_rdtscp:-} ]] ; then
+
             [[ ${_retval} -eq 99 ]] && _retval=1
+
         fi
 
+        if [[ "${current_clocksource}" != 'tsc' ]]; then
+
+            [[ ${_retval} -eq 99 ]] && _retval=88
+
+        fi
+
+        if [[ "${available_clocksource}" != *"tsc"* ]]; then
+
+            [[ ${_retval} -eq 99 ]] && _retval=77
+
+        fi
 
         #evaluate RC
         if [[ ${_retval} -eq 99 ]]; then
 
-            logCheckOk "All Time Stamp Counter flags detected - fast TSC timer active (SAP Note ${sapnote:-})"
+            logCheckInfo 'All required Time Stamp Counter flags detected'
+            logCheckInfo 'OS clocksource set to <tsc> as required for HANA2 SP4+'
+            logCheckOk "HANA uses internal timer (SAP Note ${sapnote:-})"
             _retval=0
+
+        elif [[ ${_retval} -eq 88 ]]; then
+
+            logCheckInfo 'All required Time Stamp Counter flags detected'
+            logCheckInfo 'HANA internal timer active for HANA2 SP3 and lower'
+            logCheckWarning "OS clocksource is NOT set as required for HANA2 SP4+ (is: ${current_clocksource}, must be: tsc)"
+            logCheckWarning 'Check indexserver trace files for <Fallback to system call for HR timer> messages'
+            logCheckWarning "HANA might NOT use internal timer and falls back to OS clocksource (SAP Note ${sapnote:-})"
+            _retval=1
+
+        elif [[ ${_retval} -eq 77 ]]; then
+
+            logCheckInfo 'All required Time Stamp Counter flags detected'
+            logCheckInfo 'HANA internal timer active for HANA2 SP3 and lower'
+            logCheckWarning "Available OS clocksource does NOT offer <tsc> as required for HANA2 SP4+ (is: ${available_clocksource})"
+            logCheckWarning 'Check indexserver trace files for <Fallback to system call for HR timer> messages'
+            logCheckWarning "HANA might NOT use internal timer and falls back to OS clocksource (SAP Note ${sapnote:-})"
+            _retval=1
 
         elif [[ ${_retval} -eq 1 ]]; then
 
-            logCheckWarning "RDTSCP NOT detected - fallback to slower system clocksource for HANA2 SP4+ (SAP Note ${sapnote:-})"
+            logCheckInfo 'Invariant Time Stamp Counter flags detected (nonstop,constant)'
+            logCheckInfo 'HANA internal timer active for HANA2 SP3 and lower'
+            logCheckWarning 'RDTSCP NOT detected as required for HANA2 SP4+'
             logCheckWarning 'Check indexserver trace files for <Fallback to system call for HR timer> messages'
+            logCheckWarning "HANA might NOT use internal timer and falls back to OS clocksource (SAP Note ${sapnote:-})"
 
-        else
+        elif [[ ${_retval} -eq 2 ]]; then
 
-            logCheckError "NOT all Time Stamp Counter flags detected - fallback to slower system clocksource (SAP Note ${sapnote:-})"
+            #Invariant Time Stamp Counter flags NOT detected (nonstop,constant)
             logCheckError 'Check indexserver trace files for <Fallback to system call for HR timer> messages'
+            logCheckError "HANA does NOT use internal timer and falls back to OS clocksource (SAP Note ${sapnote:-})"
+
         fi
     fi
 
     #FALLBACK
     if [[ ${_retval} -ne 0 && ${_retval} -ne 3 ]]; then
 
-        #kernel clocksource
-        local curr_clocksource
-        curr_clocksource=$(</sys/devices/system/clocksource/clocksource0/current_clocksource)
+        if [[ "${current_clocksource}" != "${recommended_clocksource}" ]]; then
 
-        if [[ "${curr_clocksource}" != "${reco_clocksource}" ]]; then
-
-            logCheckError "Fallback OS clocksource is NOT set as recommended (is: ${curr_clocksource}, should be: ${reco_clocksource})"
+            logCheckError "Fallback OS clocksource is NOT set as recommended (is: ${current_clocksource}, should be: ${recommended_clocksource})"
             _retval=2
 
         else
 
-            logCheckInfo "Fallback OS clocksource is set as recommended (is: ${curr_clocksource})"
+            logCheckInfo "Fallback OS clocksource is set as recommended (is: ${current_clocksource})"
 
             #Azure - Hyper-V - VDSO support
             local kernel_vdso_hyperv
