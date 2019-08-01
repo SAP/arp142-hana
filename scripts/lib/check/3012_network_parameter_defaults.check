@@ -15,7 +15,6 @@ function check_3012_network_parameter_defaults {
     #                               parameter                               recommended_value   RC_expected
     local -ar _tcp_parameter=(\
                                     'net.ipv4.tcp_moderate_rcvbuf'          1                   0   \
-                                    'net.ipv4.tcp_fack'                     1                   0   \
                                     'net.ipv4.tcp_sack'                     1                   0   \
     )
     # MODIFICATION SECTION<<
