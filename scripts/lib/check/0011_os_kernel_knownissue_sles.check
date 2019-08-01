@@ -34,7 +34,6 @@ function check_0011_os_kernel_knownissue_sles {
     local _sles_release
     local _kernel_lower
     local _kernel_higher
-    local sapnote
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_SLES; then
@@ -93,7 +92,7 @@ function check_0011_os_kernel_knownissue_sles {
 
         if [[ ${_retval} -eq 99 ]]; then
 
-            logCheckOk "Linux kernel has no known serious issues (SAP Note ${sapnote:-}) (is: ${OS_LEVEL})"
+            logCheckOk "Linux kernel has no known serious issues (is: ${OS_LEVEL})"
             _retval=0
 
         fi

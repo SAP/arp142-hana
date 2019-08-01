@@ -24,7 +24,6 @@ function check_0021_os_kernel_knownissues_rhel {
     local _rhel_release
     local _kernel_lower
     local _kernel_higher
-    local sapnote
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_RHEL; then
@@ -79,7 +78,7 @@ function check_0021_os_kernel_knownissues_rhel {
 
         if [[ ${_retval} -eq 99 ]]; then
 
-            logCheckOk "Linux kernel has no known serious issues (SAP Note ${sapnote:-}) (is: ${OS_LEVEL})"
+            logCheckOk "Linux kernel has no known serious issues (is: ${OS_LEVEL})"
             _retval=0
 
         fi
