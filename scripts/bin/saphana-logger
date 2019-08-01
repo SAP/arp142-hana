@@ -15,7 +15,7 @@ umask 0027
 # return if saphana-logger already loaded
 [[ -n "${HANA_LOGGER_PROGVERSION:-}" ]] && return 0
 
-HANA_LOGGER_PROGVERSION='1903.0-dev'
+HANA_LOGGER_PROGVERSION='1907.0-dev'
 
 #exec 3>&2 # logging stream (file descriptor 3) defaults to STDERR
 
