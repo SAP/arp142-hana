@@ -8,7 +8,7 @@ function check_4500_ibm-gpfs_version_intel {
 
     # MODIFICATION SECTION>>
     local -r sapnote='#1880960'
-    local -r _goodversion='4.2.3.13'
+    local -r _goodversion='4.2.3.14'    #Note version 106 2.8.2019
     # MODIFICATION SECTION<<
 
     #1880960 - Lenovo Systems Solution for SAP HANA Platform Edition FW/OS/Driver Maintenance
