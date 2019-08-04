@@ -29,9 +29,9 @@ function check_0300_timer_and_clocksource_intel {
 
         # read tsc flags into array (mapfile = bash4+)
         if [[ ${BASH_VERSINFO[0]:-} -ge 4 ]] ; then
-            mapfile -t tsc_flags < <(grep -e '^flags' /proc/cpuinfo | uniq | tr ' ' '\n' | grep tsc)
+            mapfile -t tsc_flags < <(grep -e '^flags' -m1 /proc/cpuinfo | grep -E -e 'constant_tsc|nonstop_tsc|rdtscp' -o)
         else
-            while IFS=$'\n' read -r line; do tsc_flags+=("$line"); done < <(grep -e '^flags' /proc/cpuinfo | uniq | tr ' ' '\n' | grep tsc)
+            while IFS=$'\n' read -r line; do tsc_flags+=("$line"); done < <(grep -e '^flags' -m1 /proc/cpuinfo | grep -E -e 'constant_tsc|nonstop_tsc|rdtscp' -o)
         fi
 
         local -i cpu_flag_constant_tsc
