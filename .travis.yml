@@ -32,8 +32,9 @@ before_install:
     - sudo -H pip install bashate
 
 script:
-  # Run unit tests - runs all the unit tests that can be founds
+  # Run unit tests - runs all the unit tests that can be found
   - bash -c 'cd ./scripts/tests/; ./test_runner'
+  - bash -c 'cd ./scripts/tests/; ./test_runner -t check/*'
 
   # remove check_staging_area
   - rm -rf ./scripts/lib/check_staging_area

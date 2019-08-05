@@ -55,8 +55,18 @@ function check_0301_timer_and_clocksource_hyperv {
         #kernel clocksource
         local current_clocksource
         local available_clocksource
-        current_clocksource=$(</sys/devices/system/clocksource/clocksource0/current_clocksource)
-        available_clocksource=$(</sys/devices/system/clocksource/clocksource0/available_clocksource)
+
+        #TEST_VARIABLES only required for UNIT TESTING
+        if [[ -z ${TEST_CURRENT_CLOCKSOURCE:-} ]]; then
+            current_clocksource=$(</sys/devices/system/clocksource/clocksource0/current_clocksource)
+        else
+            current_clocksource="${TEST_CURRENT_CLOCKSOURCE:-}"
+        fi
+        if [[ -z ${TEST_AVAILABLE_CLOCKSOURCE:-} ]]; then
+            available_clocksource=$(</sys/devices/system/clocksource/clocksource0/available_clocksource)
+        else
+            available_clocksource="${TEST_AVAILABLE_CLOCKSOURCE:-}"
+        fi
 
     fi
 
@@ -141,7 +151,12 @@ function check_0301_timer_and_clocksource_hyperv {
     #FALLBACK
     if [[ ${_retval} -ne 0 && ${_retval} -ne 3 ]]; then
 
-        if [[ "${current_clocksource}" != "${recommended_clocksource}" ]]; then
+        if [[ "${current_clocksource}" == 'tsc' ]]; then
+
+            #case is impossible but handle anyway correctly
+            logCheckInfo "Fallback OS clocksource is set as recommended (is: tsc)"
+
+        elif [[ "${current_clocksource}" != "${recommended_clocksource}" ]]; then
 
             logCheckError "Fallback OS clocksource is NOT set as recommended (is: ${current_clocksource}, should be: ${recommended_clocksource})"
             _retval=2
