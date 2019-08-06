@@ -1,0 +1,87 @@
+#!/bin/bash
+
+function check_5300_vmware_pvscsi_parameter {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2652670'
+
+    # LIB_COMPARE_TOOBIG_NUMBERS returns 0 if equal, 1 if first is higher, 2 if second is higher
+    # returns 0 if equal, 1 if first is higher, 2 if second is higher
+
+    #                               parameter           recommended_value   RC_expected
+    local -ar _vmw_pvscsi=(\
+                                    'cmd_per_lun'       254                 1   \
+                                    'ring_pages'        32                  1   \
+    )
+    # MODIFICATION SECTION<<
+
+    #2652670 - SAP HANA VM on VMware vSphere --> "SAP HANA on vSphere Best Practices"
+
+    local -i _curr_value
+    local -i _reco_value
+    local -i _rc_expected
+    local -i _rc_current
+    local    _parameter
+
+    # PRECONDITIONS
+    if  ! LIB_FUNC_IS_VIRT_VMWARE ;	then
+
+        logCheckSkipped 'Not running on VMware vSphere. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif [[ ! -d '/sys/module/vmw_pvscsi/parameters' ]]; then
+
+        logCheckSkipped "VMware pvscsi parameters not configurable (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+
+        # CHECK
+        # i+=3 --> every 3rd item
+        for ((i=0; i < ${#_vmw_pvscsi[@]}; i+=3)); do
+
+            logTrace "<${FUNCNAME[0]}> # ${_vmw_pvscsi[$i]}>"
+
+            _parameter=${_vmw_pvscsi[$i]}
+            _reco_value=${_vmw_pvscsi[$i+1]}
+            _rc_expected=${_vmw_pvscsi[$i+2]}
+
+            _curr_value=$(</sys/module/vmw_pvscsi/parameters/"${_parameter}")
+
+            LIB_COMPARE_TOOBIG_NUMBERS "${_curr_value}" "${_reco_value}"
+            _rc_current=$?
+
+            if [[ ${_rc_current} -le ${_rc_expected} ]]; then
+
+                logCheckOk "VMware pvscsi parameter ${_parameter} set as recommended (is: ${_curr_value})"
+
+            else
+
+                logCheckWarning "VMware pvscsi parameter ${_parameter} NOT set as recommended (is: ${_curr_value}, should be: ${_reco_value})"
+                _retval=1
+
+            fi
+
+        done
+
+        if [[ ${_retval} -eq 99 ]]; then
+
+            logCheckOk "VMware pvscsi parameters set as recommended (SAP Note ${sapnote:-})"
+            _retval=0
+
+        else
+
+            logCheckWarning "NOT all VMware pvscsi parameters set as recommended (SAP Note ${sapnote:-})"
+            _retval=1
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}

@@ -41,3 +41,4 @@
 5050_vm_dirty_bytes_sles
 5100_pagecache_limit_sles
 5200_fstrim-service_sles
+5300_vmware_pvscsi_parameter
