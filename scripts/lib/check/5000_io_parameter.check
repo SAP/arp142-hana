@@ -9,10 +9,12 @@ function check_5000_io_parameter {
     # MODIFICATION SECTION>>
     local -r sapnote='#2600030'	# Parameter Recommendations in SAP HANA Environments
 
-    #                               parameter                  recommended_value           SAPNote
+    # LIB_COMPARE_TOOBIG_NUMBERS returns 0 if equal, 1 if first is higher, 2 if second is higher
+    # returns 0 if equal, 1 if first is higher, 2 if second is higher
+    #                               parameter                  recommended_value           RC   SAPNote
     local -ar _io_parameter=(\
-                                    'fs.aio-max-nr'            18446744073709551615         '#1868829'     \
-                                    'fs.file-max'              20000000                     '#2600030' \
+                                    'fs.aio-max-nr'            18446744073709551615        1    '#1868829'  \
+                                    'fs.file-max'              20000000                    1    '#2600030'  \
     )
 
     # MODIFICATION SECTION<<
@@ -20,36 +22,46 @@ function check_5000_io_parameter {
     local  _curr_value
     local  _reco_value
     local  _parameter
+    local -i _rc_expected
+    local -i _rc_current
     local  sapnote_parameter
 
-    # i+=2 --> every 3rd item
-    for ((i=0; i < ${#_io_parameter[@]}; i+=3)); do
+    # i+=4 --> every 5th item
+    for ((i=0; i < ${#_io_parameter[@]}; i+=4)); do
 
         logTrace "<${FUNCNAME[0]}> # ${_io_parameter[$i]}>"
 
         _parameter=${_io_parameter[$i]}
         _reco_value=${_io_parameter[$i+1]}
-        sapnote_parameter=${_io_parameter[$i+2]}
+        _rc_expected=${_io_parameter[$i+2]}
+        sapnote_parameter=${_io_parameter[$i+3]}
 
         _curr_value=$(sysctl -n "${_parameter}")
 
-        if ! LIB_COMPARE_TOOBIG_NUMBERS "${_curr_value}" "${_reco_value}" ; then
+        LIB_COMPARE_TOOBIG_NUMBERS "${_curr_value}" "${_reco_value}"
+        _rc_current=$?
+
+        if [[ ${_rc_current} -le ${_rc_expected} ]] ; then
+
+            logCheckOk "sysctl IO parameter ${_parameter} set as recommended (SAP Note ${sapnote_parameter:-}) (is: ${_curr_value})"
+
+        else
+
             logCheckWarning "sysctl IO parameter ${_parameter} NOT set as recommended (SAP Note ${sapnote_parameter:-}) (is: ${_curr_value}, should be: ${_reco_value})"
             _retval=1
-        else
-            logCheckOk "sysctl IO parameter ${_parameter} set as recommended (SAP Note ${sapnote_parameter:-}) (is: ${_curr_value})"
+
         fi
 
     done
 
     if [[ ${_retval} -eq 99 ]]; then
 
-        logCheckOk "All IO sysctl parameter set as recommended (SAP Note ${sapnote:-})"
+        logCheckOk "All IO sysctl parameters set as recommended (SAP Note ${sapnote:-})"
         _retval=0
 
     else
 
-        logCheckWarning "Not All IO sysctl parameter set as recommended (SAP Note ${sapnote:-})"
+        logCheckWarning "NOT all IO sysctl parameters set as recommended (SAP Note ${sapnote:-})"
 
     fi
 
