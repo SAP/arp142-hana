@@ -45,7 +45,7 @@ function check_2500_kernel_sharedmemory {
         LIB_COMPARE_TOOBIG_NUMBERS "${_curr_value}" "${_reco_value}"
         _rc_current=$?
 
-        if [[ ${_rc_current} -le ${_rc_expected}  ]] ; then
+        if [[ ${_rc_current} -le ${_rc_expected} ]] ; then
             logCheckOk "sysctl KSHM parameter ${_parameter} set as recommended (is: ${_curr_value})"
         else
             logCheckWarning "sysctl KSHM parameter ${_parameter} NOT set as recommended (is: ${_curr_value}, should be: ${_reco_value})"
@@ -56,12 +56,12 @@ function check_2500_kernel_sharedmemory {
 
     if [[ ${_retval} -eq 99 ]]; then
 
-        logCheckOk "All kernel shared-memory sysctl parameter set as recommended (SAP Note ${sapnote:-})"
+        logCheckOk "All kernel shared-memory sysctl parameters set as recommended (SAP Note ${sapnote:-})"
         _retval=0
 
     else
 
-        logCheckWarning "Not All kernel shared-memory sysctl parameter set as recommended (SAP Note ${sapnote:-})"
+        logCheckWarning "NOT all kernel shared-memory sysctl parameters set as recommended (SAP Note ${sapnote:-})"
 
     fi
 

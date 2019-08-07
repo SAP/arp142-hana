@@ -64,12 +64,12 @@ function check_3010_network_parameter {
 
     if [[ ${_retval} -eq 99 ]]; then
 
-        logCheckOk "All network sysctl parameter set as recommended (SAP Note ${sapnote:-})"
+        logCheckOk "All network sysctl parameters set as recommended (SAP Note ${sapnote:-})"
         _retval=0
 
     else
 
-        logCheckWarning "Not All network sysctl parameter set as recommended (SAP Note ${sapnote:-})"
+        logCheckWarning "NOT all network sysctl parameters set as recommended (SAP Note ${sapnote:-})"
         _retval=1
     fi
 

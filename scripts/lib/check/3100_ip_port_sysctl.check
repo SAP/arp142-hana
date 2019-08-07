@@ -47,7 +47,7 @@ function check_3100_ip_port_sysctl {
 
     else
 
-        logCheckWarning "sysctl parameter net.ipv4.ip_local_* NOT set as recommended and therefore NOT handled by SAP Host Agent (SAP Note ${sapnote:-})"
+        logCheckWarning "sysctl parameters net.ipv4.ip_local_* NOT set as recommended and therefore NOT handled by SAP Host Agent (SAP Note ${sapnote:-})"
 
     fi
 

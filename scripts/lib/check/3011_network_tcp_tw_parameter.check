@@ -56,7 +56,7 @@ function check_3011_network_tcp_tw_parameter {
 
     if [[ ${_retval} -eq 99 ]]; then
 
-        logCheckInfo "All sysctl parameter net.ipv4.tcp_tw* set (SAP Note ${sapnote:-})"
+        logCheckInfo "All sysctl parameters net.ipv4.tcp_tw* set (SAP Note ${sapnote:-})"
     else
         logCheckInfo "Consider sysctl parameters net.ipv4.tcp_tw* to be set (SAP Note ${sapnote:-})"
         _retval=99 #reset to info

@@ -51,12 +51,12 @@ function check_5050_vm_dirty_bytes_sles {
 
         if [[ ${_retval} -eq 99 ]]; then
 
-            logCheckOk "All virtual memory dirty sysctl parameter set as recommended (SUSE KB ${sapnote:-}, SAP Note to be created)"
+            logCheckOk "All virtual memory dirty sysctl parameters set as recommended (SUSE KB ${sapnote:-}, SAP Note to be created)"
             _retval=0
 
         else
 
-            logCheckWarning "NOT all virtual memory dirty sysctl parameter set as recommended (SUSE KB ${sapnote:-}, SAP Note to be created)"
+            logCheckWarning "NOT all virtual memory dirty sysctl parameters set as recommended (SUSE KB ${sapnote:-}, SAP Note to be created)"
 
         fi
 

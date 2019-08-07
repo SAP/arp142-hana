@@ -56,7 +56,7 @@ function check_3120_ip_port_hostagent {
 
         if [[ ${_retval} -eq 99 ]]; then
 
-            logCheckOk "SAP Host Agent parameter product_list/instance_list set as recommended (SAP Note ${sapnote:-})"
+            logCheckOk "SAP Host Agent parameters product_list/instance_list set as recommended (SAP Note ${sapnote:-})"
             _retval=0
 
         else

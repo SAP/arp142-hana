@@ -101,12 +101,12 @@ function check_3020_network_memory {
 
     if [[ ${_retval} -eq 99 ]]; then
 
-        logCheckOk 'All network memory sysctl parameter set as recommended (SAP Note '"${sapnote:-})"
+        logCheckOk 'All network memory sysctl parameters set as recommended (SAP Note '"${sapnote:-})"
         _retval=0
 
     else
 
-        logCheckError 'Not All network memory sysctl parameter set as recommended (SAP Note '"${sapnote:-})"
+        logCheckError 'NOT all network memory sysctl parameters set as recommended (SAP Note '"${sapnote:-})"
         _retval=2
     fi
 

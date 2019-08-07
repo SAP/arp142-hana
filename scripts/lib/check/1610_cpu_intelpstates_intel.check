@@ -65,12 +65,12 @@ function check_1610_cpu_intelpstates_intel {
 
         if [[ ${_retval} -eq 99 ]]; then
 
-            logCheckOk "All CPU scaling driver parameter set as recommended (SAP Note ${sapnote:-})"
+            logCheckOk "All CPU scaling driver parameters set as recommended (SAP Note ${sapnote:-})"
             _retval=0
 
         else
 
-            logCheckWarning "NOT all CPU scaling driver parameter set as recommended (SAP Note ${sapnote:-})"
+            logCheckWarning "NOT all CPU scaling driver parameters set as recommended (SAP Note ${sapnote:-})"
 
         fi
 

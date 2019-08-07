@@ -57,12 +57,12 @@ function check_3012_network_parameter_defaults {
 
     if [[ ${_retval} -eq 99 ]]; then
 
-        logCheckOk "Network sysctl parameter set to defaults (SAP Note ${sapnote:-})"
+        logCheckOk "Network sysctl parameters set to defaults (SAP Note ${sapnote:-})"
         _retval=0
 
     else
 
-        logCheckWarning "Not All network sysctl parameter set to defaults (SAP Note ${sapnote:-})"
+        logCheckWarning "NOT all network sysctl parameters set to defaults (SAP Note ${sapnote:-})"
         _retval=1
     fi
 
