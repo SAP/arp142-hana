@@ -7,7 +7,8 @@ function check_5050_vm_dirty_bytes_sles {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#7010287'
+    local -r sapnote_sles12='#1984787'	  # SUSE LINUX Enterprise Server 12: Installation notes
+    local -r sapnote_sles15='#2578899'    # SUSE Linux Enterprise Server 15: Installation Note
 
     #                               parameter                       recommended_value
     local -ar _vm_parameter=(\
@@ -15,6 +16,8 @@ function check_5050_vm_dirty_bytes_sles {
                                     'vm.dirty_background_bytes'      314572800 \
     )
     # MODIFICATION SECTION<<
+
+    local sapnote
 
     # PRECONDITIONS
     if  ! LIB_FUNC_IS_SLES ;	then
@@ -25,6 +28,13 @@ function check_5050_vm_dirty_bytes_sles {
     else
 
     # CHECK
+
+        case "${OS_VERSION}" in
+
+            15.* )  sapnote="${sapnote_sles15}" ;;
+            * )     sapnote="${sapnote_sles12}" ;;
+
+        esac
 
         local _curr_value
         local _reco_value
@@ -51,12 +61,12 @@ function check_5050_vm_dirty_bytes_sles {
 
         if [[ ${_retval} -eq 99 ]]; then
 
-            logCheckOk "All virtual memory dirty sysctl parameters set as recommended (SUSE KB ${sapnote:-}, SAP Note to be created)"
+            logCheckOk "All virtual memory dirty sysctl parameters set as recommended (SAP Note ${sapnote:-})"
             _retval=0
 
         else
 
-            logCheckWarning "NOT all virtual memory dirty sysctl parameters set as recommended (SUSE KB ${sapnote:-}, SAP Note to be created)"
+            logCheckWarning "NOT all virtual memory dirty sysctl parameters set as recommended (SAP Note ${sapnote:-})"
 
         fi
 
