@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function check_1400_cpu_idle_driver_intel {
 

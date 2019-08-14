@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function check_0620_systemd_pam_config_sles {
 

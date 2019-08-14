@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function check_0021_os_kernel_knownissues_rhel {
 

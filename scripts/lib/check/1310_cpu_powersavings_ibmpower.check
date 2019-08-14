@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function check_1310_cpu_powersavings_ibmpower {
 

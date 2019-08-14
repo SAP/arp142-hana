@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function check_1360_cpu_cpufolding_ibmpower {
 

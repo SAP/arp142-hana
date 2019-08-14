@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -u 		# treat unset variables as an error
 
 #Useful information

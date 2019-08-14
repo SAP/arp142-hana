@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function check_0450_tunedprofiles-saphana_rhel {
 

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function check_0030_os_sles_ibmpower {
 # only certain SLES version are supported
