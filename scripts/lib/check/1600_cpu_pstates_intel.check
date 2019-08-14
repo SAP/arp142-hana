@@ -49,7 +49,7 @@ function check_1600_cpu_pstates_intel {
     if [[ ${_retval} -eq 99 ]]; then
 
         #unique value within array
-        mapfile -t cpufreq_drivers < <((cat /sys/devices/system/cpu/cpu*/*/scaling_driver | sort -u) 2>/dev/null)
+        mapfile -t cpufreq_drivers < <(sort -u /sys/devices/system/cpu/cpu*/*/scaling_driver 2>/dev/null)
 
         case ${#cpufreq_drivers[@]} in				#array length
 

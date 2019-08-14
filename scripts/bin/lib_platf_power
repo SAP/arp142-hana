@@ -264,7 +264,7 @@ function __get_platform_power_cpu_details {
 
     # information not provided by lscpu 'Model name'
     if [[ -z ${LIB_PLATF_CPU:-} ]]; then
-        LIB_PLATF_CPU=$(grep  'cpu' /proc/cpuinfo | sort -u)
+        LIB_PLATF_CPU=$(grep  'cpu' -m 1 /proc/cpuinfo)
         LIB_PLATF_CPU=$(LIB_FUNC_TRIM_LEFT "${LIB_PLATF_CPU/cpu[[:space:]]*:}")
         readonly LIB_PLATF_CPU
     fi

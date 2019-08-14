@@ -227,7 +227,7 @@ function __get_platform_x86_64_cpu_details {
 
     if [[ -z ${LIB_PLATF_CPU:-} ]]; then
 
-        LIB_PLATF_CPU=$(grep  'model name' /proc/cpuinfo | sort -u)
+        LIB_PLATF_CPU=$(grep  'model name' -m 1 /proc/cpuinfo)
         LIB_PLATF_CPU=$(LIB_FUNC_TRIM_LEFT "${LIB_PLATF_CPU/model name[[:blank:]]:}")
 
         readonly LIB_PLATF_CPU
