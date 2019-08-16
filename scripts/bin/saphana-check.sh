@@ -208,7 +208,7 @@ function generate_checklist {
         generate_checkfilelist_checkset
 
     else
-        CHECKFILELIST=("$(ls -1 "${PROGRAM_LIBDIR}"/check/*.check)")
+        CHECKFILELIST=("${PROGRAM_LIBDIR}"/check/*.check)
     fi
 
     local checkfile
