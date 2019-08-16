@@ -20,7 +20,7 @@ function check_0441_saptune_sles {
         logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif ! rpm -q saptune > /dev/null ; then
+    elif ! rpm -q --quiet saptune ; then
 
         logCheckSkipped 'saptune not installed' "(SAP Note ${sapnote:-}). Skipping <${FUNCNAME[0]}>"
         _retval=3

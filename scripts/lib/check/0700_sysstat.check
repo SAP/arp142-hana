@@ -11,7 +11,7 @@ function check_0700_sysstat {
     # MODIFICATION SECTION<<
 
     #PRECONDITION
-    if ! rpm -q sysstat &>/dev/null; then
+    if ! rpm -q --quiet sysstat; then
 
         logCheckError "sysstat not installed (SAP Note ${sapnote:-})"
         _retval=2

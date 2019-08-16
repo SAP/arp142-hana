@@ -20,7 +20,7 @@ function check_4500_ibm-gpfs_version_intel {
         logCheckSkipped 'Not running on Intel CPU. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif ! rpm -q gpfs.base > /dev/null ; then
+    elif ! rpm -q --quiet gpfs.base ; then
 
         logCheckSkipped 'GPFS not installed. Skipping' "<${FUNCNAME[0]}>"
         _retval=3

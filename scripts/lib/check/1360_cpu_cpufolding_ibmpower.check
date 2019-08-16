@@ -19,7 +19,7 @@ function check_1360_cpu_cpufolding_ibmpower {
     else
 
     # CHECK
-        if rpm -q pseries-energy > /dev/null ; then
+        if rpm -q --quiet pseries-energy ; then
             logCheckError "pseries-energy RPM is installed. Remove this RPM (SAP Note ${sapnote:-})"
             _retval=2
         else

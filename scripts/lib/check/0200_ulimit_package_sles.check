@@ -37,7 +37,7 @@ function check_0200_ulimit_package_sles {
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-        if rpm -q ulimit > /dev/null ; then
+        if rpm -q --quiet ulimit ; then
 
             logCheckError "ulimit RPM is installed. Remove this RPM (SAP Note ${sapnote:-})"
             _retval=2
