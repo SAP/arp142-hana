@@ -33,7 +33,7 @@ function check_0441_saptune_sles {
                 15.* )  _goodversion="${sles150}" ;;
 
                 *)
-                        logCheckSkipped 'Not applicable for SLES release' "(SAP Note ${sapnote:-}). Skipping <${FUNCNAME[0]}>"
+                        logCheckSkipped 'Check not applicable for SLES release' "(SAP Note ${sapnote:-}). Skipping <${FUNCNAME[0]}>"
                         _retval=3
                     ;;
             esac

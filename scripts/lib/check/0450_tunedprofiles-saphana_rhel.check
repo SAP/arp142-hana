@@ -25,7 +25,7 @@ function check_0450_tunedprofiles-saphana_rhel {
         case "${OS_VERSION}" in
 
                 6.* | 7.[0-2]* )
-                        logCheckSkipped 'Not applicable for RHEL release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
+                        logCheckSkipped 'Check not applicable for RHEL release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
                         _retval=3
                         ;;
 

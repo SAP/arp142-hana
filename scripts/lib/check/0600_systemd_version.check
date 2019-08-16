@@ -24,7 +24,7 @@ function check_0600_systemd_version {
 
         7.*)    _goodversion="${rhel7[0]}" ; sapnote="${rhel7[1]}" ;;
 
-        *)      logCheckSkipped "CHECK not applicable for Linux release (is: ${OS_NAME} ${OS_VERSION}). Skipping" "<${FUNCNAME[0]}>"
+        *)      logCheckSkipped "Check not applicable for Linux release (is: ${OS_NAME} ${OS_VERSION}). Skipping" "<${FUNCNAME[0]}>"
                 _retval=3
             ;;
     esac

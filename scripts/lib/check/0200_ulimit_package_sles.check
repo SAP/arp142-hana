@@ -28,7 +28,7 @@ function check_0200_ulimit_package_sles {
             11.3)	sapnote="${sapnote_sles113}"	;;
             11.4)	sapnote="${sapnote_sles114}"	;;
             *)
-                    logCheckSkipped 'Not applicable for SLES release' "(is: ${OS_NAME} ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
+                    logCheckSkipped 'Check not applicable for SLES release' "(is: ${OS_NAME} ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
                     _retval=3 ;;
 
         esac

@@ -26,7 +26,7 @@ function check_0440_sapconf_sles {
         case "${OS_VERSION}" in
 
                 11.* | 12.0* )
-                        logCheckSkipped 'Not applicable for SLES release' "(is: ${OS_NAME} ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
+                        logCheckSkipped 'Check not applicable for SLES release' "(is: ${OS_NAME} ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
                         _retval=3
                         ;;
 
@@ -35,7 +35,7 @@ function check_0440_sapconf_sles {
                 12.[3-4]* | 15.* )  _goodversion="${sles123[0]}" ; sapnote="${sles123[1]}" ;;
 
                 *)
-                        logCheckWarning 'CHECK does not support SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                        logCheckWarning 'Check does not support SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
                         _retval=1
                     ;;
             esac

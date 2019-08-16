@@ -30,7 +30,7 @@ function check_5200_fstrim-service_sles {
 
             12.2)	_retval=99	;;
 
-            *)      logCheckSkipped 'Not applicable for SLES release' "(is: ${OS_NAME} ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
+            *)      logCheckSkipped 'Check not applicable for SLES release' "(is: ${OS_NAME} ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
                     _retval=3 ;;
 
         esac
