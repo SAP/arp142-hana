@@ -20,6 +20,7 @@ function check_1410_cpu_idle_cstates_intel {
     local -r sapnote_rhel67='#2247020'		# SAP HANA DB: Recommended OS settings for RHEL 6.7
     local -r sapnote_rhel610='#2694292'		# SAP HANA DB: Recommended OS settings for RHEL 6.10
     local -r sapnote_rhel7='#2292690'		# SAP HANA DB: Recommended OS settings for RHEL 7
+    local -r sapnote_rhel8='#2777782'   	# SAP HANA DB: Recommended OS Settings for RHEL 8
 
     local -ir _reco_forcelatency=70
     # MODIFICATION SECTION<<
@@ -74,6 +75,12 @@ function check_1410_cpu_idle_cstates_intel {
                     sapnote="${sapnote_rhel7}"
                     force_latency_prefered='TRUE'
                 ;;
+
+            8.* )
+                    sapnote="${sapnote_rhel8}"
+                    force_latency_prefered='TRUE'
+                ;;
+
             *)
                     logCheckWarning 'CHECK does NOT support RHEL release' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
                     _retval=1

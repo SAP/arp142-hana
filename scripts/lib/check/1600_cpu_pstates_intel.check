@@ -26,7 +26,7 @@ function check_1600_cpu_pstates_intel {
 
         case "${OS_VERSION}" in
 
-            15.* | 12.* | 7.* ) #intel_pstate only for IvyBridge onwards
+            15.* | 12.* | 7.* | 8.* ) #intel_pstate only for IvyBridge onwards
                                 #INTEL_FAM6_IVYBRIDGE		0x3A	--> DEC 58
                                 if [[ ${LIB_PLATF_CPU_MODELID} -ge 58 ]]; then
                                     logCheckInfo "Running on intel_pstate supported Intel CPU (>=IvyBridge - ${LIB_PLATF_CPU_MODELID})" "<${FUNCNAME[0]}>"

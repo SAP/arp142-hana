@@ -7,7 +7,7 @@ function check_0040_os_rhel_ibmpower {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote7x='#2235581'	#SAP HANA: Supported Operating Systems
+    local -r sapnote='#2235581'     # 2235581 - SAP HANA: Supported Operating Systems
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS
@@ -28,12 +28,12 @@ function check_0040_os_rhel_ibmpower {
             case "${OS_VERSION}" in
 
                 7.[3-6]*)
-                        logCheckOk "RHELonPower version is supported (SAP Note ${sapnote7x:-}) (is: ${OS_VERSION})"
+                        logCheckOk "RHELonPower version is supported (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
                         _retval=0
                     ;;
 
                 *)
-                        logCheckError "RHELonPower version with LittleEndian architecture is NOT supported (SAP Note #2235581) (is: ${OS_VERSION})"
+                        logCheckError "RHELonPower version with LittleEndian architecture is NOT supported (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
                         _retval=2
                     ;;
 
@@ -41,7 +41,7 @@ function check_0040_os_rhel_ibmpower {
 
         else
 
-                logCheckError "RHELonPower with BigEndian architecture is NOT supported (SAP Note #2235581) (is: ${OS_VERSION})"
+                logCheckError "RHELonPower with BigEndian architecture is NOT supported (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
                 _retval=2
 
         fi

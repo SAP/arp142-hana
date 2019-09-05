@@ -7,8 +7,9 @@ function check_0450_tunedprofiles-saphana_rhel {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -ar rhel73=( '2.7.1-3.el7_3.3' '#2292690' )
+    local -ar rhel73=( '2.7.1-3.el7_3.3' '#2292690' )       # 2292690 - SAP HANA DB: Recommended OS settings for RHEL 7
     local -ar rhel74=( '2.8.0-5.el7_4.2' '#2292690' )
+    local -ar rhel80=( '2.10.0-7.el8_0.0' '#2777782' )      # 2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
     # MODIFICATION SECTION<<
 
     local _goodversion
@@ -32,6 +33,8 @@ function check_0450_tunedprofiles-saphana_rhel {
                 7.3* )  _goodversion="${rhel73[0]}" ; sapnote="${rhel73[1]}" ;;
 
                 7.[4-6]* )  _goodversion="${rhel74[0]}" ; sapnote="${rhel74[1]}" ;;
+
+                8.* )  _goodversion="${rhel80[0]}" ; sapnote="${rhel80[1]}" ;;
 
                 *)
                         logCheckWarning 'CHECK does not support RHEL release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"

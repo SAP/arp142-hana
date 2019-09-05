@@ -7,8 +7,9 @@ function check_2400_samepage_merging {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote_sles='#1944799'	# SAP HANA Guidelines for SLES Operating System Installation
-    local -r sapnote_rhel='#2292690'    # SAP HANA DB: Recommended OS settings for RHEL 7
+    local -r sapnote_sles='#1944799'	    # SAP HANA Guidelines for SLES Operating System Installation
+    local -r sapnote_rhel7='#2292690'       # SAP HANA DB: Recommended OS settings for RHEL 7
+    local -r sapnote_rhel8='#2777782'   	# SAP HANA DB: Recommended OS Settings for RHEL 8
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS
@@ -16,8 +17,12 @@ function check_2400_samepage_merging {
         local sapnote="${sapnote_sles}"
 
     elif LIB_FUNC_IS_RHEL ; then
-        sapnote=${sapnote_rhel}
+        case "${OS_VERSION}" in
 
+                8.*)    sapnote="${sapnote_rhel8}" ;;
+                *)    sapnote="${sapnote_rhel7}" ;;
+
+        esac
     else
         logCheckWarning 'CHECK does not support Linux distribution.' "${FUNCNAME[0]} - ${OS_NAME} ${OS_VERSION}"
         _retval=1

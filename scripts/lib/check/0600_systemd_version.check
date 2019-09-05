@@ -10,6 +10,7 @@ function check_0600_systemd_version {
     local -ar sles122=( '228-142.1' '#2205917' )	#SAP HANA DB: Recommended OS settings for SLES 12
     local -ar sles150=( '228-142.1' '#2684254' )	#SAP HANA DB: Recommended OS settings for SLES 15
     local -ar rhel7=( '219-19.el7_2.4' '#2292690')	#SAP HANA DB: Recommended OS settings for RHEL 7
+    local -ar rhel8=( '239-8.el8' '#2777782')	    #SAP HANA DB: Recommended OS Settings for RHEL 8
     # MODIFICATION SECTION<<
 
     local _goodversion
@@ -24,7 +25,9 @@ function check_0600_systemd_version {
 
         7.*)    _goodversion="${rhel7[0]}" ; sapnote="${rhel7[1]}" ;;
 
-        *)      logCheckSkipped "Check not applicable for Linux release (is: ${OS_NAME} ${OS_VERSION}). Skipping" "<${FUNCNAME[0]}>"
+        8.*)    _goodversion="${rhel8[0]}" ; sapnote="${rhel8[1]}" ;;
+
+        *)      logCheckSkipped "CHECK not applicable for Linux release (is: ${OS_NAME} ${OS_VERSION}). Skipping" "<${FUNCNAME[0]}>"
                 _retval=3
             ;;
     esac

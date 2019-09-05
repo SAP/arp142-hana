@@ -14,6 +14,7 @@ function check_0410_glibc_ibmpower {
     local -ar sles150=('2.22-61.3' '#2684254')
     local -ar rhel73=('2.17-157.el7_3.5' '#2292690')
     local -ar rhel74=('2.17-196.el7' '#1943937')        #LandscapeTest_2018_11_15.py
+    local -ar rhel80=('2.17-196.el8' '#2777782')
     # MODIFICATION SECTION<<
 
     #2263929 - SAP HANA DB: Hang during out-of-memory situation
@@ -21,6 +22,7 @@ function check_0410_glibc_ibmpower {
     #2205917 - SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
     #2684254 - SAP HANA DB: Recommended OS settings for SLES 15 / SLES for SAP Applications 15
     #2292690 - SAP HANA DB: Recommended OS settings for RHEL 7
+    #2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
     #1943937 - Hardware Configuration Check Tool - Central Note
 
     local _goodversion
@@ -58,6 +60,8 @@ function check_0410_glibc_ibmpower {
                 7.3* )      _goodversion="${rhel73[0]}" ; sapnote="${rhel73[1]}" ;;
 
                 7.[4-6]* )  _goodversion="${rhel74[0]}" ; sapnote="${rhel74[1]}" ;;
+
+                8.* )       _goodversion="${rhel80[0]}" ; sapnote="${rhel80[1]}" ;;
 
                 *)          logCheckWarning 'CHECK does not support RHEL release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
                             _retval=1
