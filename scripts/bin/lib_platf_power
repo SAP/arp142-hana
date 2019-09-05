@@ -281,6 +281,47 @@ function __get_platform_power_cpu_details {
     fi
 }
 
+function __lib_func_get_auxvector_details {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -a auxVector
+
+    local -r IFS=$'\n';
+    auxVector=( "$(LD_SHOW_AUXV=1 /bin/true)" )
+
+    local line
+    for line in ${auxVector[*]:-}; do
+
+        logTrace "<${FUNCNAME[0]}> # ${line}>"
+
+        case ${line} in
+
+        'AT_PLATFORM:'*)        #AT_PLATFORM:     power7        #Processor compatibility mode
+                                if [[ -z ${LIB_PLATF_POWER_PLATFORM_COMPAT:-} ]]; then
+                                    LIB_PLATF_POWER_PLATFORM_COMPAT=$(LIB_FUNC_TRIM_LEFT "${line/AT_PLATFORM:}")
+                                    readonly LIB_PLATF_POWER_PLATFORM_COMPAT
+                                fi
+        ;;
+
+        'AT_BASE_PLATFORM:'*)   #AT_BASE_PLATFORM:power8        #Actual processor type
+                                if [[ -z ${LIB_PLATF_POWER_PLATFORM_BASE:-} ]]; then
+                                    LIB_PLATF_POWER_PLATFORM_BASE=$(LIB_FUNC_TRIM_LEFT "${line/AT_BASE_PLATFORM:}")
+                                    readonly LIB_PLATF_POWER_PLATFORM_BASE
+                                fi
+        ;;
+
+        'AT_HWCAP2:'*)          #AT_HWCAP2: htm-nosc vcrypto tar isel ebb dscr htm arch_2_07
+                                if [[ -z ${LIB_PLATF_POWER_HWCAP2:-} ]]; then
+                                    LIB_PLATF_POWER_HWCAP2=$(LIB_FUNC_TRIM_LEFT "${line/AT_HWCAP2:}")
+                                    readonly LIB_PLATF_POWER_HWCAP2
+                                fi
+        ;;
+
+        esac
+
+    done
+}
 
 #============================================================
 # LIB MAIN - initialization
@@ -294,6 +335,7 @@ function _lib_platf_power_main {
 
     __lib_func_get_lpar_details
     __get_platform_power_cpu_details
+    __lib_func_get_auxvector_details
     __lib_func_get_hypervisor_details
 
     #readonly <AnyVariable>
@@ -309,6 +351,9 @@ function _lib_platf_power_main {
 # LIB_PLATF_POWER_CPUMODE
 # LIB_PLATF_POWER_CPUMODE_DEDDON
 # LIB_PLATF_POWER_POWERMODE
+# LIB_PLATF_POWER_PLATFORM_BASE
+# LIB_PLATF_POWER_PLATFORM_COMPAT
+# LIB_PLATF_POWER_HWCAP2
 
 #Import libraries
 #shellcheck source=./saphana-logger
