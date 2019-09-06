@@ -49,6 +49,7 @@ function check_5200_fstrim-service_sles {
         LIB_FUNC_NORMALIZE_KERNEL "${_fixedkernel}"
         normalized_goodversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
 
+        # returns 0 if equal, 1 if first is higher, 2 if second is higher
         LIB_FUNC_COMPARE_VERSIONS "${normalized_kernelversion}" "${normalized_goodversion}"
         if [[ $? -lt 2 ]]; then
 

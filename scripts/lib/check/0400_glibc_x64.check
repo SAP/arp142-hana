@@ -90,6 +90,7 @@ function check_0400_glibc_x64 {
         LIB_FUNC_NORMALIZE_RPM "${_fullversion}"
         normalized_fullversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
 
+        # returns 0 if equal, 1 if first is higher, 2 if second is higher
         LIB_FUNC_COMPARE_VERSIONS "${normalized_fullversion}" "${normalized_goodversion}"
 
         if [[ $? -ne 2 ]]; then

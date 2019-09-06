@@ -22,6 +22,8 @@ function check_3110_ip_port_range_parity {
     kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
 
     # PRECONDITIONS
+
+    # returns 0 if equal, 1 if first is higher, 2 if second is higher
     LIB_FUNC_COMPARE_VERSIONS "${kernelversion}" "${kernel_applicable}"
     if [[ $? -eq 2 ]]; then
         logCheckSkipped "Check not applicable for Linux kernel (is: ${OS_LEVEL}). Skipping" "<${FUNCNAME[0]}>"

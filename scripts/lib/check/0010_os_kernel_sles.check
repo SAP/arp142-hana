@@ -121,6 +121,7 @@ function check_0010_os_kernel_sles {
         LIB_FUNC_NORMALIZE_KERNEL "${_goodversion}"
         normalized_goodversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
 
+        # returns 0 if equal, 1 if first is higher, 2 if second is higher
         LIB_FUNC_COMPARE_VERSIONS "${normalized_kernelversion}" "${normalized_goodversion}"
         if [[ $? -eq 2 ]]; then
             logCheckError "Linux kernel must be upgraded. (SAP Note ${sapnote:-}) (is: ${OS_LEVEL}, should be: >=${_goodversion})"
