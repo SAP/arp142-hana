@@ -26,9 +26,9 @@ before_install:
 
     - echo "[INFO] _VERSION> $_VERSION ; VERSION_BUILD_COMMIT> $VERSION_BUILD_COMMIT"
     #- sudo apt-add-repository "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse"
-    - sudo apt-get -qq update
-    #- sudo apt-get -t trusty-backports install shellcheck
-    - sudo -H pip install --upgrade pip
+    # - sudo apt-get -qq update
+    # - sudo apt-get -t trusty-backports install shellcheck
+    # - sudo -H pip install --upgrade pip
     - sudo -H pip install bashate
 
 script:
