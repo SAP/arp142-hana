@@ -2,6 +2,7 @@
 0011_os_kernel_knownissue_sles
 0050_os_release_kernel_sles
 0200_ulimit_package_sles
+0210_kernel_pid_max
 0220_cgroup_pids_max_sles
 0300_timer_and_clocksource_intel
 0301_timer_and_clocksource_hyperv

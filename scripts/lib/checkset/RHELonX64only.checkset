@@ -1,6 +1,7 @@
 0020_os_kernel_rhel
 0021_os_kernel_knownissues_rhel
 0060_os_release_kernel_rhel
+0210_kernel_pid_max
 0300_timer_and_clocksource_intel
 0301_timer_and_clocksource_hyperv
 0350_timesync

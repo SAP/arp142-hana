@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+function check_0210_kernel_pid_max {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote_sles='#2684254'	# SAP HANA DB: Recommended OS settings for SLES 15
+    local -r sapnote_rhel='#2777782'   	# SAP HANA DB: Recommended OS Settings for RHEL 8
+
+    local -ir systemd_version_ge_to_check=239
+
+    local -ir _maximum_pid_max=4194304  #(2^22)
+    # MODIFICATION SECTION<<
+
+    local sapnote
+
+    # PRECONDITIONS
+    if ! rpm -q --quiet systemd ; then
+
+        logCheckSkipped 'systemd not installed.' "Skipping <${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+
+        local -i _version
+        _version=$(rpm -q --queryformat "%{VERSION}" systemd)
+
+        if [[ ${_version} -lt ${systemd_version_ge_to_check} ]]; then
+
+            logCheckSkipped 'Check not applicable for systemd version' "(is: ${_version}). Skipping <${FUNCNAME[0]}>"
+            _retval=3
+
+        elif LIB_FUNC_IS_SLES ; then
+                sapnote="${sapnote_sles}"
+
+        elif LIB_FUNC_IS_RHEL ; then
+                sapnote="${sapnote_rhel}"
+
+        fi
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local -i _curr_pid_max
+        _curr_pid_max=$(</proc/sys/kernel/pid_max)
+
+        if [[ ${_curr_pid_max} -lt ${_maximum_pid_max} ]]; then
+
+            logCheckError "Parameter kernel.pid_max NOT set as recommended (SAP Note ${sapnote:-}) (is: ${_curr_pid_max}, should be: ${_maximum_pid_max})"
+            _retval=2
+
+        else
+
+            logCheckOk "Parameter kernel.pid_max set as recommended (SAP Note ${sapnote:-}) (is: ${_curr_pid_max})"
+            _retval=0
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
