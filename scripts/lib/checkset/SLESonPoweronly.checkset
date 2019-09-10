@@ -20,6 +20,7 @@
 1360_cpu_cpufolding_ibmpower
 2000_transparent_hugepages
 2100_active_memory_sharing_ibmpower
+2150_transactional_memory_ibmpower
 2200_numa_balancing
 2220_numa_topology_updates_ibmpower_sles
 2300_vm_max_map_count

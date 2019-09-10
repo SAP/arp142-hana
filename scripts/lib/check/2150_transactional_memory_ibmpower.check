@@ -1,0 +1,134 @@
+#!/usr/bin/env bash
+
+function check_2150_transactional_memory_ibmpower {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2774105'		# Kernel Panic With Hardware Transactional Memory on Linux on Power
+
+    local -r sles124power='4.12.14-95.13.1'
+    local -r sles150power='4.12.14-150.14.1'
+    # MODIFICATION SECTION<<
+
+    local kernel_with_htm_support
+    local htm_off_required
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_IBMPOWER ; then
+
+        logCheckSkipped 'Not running on IBM Power. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif LIB_FUNC_IS_SLES; then
+
+        case "${OS_VERSION}" in
+
+        11.*)
+            logCheckSkipped 'SLESonPower version does not support HTM' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
+            _retval=3 ;;
+
+        12.[1-3]*)  htm_off_required=true ;;
+
+        12.4*)      kernel_with_htm_support="${sles124power}" ;;
+
+        15.0*)      kernel_with_htm_support="${sles150power}" ;;
+
+        *)          htm_off_required=false ;;
+
+        esac
+
+    elif LIB_FUNC_IS_RHEL; then
+
+        case "${OS_VERSION}" in
+
+        7.[3-6]*)   htm_off_required=true ;;
+
+        *)          htm_off_required=false ;;
+
+        esac
+
+    fi
+
+    #CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        #KERNEL-CHECK
+        if [[ -n ${kernel_with_htm_support:-} ]]; then
+
+            local normalized_kernelversion
+            local normalized_goodversion
+
+            LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
+            normalized_kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
+
+            LIB_FUNC_NORMALIZE_KERNEL "${kernel_with_htm_support}"
+            normalized_goodversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
+
+            # returns 0 if equal, 1 if first is higher, 2 if second is higher
+            LIB_FUNC_COMPARE_VERSIONS "${normalized_kernelversion}" "${normalized_goodversion}"
+
+            if [[ $? -eq 2 ]]; then
+
+                    htm_off_required=true
+            else
+
+                    htm_off_required=false
+            fi
+
+        fi
+
+        local regex='\bhtm\b'
+
+        if [[ -z ${LIB_PLATF_POWER_HWCAP2:-} ]]; then
+
+            if ${htm_off_required}; then
+
+                logCheckError "CPU <HW Transactional Memory> support NOT known (SAP Note ${sapnote:-}) (is: Unknown, should be: DISABLED)"
+                _retval=2
+
+            else
+
+                logCheckOk "CPU <HW Transactional Memory> support NOT known (SAP Note ${sapnote:-}) (is: Unknown, can be: ENABLED)"
+                _retval=0
+
+            fi
+
+        elif [[ "${LIB_PLATF_POWER_HWCAP2}" =~ ${regex} ]]; then
+
+            if ${htm_off_required}; then
+
+                logCheckError "CPU <HW Transactional Memory> feature NOT set as recommended (SAP Note ${sapnote:-}) (is: ENABLED, should be: DISABLED)"
+                _retval=2
+
+            else
+
+                logCheckOk "CPU <HW Transactional Memory> feature fully supported (SAP Note ${sapnote:-}) (is: ENABLED)"
+                _retval=0
+
+            fi
+
+        else
+
+            if ${htm_off_required}; then
+
+                logCheckOk "CPU <HW Transactional Memory> feature set as recommended (SAP Note ${sapnote:-}) (is: DISABLED)"
+                _retval=0
+
+            else
+
+                logCheckOk "CPU <HW Transactional Memory> feature fully supported (SAP Note ${sapnote:-}) (is: DISABLED, can be: ENABLED)"
+                _retval=0
+
+            fi
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
