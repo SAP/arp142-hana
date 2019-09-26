@@ -16,7 +16,7 @@ function check_2500_kernel_sharedmemory {
 
     #                               parameter              recommended_value    RC
     local -ar _shm_parameter=(\
-                                    'kernel.shmmni'	                   32768    1  \
+                                    'kernel.shmmni'                    32768    1  \
                                     'kernel.shmall'      1152921504606846720    1  \
                                     'kernel.shmmax'     18446744073709551615    1  \
     )

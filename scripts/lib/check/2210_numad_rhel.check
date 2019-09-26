@@ -7,14 +7,14 @@ function check_2210_numad_rhel {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote_rhel67='#2247020'	    # SAP HANA DB: Recommended OS settings for RHEL 6.7
-    local -r sapnote_rhel610='#2694292' 	# SAP HANA DB: Recommended OS settings for RHEL 6.10
-    local -r sapnote_rhel7='#2292690'	    # SAP HANA DB: Recommended OS settings for RHEL 7
-    local -r sapnote_rhel8='#2777782'   	# SAP HANA DB: Recommended OS Settings for RHEL 8
+    local -r sapnote_rhel67='#2247020'  # SAP HANA DB: Recommended OS settings for RHEL 6.7
+    local -r sapnote_rhel610='#2694292' # SAP HANA DB: Recommended OS settings for RHEL 6.10
+    local -r sapnote_rhel7='#2292690'   # SAP HANA DB: Recommended OS settings for RHEL 7
+    local -r sapnote_rhel8='#2777782'   # SAP HANA DB: Recommended OS Settings for RHEL 8
     # MODIFICATION SECTION<<
 
     # PRECONDITION
-    if  ! LIB_FUNC_IS_RHEL ;	then
+    if ! LIB_FUNC_IS_RHEL ; then
 
         logCheckSkipped 'Linux distribution is not RHEL. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
@@ -26,10 +26,10 @@ function check_2210_numad_rhel {
 
         case "${OS_VERSION}" in
 
-            6.[5-7])	sapnote="${sapnote_rhel67}" ; cmdline='systemd' ;;
-            6.10)	    sapnote="${sapnote_rhel610}" ; cmdline='systemd' ;;
-            7.*)	    sapnote="${sapnote_rhel7}" ; cmdline='systemctl' ;;
-            8.*)	    sapnote="${sapnote_rhel8}" ; cmdline='systemctl' ;;
+            6.[5-7])    sapnote="${sapnote_rhel67}" ; cmdline='systemd' ;;
+            6.10)       sapnote="${sapnote_rhel610}" ; cmdline='systemd' ;;
+            7.*)        sapnote="${sapnote_rhel7}" ; cmdline='systemctl' ;;
+            8.*)        sapnote="${sapnote_rhel8}" ; cmdline='systemctl' ;;
             *)
                     logCheckWarning 'CHECK does NOT support RHEL release' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
                     _retval=1
@@ -40,7 +40,7 @@ function check_2210_numad_rhel {
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-        if  [[ ! -x '/usr/bin/numad' ]]; then
+        if [[ ! -x '/usr/bin/numad' ]]; then
 
             logCheckOk "Userspace daemon numad not installed (SAP Note ${sapnote:-})"
             _retval=0

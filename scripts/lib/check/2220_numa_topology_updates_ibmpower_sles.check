@@ -7,7 +7,7 @@ function check_2220_numa_topology_updates_ibmpower_sles {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#2055470'		# HANA on POWER Planning and Installation Specifics - Central Note
+    local -r sapnote='#2055470' # HANA on POWER Planning and Installation Specifics - Central Note
     # MODIFICATION SECTION<<
 
     # Detailed IBM Documentation can be found on IBM Techdocs in the
@@ -20,7 +20,7 @@ function check_2220_numa_topology_updates_ibmpower_sles {
         logCheckSkipped 'Not running on IBM Power. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif  ! LIB_FUNC_IS_SLES ;	then
+    elif ! LIB_FUNC_IS_SLES ; then
 
         logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
@@ -29,7 +29,7 @@ function check_2220_numa_topology_updates_ibmpower_sles {
 
         case "${OS_VERSION}" in
 
-            12.[3-4] | 15.0 )	_retval=99 ;;
+            12.[3-4] | 15.0 )   _retval=99 ;;
             *)
                     logCheckSkipped "Check not applicable for SLES release (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
                     _retval=3

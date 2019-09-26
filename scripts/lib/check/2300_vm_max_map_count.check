@@ -7,7 +7,7 @@ function check_2300_vm_max_map_count {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#1980196'		#Setting /proc/sys/vm/max_map_count on HANA systems
+    local -r sapnote='#1980196' #Setting /proc/sys/vm/max_map_count on HANA systems
     # MODIFICATION SECTION<<
 
     # LIMIT <= 2.147.483.647 - make sure that value is not larger

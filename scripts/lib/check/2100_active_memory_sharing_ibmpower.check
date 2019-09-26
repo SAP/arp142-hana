@@ -7,7 +7,7 @@ function check_2100_active_memory_sharing_ibmpower {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#2055470'		# HANA on POWER Planning and Installation Specifics - Central Note
+    local -r sapnote='#2055470' # HANA on POWER Planning and Installation Specifics - Central Note
     # MODIFICATION SECTION<<
 
     # Detailed IBM Documentation can be found on IBM Techdocs in the
