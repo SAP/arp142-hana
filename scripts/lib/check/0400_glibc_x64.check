@@ -2,7 +2,7 @@
 
 function check_0400_glibc_x64 {
 
-    #SLES11.2/3/4	- #2263929
+    #SLES11.2/3/4 - #2263929
     #Security advise SCN-2016-257 https://listserv.sap.corp/pipermail/cert.linux.suse/2016/000959.html
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"

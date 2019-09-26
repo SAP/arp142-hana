@@ -7,7 +7,7 @@ function check_0010_os_kernel_sles {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    # array	'goodnormalized_kernelversion'	'sap note'
+    # array 'goodnormalized_kernelversion'  'sap note'
     local -ar sles113=('3.0.101-0.47.106.22.1' '#2588395')
     local -ar sles114=('3.0.101-108.38.1' '#2588395')
     local -ar sles114power=('3.0.101-108.38.1' '#2588395')
@@ -78,21 +78,21 @@ function check_0010_os_kernel_sles {
                     _retval=2
                     ;;
 
-            11.3)	_goodversion="${sles113[0]}" ; sapnote="${sles113[1]}" ;;
+            11.3)   _goodversion="${sles113[0]}" ; sapnote="${sles113[1]}" ;;
 
-            11.4)	_goodversion="${sles114[0]}" ; sapnote="${sles114[1]}" ;;
+            11.4)   _goodversion="${sles114[0]}" ; sapnote="${sles114[1]}" ;;
 
-            12.0*)	_goodversion="${sles120[0]}" ; sapnote="${sles120[1]}" ;;
+            12.0*)  _goodversion="${sles120[0]}" ; sapnote="${sles120[1]}" ;;
 
-            12.1*)	_goodversion="${sles121[0]}" ; sapnote="${sles121[1]}" ;;
+            12.1*)  _goodversion="${sles121[0]}" ; sapnote="${sles121[1]}" ;;
 
-            12.2*)	_goodversion="${sles122[0]}" ; sapnote="${sles122[1]}" ;;
+            12.2*)  _goodversion="${sles122[0]}" ; sapnote="${sles122[1]}" ;;
 
-            12.3*)	_goodversion="${sles123[0]}" ; sapnote="${sles123[1]}" ;;
+            12.3*)  _goodversion="${sles123[0]}" ; sapnote="${sles123[1]}" ;;
 
-            12.4*)	_goodversion="${sles124[0]}" ; sapnote="${sles124[1]}" ;;
+            12.4*)  _goodversion="${sles124[0]}" ; sapnote="${sles124[1]}" ;;
 
-            15.0*)	_goodversion="${sles150[0]}" ; sapnote="${sles150[1]}" ;;
+            15.0*)  _goodversion="${sles150[0]}" ; sapnote="${sles150[1]}" ;;
 
             *)
                 logCheckError "SLES version is not supported (SAP Note #2235581) (is: ${OS_VERSION})"

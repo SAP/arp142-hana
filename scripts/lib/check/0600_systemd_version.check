@@ -7,10 +7,10 @@ function check_0600_systemd_version {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -ar sles122=( '228-142.1' '#2205917' )	#SAP HANA DB: Recommended OS settings for SLES 12
-    local -ar sles150=( '228-142.1' '#2684254' )	#SAP HANA DB: Recommended OS settings for SLES 15
-    local -ar rhel7=( '219-19.el7_2.4' '#2292690')	#SAP HANA DB: Recommended OS settings for RHEL 7
-    local -ar rhel8=( '239-8.el8' '#2777782')	    #SAP HANA DB: Recommended OS Settings for RHEL 8
+    local -ar sles122=( '228-142.1' '#2205917' )    #SAP HANA DB: Recommended OS settings for SLES 12
+    local -ar sles150=( '228-142.1' '#2684254' )    #SAP HANA DB: Recommended OS settings for SLES 15
+    local -ar rhel7=( '219-19.el7_2.4' '#2292690')  #SAP HANA DB: Recommended OS settings for RHEL 7
+    local -ar rhel8=( '239-8.el8' '#2777782')       #SAP HANA DB: Recommended OS Settings for RHEL 8
     # MODIFICATION SECTION<<
 
     local _goodversion

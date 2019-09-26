@@ -7,7 +7,7 @@ function check_0021_os_kernel_knownissues_rhel {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    # array	'release' 'lower boundary' 'upper boundary' 'SAP Note'
+    # array 'release' 'lower boundary' 'upper boundary' 'SAP Note'
     local -ar _rhel_common=(\
                         '6.10'  '2.6.32-754.15.3.el6'       '2.6.32-754.22.0.el6'   '#2812427' \
                         '7.4'   '3.10.0-693.50.3.el7'       '3.10.0-693.58.0.el7'   '#2812427' \

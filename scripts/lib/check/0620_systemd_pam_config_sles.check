@@ -8,7 +8,7 @@ function check_0620_systemd_pam_config_sles {
 
     # MODIFICATION SECTION>>
     local -r reco_regex='session[[:blank:]]+optional[[:blank:]]+pam_systemd.so'
-    local -r susekb='#7022001'	#"cgroup: fork rejected by pids controller in..." found in system log
+    local -r susekb='#7022001'  #"cgroup: fork rejected by pids controller in..." found in system log
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS

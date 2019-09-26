@@ -7,11 +7,11 @@ function check_2000_transparent_hugepages {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#2131662'		# Transparent Huge Pages (THP) on SAP HANA Servers
+    local -r sapnote='#2131662'     # Transparent Huge Pages (THP) on SAP HANA Servers
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS
-    if [[ ! -f  '/sys/kernel/mm/transparent_hugepage/enabled' ]]; then
+    if [[ ! -f '/sys/kernel/mm/transparent_hugepage/enabled' ]]; then
 
         #eg: XEN
         logCheckSkipped "Transparent Hugepages not configurable (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"

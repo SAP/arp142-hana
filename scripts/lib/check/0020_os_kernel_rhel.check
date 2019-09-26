@@ -7,7 +7,7 @@ function check_0020_os_kernel_rhel {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    # array	'goodnormalized_kernelversion'	'sap note'
+    # array 'goodnormalized_kernelversion'  'sap note'
     local -ar rhel65=('2.6.32-431.29.2' '#2013638')             #Patch for NFSv4 locking problem
     local -ar rhel66=('2.6.32-504.16.2' '#2136965')             #not known, take release kernel
     local -ar rhel67=('2.6.32-573' '#2247020')                  #not known, take release kernel
@@ -30,7 +30,7 @@ function check_0020_os_kernel_rhel {
     #2247020 - SAP HANA DB: Recommended OS settings for RHEL 6.7
     #2694292 - SAP HANA DB: Recommended OS settings for RHEL 6.10
     #2292690 - SAP HANA DB: Recommended OS settings for RHEL 7
-    #2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8    
+    #2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
     #2588395 - Erroneous Accounting of Shared Memory in Multitenant Database Container Systems Running in High Isolation Level on Linux
 
 
@@ -63,7 +63,7 @@ function check_0020_os_kernel_rhel {
                     _retval=2
                     ;;
 
-            6.10)	_goodversion="${rhel610[0]}" ; sapnote="${rhel610[1]}" ;;
+            6.10)   _goodversion="${rhel610[0]}" ; sapnote="${rhel610[1]}" ;;
 
             7.2)    _goodversion="${rhel72[0]}" ; sapnote="${rhel72[1]}" ;;
             7.3)    _goodversion="${rhel73[0]}" ; sapnote="${rhel73[1]}" ;;
@@ -111,7 +111,7 @@ function check_0020_os_kernel_rhel {
 
             LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
             normalized_kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
-            #2.6.32-504.16.2.el6.x86_64	-->	2.6.32-504.16.2
+            #2.6.32-504.16.2.el6.x86_64 --> 2.6.32-504.16.2
 
             LIB_FUNC_NORMALIZE_KERNEL "${_goodversion}"
             normalized_goodversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"

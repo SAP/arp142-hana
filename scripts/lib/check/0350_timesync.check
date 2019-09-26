@@ -18,25 +18,25 @@ function check_0350_timesync {
     local cmdline
 
     # PRECONDITION
-    if  LIB_FUNC_IS_SLES ;	then
+    if LIB_FUNC_IS_SLES ; then
 
         sapnote="${sapnote_sles}"
 
         case "${OS_VERSION}" in
 
-            11.*)	cmdline='systemd' ;;
-            *)	    cmdline='systemctl' ;;
+            11.*)   cmdline='systemd' ;;
+            *)      cmdline='systemctl' ;;
 
         esac
 
-    elif LIB_FUNC_IS_RHEL ;	then
+    elif LIB_FUNC_IS_RHEL ; then
 
         sapnote="${sapnote_rhel}"
 
         case "${OS_VERSION}" in
 
-            6.*)	cmdline='systemd' ;;
-            *)	    cmdline='systemctl' ;;
+            6.*)    cmdline='systemd' ;;
+            *)      cmdline='systemctl' ;;
 
         esac
 

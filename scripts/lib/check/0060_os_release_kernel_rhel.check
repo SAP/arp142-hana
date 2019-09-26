@@ -10,7 +10,7 @@ function check_0060_os_release_kernel_rhel {
     # https://access.redhat.com/articles/3078
 
     # MODIFICATION SECTION>>
-    # array	'expected kernelversion' - must not have *.el suffix
+    # array 'expected kernelversion' - must not have *.el suffix
     local -ar rhel65=( '2.6.32-431' )
     local -ar rhel66=( '2.6.32-504' )
     local -ar rhel67=( '2.6.32-573' )
@@ -26,7 +26,7 @@ function check_0060_os_release_kernel_rhel {
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS
-    if  ! LIB_FUNC_IS_RHEL ;	then
+    if ! LIB_FUNC_IS_RHEL ; then
 
         logCheckSkipped 'Linux distribution is not RHEL. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
@@ -42,29 +42,29 @@ function check_0060_os_release_kernel_rhel {
                         _retval=2
                 ;;
 
-            6.5)	expected_kernel="${rhel65[0]}" ;;
+            6.5)    expected_kernel="${rhel65[0]}" ;;
 
-            6.6)	expected_kernel="${rhel66[0]}" ;;
+            6.6)    expected_kernel="${rhel66[0]}" ;;
 
-            6.7)	expected_kernel="${rhel67[0]}" ;;
+            6.7)    expected_kernel="${rhel67[0]}" ;;
 
             6.[8-9] )   logCheckError 'RHEL 6.8 and 6.9 are not supported. Please upgrade to RHEL 6.10+ (SAP Note #2235581)'
                         _retval=2
                 ;;
 
-            6.10)	expected_kernel="${rhel610[0]}" ;;
+            6.10)   expected_kernel="${rhel610[0]}" ;;
 
             7.[0-1] )   logCheckError 'RHEL 7.0 and 7.1 are not supported. Please upgrade to RHEL 7.2+ (SAP Note #2235581)'
                         _retval=2
                 ;;
 
-            7.2)	expected_kernel="${rhel72[0]}" ;;
-            7.3)	expected_kernel="${rhel73[0]}" ;;
-            7.4)	expected_kernel="${rhel74[0]}" ;;
-            7.5)	expected_kernel="${rhel75[0]}" ;;
-            7.6)	expected_kernel="${rhel76[0]}" ;;
+            7.2)    expected_kernel="${rhel72[0]}" ;;
+            7.3)    expected_kernel="${rhel73[0]}" ;;
+            7.4)    expected_kernel="${rhel74[0]}" ;;
+            7.5)    expected_kernel="${rhel75[0]}" ;;
+            7.6)    expected_kernel="${rhel76[0]}" ;;
 
-            8.*)	expected_kernel="${rhel80[0]}" ;;
+            8.*)    expected_kernel="${rhel80[0]}" ;;
 
             *)      logCheckWarning 'CHECK does not support RHEL release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
                     _retval=1
@@ -78,9 +78,10 @@ function check_0060_os_release_kernel_rhel {
 
             LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
             normalized_kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
-            #2.6.32-504.16.2.el6.x86_64	-->	2.6.32-504.16.2
+            #2.6.32-504.16.2.el6.x86_64 --> 2.6.32-504.16.2
 
-            normalized_kernelversion=${normalized_kernelversion:0:${#expected_kernel}}	#substring - lenght as expected kernel version
+            normalized_kernelversion=${normalized_kernelversion:0:${#expected_kernel}}
+            #substring - lenght as expected kernel version
 
             # returns 0 if equal, 1 if first is higher, 2 if second is higher
             if ! LIB_FUNC_COMPARE_VERSIONS "${normalized_kernelversion}" "${expected_kernel}" ; then

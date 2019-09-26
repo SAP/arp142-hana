@@ -10,7 +10,7 @@ function check_0050_os_release_kernel_sles {
     # https://www.novell.com/support/kb/doc.php?id=3594951
 
     # MODIFICATION SECTION>>
-    # array	'lowest expected ' 'upper boundary'
+    # array 'lowest expected ' 'upper boundary'
     local -ar sles113=( '3.0.76-0.11.1' '3.0.101-0.47.999' )
     local -ar sles114=( '3.0.101-63.1' '3.0.101-999' '#2240716' )
     local -ar sles120=( '3.12.28-4.6' '3.12.61-52.9999' )
@@ -20,11 +20,11 @@ function check_0050_os_release_kernel_sles {
     local -ar sles124=( '4.12.14-94.38.1' '4.12.999' )
     local -ar sles150=( '4.12.14-23.1' '4.12.999' )
 
-    local -r sapnote='#2235581'	#SAP HANA: Supported Operating Systems
+    local -r sapnote='#2235581' #SAP HANA: Supported Operating Systems
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS
-    if  ! LIB_FUNC_IS_SLES ;	then
+    if ! LIB_FUNC_IS_SLES ; then
 
         logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
@@ -41,21 +41,21 @@ function check_0050_os_release_kernel_sles {
                 _retval=2
                 ;;
 
-            11.3)	kernel_low="${sles113[0]}" ; kernel_high="${sles113[1]}" ;;
+            11.3)   kernel_low="${sles113[0]}" ; kernel_high="${sles113[1]}" ;;
 
-            11.4)	kernel_low="${sles114[0]}" ; kernel_high="${sles114[1]}" ;;
+            11.4)   kernel_low="${sles114[0]}" ; kernel_high="${sles114[1]}" ;;
 
-            12.0*)	kernel_low="${sles120[0]}" ; kernel_high="${sles120[1]}" ;;
+            12.0*)  kernel_low="${sles120[0]}" ; kernel_high="${sles120[1]}" ;;
 
-            12.1*)	kernel_low="${sles121[0]}" ; kernel_high="${sles121[1]}" ;;
+            12.1*)  kernel_low="${sles121[0]}" ; kernel_high="${sles121[1]}" ;;
 
-            12.2*)	kernel_low="${sles122[0]}" ; kernel_high="${sles122[1]}" ;;
+            12.2*)  kernel_low="${sles122[0]}" ; kernel_high="${sles122[1]}" ;;
 
-            12.3*)	kernel_low="${sles123[0]}" ; kernel_high="${sles123[1]}" ;;
+            12.3*)  kernel_low="${sles123[0]}" ; kernel_high="${sles123[1]}" ;;
 
-            12.4*)	kernel_low="${sles124[0]}" ; kernel_high="${sles124[1]}" ;;
+            12.4*)  kernel_low="${sles124[0]}" ; kernel_high="${sles124[1]}" ;;
 
-            15.0*)	kernel_low="${sles150[0]}" ; kernel_high="${sles150[1]}" ;;
+            15.0*)  kernel_low="${sles150[0]}" ; kernel_high="${sles150[1]}" ;;
 
             *)
                     logCheckWarning 'CHECK does not support SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"

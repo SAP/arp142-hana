@@ -7,7 +7,7 @@ function check_0300_timer_and_clocksource_intel {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#2753418'		    #2753418 - Performance Degradation Due to Timer Fallback
+    local -r sapnote='#2753418'     #2753418 - Performance Degradation Due to Timer Fallback
 
     local recommended_clocksource='tsc'
     # MODIFICATION SECTION<<

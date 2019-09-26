@@ -9,17 +9,17 @@ function check_0030_os_sles_ibmpower {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote114='#2240716'	#SAP HANA DB: Recommended OS settings for SLES 11 / SLES for SAP Applications 11 SP4
-    local -r sapnote12x='#2235581'	#SAP HANA: Supported Operating Systems
+    local -r sapnote114='#2240716'  #SAP HANA DB: Recommended OS settings for SLES 11 / SLES for SAP Applications 11 SP4
+    local -r sapnote12x='#2235581'  #SAP HANA: Supported Operating Systems
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS
-    if  ! LIB_FUNC_IS_IBMPOWER ; then
+    if ! LIB_FUNC_IS_IBMPOWER ; then
 
         logCheckSkipped 'Not running on IBM Power. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif  ! LIB_FUNC_IS_SLES ; then
+    elif ! LIB_FUNC_IS_SLES ; then
 
         logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
