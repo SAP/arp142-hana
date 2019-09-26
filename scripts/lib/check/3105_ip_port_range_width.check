@@ -7,7 +7,7 @@ function check_3105_ip_port_range_width {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#2600030,#401162'	# Parameter Recommendations in SAP HANA Environments; SHA
+    local -r sapnote='#2600030,#401162' # Parameter Recommendations in SAP HANA Environments; SHA
     local -ri pr_lower_expected=40000
     local -ri pr_upper_expected=64999
     # MODIFICATION SECTION<<
@@ -21,11 +21,11 @@ function check_3105_ip_port_range_width {
     if [[ ${_retval} -eq 99 ]]; then
 
         local port_range
-        port_range=$(sysctl -n net.ipv4.ip_local_port_range)		# 40000 64999
+        port_range=$(sysctl -n net.ipv4.ip_local_port_range)    # 40000 64999
         readonly port_range
 
-        local -ri port_range_lower="${port_range%%[[:space:]]*}"	        # BLANKS and TABS --> 40000
-        local -ri port_range_upper="${port_range##*[[:space:]]}"	        # BLANKS and TABS --> 64999
+        local -ri port_range_lower="${port_range%%[[:space:]]*}"    # BLANKS and TABS --> 40000
+        local -ri port_range_upper="${port_range##*[[:space:]]}"    # BLANKS and TABS --> 64999
 
         if [[ ${port_range_lower} -le ${pr_lower_expected} ]]; then
 

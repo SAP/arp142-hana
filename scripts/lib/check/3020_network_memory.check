@@ -7,7 +7,7 @@ function check_3020_network_memory {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#2382421'	# Optimizing the Network Configuration on HANA- and OS-Level for SPS10 and Higher
+    local -r sapnote='#2382421' # Optimizing the Network Configuration on HANA- and OS-Level for SPS10 and Higher
 
     local -ir reco_ipv4_tcp_rmem_max=6291456
     local -ir reco_ipv4_tcp_wmem_max=4194304
@@ -59,8 +59,8 @@ function check_3020_network_memory {
     fi
 
     # Max Values
-    local -ir ipv4_tcp_rmem_max="${ipv4_tcp_rmem_all##*[[:space:]]}"				# BLANKS and TABS --> 6291456
-    local -ir ipv4_tcp_wmem_max="${ipv4_tcp_wmem_all##*[[:space:]]}"				# BLANKS and TABS --> 4194304
+    local -ir ipv4_tcp_rmem_max="${ipv4_tcp_rmem_all##*[[:space:]]}"    # BLANKS and TABS --> 6291456
+    local -ir ipv4_tcp_wmem_max="${ipv4_tcp_wmem_all##*[[:space:]]}"    # BLANKS and TABS --> 4194304
 
     #ipv4_tcp_rmem_max
     if [[ ${ipv4_tcp_rmem_max} -lt ${reco_ipv4_tcp_rmem_max} ]]; then

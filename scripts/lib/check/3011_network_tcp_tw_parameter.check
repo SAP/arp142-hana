@@ -7,7 +7,7 @@ function check_3011_network_tcp_tw_parameter {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#2382421'	# Optimizing the Network Configuration on HANA- and OS-Level for SPS10 and Higher
+    local -r sapnote='#2382421' # Optimizing the Network Configuration on HANA- and OS-Level for SPS10 and Higher
 
     #                               parameter                       recommended_value
     local -ar _tcp_parameter=(\

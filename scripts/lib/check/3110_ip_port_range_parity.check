@@ -10,7 +10,7 @@ function check_3110_ip_port_range_parity {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#2382421'	# Optimizing the Network Configuration on HANA- and OS-Level for SPS10 and Higher
+    local -r sapnote='#2382421' # Optimizing the Network Configuration on HANA- and OS-Level for SPS10 and Higher
 
     local kernel_applicable='4.2'
     LIB_FUNC_IS_RHEL && kernel_applicable='3.10.0-514'
@@ -34,13 +34,13 @@ function check_3110_ip_port_range_parity {
     if [[ ${_retval} -eq 99 ]]; then
 
         local port_range
-        port_range=$(sysctl -n net.ipv4.ip_local_port_range)		# 1024 64999
+        port_range=$(sysctl -n net.ipv4.ip_local_port_range)    # 1024 64999
 
-        local -r port_range_lower="${port_range%%[[:space:]]*}"				# BLANKS and TABS --> 1024
-        local -ri port_range_lower_last_digit="${port_range_lower:(-1)}"	# get last digit  --> 4
+        local -r port_range_lower="${port_range%%[[:space:]]*}"             # BLANKS and TABS --> 1024
+        local -ri port_range_lower_last_digit="${port_range_lower:(-1)}"    # get last digit  --> 4
 
-        local -r port_range_upper="${port_range##*[[:space:]]}"				# BLANKS and TABS --> 64999
-        local -ri port_range_upper_last_digit="${port_range_upper:(-1)}"	# get last digit  --> 9
+        local -r port_range_upper="${port_range##*[[:space:]]}"             # BLANKS and TABS --> 64999
+        local -ri port_range_upper_last_digit="${port_range_upper:(-1)}"    # get last digit  --> 9
 
         if [[ $((port_range_lower_last_digit%2)) -eq 0 ]]; then
             #even?
