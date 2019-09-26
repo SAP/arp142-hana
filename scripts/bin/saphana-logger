@@ -20,12 +20,12 @@ HANA_LOGGER_PROGVERSION='1907.0-dev'
 #exec 3>&2 # logging stream (file descriptor 3) defaults to STDERR
 
 # notify/silent=0 (always), error=1, warn=2, info=3, CHK_verbose=4, debug=5, trace=6
-logNotify() { logger 0 '[N]'	"$1"; } # Always prints
-logError()  { logger 1 '[E]'	"$1"; }
-logWarn()   { logger 2 '[W]'	"$1"; }
-logInfo()   { logger 3 '[I]'	"$1"; }
-logDebug()  { logger 5 '[D]'	"$1"; }
-logTrace()  { logger 6 '[T]'	"$1"; }
+logNotify() { logger 0 '[N]'    "$1"; } # Always prints
+logError()  { logger 1 '[E]'    "$1"; }
+logWarn()   { logger 2 '[W]'    "$1"; }
+logInfo()   { logger 3 '[I]'    "$1"; }
+logDebug()  { logger 5 '[D]'    "$1"; }
+logTrace()  { logger 6 '[T]'    "$1"; }
 
 function logger {
 
@@ -44,7 +44,7 @@ function logger {
         if show_timestamp; then                 #only debug/trace show timestamp
 
             datestring=$(date +'%H:%M:%S.%3N ')
-            prefix_length=30	                #len("00:04:32.001")+1 && len("[C] Lxxxx <ERROR>")
+            prefix_length=30                    #len("00:04:32.001")+1 && len("[C] Lxxxx <ERROR>")
 
         fi
 
@@ -78,7 +78,7 @@ function logCheckError {
     printf -v CallerCheck 'L%-4.4s' "${FUNCNAME[1]:6:4}"
 
     if use_colored_output; then
-        logger 1 "[C] ${fmt_error}${CallerCheck} <ERROR>${fmt_reset}"	"$@"
+        logger 1 "[C] ${fmt_error}${CallerCheck} <ERROR>${fmt_reset}"   "$@"
     else
         logger 1 "[C] ${CallerCheck} <ERROR>" "$@"
     fi
@@ -93,7 +93,7 @@ function logCheckWarning {
 
     if use_colored_output; then
         #we need the trailing space after fmt_reset, because color formatting prevents padding
-        logger 2 "[C] ${fmt_warn}${fmt_blbackgr}${CallerCheck} <WARN>${fmt_reset} "	"$@"
+        logger 2 "[C] ${fmt_warn}${fmt_blbackgr}${CallerCheck} <WARN>${fmt_reset} " "$@"
     else
         logger 2 "[C] ${CallerCheck} <WARN>" "$@"
     fi
@@ -108,7 +108,7 @@ function logCheckOk {
 
     if use_colored_output; then
         #we need the trailing spaces after fmt_reset, because color formatting prevents padding
-        logger 3 "[C] ${fmt_ok}${CallerCheck} <OK>${fmt_reset}   "	"$@"
+        logger 3 "[C] ${fmt_ok}${CallerCheck} <OK>${fmt_reset}   "  "$@"
     else
         logger 3 "[C] ${CallerCheck} <OK>" "$@"
     fi
@@ -138,7 +138,7 @@ function logCheckSkipped {
 
     if use_colored_output; then
         #we need the trailing space after fmt_reset, because color formatting prevents padding
-        logger 4 "[C] ${fmt_skip}${CallerCheck} <SKIP>${fmt_reset} "	"$@"
+        logger 4 "[C] ${fmt_skip}${CallerCheck} <SKIP>${fmt_reset} "    "$@"
     else
         logger 4 "[C] ${CallerCheck} <SKIP>" "$@"
     fi

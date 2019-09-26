@@ -239,7 +239,7 @@ function __get_platform_power_cpu_details {
                             fi
         ;;
 
-        'Model:'*)			#<Model: IBM,9119-MHE>
+        'Model:'*)          #<Model: IBM,9119-MHE>
                             if [[ -z ${LIB_PLATF_NAME:-} ]]; then
                                 LIB_PLATF_NAME=$(LIB_FUNC_TRIM_LEFT "${line/Model:}")
                                 readonly LIB_PLATF_NAME

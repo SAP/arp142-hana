@@ -1,5 +1,5 @@
 #! /bin/bash
-set -u 		# treat unset variables as an error
+set -u  # treat unset variables as an error
 
 PROGRAM_DIR="$( cd "${BASH_SOURCE[0]%/*}" && pwd )"
 readonly PROGRAM_DIR

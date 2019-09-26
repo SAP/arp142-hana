@@ -14,7 +14,7 @@ my $data = '';
 if ( ! defined ${travis} ) {
     #backup original File before editing in case of non TRAVIS environment
     copy($origfile,"$origfile.bak") or die "Backup Copy failed: $!";
-} 
+}
 
 #DATE
 my $prog_date = `date +"%Y-%b-%d"`;
@@ -26,12 +26,12 @@ $data = read_file($origfile);
 #REPLACE
 $data =~ s/PROGVERSION=.*/PROGVERSION='${prog_vers}'/;
 $data =~ s/PROGDATE=.*/PROGDATE='${prog_date}'/;
- 
-#Write File 
+
+#Write File
 write_file("$origfile", $data);
 
 exit;
-	
+
 #http://perlmaven.com/how-to-replace-a-string-in-a-file-with-perl
 sub read_file {
     my ($filename) = @_;

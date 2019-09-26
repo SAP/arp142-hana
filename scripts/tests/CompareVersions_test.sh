@@ -1,5 +1,5 @@
 #! /bin/bash
-set -u 		# treat unset variables as an error
+set -u      # treat unset variables as an error
 
 #Useful information
 #http://stackoverflow.com/questions/4023830/how-compare-two-strings-in-dot-separated-version-format-in-bash
@@ -70,7 +70,7 @@ testCompareVersionsGreaterThan() {
     2.1             1.2
     2.11.3-17.95.2  2.11.3-17.56.2
     2.19-38.2       2.11.3-17.95.2
-    3.0.101-0.47.71-1	3.0.101-0.47.71
+    3.0.101-0.47.71-1   3.0.101-0.47.71
 EOF
 }
 

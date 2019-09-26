@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -u 		# treat unset variables as an error
+set -u      # treat unset variables as an error
 
 #Useful information
 #http://stackoverflow.com/questions/4023830/how-compare-two-strings-in-dot-separated-version-format-in-bash
@@ -13,18 +13,18 @@ source "${PROGRAM_DIR}/../bin/saphana-helper-funcs"
 
 
 test_CompareVersions () {
-	LIB_FUNC_COMPARE_VERSIONS "$1" "$2"
-	case $? in
-		0) op='=';;
-		1) op='>';;
-		2) op='<';;
-	esac
-	if [[ $op != "$3" ]]
-	then
-		printf 'FAIL: Expected "%s", Actual "%s", Arg1 "%s", Arg2 "%s"\n'	"$3" "$op" "$1" "$2"
-	else
-		printf 'Pass: "%s %s %s"\n'	"$1" "$op" "$2"
-	fi
+    LIB_FUNC_COMPARE_VERSIONS "$1" "$2"
+    case $? in
+        0) op='=';;
+        1) op='>';;
+        2) op='<';;
+    esac
+    if [[ $op != "$3" ]]
+    then
+        printf 'FAIL: Expected "%s", Actual "%s", Arg1 "%s", Arg2 "%s"\n'   "$3" "$op" "$1" "$2"
+    else
+        printf 'Pass: "%s %s %s"\n' "$1" "$op" "$2"
+    fi
 }
 
 # Run tests
@@ -33,8 +33,8 @@ test_CompareVersions () {
 printf 'The following tests should pass\n'
 while read -r test
 do
-	# shellcheck disable=SC2086
-	test_CompareVersions $test
+    # shellcheck disable=SC2086
+    test_CompareVersions $test
 done << EOF
 1            1            =
 2.1          2.2          <
@@ -58,7 +58,7 @@ done << EOF
 2.19-38.2       2.19-38.2       =
 2.19-38.2       2.11.3-17.95.2  >
 2.11.3-17.95.2  2.19-38.2       <
-3.0.101-0.47.71-1	3.0.101-0.47.71 >
+3.0.101-0.47.71-1   3.0.101-0.47.71 >
 EOF
 
 printf 'The following test should fail (test the tester)\n'

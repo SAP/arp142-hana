@@ -30,14 +30,14 @@ function LIB_FUNC_CHECK_CHECK_SECURITY {
     local -i fileownerid
     fileownerid=$(stat -c %u "${fullpath}")
     if [[ "${fileownerid}" -ne 0 ]]; then
-        printf 'Check %s is not owned by root.\n'	"${fullpath}"
+        printf 'Check %s is not owned by root.\n'   "${fullpath}"
         return 1
     fi
 
     local fileperm
     fileperm=$(stat -c %A "${fullpath}")
     if [[ "${fileperm}" != ?r???-??-? ]]; then
-        printf 'Check %s is world writable.\n'	"${fullpath}"
+        printf 'Check %s is world writable.\n'  "${fullpath}"
         return 1
     fi
 }
@@ -284,9 +284,9 @@ function LIB_FUNC_NORMALIZE_KERNEL {
     kernelversion=${kernelversion/bigmem*/1}        #3.0.101-88-bigmem
     kernelversion=${kernelversion/ppc64*/1}         #3.0.101-71-ppc64
     kernelversion=${kernelversion/azure/1}          #4.12.14-6.12-azure"
-    kernelversion=${kernelversion/.el[[:digit:]]*/}	# Remove trailing ".el6.x86_64" or ".el7.ppc64le"
+    kernelversion=${kernelversion/.el[[:digit:]]*/} # Remove trailing ".el6.x86_64" or ".el7.ppc64le"
 
-    LIB_FUNC_NORMALIZE_KERNEL_RETURN="${kernelversion}"	#variable is available to caller
+    LIB_FUNC_NORMALIZE_KERNEL_RETURN="${kernelversion}" #variable is available to caller
 }
 
 function LIB_FUNC_NORMALIZE_RPM {
@@ -296,10 +296,10 @@ function LIB_FUNC_NORMALIZE_RPM {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-    rpmversion=${rpmversion/.el[[:digit:]]*_[[:digit:]]*./.0.}		# 2.17-157.el7_3.5	-> 2.17-157.0.5
-    rpmversion=${rpmversion/.el[[:digit:]]*/.0}						# 219-30.el7		-> 219-30.0
+    rpmversion=${rpmversion/.el[[:digit:]]*_[[:digit:]]*./.0.}  # 2.17-157.el7_3.5  -> 2.17-157.0.5
+    rpmversion=${rpmversion/.el[[:digit:]]*/.0}                 # 219-30.el7        -> 219-30.0
 
-    LIB_FUNC_NORMALIZE_RPM_RETURN="${rpmversion}"	#variable is available to caller
+    LIB_FUNC_NORMALIZE_RPM_RETURN="${rpmversion}"   #variable is available to caller
 }
 
 
@@ -385,23 +385,23 @@ function _lib_helper_main {
 
 ##########################################################
 #GLOBAL -x --> exported
-declare		LIB_PLATF_VENDOR
-declare		LIB_PLATF_NAME
-declare 	LIB_PLATF_CPU_VENDOR
-declare 	LIB_PLATF_CPU
-declare -i	LIB_PLATF_CPU_MODELID
-declare -i	LIB_PLATF_RAM_MIB_PHYS
-declare -i	LIB_PLATF_RAM_MiB_AVAILABLE
+declare     LIB_PLATF_VENDOR
+declare     LIB_PLATF_NAME
+declare     LIB_PLATF_CPU_VENDOR
+declare     LIB_PLATF_CPU
+declare -i  LIB_PLATF_CPU_MODELID
+declare -i  LIB_PLATF_RAM_MIB_PHYS
+declare -i  LIB_PLATF_RAM_MiB_AVAILABLE
 
-declare 	LIB_PLATF_ARCHITECTURE
-declare 	LIB_PLATF_BYTEORDER
+declare     LIB_PLATF_ARCHITECTURE
+declare     LIB_PLATF_BYTEORDER
 declare -i  LIB_PLATF_CPU_THREADSPERCORE
 declare -i  LIB_PLATF_CPU_CORESPERSOCKET
 declare -i  LIB_PLATF_CPU_SOCKETS
 declare -i  LIB_PLATF_CPU_NUMANODES
 
-declare		LIB_PLATF_VIRT_HYPER
-declare		LIB_PLATF_VIRT_TYPE
+declare     LIB_PLATF_VIRT_HYPER
+declare     LIB_PLATF_VIRT_TYPE
 
 #LIB local
 
