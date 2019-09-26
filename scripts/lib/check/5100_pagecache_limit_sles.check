@@ -7,11 +7,11 @@ function check_5100_pagecache_limit_sles {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#1557506'    #1557506 - Linux paging improvements
+    local -r sapnote='#1557506' #1557506 - Linux paging improvements
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS
-    if  ! LIB_FUNC_IS_SLES ;	then
+    if ! LIB_FUNC_IS_SLES ; then
 
         logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
@@ -28,7 +28,7 @@ function check_5100_pagecache_limit_sles {
         # shellcheck disable=SC2154
         calc_pg_limit=$(( LIB_PLATF_RAM_MiB_AVAILABLE * 2 / 100 ))
 
-        # <  256 GB:    4096	            (=recommended limit) (262144 MB)
+        # <  256 GB:    4096                (=recommended limit) (262144 MB)
         # >= 256 GB:    2% of RAM_MiB
         # https://www.gnu.org/software/bash/manual/html_node/Shell-Arithmetic.html#Shell-Arithmetic
         local -i reco_pgcache_limit

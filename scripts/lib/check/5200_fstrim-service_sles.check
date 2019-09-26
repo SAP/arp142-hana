@@ -7,8 +7,8 @@ function check_5200_fstrim-service_sles {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#2205917'	    #SAP HANA DB: Recommended OS settings for SLES 12 - SLES12.2 only
-                                    #SUSE-KB 7022921 XFS metadata corruption and invalid checksum's on SAP Hana servers
+    local -r sapnote='#2205917' #SAP HANA DB: Recommended OS settings for SLES 12 - SLES12.2 only
+                                #SUSE-KB 7022921 XFS metadata corruption and invalid checksum's on SAP Hana servers
     local -ar _ptfversions=(\
                             '4.4.120-92.70.1' \
                             '4.4.121-92.73.1' \
@@ -19,7 +19,7 @@ function check_5200_fstrim-service_sles {
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS
-    if  ! LIB_FUNC_IS_SLES ;	then
+    if ! LIB_FUNC_IS_SLES ; then
 
         logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
@@ -28,7 +28,7 @@ function check_5200_fstrim-service_sles {
 
         case "${OS_VERSION}" in
 
-            12.2)	_retval=99	;;
+            12.2)   _retval=99 ;;
 
             *)      logCheckSkipped 'Check not applicable for SLES release' "(is: ${OS_NAME} ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
                     _retval=3 ;;

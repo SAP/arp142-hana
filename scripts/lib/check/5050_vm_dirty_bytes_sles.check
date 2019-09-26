@@ -7,12 +7,12 @@ function check_5050_vm_dirty_bytes_sles {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote_sles12='#1984787'	  # SUSE LINUX Enterprise Server 12: Installation notes
-    local -r sapnote_sles15='#2578899'    # SUSE Linux Enterprise Server 15: Installation Note
+    local -r sapnote_sles12='#1984787'  # SUSE LINUX Enterprise Server 12: Installation notes
+    local -r sapnote_sles15='#2578899'  # SUSE Linux Enterprise Server 15: Installation Note
 
     #                               parameter                       recommended_value
     local -ar _vm_parameter=(\
-                                    'vm.dirty_bytes'	             629145600 \
+                                    'vm.dirty_bytes'                 629145600 \
                                     'vm.dirty_background_bytes'      314572800 \
     )
     # MODIFICATION SECTION<<
@@ -20,7 +20,7 @@ function check_5050_vm_dirty_bytes_sles {
     local sapnote
 
     # PRECONDITIONS
-    if  ! LIB_FUNC_IS_SLES ;	then
+    if ! LIB_FUNC_IS_SLES ; then
 
         logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
