@@ -11,16 +11,16 @@ function check_1410_cpu_idle_cstates_intel {
     #tuned profile parameter force_latency finally sets /dev/cpu_dma_latency
 
     # MODIFICATION SECTION>>
-    local -r sapnote_sles113='#1954788'		# SAP HANA DB: Recommended OS settings for SLES 11.3
-    local -r sapnote_sles114='#2240716'		# SAP HANA DB: Recommended OS settings for SLES 11.4
-    local -r sapnote_sles12='#2205917'		# SAP HANA DB: Recommended OS settings for SLES 12
-    local -r sapnote_sles15='#2684254'		# SAP HANA DB: Recommended OS settings for SLES 15
-    local -r sapnote_rhel65='#2013638'		# SAP HANA DB: Recommended OS settings for RHEL 6.5
-    local -r sapnote_rhel66='#2136965'		# SAP HANA DB: Recommended OS settings for RHEL 6.6
-    local -r sapnote_rhel67='#2247020'		# SAP HANA DB: Recommended OS settings for RHEL 6.7
-    local -r sapnote_rhel610='#2694292'		# SAP HANA DB: Recommended OS settings for RHEL 6.10
-    local -r sapnote_rhel7='#2292690'		# SAP HANA DB: Recommended OS settings for RHEL 7
-    local -r sapnote_rhel8='#2777782'   	# SAP HANA DB: Recommended OS Settings for RHEL 8
+    local -r sapnote_sles113='#1954788' # SAP HANA DB: Recommended OS settings for SLES 11.3
+    local -r sapnote_sles114='#2240716' # SAP HANA DB: Recommended OS settings for SLES 11.4
+    local -r sapnote_sles12='#2205917'  # SAP HANA DB: Recommended OS settings for SLES 12
+    local -r sapnote_sles15='#2684254'  # SAP HANA DB: Recommended OS settings for SLES 15
+    local -r sapnote_rhel65='#2013638'  # SAP HANA DB: Recommended OS settings for RHEL 6.5
+    local -r sapnote_rhel66='#2136965'  # SAP HANA DB: Recommended OS settings for RHEL 6.6
+    local -r sapnote_rhel67='#2247020'  # SAP HANA DB: Recommended OS settings for RHEL 6.7
+    local -r sapnote_rhel610='#2694292' # SAP HANA DB: Recommended OS settings for RHEL 6.10
+    local -r sapnote_rhel7='#2292690'   # SAP HANA DB: Recommended OS settings for RHEL 7
+    local -r sapnote_rhel8='#2777782'   # SAP HANA DB: Recommended OS Settings for RHEL 8
 
     local -ir _reco_forcelatency=70
     # MODIFICATION SECTION<<
@@ -42,9 +42,9 @@ function check_1410_cpu_idle_cstates_intel {
     elif LIB_FUNC_IS_SLES ; then
         case "${OS_VERSION}" in
 
-            11.3)	sapnote="${sapnote_sles113}";;
-            11.4)	sapnote="${sapnote_sles114}";;
-            12.[0-1]*)	sapnote="${sapnote_sles12}";;
+            11.3)       sapnote="${sapnote_sles113}";;
+            11.4)       sapnote="${sapnote_sles114}";;
+            12.[0-1]*)  sapnote="${sapnote_sles12}";;
 
             12.[2-4]*)
                     sapnote="${sapnote_sles12}"
@@ -65,11 +65,11 @@ function check_1410_cpu_idle_cstates_intel {
     elif LIB_FUNC_IS_RHEL ; then
         case "${OS_VERSION}" in
 
-            6.5)	sapnote="${sapnote_rhel65}";;
-            6.6)	sapnote="${sapnote_rhel66}";;
-            6.7)	sapnote="${sapnote_rhel67}";;
-            6.10)	sapnote="${sapnote_rhel610}";;
-            7.2)	sapnote="${sapnote_rhel7}";;
+            6.5)    sapnote="${sapnote_rhel65}";;
+            6.6)    sapnote="${sapnote_rhel66}";;
+            6.7)    sapnote="${sapnote_rhel67}";;
+            6.10)   sapnote="${sapnote_rhel610}";;
+            7.2)    sapnote="${sapnote_rhel7}";;
 
             7.[3-6]* )
                     sapnote="${sapnote_rhel7}"
@@ -100,7 +100,7 @@ function check_1410_cpu_idle_cstates_intel {
 
         case ${_current_driver} in
 
-            'acpi_idle')	#check max_cstate value =0
+            'acpi_idle')    #check max_cstate value =0
 
                     local -i _acpi_mcstate
 
@@ -177,7 +177,7 @@ function check_1410_cpu_idle_cstates_intel {
                 fi
             ;;
 
-            'none')	#no cpuidle driver used because of BIOS settings (disabled c-states)
+            'none') #no cpuidle driver used because of BIOS settings (disabled c-states)
                     # impacts TurboMode, BIOS cannot be seen by OS, recommendations changes cannot be easily applied
 
                     logCheckWarning 'CPUidle driver not active - check BIOS settings for disabled c-states'

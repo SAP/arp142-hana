@@ -27,7 +27,7 @@ function check_1600_cpu_pstates_intel {
         case "${OS_VERSION}" in
 
             15.* | 12.* | 7.* | 8.* ) #intel_pstate only for IvyBridge onwards
-                                #INTEL_FAM6_IVYBRIDGE		0x3A	--> DEC 58
+                                #INTEL_FAM6_IVYBRIDGE   0x3A --> DEC 58
                                 if [[ ${LIB_PLATF_CPU_MODELID} -ge 58 ]]; then
                                     logCheckInfo "Running on intel_pstate supported Intel CPU (>=IvyBridge - ${LIB_PLATF_CPU_MODELID})" "<${FUNCNAME[0]}>"
                                 else
@@ -51,7 +51,7 @@ function check_1600_cpu_pstates_intel {
         #unique value within array
         mapfile -t cpufreq_drivers < <(sort -u /sys/devices/system/cpu/cpu*/*/scaling_driver 2>/dev/null)
 
-        case ${#cpufreq_drivers[@]} in				#array length
+        case ${#cpufreq_drivers[@]} in      #array length
 
             0)
                         logCheckWarning "CPU scaling driver not set.(SAP Note  ${sapnote:-}) (is: -, should be: intel_pstate)"
@@ -74,7 +74,7 @@ function check_1600_cpu_pstates_intel {
 
                 ;;
 
-            *)		logCheckError "CPU scaling driver NOT set as recommended (SAP Note ${sapnote:-}) (is: multiple, should be: intel_pstate)"
+            *)      logCheckError "CPU scaling driver NOT set as recommended (SAP Note ${sapnote:-}) (is: multiple, should be: intel_pstate)"
                     _retval=2
                 ;;
         esac

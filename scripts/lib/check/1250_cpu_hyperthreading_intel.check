@@ -7,7 +7,7 @@ function check_1250_cpu_hyperthreading_intel {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#2711650'		# SAP HANA on Intel server systems with more than 8 CPU´s / sockets
+    local -r sapnote='#2711650' # SAP HANA on Intel server systems with more than 8 CPU´s / sockets
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS

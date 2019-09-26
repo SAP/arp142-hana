@@ -7,11 +7,11 @@ function check_1310_cpu_powersavings_ibmpower {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote_sles114='#2240716'	    # SAP HANA DB: Recommended OS settings for SLES 11 SP4
-    local -r sapnote_sles12='#2205917'		# SAP HANA DB: Recommended OS settings for SLES 12
-    local -r sapnote_sles15='#2684254'		# SAP HANA DB: Recommended OS settings for SLES 15
-    local -r sapnote_rhel7='#2292690'		# SAP HANA DB: Recommended OS settings for RHEL 7
-    local -r sapnote_rhel8='#2777782'   	# SAP HANA DB: Recommended OS Settings for RHEL 8
+    local -r sapnote_sles114='#2240716' # SAP HANA DB: Recommended OS settings for SLES 11 SP4
+    local -r sapnote_sles12='#2205917'  # SAP HANA DB: Recommended OS settings for SLES 12
+    local -r sapnote_sles15='#2684254'  # SAP HANA DB: Recommended OS settings for SLES 15
+    local -r sapnote_rhel7='#2292690'   # SAP HANA DB: Recommended OS settings for RHEL 7
+    local -r sapnote_rhel8='#2777782'   # SAP HANA DB: Recommended OS Settings for RHEL 8
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS
@@ -24,8 +24,8 @@ function check_1310_cpu_powersavings_ibmpower {
         case "${OS_VERSION}" in
 
             11.4 )  sapnote="${sapnote_sles114}" ;;
-            12.* )	sapnote="${sapnote_sles12}" ;;
-            15.* )	sapnote="${sapnote_sles15}" ;;
+            12.* )  sapnote="${sapnote_sles12}" ;;
+            15.* )  sapnote="${sapnote_sles15}" ;;
 
             *)      sapnote="${sapnote_sles114}" ;;
         esac

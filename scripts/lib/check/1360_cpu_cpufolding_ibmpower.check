@@ -7,7 +7,7 @@ function check_1360_cpu_cpufolding_ibmpower {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#2055470'	# HANA on POWER Planning and Installation Specifics
+    local -r sapnote='#2055470' # HANA on POWER Planning and Installation Specifics
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS

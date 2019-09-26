@@ -7,7 +7,7 @@ function check_1200_shared_processor_mode_ibmpower {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#2230704'		# SAP HANA on IBM Power Systems with multiple - LPARs per physical host
+    local -r sapnote='#2230704' # SAP HANA on IBM Power Systems with multiple - LPARs per physical host
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS
