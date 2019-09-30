@@ -34,27 +34,26 @@ before_install:
 script:
   # Run unit tests - runs all the unit tests that can be found
   - bash -c 'cd ./scripts/tests/; ./test_runner'
-  - bash -c 'cd ./scripts/tests/; ./test_runner -t check/*'
+  - bash -c 'cd ./scripts/tests/; ./test_runner -t "$(echo ./check/*_test.sh)"'
 
   # remove check_staging_area
   - rm -rf ./scripts/lib/check_staging_area
 
   # Syntax checking
-  - bash -c 'shopt -s globstar; shellcheck --version'
-  - bash -c 'shopt -s globstar; cd scripts/bin; shellcheck --external-sources ./saphana-* ./lib*'
+  - bash -c 'shellcheck --version'
+  - bash -c 'cd scripts/bin; shellcheck --external-sources ./saphana-* ./lib*'
   - bash -c 'shopt -s globstar; shellcheck --exclude=SC2154 scripts/**/*.check'
 
   # Code format checking
   # - bash -c 'shopt -s globstar; bashate scripts/**/*.{sh,check}'
-  - bash -c 'shopt -s globstar; bashate -i E006,E043 scripts/bin/saphana*'
-  - bash -c 'shopt -s globstar; bashate -i E006 scripts/bin/lib*'
+  - bash -c 'bashate -i E006,E043 scripts/bin/saphana*'
+  - bash -c 'bashate -i E006 scripts/bin/lib*'
   - bash -c 'shopt -s globstar; bashate -i E006,E010 scripts/**/*.check'
 
 
 after_success:
     - mkdir -p build/opt/sap/saphana-checks
-    - cp -rp ./scripts/bin build/opt/sap/saphana-checks
-    - cp -rp ./scripts/lib build/opt/sap/saphana-checks
+    - cp -rp ./scripts/{bin,lib} build/opt/sap/saphana-checks
 
     # modifiy VERSION & DATE
     - perl ./buildscripts/replace-version.pl build/opt/sap/saphana-checks/bin/saphana-check.sh ${VERSION_BUILD_COMMIT}
