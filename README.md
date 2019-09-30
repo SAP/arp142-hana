@@ -1,5 +1,5 @@
 # saphana-checks
-[![Travis CI](https://travis-ci.mo.sap.corp/SAP-COE-HPTI/saphana-checks.svg?token=1mpYpLDN3GSv5tMmhNxn&branch=master)](https://travis-ci.mo.sap.corp/SAP-COE-HPTI/saphana-checks)
+[![Travis CI](https://travis-ci.cloud.sap.corp/SAP-COE-HPTI/saphana-checks.svg?token=zqzFSWKfzYUkTBrvFzUG&branch=master)](https://travis-ci.cloud.sap.corp/SAP-COE-HPTI/saphana-checks)
 
 ## FAQ
 Q: Does it work on all linux versions - independend from distributions, kernel, filesystem, hana version?  
@@ -31,7 +31,12 @@ A: Scripts require root permission in order to read certain kernel parameter val
 
 #### -c    (execute single checks)
 ```
-  ./saphana-check.sh -c "0010_os_kernel_sles 0200_ulimit_package"
+  ./saphana-check.sh -c 0800_sap_host_agent  (single check - fully specified checkname)
+  ./saphana-check.sh -c 0800                 (single check - fully specified checkid)
+  ./saphana-check.sh -c 08*                  (multiple checks - beginning with 08)
+  ./saphana-check.sh -c 0*                   (multiple checks - all checks from category 0)
+  ./saphana-check.sh -c 0010,0020            (multiple checks - ids seperated by comma)
+  ./saphana-check.sh -c 0010,5*              (combination of above examples)
 ```
 > checks are located within subfolder lib/check - specify without file extention .check
 
@@ -47,13 +52,15 @@ A: Scripts require root permission in order to read certain kernel parameter val
 ```
 ./saphana-check.sh -h
 
- USAGE: ./saphana-check.sh [flags]
- flags:
- -c,--checks:  <"check1 check2 ...">  A space-separated list of checks that will be performed. (default: '')
- -C,--checkset:  <Checkset>  A textfile containing the various checks to perform. (default: '')
- -l,--loglevel:  notify/silent=0 (always), error=1, warn=2, info=3, debug=5, trace=6 (default: 4)
- -v,--[no]verbose:  enable chk_verbose mode (set loglevel=4) (default: false)
- -d,--[no]debug:  enable debug mode (set loglevel=5) (default: false)
- -t,--[no]trace:  enable trace mode (set loglevel=6) (default: false)
- -h,--help:  show this help (default: false)
+flags:
+  -c,--checks:  <"check1,check2,..."> a comma-separated list of checks that will be performed. (default: '')
+  -C,--checkset:  <Checkset> a textfile stored within lib/checkset containing the various checks to perform. (default: '')
+  -l,--loglevel:  notify/silent=0 (always), error=1, warn=2, info=3, debug=5, trace=6 (default: 4)
+  -v,--[no]verbose:  enable chk_verbose mode (set loglevel=4) (default: false)
+  -d,--[no]debug:  enable debug mode (set loglevel=5) (default: false)
+  -t,--[no]trace:  enable trace mode (set loglevel=6) (default: false)
+  --[no]color:  enable color mode (default: false)
+  --[no]timestamp:  show timestamp (default for debug/trace) (default: false)
+  -h,--help:  show this help (default: false)
+
 ```
