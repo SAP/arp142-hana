@@ -59,11 +59,17 @@ function check_0021_os_kernel_knownissues_rhel {
             _kernel_higher="${_rhel_all[$i+2]}"
             _sapnote="${_rhel_all[$i+3]}"
 
+            LIB_FUNC_NORMALIZE_KERNEL "${_kernel_higher}"
+            _kernel_higher="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
+
             # returns 0 if equal, 1 if first is higher, 2 if second is higher
             LIB_FUNC_COMPARE_VERSIONS "${kernelversion}" "${_kernel_higher}"
             if [[ $? -ne 1 ]]; then
 
                 #kernel is NOT higher than blacklisted high boundary - check lower value if in blacklist range
+
+                LIB_FUNC_NORMALIZE_KERNEL "${_kernel_lower}"
+                _kernel_lower="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
 
                 LIB_FUNC_COMPARE_VERSIONS "${kernelversion}" "${_kernel_lower}"
                 if [[ $? -le 1 ]]; then
