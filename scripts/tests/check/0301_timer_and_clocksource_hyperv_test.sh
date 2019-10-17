@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/usr/bin/env bash
 set -u      # treat unset variables as an error
 
 PROGRAM_DIR="$( cd "${BASH_SOURCE[0]%/*}" && pwd )"
@@ -11,7 +11,7 @@ LIB_FUNC_IS_RHEL() { return 1 ; }
 LIB_FUNC_NORMALIZE_KERNEL() { LIB_FUNC_NORMALIZE_KERNEL_RETURN="$1" ; }
 LIB_FUNC_COMPARE_VERSIONS() { return "${RC_COMPARE_VERSIONS}" ; }
 
-# still to fake for tests
+# still to mock for tests
 # grep /proc/cpuinfo
 # /sys/devices/system/clocksource/clocksource0/current_clocksource
 # /sys/devices/system/clocksource/clocksource0/available_clocksource
@@ -42,11 +42,11 @@ test_all_cpu_flags_and_tsc_clocksource() {
     TEST_CURRENT_CLOCKSOURCE='tsc'
     TEST_AVAILABLE_CLOCKSOURCE='tsc'
 
-    #test
+    #act
     check_0301_timer_and_clocksource_hyperv
 
     #assert
-    assertTrue "${FUNCNAME[0]} failure - expect RC=0 (CheckOk)" "[ $? -eq 0 ]"
+    assertEquals "CheckOk? RC" '0' "$?"
 }
 
 test_all_cpu_flags_and_reco_clock_vdso() {
@@ -64,11 +64,11 @@ test_all_cpu_flags_and_reco_clock_vdso() {
 
     RC_COMPARE_VERSIONS=1   #VDSO support
 
-    #test
+    #act
     check_0301_timer_and_clocksource_hyperv
 
     #assert
-    assertTrue "${FUNCNAME[0]} failure - expect RC=1 (CheckWarning)" "[ $? -eq 1 ]"
+    assertEquals "CheckWarning? RC" '1' "$?"
 }
 
 test_all_cpu_flags_and_reco_clock_no_vdso() {
@@ -86,11 +86,11 @@ test_all_cpu_flags_and_reco_clock_no_vdso() {
 
     RC_COMPARE_VERSIONS=2   #no VDSO support
 
-    #test
+    #act
     check_0301_timer_and_clocksource_hyperv
 
     #assert
-    assertTrue "${FUNCNAME[0]} failure - expect RC=2 (CheckError)" "[ $? -eq 2 ]"
+    assertEquals "CheckError? RC" '2' "$?"
 }
 
 test_all_cpu_flags_and_wrong_clocksource() {
@@ -104,11 +104,11 @@ test_all_cpu_flags_and_wrong_clocksource() {
     TEST_CURRENT_CLOCKSOURCE='acpi_pm'
     TEST_AVAILABLE_CLOCKSOURCE='hyperv_clocksource_tsc_page acpi_pm'
 
-    #test
+    #act
     check_0301_timer_and_clocksource_hyperv
 
     #assert
-    assertTrue "${FUNCNAME[0]} failure - expect RC=2 (CheckError)" "[ $? -eq 2 ]"
+    assertEquals "CheckError? RC" '2' "$?"
 }
 
 test_missing_rdtscp_and_tsc_clocksource() {
@@ -123,11 +123,11 @@ test_missing_rdtscp_and_tsc_clocksource() {
     TEST_CURRENT_CLOCKSOURCE='tsc'
     TEST_AVAILABLE_CLOCKSOURCE='tsc'
 
-    #test
+    #act
     check_0301_timer_and_clocksource_hyperv
 
     #test
-    assertTrue "${FUNCNAME[0]} failure - expect RC=1 (CheckWarning)" "[ $? -eq 1 ]"
+    assertEquals "CheckWarning? RC" '1' "$?"
 }
 
 test_missing_rdtscp_and_reco_clock_vdso() {
@@ -144,11 +144,11 @@ test_missing_rdtscp_and_reco_clock_vdso() {
 
     RC_COMPARE_VERSIONS=1   #VDSO support
 
-    #test
+    #act
     check_0301_timer_and_clocksource_hyperv
 
     #assert
-    assertTrue "${FUNCNAME[0]} failure - expect RC=1 (CheckWarning)" "[ $? -eq 1 ]"
+    assertEquals "CheckWarning? RC" '1' "$?"
 }
 
 test_missing_rdtscp_and_reco_clock_no-vdso() {
@@ -165,11 +165,11 @@ test_missing_rdtscp_and_reco_clock_no-vdso() {
 
     RC_COMPARE_VERSIONS=2   #no VDSO support
 
-    #test
+    #act
     check_0301_timer_and_clocksource_hyperv
 
     #assert
-    assertTrue "${FUNCNAME[0]} failure - expect RC=2 (CheckError)" "[ $? -eq 2 ]"
+    assertEquals "CheckError? RC" '2' "$?"
 }
 
 test_missing_rdtscp_and_wrong_clocksource() {
@@ -182,11 +182,11 @@ test_missing_rdtscp_and_wrong_clocksource() {
     TEST_CURRENT_CLOCKSOURCE='acpi_pm'
     TEST_AVAILABLE_CLOCKSOURCE='hyperv_clocksource_tsc_page acpi_pm'
 
-    #test
+    #act
     check_0301_timer_and_clocksource_hyperv
 
-    #test
-    assertTrue "${FUNCNAME[0]} failure - expect RC=2 (CheckError)" "[ $? -eq 2 ]"
+    #assert
+    assertEquals "CheckError? RC" '2' "$?"
 }
 
 test_missing_constant_tsc() {
@@ -196,11 +196,11 @@ test_missing_constant_tsc() {
     cpu_flags+=('nonstop_tsc')
     cpu_flags+=('rdtscp')
 
-    #test
+    #act
     check_0301_timer_and_clocksource_hyperv
 
     #assert
-    assertTrue "${FUNCNAME[0]} failure  - expect RC=2 (CheckError)" "[ $? -eq 2 ]"
+    assertEquals "CheckError? RC" '2' "$?"
 }
 
 test_missing_nonstop_tsc() {
@@ -210,11 +210,11 @@ test_missing_nonstop_tsc() {
     cpu_flags+=('constant_tsc')
     cpu_flags+=('rdtsc')
 
-    #test
+    #act
     check_0301_timer_and_clocksource_hyperv
 
     #assert
-    assertTrue "${FUNCNAME[0]} failure  - expect RC=2 (CheckError)" "[ $? -eq 2 ]"
+    assertEquals "CheckError? RC" '2' "$?"
 }
 
 

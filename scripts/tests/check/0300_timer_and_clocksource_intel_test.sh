@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/usr/bin/env bash
 set -u  # treat unset variables as an error
 
 PROGRAM_DIR="$( cd "${BASH_SOURCE[0]%/*}" && pwd )"
@@ -8,7 +8,7 @@ readonly PROGRAM_DIR
 LIB_FUNC_IS_INTEL() { return 0 ; }
 LIB_FUNC_IS_VIRT_MICROSOFT() { return 1 ; }
 
-# still to fake for tests
+# still to mock for tests
 # grep /proc/cpuinfo
 # /sys/devices/system/clocksource/clocksource0/current_clocksource
 # /sys/devices/system/clocksource/clocksource0/available_clocksource
@@ -35,11 +35,11 @@ test_all_cpu_flags_available_and_correct_clocksource() {
     TEST_CURRENT_CLOCKSOURCE='tsc'
     TEST_AVAILABLE_CLOCKSOURCE='tsc'
 
-    #test
+    #act
     check_0300_timer_and_clocksource_intel
 
     #assert
-    assertTrue "${FUNCNAME[0]} failure - expect RC=0 (CheckOk)" "[ $? -eq 0 ]"
+    assertEquals "CheckOk? RC" '0' "$?"
 }
 
 test_all_cpu_flags_available_and_wrong_clocksource() {
@@ -53,11 +53,11 @@ test_all_cpu_flags_available_and_wrong_clocksource() {
     TEST_CURRENT_CLOCKSOURCE='kvm_clock'
     TEST_AVAILABLE_CLOCKSOURCE='kvm_clock tsc'
 
-    #test
+    #act
     check_0300_timer_and_clocksource_intel
 
     #assert
-    assertTrue "${FUNCNAME[0]} failure - expect RC=2 (CheckError)" "[ $? -eq 2 ]"
+    assertEquals "CheckError? RC" '2' "$?"
 }
 
 test_missing_rdtscp_but_correct_clocksource() {
@@ -70,11 +70,11 @@ test_missing_rdtscp_but_correct_clocksource() {
     TEST_CURRENT_CLOCKSOURCE='tsc'
     TEST_AVAILABLE_CLOCKSOURCE='tsc'
 
-    #test
+    #act
     check_0300_timer_and_clocksource_intel
 
-    #test
-    assertTrue "${FUNCNAME[0]} failure - expect RC=1 (CheckWarning)" "[ $? -eq 1 ]"
+    #assert
+    assertEquals "CheckWarning? RC" '1' "$?"
 }
 
 test_missing_rdtscp_and_wrong_clocksource() {
@@ -87,11 +87,11 @@ test_missing_rdtscp_and_wrong_clocksource() {
     TEST_CURRENT_CLOCKSOURCE='kvm_clock'
     TEST_AVAILABLE_CLOCKSOURCE='kvm_clock tsc'
 
-    #test
+    #act
     check_0300_timer_and_clocksource_intel
 
-    #test
-    assertTrue "${FUNCNAME[0]} failure - expect RC=2 (CheckError)" "[ $? -eq 2 ]"
+    #assert
+    assertEquals "CheckError? RC" '2' "$?"
 }
 
 test_missing_constant_tsc() {
@@ -101,11 +101,11 @@ test_missing_constant_tsc() {
     cpu_flags+=('nonstop_tsc')
     cpu_flags+=('rdtscp')
 
-    #test
+    #act
     check_0300_timer_and_clocksource_intel
 
     #assert
-    assertTrue "${FUNCNAME[0]} failure  - expect RC=2 (CheckError)" "[ $? -eq 2 ]"
+    assertEquals "CheckError? RC" '2' "$?"
 }
 
 test_missing_nonstop_tsc() {
@@ -115,11 +115,11 @@ test_missing_nonstop_tsc() {
     cpu_flags+=('constant_tsc')
     cpu_flags+=('rdtsc')
 
-    #test
+    #act
     check_0300_timer_and_clocksource_intel
 
     #assert
-    assertTrue "${FUNCNAME[0]} failure  - expect RC=2 (CheckError)" "[ $? -eq 2 ]"
+    assertEquals "CheckError? RC" '2' "$?"
 }
 
 
