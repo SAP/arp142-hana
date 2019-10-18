@@ -7,12 +7,13 @@ function check_0210_kernel_pid_max {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote_sles='#2684254'	# SAP HANA DB: Recommended OS settings for SLES 15
-    local -r sapnote_rhel='#2777782'   	# SAP HANA DB: Recommended OS Settings for RHEL 8
+    local -r sapnote_sles='#2684254'    # SAP HANA DB: Recommended OS settings for SLES 15
+    local -r sapnote_rhel='#2777782'    # SAP HANA DB: Recommended OS Settings for RHEL 8
 
-    local -ir systemd_version_ge_to_check=239
+    local -ir systemd_version_ge_to_check=234
 
-    local -ir _maximum_pid_max=4194304  #(2^22)
+    local -ir _expected_pid_max=4194304  #(2^22)
+    local -ir _expected_threads_max=250000
     # MODIFICATION SECTION<<
 
     local sapnote
@@ -46,18 +47,53 @@ function check_0210_kernel_pid_max {
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
+        #TEST_VARIABLES only required for UNIT TESTING
+
         local -i _curr_pid_max
-        _curr_pid_max=$(</proc/sys/kernel/pid_max)
+        if [[ -z ${TEST_KERNEL_PID_MAX:-} ]]; then
+            _curr_pid_max=$(</proc/sys/kernel/pid_max)
+        else
+            _curr_pid_max="${TEST_KERNEL_PID_MAX}"
+        fi
 
-        if [[ ${_curr_pid_max} -lt ${_maximum_pid_max} ]]; then
 
-            logCheckError "Parameter kernel.pid_max NOT set as recommended (SAP Note ${sapnote:-}) (is: ${_curr_pid_max}, should be: ${_maximum_pid_max})"
+        if [[ ${_curr_pid_max} -lt ${_expected_pid_max} ]]; then
+
+            logCheckError "Parameter kernel.pid_max is too low (is: ${_curr_pid_max}, should be: ${_expected_pid_max})"
             _retval=2
 
         else
 
-            logCheckOk "Parameter kernel.pid_max set as recommended (SAP Note ${sapnote:-}) (is: ${_curr_pid_max})"
+            logCheckOk "Parameter kernel.pid_max set as recommended (is: ${_curr_pid_max})"
+
+        fi
+
+        local -i _curr_threads_max
+        if [[ -z ${TEST_KERNEL_THREADS_MAX:-} ]]; then
+            _curr_threads_max=$(</proc/sys/kernel/threads-max)
+        else
+            _curr_threads_max="${TEST_KERNEL_THREADS_MAX}"
+        fi
+
+        if [[ ${_curr_threads_max} -lt ${_expected_threads_max} ]]; then
+
+            logCheckError "Parameter kernel.threads-max is too low (is: ${_curr_threads_max}, should be: ${_expected_threads_max})"
+            _retval=2
+
+        else
+
+            logCheckOk "Parameter kernel.threads-max set as recommended (is: ${_curr_threads_max})"
+
+        fi
+
+        if [[ ${_retval} -eq 99 ]]; then
+
+            logCheckOk "systemd parameter TasksMax set as recommended (SAP Note ${sapnote:-})"
             _retval=0
+
+        else
+
+            logCheckError "systemd parameter TasksMax NOT set as recommended (SAP Note ${sapnote:-})"
 
         fi
 
