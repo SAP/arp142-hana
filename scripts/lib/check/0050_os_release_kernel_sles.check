@@ -19,6 +19,7 @@ function check_0050_os_release_kernel_sles {
     local -ar sles123=( '4.4.73-5.1' '4.4.999' )
     local -ar sles124=( '4.12.14-94.38.1' '4.12.999' )
     local -ar sles150=( '4.12.14-23.1' '4.12.999' )
+    local -ar sles151=( '4.12.14-195.1' '4.12.999' )
 
     local -r sapnote='#2235581' #SAP HANA: Supported Operating Systems
     # MODIFICATION SECTION<<
@@ -56,6 +57,8 @@ function check_0050_os_release_kernel_sles {
             12.4*)  kernel_low="${sles124[0]}" ; kernel_high="${sles124[1]}" ;;
 
             15.0*)  kernel_low="${sles150[0]}" ; kernel_high="${sles150[1]}" ;;
+
+            15.1*)  kernel_low="${sles151[0]}" ; kernel_high="${sles151[1]}" ;;
 
             *)
                     logCheckWarning 'CHECK does not support SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
