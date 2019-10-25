@@ -224,7 +224,7 @@ function generate_checklist {
             continue
         fi
 
-        if ! [[ -r "${checkfile}" && -w "${checkfile}" ]]; then
+        if [[ ! -r "${checkfile}" ]]; then
             logWarn "Skipping check ${checkfileshort},
                                         could not read check file ${checkfile}"
             continue
