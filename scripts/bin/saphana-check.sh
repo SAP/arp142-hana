@@ -169,7 +169,12 @@ function generate_checkfilelist_checks {
         for file in "${PROGRAM_LIBDIR}"/check/${check}.check; do
 
             if [[ -f "${file}" ]]; then
+
                 CHECKFILELIST+=("${file}")
+
+            else
+                logWarn "Skipping check ${check}. Check file not found.
+                            ${file}"
             fi
 
         done
@@ -178,20 +183,25 @@ function generate_checkfilelist_checks {
 
 function generate_checkfilelist_checkset {
 
-    local checksetfile="${PROGRAM_LIBDIR}/checkset/${FLAGS_checkset:?}.checkset"
-    local checkset
+    local checkset="$1"
+    shift 1
+
+    local checksetfile="${PROGRAM_LIBDIR}/checkset/${checkset:?}.checkset"
+    local checklist
 
     if [[ ! -f "${checksetfile}" ]]; then
-        logError "${checksetfile} does not exist."
+        logError "Checkset file not found.
+                    ${checksetfile}"
         exit 1
     fi
 
-    if ! checkset=$(<"${checksetfile}"); then
-        logError "Could not load checkset file ${checksetfile}"
+    if ! checklist=$(<"${checksetfile}"); then
+        logError "Could not load checkset file.
+                    ${checksetfile}"
         exit 1
     fi
 
-    generate_checkfilelist_checks "${checkset}"
+    generate_checkfilelist_checks "${checklist}"
 }
 
 function generate_checklist {
@@ -203,9 +213,9 @@ function generate_checklist {
 
         generate_checkfilelist_checks "${FLAGS_checks}"
 
-    elif [[ "${FLAGS_checkset}" != "" ]]; then
+    elif [[ "${FLAGS_checkset:-}" != "" ]]; then
 
-        generate_checkfilelist_checkset
+        generate_checkfilelist_checkset "${FLAGS_checkset}"
 
     else
         CHECKFILELIST=("${PROGRAM_LIBDIR}"/check/*.check)
@@ -220,16 +230,18 @@ function generate_checklist {
         checkfileshort=${checkfile##*/}
 
         if ! safetycheck=$(LIB_FUNC_CHECK_CHECK_SECURITY "$checkfile"); then
-            logWarn "Skipping check ${checkfileshort}. Reason: ${safetycheck}"
-            continue
-        fi
 
-        if [[ ! -r "${checkfile}" ]]; then
-            logWarn "Skipping check ${checkfileshort},
-                                        could not read check file ${checkfile}"
-            continue
+            logWarn "Skipping check ${checkfileshort}. Reason: ${safetycheck}"
+
+        elif [[ ! -r "${checkfile}" ]]; then
+
+            logWarn "Skipping check ${checkfileshort}. Check file not readable.
+                        ${checkfile}"
+
         else
+
             CHECKLIST+=("${checkfile}")
+
         fi
 
     done
@@ -245,16 +257,14 @@ function run_checklist {
         checkfileshort=${checkfile##*/}
         checkname="check_${checkfileshort%.check}"
 
-        # printCheckHeader "Checking " $check
-
         printf '\n'
 
         (#run Subshell to forget sourcing
 
             # shellcheck source=/dev/null
             if ! source "${checkfile}"; then
-                logWarn "Skipping check ${checkfileshort},
-                                        could not load check file ${checkfile}"
+                logWarn "Skipping check ${checkfileshort}. Could not load check file.
+                            ${checkfile}"
                 return 3
             else
                 ${checkname}
@@ -265,7 +275,6 @@ function run_checklist {
         RC_CHECK=$?
         update_check_counters ${RC_CHECK}
 
-        # printCheckHeader $line
     done
 
 }
