@@ -68,6 +68,32 @@ function LIB_FUNC_IS_VIRT_VMWARE {
     return ${_retval}
 }
 
+# Returns 0 on Xen, 1 others
+function LIB_FUNC_IS_VIRT_XEN {
+
+    local -i _retval=1
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    [[ ( "${LIB_PLATF_VIRT_HYPER:-}" == 'Xen' ) ]] && _retval=0
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+}
+
+# Returns 0 on KVM, 1 others
+function LIB_FUNC_IS_VIRT_KVM {
+
+    local -i _retval=1
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    [[ ( "${LIB_PLATF_VIRT_HYPER:-}" == 'KVM' ) ]] && _retval=0
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+}
+
 # Returns 0 on MS HyperV, 1 others
 function LIB_FUNC_IS_VIRT_MICROSOFT {
 
@@ -323,19 +349,16 @@ function __get_platform_mem_details {
 
     local collectedby
 
-    #dmesg - kernel boot message
-    if [[ -z ${LIB_PLATF_RAM_MIB_PHYS:-} && -x "$(command -v dmesg)" ]]; then
+    if [[ -z ${LIB_PLATF_RAM_MIB_PHYS:-} && -d '/sys/devices/system/memory' ]]; then
 
-        local boot_mem_line
-        boot_mem_line=$(dmesg | grep "Memory:.*available")
-        LIB_PLATF_RAM_MIB_PHYS=$(awk '/Memory:.*available/ {match($0, /\/([0-9]+?)(K|k)/); printf "%.0f", substr($0,RSTART+1,RLENGTH-2) / 1024 }' <<< "${boot_mem_line}" )
+        local mem_blocks_online
+        mem_blocks_online=$(grep -ri --include='online' '1' /sys/devices/system/memory | wc -l)
 
-        #since 3.11 - reports the total number of physical pages in the system; before max_pfn --> need to substract absent memory
-        local -i boot_mem_absent_mb
-        boot_mem_absent_mb=$(awk '/Memory:.*available/ {match($0, /([0-9]+?)k absent/); printf "%.0f", substr($0,RSTART,RLENGTH-2) / 1024}' <<< "${boot_mem_line}" )
-        [[ ${boot_mem_absent_mb} -ne 0 ]] && LIB_PLATF_RAM_MIB_PHYS=$(( LIB_PLATF_RAM_MIB_PHYS - boot_mem_absent_mb ))
+        local block_size_bytes #convert hex
+        block_size_bytes=$((0x$(< /sys/devices/system/memory/block_size_bytes)))
 
-        collectedby='dmesg'
+        LIB_PLATF_RAM_MIB_PHYS=$(( block_size_bytes*mem_blocks_online/1024**2 ))
+        collectedby='sysdevmem'
 
     fi
 
