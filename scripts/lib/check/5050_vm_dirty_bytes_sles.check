@@ -39,6 +39,7 @@ function check_5050_vm_dirty_bytes_sles {
         local _curr_value
         local _reco_value
         local _parameter
+        local _parameter_normalized
 
         # i+=2 --> every 2nd item
         for ((i=0; i < ${#_vm_parameter[@]}; i+=2)); do
@@ -46,9 +47,19 @@ function check_5050_vm_dirty_bytes_sles {
             logTrace "<${FUNCNAME[0]}> # ${_vm_parameter[$i]}>"
 
             _parameter=${_vm_parameter[$i]}
+            _parameter_normalized=${_parameter//./\/}
+            logTrace "<${FUNCNAME[0]}> # ${_parameter_normalized}>"
+
             _reco_value=${_vm_parameter[$i+1]}
 
-            _curr_value=$(sysctl -n "${_parameter}")
+            if [[ ! -f "/proc/sys/${_parameter_normalized}" ]]; then
+
+                logCheckInfo "sysctl parameter ${_parameter} not available"
+
+            else
+                _curr_value=$(</proc/sys/"${_parameter_normalized}")
+
+            fi
 
             if [[ ${_curr_value} -ne ${_reco_value} ]]; then
                 logCheckWarning "sysctl VM parameter ${_parameter} NOT set as recommended (is: ${_curr_value}, should be: ${_reco_value})"

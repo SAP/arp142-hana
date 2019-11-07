@@ -31,6 +31,7 @@ function check_3010_network_parameter {
     local -i _rc_expected
     local -i _rc_current
     local    _parameter
+    local _parameter_normalized
 
     # PRECONDITIONS
 
@@ -41,10 +42,20 @@ function check_3010_network_parameter {
         logTrace "<${FUNCNAME[0]}> # ${_tcp_parameter[$i]}>"
 
         _parameter=${_tcp_parameter[$i]}
+        _parameter_normalized=${_parameter//./\/}
+        logTrace "<${FUNCNAME[0]}> # ${_parameter_normalized}>"
+
         _reco_value=${_tcp_parameter[$i+1]}
         _rc_expected=${_tcp_parameter[$i+2]}
 
-        _curr_value=$(sysctl -n "${_parameter}")
+        if [[ ! -f "/proc/sys/${_parameter_normalized}" ]]; then
+
+            logCheckInfo "sysctl parameter ${_parameter} not available"
+
+        else
+            _curr_value=$(</proc/sys/"${_parameter_normalized}")
+
+        fi
 
         LIB_COMPARE_TOOBIG_NUMBERS "${_curr_value}" "${_reco_value}"
         _rc_current=$?

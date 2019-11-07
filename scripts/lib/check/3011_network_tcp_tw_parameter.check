@@ -34,18 +34,18 @@ function check_3011_network_tcp_tw_parameter {
         logTrace "<${FUNCNAME[0]}> # ${_tcp_parameter[$i]}>"
 
         _parameter=${_tcp_parameter[$i]}
-        _parameter_normalized=${_parameter##*\.}
+        _parameter_normalized=${_parameter//./\/}
         logTrace "<${FUNCNAME[0]}> # ${_parameter_normalized}>"
 
         _reco_value=${_tcp_parameter[$i+1]}
 
-        if [[ ! -f "/proc/sys/net/ipv4/${_parameter_normalized}" ]]; then
+        if [[ ! -f "/proc/sys/${_parameter_normalized}" ]]; then
 
             logCheckInfo "sysctl parameter ${_parameter} not available"
 
         else
 
-            _curr_value=$(</proc/sys/net/ipv4/"${_parameter_normalized}")
+            _curr_value=$(</proc/sys/"${_parameter_normalized}")
 
             if [[ ${_curr_value} -ne ${_reco_value} ]]; then
 

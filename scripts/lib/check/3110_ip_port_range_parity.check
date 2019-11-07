@@ -34,7 +34,7 @@ function check_3110_ip_port_range_parity {
     if [[ ${_retval} -eq 99 ]]; then
 
         local port_range
-        port_range=$(sysctl -n net.ipv4.ip_local_port_range)    # 1024 64999
+        port_range=$(</proc/sys/net/ipv4/ip_local_port_range)    # 1024 64999
 
         local -r port_range_lower="${port_range%%[[:space:]]*}"             # BLANKS and TABS --> 1024
         local -ri port_range_lower_last_digit="${port_range_lower:(-1)}"    # get last digit  --> 4

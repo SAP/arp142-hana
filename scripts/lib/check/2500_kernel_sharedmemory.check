@@ -27,6 +27,7 @@ function check_2500_kernel_sharedmemory {
     local -i _rc_expected
     local -i _rc_current
     local _parameter
+    local _parameter_normalized
 
     # PRECONDITIONS
 
@@ -37,10 +38,20 @@ function check_2500_kernel_sharedmemory {
         logTrace "<${FUNCNAME[0]}> # ${_shm_parameter[$i]}>"
 
         _parameter=${_shm_parameter[$i]}
+        _parameter_normalized=${_parameter//./\/}
+        logTrace "<${FUNCNAME[0]}> # ${_parameter_normalized}>"
+
         _reco_value=${_shm_parameter[$i+1]}
         _rc_expected=${_shm_parameter[$i+2]}
 
-        _curr_value=$(sysctl -n "${_parameter}")
+        if [[ ! -f "/proc/sys/${_parameter_normalized}" ]]; then
+
+            logCheckInfo "sysctl parameter ${_parameter} not available"
+
+        else
+            _curr_value=$(</proc/sys/"${_parameter_normalized}")
+
+        fi
 
         LIB_COMPARE_TOOBIG_NUMBERS "${_curr_value}" "${_reco_value}"
         _rc_current=$?

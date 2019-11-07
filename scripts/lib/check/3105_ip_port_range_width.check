@@ -21,7 +21,7 @@ function check_3105_ip_port_range_width {
     if [[ ${_retval} -eq 99 ]]; then
 
         local port_range
-        port_range=$(sysctl -n net.ipv4.ip_local_port_range)    # 40000 64999
+        port_range=$(</proc/sys/net/ipv4/ip_local_port_range)    # 40000 64999
         readonly port_range
 
         local -ri port_range_lower="${port_range%%[[:space:]]*}"    # BLANKS and TABS --> 40000
