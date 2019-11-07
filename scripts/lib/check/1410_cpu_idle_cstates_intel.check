@@ -153,10 +153,10 @@ function check_1410_cpu_idle_cstates_intel {
                     fi
 
                     if [[ ${_intel_mcstate} -lt 3 ]]; then
-                        logCheckError "CPUidle driver <intel_idle> max_cstate prevents latency control (is: ${_intel_mcstate}, should be: 9)"
+                        logCheckError "CPUidle driver <intel_idle> max_cstate prevents latency control (is: ${_intel_mcstate}, should NOT be set)"
                         _retval=2
-                    elif [[ ${_intel_mcstate} -lt 9 ]]; then
-                        logCheckWarning "CPUidle driver <intel_idle> max_cstate limits latency control (is: ${_intel_mcstate}, should be: 9)"
+                    elif [[ ${_intel_mcstate} -lt 6 ]]; then
+                        logCheckWarning "CPUidle driver <intel_idle> max_cstate limits latency control (is: ${_intel_mcstate}, should NOT be set)"
 
                         #keep higher return values
                         [[ ${_retval} -eq 0 ]] && _retval=1
