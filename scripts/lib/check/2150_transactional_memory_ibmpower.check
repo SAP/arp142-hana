@@ -44,7 +44,7 @@ function check_2150_transactional_memory_ibmpower {
 
         case "${OS_VERSION}" in
 
-        7.[3-6]*)   htm_off_required=true ;;
+        7.[3-5]*)   htm_off_required=true ;;
 
         *)          htm_off_required=false ;;
 
