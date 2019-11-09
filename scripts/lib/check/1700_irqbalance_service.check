@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+
+function check_1700_irqbalance_service {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote_sles='#1944799'
+    local -r sapnote_rhel='#2009879'
+    # MODIFICATION SECTION<<
+
+    #1944799 - SAP HANA Guidelines for SLES Operating System Installation
+    #2009879 - SAP HANA Guidelines for Red Hat Enterprise Linux (RHEL) Operating System
+
+    local sapnote
+    local cmdline
+    local systemd_service
+
+    # PRECONDITION
+    if LIB_FUNC_IS_SLES ; then
+
+        sapnote="${sapnote_sles}"
+
+        case "${OS_VERSION}" in
+
+            11.*)   cmdline='systemd'
+                    systemd_service='irq_balancer';;
+
+            *)      cmdline='systemctl' ;;
+
+        esac
+
+    elif LIB_FUNC_IS_RHEL ; then
+
+        sapnote="${sapnote_rhel}"
+
+        case "${OS_VERSION}" in
+
+            6.*)    cmdline='systemd'
+                    systemd_service='irqbalance';;
+
+            *)      cmdline='systemctl' ;;
+
+        esac
+
+    else
+
+        logCheckError "Linux distribution NOT supported (SAP Note #2235581) (is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
+        _retval=2
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        if [[ ${cmdline} == 'systemctl' ]]; then
+
+            if systemctl is-active "irqbalance" --quiet; then
+                _retval=0
+            fi
+
+        elif [[ ${cmdline} == 'systemd' ]]; then
+
+            local cmdline_systemd
+            cmdline_systemd="service ${systemd_service} status &>/dev/null"
+
+            if eval "${cmdline_systemd}"; then
+                _retval=0
+
+            fi
+
+        fi
+
+    fi
+
+    #time sync active?
+    if [[ ${_retval} -eq 0 ]]; then
+
+        logCheckOk "IRQ balancing is active (SAP Note ${sapnote:-})"
+
+    else
+
+        logCheckWarning "IRQ balancing SHOULD be active (SAP Note ${sapnote:-})"
+        _retval=1
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}

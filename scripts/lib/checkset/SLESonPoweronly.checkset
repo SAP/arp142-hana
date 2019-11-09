@@ -18,6 +18,7 @@
 1260_cpu_smthreading_ibmpower
 1310_cpu_powersavings_ibmpower
 1360_cpu_cpufolding_ibmpower
+1700_irqbalance_service
 2000_transparent_hugepages
 2100_active_memory_sharing_ibmpower
 2150_transactional_memory_ibmpower

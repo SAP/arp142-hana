@@ -22,6 +22,7 @@
 1500_cpu_perfbias_intel
 1600_cpu_pstates_intel
 1610_cpu_intelpstates_intel
+1700_irqbalance_service
 2000_transparent_hugepages
 2200_numa_balancing
 2300_vm_max_map_count
