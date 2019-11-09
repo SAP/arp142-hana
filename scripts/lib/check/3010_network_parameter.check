@@ -17,14 +17,10 @@ function check_3010_network_parameter {
                                     'net.core.somaxconn'                    4096                1   \
                                     'net.ipv4.tcp_max_syn_backlog'          8192                0   \
                                     'net.ipv4.tcp_timestamps'               1                   0   \
-                                    'net.ipv4.tcp_syn_retries'              8                   0   \
                                     'net.ipv4.tcp_window_scaling'           1                   0   \
                                     'net.ipv4.tcp_slow_start_after_idle'    0                   0   \
     )
     # MODIFICATION SECTION<<
-
-    #to change - On SAP HANA 1.0 database Revisions <= 122.14 and on all SAP HANA 2.0 database Revisions of SPS00 only
-    #net.ipv4.tcp_syn_retries = 8
 
     local -i _curr_value
     local -i _reco_value
