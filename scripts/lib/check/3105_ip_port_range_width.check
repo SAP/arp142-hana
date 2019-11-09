@@ -7,12 +7,13 @@ function check_3105_ip_port_range_width {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#2600030,#401162' # Parameter Recommendations in SAP HANA Environments; SHA
-    local -ri pr_lower_expected=40000
-    local -ri pr_upper_expected=64999
+    local -r sapnote='#2382421,#401162'
+    local -ri pr_lower_expected=9000
+    local -ri pr_upper_expected=65499
     # MODIFICATION SECTION<<
 
-    #SAP Note #401162 - SAP Hostagent (SHA) Patchlevel 36 sets the range even wider
+    # 2382421 - Optimizing the Network Configuration on HANA- and OS-Level
+    # 401162  - Linux: Avoiding TCP/IP port conflicts and start problems
     #'net.ipv4.ip_local_port_range' "9000 65499"
 
     # PRECONDITIONS
