@@ -16,6 +16,10 @@ umask 0027
 [[ -n "${HANA_LOGGER_STUBS:-}" ]] && return 0
 HANA_LOGGER_STUBS='stubs'
 
+# prevent loading of original HANA_LOGGER
+# shellcheck disable=SC2034
+HANA_LOGGER_PROGVERSION='stubs'
+
 logNotify()  { : ; }
 logError()  { : ; }
 logWarn()  { : ; }
