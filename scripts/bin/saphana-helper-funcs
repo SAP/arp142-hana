@@ -352,7 +352,8 @@ function __get_platform_mem_details {
     if [[ -z ${LIB_PLATF_RAM_MIB_PHYS:-} && -d '/sys/devices/system/memory' ]]; then
 
         local mem_blocks_online
-        mem_blocks_online=$(grep -ri --include='online' '1' /sys/devices/system/memory | wc -l)
+        # shellcheck disable=SC2126
+        mem_blocks_online=$(grep -i 'online' /sys/devices/system/memory/memory*/state | wc -l)
 
         local block_size_bytes #convert hex
         block_size_bytes=$((0x$(< /sys/devices/system/memory/block_size_bytes)))
@@ -362,8 +363,12 @@ function __get_platform_mem_details {
 
     fi
 
-    #MemTotal in /proc/meminfo - usable memory
-    LIB_PLATF_RAM_MiB_AVAILABLE=$(awk '/^MemTotal:/ {match($0, /[0-9]+/); printf "%.0f", substr($0,RSTART,RLENGTH)/1024 }' /proc/meminfo)
+    if [[ -z ${LIB_PLATF_RAM_MiB_AVAILABLE:-} ]]; then
+
+        #MemTotal in /proc/meminfo - usable memory
+        LIB_PLATF_RAM_MiB_AVAILABLE=$(awk '/^MemTotal:/ {match($0, /[0-9]+/); printf "%.0f", substr($0,RSTART,RLENGTH)/1024 }' /proc/meminfo)
+
+    fi
 
     if [[ -z ${LIB_PLATF_RAM_MIB_PHYS:-} || ${LIB_PLATF_RAM_MIB_PHYS} -eq 0 ]]; then
 
