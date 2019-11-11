@@ -18,11 +18,25 @@ umask 0027
 # return if saphana-helper-funcs already loaded
 [[ -n "${HANA_HELPER_PROGVERSION:-}" ]] && return 0
 
-HANA_HELPER_PROGVERSION='1907.0-dev'
+HANA_HELPER_PROGVERSION='1911.0-dev'
 
 ##################################################
 # Global functions - to be used in other scripts
 ##################################################
+
+# Returns 1 on NON-ROOT, 0 as ROOT
+function LIB_FUNC_IS_ROOT {
+
+    local -i _retval=1
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    [[ ${UID} -eq 0 ]] && _retval=0
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+}
+
 function LIB_FUNC_CHECK_CHECK_SECURITY {
 
     local fullpath=$1
