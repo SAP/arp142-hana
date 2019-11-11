@@ -13,7 +13,12 @@ function check_3120_ip_port_hostagent {
     #SAP Note 401162 - Linux: Avoiding TCP/IP port conflicts and start problems
 
     # PRECONDITIONS
-    if [[ ! -f '/usr/sap/hostctrl/exe/host_profile' ]]; then
+    if ! LIB_FUNC_IS_ROOT ; then
+
+        logCheckError "ROOT required - Host Agent configuration file not readable (SAP Note ${sapnote:-})"
+        _retval=2
+
+    elif [[ ! -f '/usr/sap/hostctrl/exe/host_profile' ]]; then
 
         logCheckSkipped "SAP Host Agent configuration file not found (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
         _retval=3

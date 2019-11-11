@@ -28,7 +28,12 @@ function check_0800_sap_host_agent {
 
 
     #PRECONDITION
-    if ! [[ -e "${saphostexec_path}" ]]; then
+    if ! LIB_FUNC_IS_ROOT ; then
+
+        logCheckError "ROOT required - SAP host agent not executable (SAP Note ${sapnote:-})"
+        _retval=2
+
+    elif ! [[ -e "${saphostexec_path}" ]]; then
 
         logCheckError "SAP host agent not installed (SAP Note ${sapnote:-})"
         _retval=2

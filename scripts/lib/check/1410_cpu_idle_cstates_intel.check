@@ -131,36 +131,44 @@ function check_1410_cpu_idle_cstates_intel {
 
                     logCheckInfo "CPUidle driver <intel_idle>: prefer modern latency setting instead of setting fixed cstates (SAP Note ${sapnote:-})"
 
-                    #requires root to read from /dev/cpu_dma_latency
-                    local _curr_forcelatency
-                    _curr_forcelatency=$(hexdump -e '"%i"' /dev/cpu_dma_latency)
+                    if LIB_FUNC_IS_ROOT ; then  #/dev/cpu_dma_latency
 
-                    if [[ ${_curr_forcelatency:-} -eq ${_reco_forcelatency} ]]; then
+                        local _curr_forcelatency
+                        _curr_forcelatency=$(hexdump -e '"%i"' /dev/cpu_dma_latency)
 
-                        logCheckOk 'CPU latency set as recommended' "(SAP Note ${sapnote:-}) (is: ${_curr_forcelatency:-})"
-                        _retval=0
+                        if [[ ${_curr_forcelatency:-} -eq ${_reco_forcelatency} ]]; then
 
-                    elif [[ ${_curr_forcelatency:-} -lt ${_reco_forcelatency:-} ]]; then
-                        #2 = C1; #10 = C1E
-                        logCheckWarning 'CPU latency set to low - limiting CPU TurboMode features' "(SAP Note ${sapnote:-}) (is: ${_curr_forcelatency:-}, should be: ${_reco_forcelatency})"
-                        _retval=1
+                            logCheckOk 'CPU latency set as recommended' "(SAP Note ${sapnote:-}) (is: ${_curr_forcelatency:-})"
+                            _retval=0
 
-                    elif [[ ${_curr_forcelatency:-} -gt ${_reco_forcelatency:-} ]]; then
+                        elif [[ ${_curr_forcelatency:-} -lt ${_reco_forcelatency:-} ]]; then
+                            #2 = C1; #10 = C1E
+                            logCheckWarning 'CPU latency set to low - limiting CPU TurboMode features' "(SAP Note ${sapnote:-}) (is: ${_curr_forcelatency:-}, should be: ${_reco_forcelatency})"
+                            _retval=1
 
-                        logCheckError 'CPU latency set to high - deeper c-states causing longer wakeup times' "(SAP Note ${sapnote:-}) (is: ${_curr_forcelatency:-}, should be: ${_reco_forcelatency})"
-                        _retval=2
+                        elif [[ ${_curr_forcelatency:-} -gt ${_reco_forcelatency:-} ]]; then
 
-                    fi
+                            logCheckError 'CPU latency set to high - deeper c-states causing longer wakeup times' "(SAP Note ${sapnote:-}) (is: ${_curr_forcelatency:-}, should be: ${_reco_forcelatency})"
+                            _retval=2
 
-                    if [[ ${_intel_mcstate} -lt 3 ]]; then
-                        logCheckError "CPUidle driver <intel_idle> max_cstate prevents latency control (is: ${_intel_mcstate}, should NOT be set)"
-                        _retval=2
-                    elif [[ ${_intel_mcstate} -lt 6 ]]; then
-                        logCheckWarning "CPUidle driver <intel_idle> max_cstate limits latency control (is: ${_intel_mcstate}, should NOT be set)"
+                        fi
 
-                        #keep higher return values
-                        [[ ${_retval} -eq 0 ]] && _retval=1
-                    fi
+                        if [[ ${_intel_mcstate} -lt 3 ]]; then
+                            logCheckError "CPUidle driver <intel_idle> max_cstate prevents latency control (is: ${_intel_mcstate}, should NOT be set)"
+                            _retval=2
+                        elif [[ ${_intel_mcstate} -lt 6 ]]; then
+                            logCheckWarning "CPUidle driver <intel_idle> max_cstate limits latency control (is: ${_intel_mcstate}, should NOT be set)"
+
+                            #keep higher return values
+                            [[ ${_retval} -eq 0 ]] && _retval=1
+                        fi
+
+                    else
+
+                            logCheckError 'ROOT required - CPU latency could not be evaluated' "(SAP Note ${sapnote:-}) (is: na, should be: ${_reco_forcelatency})"
+                            _retval=2
+
+                    fi #ROOT
 
                 else
 
