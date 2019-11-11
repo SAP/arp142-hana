@@ -304,13 +304,13 @@ function print_counters {
 
     local _line_formated
 
-    printf -v _line_formated '%-7s|%6s |%8s |%5s |%8s |%6s' 'Status' 'Error' 'Warning' 'OK' 'Skipped' 'Info'
+    printf -v _line_formated '%-7s|%6s |%8s |%5s |%8s |%5s |%6s' 'Status' 'Error' 'Warning' 'OK' 'Skipped' 'Info' 'Total'
     logNotify "## ${_line_formated}"
 
-    printf -v _line_formated '%-7s|%6s |%8s |%5s |%8s |%6s' '%' $percent_error $percent_warning $percent_ok $percent_skipped $percent_info
+    printf -v _line_formated '%-7s|%6s |%8s |%5s |%8s |%5s |%6s' '%' $percent_error $percent_warning $percent_ok $percent_skipped $percent_info '100'
     logNotify "## ${_line_formated}"
 
-    printf -v _line_formated '%-7s|%6s |%8s |%5s |%8s |%6s' '#' $NUMBER_CHECKS_ERROR $NUMBER_CHECKS_WARNING $NUMBER_CHECKS_OK $NUMBER_CHECKS_SKIPPED $NUMBER_CHECKS_INFO
+    printf -v _line_formated '%-7s|%6s |%8s |%5s |%8s |%5s |%6s' '#' $NUMBER_CHECKS_ERROR $NUMBER_CHECKS_WARNING $NUMBER_CHECKS_OK $NUMBER_CHECKS_SKIPPED $NUMBER_CHECKS_INFO $check_count
     logNotify "## ${_line_formated}"
 
 }
