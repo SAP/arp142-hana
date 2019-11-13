@@ -415,7 +415,7 @@ function _lib_helper_main {
         ;;
 
         *)          #unsupported platform
-                    logError 'Unsupported platform'
+                    logError "Unsupported platform - <${HOSTTYPE}>"
                     exit 2
         ;;
 
