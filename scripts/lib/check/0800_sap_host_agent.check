@@ -10,9 +10,9 @@ function check_0800_sap_host_agent {
     local -r sapnote='#1113545'
     local -r sapnote721='#2130510'
     local -r sapnoteFIX='#2498706'
-    local -r sapnoteLATEST='#2809845'
+    local -r sapnoteLATEST='#2858934'
 
-    local -r hostagent_version_exp='721.44'
+    local -r hostagent_version_exp='721.44.1957031'
     local -ar hostagent_buggy=( '721.26' '721.28' )
 
     # MODIFICATION SECTION<<
@@ -23,6 +23,7 @@ function check_0800_sap_host_agent {
     #2240028 - SAP Host Agent Patches specific to Linux
     #2809845 - SAP Host Agent Patch Collection 08/2019
     #2422465 - Advanced corrections for HANA metric definitions in SAP Hostagent
+    #2858934 - ConfigureOutsideDiscovery leads to SAP Host Agent 721 patchlevel 44 crash
 
     local -r saphostexec_path='/usr/sap/hostctrl/exe/saphostexec'
 
@@ -43,14 +44,15 @@ function check_0800_sap_host_agent {
         local -a versions
         # read infos into array (mapfile = bash4+)
         if [[ ${BASH_VERSINFO[0]:-} -ge 4 ]] ; then
-            mapfile -t versions < <(($saphostexec_path -version |  grep -iE '(kernel release|patch number)') 2>/dev/null)
+            mapfile -t versions < <(($saphostexec_path -version |  grep -iE '(kernel release|patch number|change number)') 2>/dev/null)
         else
-            while IFS=$'\n' read -r line; do versions+=("$line"); done < <(($saphostexec_path -version |  grep -iE '(kernel release|patch number)') 2>/dev/null)
+            while IFS=$'\n' read -r line; do versions+=("$line"); done < <(($saphostexec_path -version |  grep -iE '(kernel release|patch number|change number)') 2>/dev/null)
         fi
 
         versions[0]=$(LIB_FUNC_TRIM_LEFT "${versions[0]/kernel release}")
         versions[1]=$(LIB_FUNC_TRIM_LEFT "${versions[1]/patch number}")
-        local hostagent_version_curr="${versions[0]}.${versions[1]}"
+        versions[2]=$(LIB_FUNC_TRIM_LEFT "${versions[2]/*change number}")
+        local hostagent_version_curr="${versions[0]}.${versions[1]}.${versions[2]}"
 
         local normalized_hostagent_version_curr
         local normalized_hostagent_version_exp
