@@ -167,9 +167,7 @@ function LIB_FUNC_IS_IBMPOWER {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-    if [[ "${LIB_PLATF_ARCHITECTURE}" == 'ppc64le' ]] || [[ "${LIB_PLATF_ARCHITECTURE}" == 'ppc64' ]]; then
-        _retval=0
-    fi
+    [[ "${LIB_PLATF_ARCHITECTURE:-}" =~ ppc64le|ppc64|powerpc64le ]] && _retval=0
 
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
     return ${_retval}
@@ -404,13 +402,16 @@ function _lib_helper_main {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # HOSTTYPE - PLATFORM (${HOSTTYPE})"
+
     case "${HOSTTYPE}" in
 
         'x86_64')   #shellcheck source=./lib_platf_x86_64
                     source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/lib_platf_x86_64" || { echo 'unable to load lib_platf_power library' >&2; exit 1; }
         ;;
 
-        'ppc64'*)   #shellcheck source=./lib_platf_power
+        'ppc64'* | 'powerpc64'* )
+                    #shellcheck source=./lib_platf_power
                     source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/lib_platf_power" || { echo 'unable to load lib_platf_power library' >&2; exit 1; }
         ;;
 

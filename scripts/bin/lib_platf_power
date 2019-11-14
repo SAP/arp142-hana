@@ -202,7 +202,10 @@ function __get_platform_power_cpu_details {
         case ${line} in
 
         'Architecture:'*)
-                            :
+                            if [[ -z ${LIB_PLATF_ARCHITECTURE:-} ]]; then
+                                LIB_PLATF_ARCHITECTURE=$(LIB_FUNC_TRIM_LEFT "${line/Architecture:}")
+                                readonly LIB_PLATF_ARCHITECTURE
+                            fi
         ;;
 
         'Byte Order:'*)
@@ -329,9 +332,6 @@ function __lib_func_get_auxvector_details {
 function _lib_platf_power_main {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
-
-    LIB_PLATF_ARCHITECTURE=${HOSTTYPE}
-    readonly LIB_PLATF_ARCHITECTURE
 
     __lib_func_get_lpar_details
     __get_platform_power_cpu_details

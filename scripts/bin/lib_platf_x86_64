@@ -146,13 +146,15 @@ function __get_platform_x86_64_cpu_details {
         case ${line} in
 
         'Architecture:'*)
-                            :
+                            if [[ -z ${LIB_PLATF_ARCHITECTURE:-} ]]; then
+                                LIB_PLATF_ARCHITECTURE=$(LIB_FUNC_TRIM_LEFT "${line/Architecture:}")
+                                readonly LIB_PLATF_ARCHITECTURE
+                            fi
         ;;
 
         'Byte Order:'*)
                             LIB_PLATF_BYTEORDER=$(LIB_FUNC_TRIM_LEFT "${line/Byte Order:}")
                             readonly LIB_PLATF_BYTEORDER
-                            #break
         ;;
 
         'Thread(s) per core:'*)
@@ -247,9 +249,6 @@ function __get_platform_x86_64_cpu_details {
 function _lib_platf_x86_64_main {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
-
-    LIB_PLATF_ARCHITECTURE=${HOSTTYPE}
-    readonly LIB_PLATF_ARCHITECTURE
 
     __get_platform_x86_64_vendor_details
     __get_platform_x86_64_cpu_details
