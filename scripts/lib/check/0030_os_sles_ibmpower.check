@@ -76,7 +76,7 @@ function check_0030_os_sles_ibmpower {
 
             case "${OS_VERSION}" in
 
-                12.[1-4]* | 15.0* )
+                12.[1-4]* | 15.[0-1]* )
                         logCheckOk "SLESonPower release is supported (SAP Note ${sapnote12x:-}) (is: ${OS_VERSION})"
                         _retval=0
                     ;;
