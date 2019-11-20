@@ -31,7 +31,8 @@
 3010_network_parameter
 3011_network_tcp_tw_parameter
 3012_network_parameter_defaults
-3020_network_memory
+3020_network_memory_max
+3021_network_memory_minmid
 3100_ip_port_sysctl
 3105_ip_port_range_width
 3110_ip_port_range_parity

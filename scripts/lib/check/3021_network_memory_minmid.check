@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+
+function check_3021_network_memory_minmid {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2382421' # Optimizing the Network Configuration on HANA- and OS-Level for SPS10 and Higher
+
+    local reco_ipv4_tcp_rmem_minmid
+    local reco_ipv4_tcp_wmem_minmid
+
+    #PAGE_SIZE = SK_MEM_QUANTUM = 4K (Intel and newer IBMPower kernels)
+    reco_ipv4_tcp_rmem_minmid="4096 87380"
+    reco_ipv4_tcp_wmem_minmid="4096 16384"
+
+    if LIB_FUNC_IS_IBMPOWER ; then
+
+        local kernel_applicable='4.10'
+
+        LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
+        kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
+
+        # returns 0 if equal, 1 if first is higher, 2 if second is higher
+        LIB_FUNC_COMPARE_VERSIONS "${kernelversion}" "${kernel_applicable}"
+        if [[ $? -eq 2 ]]; then
+
+            #old behavior PAGE_SIZE instead of SK_MEM_QUANTUM=4K
+            reco_ipv4_tcp_rmem_minmid="65536 87380"
+            reco_ipv4_tcp_wmem_minmid="65536 16384"
+
+        fi
+
+    fi
+    readonly reco_ipv4_tcp_rmem_minmid
+    readonly reco_ipv4_tcp_wmem_minmid
+    # MODIFICATION SECTION<<
+
+    # PRECONDITIONS
+
+    # #CHECK
+
+    local ipv4_tcp_rmem
+    local ipv4_tcp_wmem
+
+    ipv4_tcp_rmem=$(</proc/sys/net/ipv4/tcp_rmem)           # 4096    87380   6291456
+    ipv4_tcp_wmem=$(</proc/sys/net/ipv4/tcp_wmem)           # 4096    16384   4194304
+
+    ipv4_tcp_rmem="${ipv4_tcp_rmem%[[:space:]]*}"           # 4096    87380
+    ipv4_tcp_wmem="${ipv4_tcp_wmem%[[:space:]]*}"           # 4096    16384
+
+    shopt -s extglob    #enable extended pattern matching
+    ipv4_tcp_rmem=${ipv4_tcp_rmem//+([[:space:]])/ }        # 4096 87380
+    ipv4_tcp_wmem=${ipv4_tcp_wmem//+([[:space:]])/ }        # 4096 16384
+    shopt -u extglob    #disable extended pattern matching
+
+    logTrace "<${FUNCNAME[0]}> # ipv4_tcp_rmem MIN/MID <${ipv4_tcp_rmem}>; ipv4_tcp_wmem MIN/MID <${ipv4_tcp_wmem}>"
+
+    # Min Mid Values
+    if [[ "${ipv4_tcp_rmem}" != ${reco_ipv4_tcp_rmem_minmid}* ]]; then
+        logCheckWarning 'Network kernel parameter net.ipv4.tcp_rmem MIN/MID values do not need to be adjusted (is: '"${ipv4_tcp_rmem}, should be: ${reco_ipv4_tcp_rmem_minmid})"
+        _retval=1
+    fi
+
+    if [[ "${ipv4_tcp_wmem}" != ${reco_ipv4_tcp_wmem_minmid}* ]]; then
+        logCheckWarning 'Network kernel parameter net.ipv4.tcp_wmem MIN/MID values do not need to be adjusted (is: '"${ipv4_tcp_wmem}, should be: ${reco_ipv4_tcp_wmem_minmid})"
+        _retval=1
+    fi
+
+    if [[ ${_retval} -eq 99 ]]; then
+
+        logCheckOk 'Network kernel memory parameters MIN/MID set as recommended (SAP Note '"${sapnote:-})"
+        _retval=0
+
+    else
+
+        logCheckWarning 'Network kernel memory parameters MIN/MID changed (SAP Note '"${sapnote:-})"
+        _retval=1
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
