@@ -131,11 +131,32 @@ function __lib_func_get_lpar_details {
                             fi
             ;;
 
-            'entitled_memory_pool_number'*)
-                            #65535 = Dedicated .. else Shared
+            'entitled_memory='*)
+                            if [[ -z ${LIB_PLATF_POWER_MEMENTITLED:-} ]]; then
+                                _temp=$(LIB_FUNC_TRIM_LEFT "${line/entitled_memory=}")
+                                LIB_PLATF_POWER_MEMENTITLED="${_temp}"
+                                readonly LIB_PLATF_POWER_MEMENTITLED
+                            fi
+            ;;
+
+            'mapped_entitled_memory='*)
+                            if [[ -z ${LIB_PLATF_POWER_MEMENTITLEDMAPPED:-} ]]; then
+                                _temp=$(LIB_FUNC_TRIM_LEFT "${line/mapped_entitled_memory=}")
+                                LIB_PLATF_POWER_MEMENTITLEDMAPPED="${_temp}"
+                                readonly LIB_PLATF_POWER_MEMENTITLEDMAPPED
+                            fi
+            ;;
+
+            'entitled_memory_weight='*)
+                            #partition's shared memory weight 0 = Dedicated .. else Shared
+                            if [[ -z ${LIB_PLATF_POWER_MEMENTITLEDWEIGHT:-} ]]; then
+                                _temp=$(LIB_FUNC_TRIM_LEFT "${line/entitled_memory_weight=}")
+                                LIB_PLATF_POWER_MEMENTITLEDWEIGHT="${_temp}"
+                                readonly LIB_PLATF_POWER_MEMENTITLEDWEIGHT
+
+                            fi
                             if [[ -z ${LIB_PLATF_POWER_MEMMODE:-} ]]; then
-                                _temp=$(LIB_FUNC_TRIM_LEFT "${line/entitled_memory_pool_number=}")
-                                [[ ${_temp} = 65535 ]] && _temp='DEDICATED' || _temp='SHARED'
+                                [[ ${LIB_PLATF_POWER_MEMENTITLEDWEIGHT} = 0 ]] && _temp='DEDICATED' || _temp='SHARED'
                                 LIB_PLATF_POWER_MEMMODE="${_temp}"
                                 readonly LIB_PLATF_POWER_MEMMODE
                             fi
@@ -347,6 +368,9 @@ function _lib_platf_power_main {
 # don't use declare here ... file is sourced within function, which would restrict visibility
 # LIB_PLATF_POWER_CPUCAP
 # LIB_PLATF_POWER_MEMMODE
+# LIB_PLATF_POWER_MEMENTITLED
+# LIB_PLATF_POWER_MEMENTITLEDMAPPED
+# LIB_PLATF_POWER_MEMENTITLEDWEIGHT
 # LIB_PLATF_POWER_MEMAMS
 # LIB_PLATF_POWER_CPUMODE
 # LIB_PLATF_POWER_CPUMODE_DEDDON
