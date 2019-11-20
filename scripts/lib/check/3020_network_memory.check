@@ -12,6 +12,8 @@ function check_3020_network_memory {
     local -ir reco_ipv4_tcp_rmem_max=6291456
     local -ir reco_ipv4_tcp_wmem_max=4194304
 
+    local -ir highspeed_ipv4_tcp_mem_max=16777216
+
     local reco_ipv4_tcp_rmem_minmid
     local reco_ipv4_tcp_wmem_minmid
 
@@ -104,6 +106,18 @@ function check_3020_network_memory {
         logCheckOk 'Network kernel parameter net.core.wmem_max set as recommended (is: '"${core_wmem_max})"
     fi
 
+    #ipv4_tcp_?mem_max - high performance 10G+
+    local -i curr_ipv4_tcp_mem_max
+    curr_ipv4_tcp_mem_max=$(( ipv4_tcp_rmem_max > ipv4_tcp_wmem_max ? ipv4_tcp_rmem_max : ipv4_tcp_wmem_max ))
+
+    if [[ ${curr_ipv4_tcp_mem_max} -lt ${highspeed_ipv4_tcp_mem_max} ]]; then
+        logCheckInfo '---'
+        logCheckInfo 'In case of 10G+ networks with high bandwidth demand for certain traffic'
+        logCheckInfo 'e.g HANA internode, HANA system replication, HANA network backup'
+        logCheckInfo 'Paramters net.ipv4.tcp_rmem and net.ipv4.tcp_wmem max respectively net.core.*mem_max values'
+        logCheckInfo 'should be further increased. (should be >=: '"${highspeed_ipv4_tcp_mem_max})"
+        logCheckInfo '---'
+    fi
 
     if [[ ${_retval} -eq 99 ]]; then
 
