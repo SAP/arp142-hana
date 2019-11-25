@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+function check_3015_network_tcp_timestamps {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2382421'
+
+    # MODIFICATION SECTION<<
+
+    # 2382421 - Optimizing the Network Configuration on HANA- and OS-Level
+
+    # net.ipv4.tcp_timestamps=1
+    # Do not enable TCP timestamps on Azure VMs placed behind Azure Load Balancer
+
+    # PRECONDITIONS
+    if [[ ! -e '/proc/sys/net/ipv4/tcp_timestamps' ]]; then
+
+        logCheckSkipped 'Network kernel TCP timestamps not configurable' "(SAP Note ${sapnote:-}). Skipping <${FUNCNAME[0]}>"
+        _retval=3
+
+    elif LIB_FUNC_IS_VIRT_MICROSOFT; then
+
+        logCheckWarning '---'
+        logCheckWarning 'Do NOT enable TCP timestamps on Azure VMs placed behind Azure Load Balancer.'
+        logCheckWarning 'Enabling TCP timestamps will cause the health probes to fail.'
+        logCheckWarning '---'
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -ne 99 ]]; then
+
+        :
+
+    elif [[ $(</proc/sys/net/ipv4/tcp_timestamps) -eq 1 ]]; then
+
+        logCheckOk 'Network kernel parameter net.ipv4.tcp_timestamps set as recommended (is: 1)' "(SAP Note ${sapnote:-})"
+        _retval=0
+
+    else
+
+        logCheckWarning 'Network kernel parameter net.ipv4.tcp_timestamps NOT set as recommended (is: 0)' "(SAP Note ${sapnote:-})"
+        _retval=1
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
