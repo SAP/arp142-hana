@@ -8,6 +8,8 @@ function check_1250_cpu_hyperthreading_intel {
 
     # MODIFICATION SECTION>>
     local -r sapnote='#2711650' # SAP HANA on Intel server systems with more than 8 CPU´s / sockets
+
+    local -i max_cpu_sockets_with_hyperthreads=8
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS
@@ -38,7 +40,7 @@ function check_1250_cpu_hyperthreading_intel {
 
         logCheckInfo "${LIB_PLATF_VENDOR:-} ${LIB_PLATF_NAME:-} - Sockets:<${LIB_PLATF_CPU_SOCKETS}>, ThreadsPerCore:<${LIB_PLATF_CPU_THREADSPERCORE}>"
 
-        if [[ ${LIB_PLATF_CPU_SOCKETS} -le 8 ]]; then
+        if [[ ${LIB_PLATF_CPU_SOCKETS} -le ${max_cpu_sockets_with_hyperthreads} ]]; then
 
             if [[ ${LIB_PLATF_CPU_THREADSPERCORE:-} -eq 1 ]]; then
 
@@ -54,14 +56,22 @@ function check_1250_cpu_hyperthreading_intel {
 
         else
 
+            if [[ "${LIB_PLATF_NAME:-}" =~ Flex ]]; then
+
+                # Superdome Flex
+                logCheckInfo 'For SAP S/4HANA (analytical and transactional workloads). For 12s Systems and above, Hyperthreading should be disabled.'
+                logCheckInfo 'For SAP BW/4HANA (analytical workloads), Hyperthreading should be enabled for all system sizes (4s, 8s, 12s and above).'
+
+            fi
+
             if [[ ${LIB_PLATF_CPU_THREADSPERCORE:-} -lt 1 ]]; then
 
-                logCheckError "Intel's Hyperthreading on 8+ Socket system NOT disabled. (SAP Note ${sapnote:-})"
+                logCheckError "Intel's Hyperthreading on ${max_cpu_sockets_with_hyperthreads}+ Socket system NOT disabled. (SAP Note ${sapnote:-})"
                 _retval=2
 
             else
 
-                logCheckOk "Intel's Hyperthreading on 8+ Socket system disabled. (SAP Note ${sapnote:-})"
+                logCheckOk "Intel's Hyperthreading on ${max_cpu_sockets_with_hyperthreads}+ Socket system disabled. (SAP Note ${sapnote:-})"
                 _retval=0
 
             fi
