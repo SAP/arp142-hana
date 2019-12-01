@@ -89,7 +89,7 @@ function check_3020_network_memory_max {
         logCheckInfo '---'
         logCheckInfo 'In case of 10G+ networks with high bandwidth demand for certain traffic'
         logCheckInfo 'e.g HANA internode, HANA system replication, HANA network backup'
-        logCheckInfo 'Paramters net.ipv4.tcp_rmem and net.ipv4.tcp_wmem max respectively net.core.*mem_max values'
+        logCheckInfo 'Parameters net.ipv4.tcp_rmem and net.ipv4.tcp_wmem max respectively net.core.*mem_max values'
         logCheckInfo 'should be further increased. (should be >=: '"${highspeed_ipv4_tcp_mem_max})"
         logCheckInfo '---'
     fi
