@@ -14,7 +14,7 @@ umask 0027
 # return if library is already loaded
 [[ -n "${LIB_PLATF_POWER_RELEASE:-}" ]] && return 0
 
-LIB_PLATF_POWER_RELEASE='1903.0-dev'
+LIB_PLATF_POWER_RELEASE='loaded'
 
 ##########################################################
 # Global functions - to be used in other functions
