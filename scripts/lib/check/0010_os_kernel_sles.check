@@ -10,7 +10,7 @@ function check_0010_os_kernel_sles {
     # array 'goodnormalized_kernelversion'  'sap note'
     local -ar sles113=('3.0.101-0.47.106.22.1' '#2588395')
     local -ar sles114=('3.0.101-108.38.1' '#2588395')
-    local -ar sles114power=('3.0.101-108.38.1' '#2588395')
+    local -ar sles114power=('3.0.101-108.81.1' '#2240716')
     local -ar sles120=('3.12.61-52.125.1' '#2588395')
     local -ar sles121=('3.12.74-60.64.85.1' '#2588395')
     local -ar sles122=('4.4.120-92.70.1' '#2205917')
