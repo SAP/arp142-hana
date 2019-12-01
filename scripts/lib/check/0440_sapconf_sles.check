@@ -21,6 +21,11 @@ function check_0440_sapconf_sles {
         logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
+    elif ! rpm -q --quiet sapconf ; then
+
+        logCheckSkipped 'sapconf not installed' "(SAP Note ${sapnote:-}). Skipping <${FUNCNAME[0]}>"
+        _retval=3
+
     else
 
         case "${OS_VERSION}" in
@@ -48,20 +53,8 @@ function check_0440_sapconf_sles {
         local normalized_goodversion
         local normalized_fullversion
 
-        local rc
         local _fullversion
         _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" sapconf)
-        rc=$?
-
-        if [[ ${rc} -ne 0 ]]; then
-
-            logCheckWarning 'sapconf not installed' "(SAP Note ${sapnote:-}) (should be: >=${_goodversion})"
-            _retval=1
-        fi
-
-    fi
-
-    if [[ ${_retval} -eq 99 ]]; then
 
         #normalize good version
         LIB_FUNC_NORMALIZE_RPM "${_goodversion}"
