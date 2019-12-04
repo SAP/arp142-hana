@@ -14,9 +14,16 @@ function check_1700_irqbalance_service {
     #1944799 - SAP HANA Guidelines for SLES Operating System Installation
     #2009879 - SAP HANA Guidelines for Red Hat Enterprise Linux (RHEL) Operating System
 
+    local -ar _irq_balance=(\
+                        'irqbalance' \
+                        'irq_balancer' \
+                        'hpe_irqbalance' \
+                        'sgi_irqbalance' \
+                        )
+
     local sapnote
     local cmdline
-    local systemd_service
+    local service
 
     # PRECONDITION
     if LIB_FUNC_IS_SLES ; then
@@ -25,8 +32,7 @@ function check_1700_irqbalance_service {
 
         case "${OS_VERSION}" in
 
-            11.*)   cmdline='systemd'
-                    systemd_service='irq_balancer';;
+            11.*)   cmdline='systemd' ;;
 
             *)      cmdline='systemctl' ;;
 
@@ -38,8 +44,7 @@ function check_1700_irqbalance_service {
 
         case "${OS_VERSION}" in
 
-            6.*)    cmdline='systemd'
-                    systemd_service='irqbalance';;
+            6.*)    cmdline='systemd' ;;
 
             *)      cmdline='systemctl' ;;
 
@@ -54,30 +59,35 @@ function check_1700_irqbalance_service {
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-        if [[ ${cmdline} == 'systemctl' ]]; then
+        local cmdline_service
 
-            if systemctl is-active "irqbalance" --quiet; then
-                _retval=0
+        for service in "${_irq_balance[@]}"; do
+
+            logTrace "<${FUNCNAME[0]}> # ${service}>"
+
+            if [[ ${cmdline} == 'systemctl' ]]; then
+
+                cmdline_service="systemctl is-active ${service} --quiet"
+
+            elif [[ ${cmdline} == 'systemd' ]]; then
+
+                cmdline_service="service ${service} status &>/dev/null"
+
             fi
 
-        elif [[ ${cmdline} == 'systemd' ]]; then
-
-            local cmdline_systemd
-            cmdline_systemd="service ${systemd_service} status &>/dev/null"
-
-            if eval "${cmdline_systemd}"; then
+            if eval "${cmdline_service}"; then
                 _retval=0
-
+                break
             fi
 
-        fi
+        done
 
     fi
 
     #time sync active?
     if [[ ${_retval} -eq 0 ]]; then
 
-        logCheckOk "IRQ balancing is active (SAP Note ${sapnote:-})"
+        logCheckOk "IRQ balancing is active (SAP Note ${sapnote:-}) (is: ${service})"
 
     else
 
