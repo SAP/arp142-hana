@@ -8,7 +8,8 @@ function check_4500_ibm-gpfs_version_intel {
 
     # MODIFICATION SECTION>>
     local -r sapnote='#1880960'
-    local -r _goodversion='4.2.3.14'    #Note version 106 2.8.2019
+    local -r _goodversion4='4.2.3.14'    #Note version 108 6.12.2019
+    local -r _goodversion5='5.0.2.2'
     # MODIFICATION SECTION<<
 
     #1880960 - Lenovo Systems Solution for SAP HANA Platform Edition FW/OS/Driver Maintenance
@@ -32,9 +33,18 @@ function check_4500_ibm-gpfs_version_intel {
 
         local normalized_goodversion
         local normalized_fullversion
+        local _goodversion
 
         local _fullversion
         _fullversion=$(rpm -q --queryformat "%{VERSION}.%{RELEASE}" gpfs.base)
+
+        case ${_fullversion} in
+
+            [3-4].*)    _goodversion=${_goodversion4} ;;
+
+            *)          _goodversion=${_goodversion5} ;;
+
+        esac
 
         #normalize good version
         LIB_FUNC_NORMALIZE_RPM "${_goodversion}"
