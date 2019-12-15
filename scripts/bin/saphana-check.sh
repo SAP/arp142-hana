@@ -354,10 +354,9 @@ function main {
     logNotify "## Numa nodes:     ${_line_formated}"
     logNotify '##'
 
-    #need awk - because of float number
-    _line_formated=$(awk -v RAM_MiB="${LIB_PLATF_RAM_MIB_PHYS}" \
-        'BEGIN {printf "%.0f GiB (%d MiB)", RAM_MiB/1024, RAM_MiB}')
-    logNotify "## Memory:         ${_line_formated}"
+    #round up a divided number
+    printf -v _line_formated '%.0f GiB (%d MiB)' $(( (LIB_PLATF_RAM_MiB_AVAILABLE+1023)/1024 )) "${LIB_PLATF_RAM_MiB_AVAILABLE}"
+    logNotify "## Memory usable:  ${_line_formated}"
     logNotify '##'
 
     printf -v _line_formated '%-17s - %-11s %-20s' "${OS_NAME} ${OS_VERSION}" 'Kernel:' "${OS_LEVEL}"
