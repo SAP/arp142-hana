@@ -360,20 +360,9 @@ function __get_platform_mem_details {
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
     local collectedby
+    collectedby='lib_platf_*'
 
-    if [[ -z ${LIB_PLATF_RAM_MIB_PHYS:-} && -d '/sys/devices/system/memory' ]]; then
-
-        local mem_blocks_online
-        # shellcheck disable=SC2126
-        mem_blocks_online=$(grep -i 'online' /sys/devices/system/memory/memory*/state | wc -l)
-
-        local block_size_bytes #convert hex
-        block_size_bytes=$((0x$(< /sys/devices/system/memory/block_size_bytes)))
-
-        LIB_PLATF_RAM_MIB_PHYS=$(( block_size_bytes*mem_blocks_online/1024**2 ))
-        collectedby='sysdevmem'
-
-    fi
+    #LIB_PLATF_RAM_MIB_PHYS - so far no reliable way detecting physMEM on all platforms
 
     if [[ -z ${LIB_PLATF_RAM_MiB_AVAILABLE:-} ]]; then
 
