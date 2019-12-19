@@ -28,7 +28,6 @@ function check_0010_os_kernel_sles {
 
     #2240716 - SAP HANA DB: Recommended OS settings for SLES 11 / SLES for SAP Applications 11 SP4
     #2205917 - SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
-    #1943937 - Hardware Configuration Check Tool - Central Note
     #2684254 - SAP HANA DB: Recommended OS settings for SLES 15 / SLES for SAP Applications 15
     #2774105 - Kernel Panic With Hardware Transactional Memory on Linux on Power
     #2588395 - Erroneous Accounting of Shared Memory in Multitenant Database Container Systems Running in High Isolation Level on Linux
