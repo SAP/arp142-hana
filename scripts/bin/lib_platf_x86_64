@@ -81,7 +81,8 @@ function __get_platform_x86_64_vendor_details {
         elif [[ "${_chassis_asset_tag:-}" == '7783-7084-3265-9085-8269-3286-77' ]]; then
 
             LIB_PLATF_VENDOR='Microsoft Azure'
-            LIB_PLATF_NAME=$(curl -H "Metadata:true" "http://169.254.169.254/metadata/instance/compute/vmSize?api-version=2017-04-02&format=text")
+            _lib_platf_name=$(curl -H "Metadata:true" "http://169.254.169.254/metadata/instance/compute/vmSize?api-version=2017-04-02&format=text")
+            [[ "${_lib_platf_name}" =~ ^Standard_* ]] && LIB_PLATF_NAME=${_lib_platf_name}
 
         elif [[ "${_lib_platf_name:-}" == 'Alibaba Cloud ECS' ]]; then
 
@@ -121,6 +122,8 @@ function __get_platform_x86_64_vendor_details {
 
         fi
 
+        [[ -z "${LIB_PLATF_VENDOR}" ]] && LIB_PLATF_VENDOR='N/A'
+        [[ -z "${LIB_PLATF_NAME}" ]] && LIB_PLATF_NAME='N/A'
         readonly LIB_PLATF_VENDOR
         readonly LIB_PLATF_NAME
 
