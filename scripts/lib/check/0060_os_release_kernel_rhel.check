@@ -64,7 +64,7 @@ function check_0060_os_release_kernel_rhel {
             7.5)    expected_kernel="${rhel75[0]}" ;;
             7.6)    expected_kernel="${rhel76[0]}" ;;
 
-            8.*)    expected_kernel="${rhel80[0]}" ;;
+            8.0)    expected_kernel="${rhel80[0]}" ;;
 
             *)      logCheckWarning 'CHECK does not support RHEL release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
                     _retval=1

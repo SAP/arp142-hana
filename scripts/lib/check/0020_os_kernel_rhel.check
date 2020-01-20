@@ -22,7 +22,7 @@ function check_0020_os_kernel_rhel {
     local -ar rhel76=('3.10.0-957.1.3.el7' '#2292690')
     local -ar rhel76power=('3.10.0-957.1.3.el7' '#2292690')
     local -ar rhel80=('4.18.0-80.el8' '#2777782')
-    local -ar rhel80power=('4.18.0-80.el8' '#2777782') #not known, take release kernel, all should be fine
+    local -ar rhel80power=('4.18.0-80.15.1.el8' '#2777782')
     # MODIFICATION SECTION<<
 
     #2013638 - SAP HANA DB: Recommended OS settings for RHEL 6.5
@@ -88,7 +88,7 @@ function check_0020_os_kernel_rhel {
             7.5) _goodversion="${rhel75power[0]}" ; sapnote="${rhel75power[1]}" ;;
             7.6) _goodversion="${rhel76power[0]}" ; sapnote="${rhel76power[1]}" ;;
 
-            8.*) _goodversion="${rhel80power[0]}" ; sapnote="${rhel80power[1]}" ;;
+            8.0) _goodversion="${rhel80power[0]}" ; sapnote="${rhel80power[1]}" ;;
 
             *)
                 logCheckError "RHEL version is not supported (SAP Note #2235581) (is: ${OS_VERSION})"
