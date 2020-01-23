@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+
+function check_1375_cpu_scheduler_parameter_ibmpower_rhel {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2777782'
+    #2777782 v10 - 2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
+
+    # LIB_COMPARE_TOOBIG_NUMBERS returns 0 if equal, 1 if first is higher, 2 if second is higher
+    # returns 0 if equal, 1 if first is higher, 2 if second is higher
+
+    #                               parameter                               recommended_value       RC
+    local -ar _sched_parameters=(\
+                                    'kernel.sched_min_granularity_ns'       3000000                 0  \
+                                    'kernel.sched_wakeup_granularity_ns'    4000000                 0  \
+    )
+    # MODIFICATION SECTION<<
+
+    local _curr_value
+    local _reco_value
+    local -i _rc_expected
+    local -i _rc_current
+    local _parameter
+    local _parameter_normalized
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_IBMPOWER ; then
+
+        logCheckSkipped 'Not running on IBM Power. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif ! LIB_FUNC_IS_RHEL ; then
+
+        logCheckSkipped 'Linux distribution is not RHEL. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+
+        case "${OS_VERSION}" in
+
+            8.0)   _retval=99 ;;
+
+            *)      logCheckSkipped 'Check not applicable for RHEL release' "(is: ${OS_NAME} ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
+                    _retval=3 ;;
+
+        esac
+
+    fi
+
+    #CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        # i+=3 --> every 3rd item
+        for ((i=0; i < ${#_sched_parameters[@]}; i+=3)); do
+
+            logTrace "<${FUNCNAME[0]}> # ${_sched_parameters[$i]}>"
+
+            _parameter=${_sched_parameters[$i]}
+            _parameter_normalized=${_parameter//./\/}
+            logTrace "<${FUNCNAME[0]}> # ${_parameter_normalized}>"
+
+            _reco_value=${_sched_parameters[$i+1]}
+            _rc_expected=${_sched_parameters[$i+2]}
+
+            if [[ ! -f "/proc/sys/${_parameter_normalized}" ]]; then
+
+                logCheckInfo "Kernel process scheduler parameter ${_parameter} not available"
+
+            else
+                _curr_value=$(</proc/sys/"${_parameter_normalized}")
+
+            fi
+
+            LIB_COMPARE_TOOBIG_NUMBERS "${_curr_value}" "${_reco_value}"
+            _rc_current=$?
+
+            if [[ ${_rc_current} -le ${_rc_expected} ]] ; then
+                logCheckOk "Kernel process scheduler parameter ${_parameter} set as recommended (is: ${_curr_value})"
+            else
+                logCheckError "Kernel process scheduler parameter ${_parameter} NOT set as recommended (is: ${_curr_value}, should be: ${_reco_value})"
+                _retval=2
+            fi
+
+        done
+
+        if [[ ${_retval} -eq 99 ]]; then
+
+            logCheckOk "All kernel process scheduler parameters set as recommended (SAP Note ${sapnote:-})"
+            _retval=0
+
+        else
+
+            logCheckError "NOT all kernel process scheduler parameters set as recommended (SAP Note ${sapnote:-})"
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+}
