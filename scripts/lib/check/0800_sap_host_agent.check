@@ -10,9 +10,9 @@ function check_0800_sap_host_agent {
     local -r sapnote='#1113545'
     local -r sapnote721='#2130510'
     local -r sapnoteFIX='#2498706'
-    local -r sapnoteLATEST='#2858934'
+    local -r sapnoteLATEST='#2854870'
 
-    local -r hostagent_version_exp='721.44.1957031'
+    local -r hostagent_version_exp='721.45.0'
     local -ar hostagent_buggy=( '721.26' '721.28' )
 
     # MODIFICATION SECTION<<
@@ -21,9 +21,9 @@ function check_0800_sap_host_agent {
     #2130510 - SAP Host Agent 7.21
     #2498706 - Linux saposcol core dumps, missing ST06 data ==> 7.21 PL26-PL28
     #2240028 - SAP Host Agent Patches specific to Linux
-    #2809845 - SAP Host Agent Patch Collection 08/2019
     #2422465 - Advanced corrections for HANA metric definitions in SAP Hostagent
     #2858934 - ConfigureOutsideDiscovery leads to SAP Host Agent 721 patchlevel 44 crash
+    #2854870 - SAP Host Agent Patch Collection 12/2019
 
     local -r saphostexec_path='/usr/sap/hostctrl/exe/saphostexec'
 
