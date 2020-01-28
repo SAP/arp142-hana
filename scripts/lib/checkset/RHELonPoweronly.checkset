@@ -2,7 +2,7 @@
 0021_os_kernel_knownissues_rhel
 0040_os_rhel_ibmpower
 0060_os_release_kernel_rhel
-0210_kernel_pid_max
+0210_kernel_pid_max_rhel
 0310_clocksource_ibmpower
 0350_timesync
 0410_glibc_ibmpower

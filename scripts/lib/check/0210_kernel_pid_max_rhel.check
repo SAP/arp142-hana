@@ -1,25 +1,27 @@
 #!/usr/bin/env bash
 
-function check_0210_kernel_pid_max {
+function check_0210_kernel_pid_max_rhel {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote_sles='#2684254'    # SAP HANA DB: Recommended OS settings for SLES 15
-    local -r sapnote_rhel='#2777782'    # SAP HANA DB: Recommended OS Settings for RHEL 8
+    local -r sapnote='#2777782'    # SAP HANA DB: Recommended OS Settings for RHEL 8
 
-    local -ir systemd_version_ge_to_check=234
+    local -ir systemd_version_ge_to_check=239
 
     local -ir _expected_pid_max=4194304  #(2^22)
     local -ir _expected_threads_max=250000
     # MODIFICATION SECTION<<
 
-    local sapnote
-
     # PRECONDITIONS
-    if ! rpm -q --quiet systemd ; then
+    if ! LIB_FUNC_IS_RHEL ; then
+
+        logCheckSkipped 'Linux distribution is not RHEL. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif ! rpm -q --quiet systemd ; then
 
         logCheckSkipped 'systemd not installed.' "Skipping <${FUNCNAME[0]}>"
         _retval=3
@@ -33,12 +35,6 @@ function check_0210_kernel_pid_max {
 
             logCheckSkipped 'Check not applicable for systemd version' "(is: ${_version}). Skipping <${FUNCNAME[0]}>"
             _retval=3
-
-        elif LIB_FUNC_IS_SLES ; then
-                sapnote="${sapnote_sles}"
-
-        elif LIB_FUNC_IS_RHEL ; then
-                sapnote="${sapnote_rhel}"
 
         fi
 

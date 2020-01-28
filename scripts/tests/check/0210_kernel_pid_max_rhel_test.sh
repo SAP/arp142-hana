@@ -5,8 +5,7 @@ PROGRAM_DIR="$( cd "${BASH_SOURCE[0]%/*}" && pwd )"
 readonly PROGRAM_DIR
 
 #mock PREREQUISITE functions
-LIB_FUNC_IS_SLES() { return 0 ; }
-LIB_FUNC_IS_RHEL() { return 1 ; }
+LIB_FUNC_IS_RHEL() { return 0 ; }
 
 # still to mock for tests
 # rpm -q --quiet systemd
@@ -33,10 +32,10 @@ test_systemd_not_installed() {
 
     #arrange
     RPM_RC=1
-    SYSTEMD_VERSION='234'
+    SYSTEMD_VERSION='239'
 
     #act
-    check_0210_kernel_pid_max
+    check_0210_kernel_pid_max_rhel
 
     #assert
     assertEquals "CheckSkipped? RC" '3' "$?"
@@ -46,10 +45,10 @@ test_systemd_too_low() {
 
     #arrange
     RPM_RC=0
-    SYSTEMD_VERSION='233'
+    SYSTEMD_VERSION='238'
 
     #act
-    check_0210_kernel_pid_max
+    check_0210_kernel_pid_max_rhel
 
     #assert
     assertEquals "CheckSkipped? RC" '3' "$?"
@@ -59,12 +58,12 @@ test_all_settings_correct() {
 
     #arrange
     RPM_RC=0
-    SYSTEMD_VERSION='234'
+    SYSTEMD_VERSION='239'
     TEST_KERNEL_PID_MAX=4194304
     TEST_KERNEL_THREADS_MAX=250000
 
     #act
-    check_0210_kernel_pid_max
+    check_0210_kernel_pid_max_rhel
 
     #assert
     assertEquals "CheckOk? RC" '0' "$?"
@@ -74,12 +73,12 @@ test_pidmax_too_low() {
 
     #arrange
     RPM_RC=0
-    SYSTEMD_VERSION='234'
+    SYSTEMD_VERSION='239'
     TEST_KERNEL_PID_MAX=4194303
     TEST_KERNEL_THREADS_MAX=250000
 
     #act
-    check_0210_kernel_pid_max
+    check_0210_kernel_pid_max_rhel
 
     #assert
     assertEquals "CheckError? RC" '2' "$?"
@@ -89,12 +88,12 @@ test_threadsmax_too_low() {
 
     #arrange
     RPM_RC=0
-    SYSTEMD_VERSION='234'
+    SYSTEMD_VERSION='239'
     TEST_KERNEL_PID_MAX=4194304
     TEST_KERNEL_THREADS_MAX=249999
 
     #act
-    check_0210_kernel_pid_max
+    check_0210_kernel_pid_max_rhel
 
     #assert
     assertEquals "CheckError? RC" '2' "$?"
@@ -104,12 +103,12 @@ test_both_too_low() {
 
     #arrange
     RPM_RC=0
-    SYSTEMD_VERSION='234'
+    SYSTEMD_VERSION='239'
     TEST_KERNEL_PID_MAX=4194303
     TEST_KERNEL_THREADS_MAX=249999
 
     #act
-    check_0210_kernel_pid_max
+    check_0210_kernel_pid_max_rhel
 
     #assert
     assertEquals "CheckError? RC" '2' "$?"
@@ -140,8 +139,8 @@ oneTimeSetUp() {
     #shellcheck source=../saphana-logger-stubs
     source "${PROGRAM_DIR}/../saphana-logger-stubs"
 
-    #shellcheck source=../../lib/check/0210_kernel_pid_max.check
-    source "${PROGRAM_DIR}/../../lib/check/0210_kernel_pid_max.check"
+    #shellcheck source=../../lib/check/0210_kernel_pid_max_rhel.check
+    source "${PROGRAM_DIR}/../../lib/check/0210_kernel_pid_max_rhel.check"
 
 }
 

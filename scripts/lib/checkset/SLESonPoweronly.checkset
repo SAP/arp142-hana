@@ -3,7 +3,6 @@
 0030_os_sles_ibmpower
 0050_os_release_kernel_sles
 0200_ulimit_package_sles
-0210_kernel_pid_max
 0220_cgroup_pids_max_sles
 0310_clocksource_ibmpower
 0350_timesync
