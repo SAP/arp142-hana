@@ -1,0 +1,124 @@
+#!/usr/bin/env bash
+
+function check_1411_cpu_idle_acpi_cstates_intel {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote_sles113='#1954788' # SAP HANA DB: Recommended OS settings for SLES 11.3
+    local -r sapnote_sles114='#2240716' # SAP HANA DB: Recommended OS settings for SLES 11.4
+    local -r sapnote_rhel65='#2013638'  # SAP HANA DB: Recommended OS settings for RHEL 6.5
+    local -r sapnote_rhel66='#2136965'  # SAP HANA DB: Recommended OS settings for RHEL 6.6
+    local -r sapnote_rhel67='#2247020'  # SAP HANA DB: Recommended OS settings for RHEL 6.7
+    local -r sapnote_rhel610='#2694292' # SAP HANA DB: Recommended OS settings for RHEL 6.10
+    # MODIFICATION SECTION<<
+
+    local sapnote
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_INTEL ; then
+
+        logCheckSkipped 'Not running on Intel CPU. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif ! LIB_FUNC_IS_BARE_METAL ; then
+
+        logCheckSkipped 'Running virtualized. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif [[ ! -f '/sys/devices/system/cpu/cpuidle/current_driver' ]]; then
+
+        logCheckSkipped 'No CPUidle driver loaded. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif [[ $(</sys/devices/system/cpu/cpuidle/current_driver) != 'acpi_idle' ]]; then
+
+        logCheckSkipped 'CPUidle driver <acpi_idle> not active. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif LIB_FUNC_IS_SLES ; then
+        case "${OS_VERSION}" in
+
+            11.3)       sapnote="${sapnote_sles113}";;
+            11.4)       sapnote="${sapnote_sles114}";;
+
+            *)
+                    logCheckWarning 'CHECK does NOT support SLES release' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                    _retval=1
+                ;;
+        esac
+
+    elif LIB_FUNC_IS_RHEL ; then
+        case "${OS_VERSION}" in
+
+            6.5)    sapnote="${sapnote_rhel65}";;
+            6.6)    sapnote="${sapnote_rhel66}";;
+            6.7)    sapnote="${sapnote_rhel67}";;
+            6.10)   sapnote="${sapnote_rhel610}";;
+
+            *)
+                    logCheckWarning 'CHECK does NOT support RHEL release' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                    _retval=1
+                ;;
+        esac
+
+    else
+            logCheckError 'Linux distribution NOT supported (SAP Note #2235581)' "(is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
+            _retval=2
+    fi
+
+    #CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local _maxCstateName
+        local -i _maxCstateLatency
+        local -i _state_latency
+
+        _maxCstateName='NONE'
+        _maxCstateLatency=0
+
+        # determine highest latency of enabled cstates
+        if [[ -d '/sys/devices/system/cpu/cpu0/cpuidle/state0' ]]; then
+
+            for _cstate in /sys/devices/system/cpu/cpu0/cpuidle/state*/; do
+
+                [[ "$(<"${_cstate}"/disable)" -ne 0 ]] && continue
+
+                _state_latency="$(<"${_cstate}"/latency)"
+
+                if [[ ${_state_latency} -ge ${_maxCstateLatency:-} ]]; then
+
+                    _maxCstateName="$(<"${_cstate}"/name)"
+                    _maxCstateLatency=${_state_latency}
+
+                    logTrace "<${FUNCNAME[0]}> # cstate=${_maxCstateName} latency=${_maxCstateLatency}"
+
+                fi
+
+            done
+
+        fi
+
+        logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # cstate=${_maxCstateName} latency=${_maxCstateLatency}"
+
+
+        if [[ ${_maxCstateLatency} -gt 0 ]]; then
+
+            logCheckError "CPUidle driver <acpi_idle> max_cstate set to high (SAP Note ${sapnote:-}) (is: ${_maxCstateName}, should be: 0)"
+            _retval=2
+
+            else
+
+            logCheckOk "CPUidle driver <acpi_idle> max_cstate setting ok (SAP Note ${sapnote:-}) (is: ${_maxCstateLatency})"
+            _retval=0
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
