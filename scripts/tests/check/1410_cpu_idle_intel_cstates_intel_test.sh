@@ -42,7 +42,22 @@ test_classic_cstate_too_high_latency_too_high() {
     assertEquals "CheckError? RC" '2' "$?"
 }
 
-test_classic_cstate_too_high_latency_correct() {
+test_classic_cstate_too_high_latency_correct2() {
+
+    #arrange
+    OS_VERSION='12.1'
+    TEST_driverMaxCstate=2
+    TEST_maxCstateLatency=2
+    TEST_maxForceLatency=2000000000
+
+    #act
+    check_1410_cpu_idle_intel_cstates_intel
+
+    #assert
+    assertEquals "CheckOk? RC" '0' "$?"
+}
+
+test_classic_cstate_too_high_latency_correct3() {
 
     #arrange
     OS_VERSION='12.1'
@@ -115,12 +130,27 @@ test_latency_cstate_high_latency_too_high() {
     assertEquals "CheckError? RC" '2' "$?"
 }
 
-test_latency_cstate_high_cstatelatency_correct() {
+test_latency_cstate_high_cstatelatency_correct33() {
 
     #arrange
     OS_VERSION='12.3'
     TEST_driverMaxCstate=6
-    TEST_maxCstateLatency=70
+    TEST_maxCstateLatency=33            #C1=3, C1E=10, C3=33, C6=133
+    TEST_maxForceLatency=2000000000
+
+    #act
+    check_1410_cpu_idle_intel_cstates_intel
+
+    #assert
+    assertEquals "CheckOk? RC" '0' "$?"
+}
+
+test_latency_cstate_high_cstatelatency_correct70() {
+
+    #arrange
+    OS_VERSION='12.3'
+    TEST_driverMaxCstate=6
+    TEST_maxCstateLatency=70            #C1=3, C1E=10, C3=33, C6=133
     TEST_maxForceLatency=2000000000
 
     #act
@@ -145,7 +175,22 @@ test_latency_cstate_high_forcelatency_correct() {
     assertEquals "CheckOk? RC" '0' "$?"
 }
 
-test_latency_cstate_high_cstatelatency_too_low() {
+test_latency_cstate_high_cstatelatency_too_low10() {
+
+    #arrange
+    OS_VERSION='12.3'
+    TEST_driverMaxCstate=6
+    TEST_maxCstateLatency=10
+    TEST_maxForceLatency=2000000000
+
+    #act
+    check_1410_cpu_idle_intel_cstates_intel
+
+    #assert
+    assertEquals "CheckWarn? RC" '1' "$?"
+}
+
+test_latency_cstate_high_cstatelatency_too_low3() {
 
     #arrange
     OS_VERSION='12.3'

@@ -199,13 +199,13 @@ function check_1410_cpu_idle_intel_cstates_intel {
         # assert
         if [[ ${higher_latency_accepted:-} == 'TRUE' ]]; then
 
-            if [[ ${_active_latency:-} -eq ${_reco_latency} ]]; then
+            # C1=3, C1E=10, C3=33, C6=133 - allow range 10 < x <= 70
+            if [[ 10 -lt ${_active_latency:-} && ${_active_latency:-} -le ${_reco_latency} ]]; then
 
                 logCheckOk 'CPU cstate latency set as recommended' "(SAP Note ${sapnote:-}) (is: ${_active_latency:-})"
                 _retval=0
 
-            elif [[ ${_active_latency:-} -lt ${_reco_latency:-} ]]; then
-                #2 = C1; #10 = C1E
+            elif [[ ${_active_latency:-} -le 10 ]]; then
                 logCheckWarning 'CPU cstate latency set too low - limiting CPU TurboMode features' "(SAP Note ${sapnote:-}) (is: ${_active_latency:-}, should be: ${_reco_latency})"
                 _retval=1
 
@@ -222,10 +222,10 @@ function check_1410_cpu_idle_intel_cstates_intel {
 
         elif [[ ${higher_latency_accepted:-} == 'FALSE' ]]; then
 
-            # only max_ctate = 1 or equivalent latency=3
+            # only max_ctate = 1 or equivalent latency - allow range 0 < x <= 3
             if [[ ${_driverMaxCstate} -gt 1 ]]; then
 
-                if [[ ${_active_latency:-} -eq ${_reco_latency} ]]; then
+                if [[ 0 -lt ${_active_latency:-} && ${_active_latency:-} -le ${_reco_latency} ]]; then
 
                     logCheckOk 'CPU cstate latency set as recommended' "(SAP Note ${sapnote:-}) (is: ${_active_latency:-})"
                     _retval=0
