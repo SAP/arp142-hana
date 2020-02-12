@@ -51,6 +51,8 @@ source "${PROGRAM_BINDIR}/shflags" || die 'unable to load shflags library'
 
 DEFINE_string   'checks'    ''      '<\"check1,check2,...\"> a comma-separated list of checks that will be performed.'  'c'
 DEFINE_string   'checkset'  ''      '<Checkset> a textfile stored within lib/checkset containing the various checks to perform.'    'C'
+DEFINE_boolean  'showchecks'      false   'show listing of checks to be executed'  's'
+DEFINE_boolean  'showchecksets'   false   'show listing of checksets available'    'S'
 DEFINE_integer  'loglevel'  4       'notify/silent=0 (always), error=1, warn=2, info=3, debug=5, trace=6'   'l'
 DEFINE_boolean  'verbose'   false   'enable chk_verbose mode (set loglevel=4)' 'v'
 DEFINE_boolean  'debug'     false   'enable debug mode (set loglevel=5)' 'd'
@@ -279,6 +281,32 @@ function run_checklist {
 
 }
 
+function show_checklist {
+
+    for checkfile in ${CHECKLIST[*]:-}; do
+
+        checkfileshort=${checkfile##*/}
+        checkname="${checkfileshort%.check}"
+
+        printf '%s\n' "${checkname}"
+
+    done
+
+}
+
+function show_checksetlist {
+
+    for checksetfile in "${PROGRAM_LIBDIR}"/checkset/*.checkset; do
+
+        checksetfileshort=${checksetfile##*/}
+        checksetname="${checksetfileshort%.checkset}"
+
+        printf '%s\n' "${checksetname}"
+
+    done
+
+}
+
 function print_counters {
 
     local -i check_run
@@ -367,11 +395,23 @@ function main {
     printf '\n'
 
     generate_checklist
-    run_checklist
+    if [[ ${#CHECKLIST[@]} -eq 0 ]]; then
 
-    if [[ ${#CHECKLIST[@]} -eq 0 ]] ; then
         logError "## NOTHING to EXECUTE - revise check/checkset parameter !!!"
         exit 1
+
+    elif [[ ${FLAGS_showchecks:?} -eq ${FLAGS_TRUE} ]]; then
+
+        show_checklist
+
+    elif [[ ${FLAGS_showchecksets:?} -eq ${FLAGS_TRUE} ]]; then
+
+        show_checksetlist
+
+    else
+
+        run_checklist
+
     fi
 
     printf '\n'
