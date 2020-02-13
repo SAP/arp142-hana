@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function check_5300_vmware_pvscsi_parameter {
+function check_5301_pvscsi_parameter_vmware {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
