@@ -19,6 +19,10 @@ function check_0011_os_kernel_knownissue_sles {
                         '15.1' '4.12.14-197.4.1'        '4.12.14-197.10.0'   '#2812427' \
                         )
 
+    local -ar _sles_kvm_or_xen=(\
+                        '12.3' '4.4.120-94.17.1'        '4.4.180-94.103.0'  '#2859234' \
+                        )
+
     local -ar _sles_azure=(\
                         '12.4' '4.12.14-6.12-azure'     '4.12.14-6.12-azure'     '#2814271' \
                         '12.4' '4.12.14-95.13-default'  '4.12.14-95.37.0'        '#2814271' \
@@ -38,6 +42,7 @@ function check_0011_os_kernel_knownissue_sles {
     #2814271 - SAP HANA Backup fails on Azure with Checksum Error
     #2205917 - SAP HANA DB: Recommended OS settings for SLES 12 - SLES12.2 only --> SUSE-KB 7022921 XFS metadata
     #2240716 - SAP HANA DB: Recommended OS settings for SLES 11 / SLES for SAP Applications 11 SP4
+    #2859234 - SAP HANA Timer Fallback alert on SLES 12 SP3
 
     local _sles_release
     local _kernel_lower
@@ -56,6 +61,10 @@ function check_0011_os_kernel_knownissue_sles {
     elif LIB_FUNC_IS_IBMPOWER; then
 
         _sles_all+=("${_sles_common[@]}" "${_sles_ibmpower[@]}")
+
+    elif LIB_FUNC_IS_VIRT_KVM || LIB_FUNC_IS_VIRT_XEN ; then
+
+        _sles_all+=("${_sles_common[@]}" "${_sles_kvm_or_xen[@]}")
 
     else
 
