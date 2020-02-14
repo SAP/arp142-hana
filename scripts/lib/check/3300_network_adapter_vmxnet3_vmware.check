@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+function check_3300_network_adapter_vmxnet3_vmware {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2652670'
+    # MODIFICATION SECTION<<
+
+    #2652670 - SAP HANA VM on VMware vSphere --> "SAP HANA on vSphere Best Practices"
+
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_VIRT_VMWARE ; then
+
+        logCheckSkipped 'Not running on VMware vSphere. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        if [[ ! -d '/sys/bus/pci/drivers/vmxnet3' ]]; then
+
+            logCheckError "VMware vmxnet3 network driver NOT installed (SAP Note ${sapnote:-})"
+            _retval=2
+
+        else
+
+            local -a vmxnet3_adapters
+
+            # read vmxnet3 adapters into array (mapfile = bash4+)
+            if [[ ${BASH_VERSINFO[0]:-} -ge 4 ]] ; then
+                mapfile -t vmxnet3_adapters < <(find -L /sys/bus/pci/drivers/vmxnet3/* -maxdepth 1 -name enable -exec grep -H 1 {} \;)
+            else
+                while IFS=$'\n' read -r line; do vmxnet3_adapters+=("$line"); done < <(find -L /sys/bus/pci/drivers/vmxnet3/* -maxdepth 1 -name enable -exec grep -H 1 {} \;)
+            fi
+
+            if [[ ${#vmxnet3_adapters[@]} -ge 2 ]]; then
+
+                logCheckOk "VMware vmxnet3 network adapter enabled as recommended (SAP Note ${sapnote:-}) (is: ${#vmxnet3_adapters[@]})"
+                _retval=0
+
+            elif [[ ${#vmxnet3_adapters[@]} -eq 1 ]]; then
+
+                logCheckInfo '---'
+                logCheckInfo 'In case of HANA Scale-Out or HANA SystemReplication at least 2 vmxnet3 adapters should be configured'
+                logCheckInfo '---'
+
+                logCheckWarning "#VMware vmxnet3 network adapter NOT as recommended (SAP Note ${sapnote:-}) (is: ${#vmxnet3_adapters[@]}, should be: >=2)"
+                _retval=1
+
+            else
+
+                logCheckError "VMware vmxnet3 network adapter NOT configured (SAP Note ${sapnote:-})"
+                _retval=2
+
+            fi
+
+        fi
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
