@@ -12,35 +12,17 @@ LIB_FUNC_NORMALIZE_KERNEL() { LIB_FUNC_NORMALIZE_KERNEL_RETURN="$1" ; }
 LIB_FUNC_COMPARE_VERSIONS() { return "${RC_COMPARE_VERSIONS}" ; }
 
 # still to mock for tests
-# grep /proc/cpuinfo
 # /sys/devices/system/clocksource/clocksource0/current_clocksource
-# /sys/devices/system/clocksource/clocksource0/available_clocksource
-cpu_flags=''
 TEST_CURRENT_CLOCKSOURCE=''
-TEST_AVAILABLE_CLOCKSOURCE=''
-
 OS_LEVEL=''
 
-grep() {
-    #we fake <(grep -e '^flags' -m1 /proc/cpuinfo | grep -E -e 'constant_tsc|nonstop_tsc|rdtscp' -o)
-    for item in ${cpu_flags[*]}
-    do
-        printf "%s\n" "${item}"
-    done
-}
-
-test_all_cpu_flags_and_tsc_clocksource() {
-
-    # currently this is not possible - hyperv does not offer <tsc> clocksource
+test_reco_clock_vdso() {
 
     #arrange
-    cpu_flags=()
-    cpu_flags+=('constant_tsc')
-    cpu_flags+=('nonstop_tsc')
-    cpu_flags+=('rdtscp')
+    TEST_CURRENT_CLOCKSOURCE='hyperv_clocksource_tsc_page'
 
-    TEST_CURRENT_CLOCKSOURCE='tsc'
-    TEST_AVAILABLE_CLOCKSOURCE='tsc'
+    OS_LEVEL='4.4.178-94.91'                 #VDSO support
+    RC_COMPARE_VERSIONS=1
 
     #act
     check_0301_timer_and_clocksource_hyperv
@@ -49,42 +31,13 @@ test_all_cpu_flags_and_tsc_clocksource() {
     assertEquals "CheckOk? RC" '0' "$?"
 }
 
-test_all_cpu_flags_and_reco_clock_vdso() {
-
-    #this will be the standard case
+test_reco_clock_no_vdso() {
 
     #arrange
-    cpu_flags=()
-    cpu_flags+=('constant_tsc')
-    cpu_flags+=('nonstop_tsc')
-    cpu_flags+=('rdtscp')
-
     TEST_CURRENT_CLOCKSOURCE='hyperv_clocksource_tsc_page'
-    TEST_AVAILABLE_CLOCKSOURCE='hyperv_clocksource_tsc_page acpi_pm'
 
-    RC_COMPARE_VERSIONS=1   #VDSO support
-
-    #act
-    check_0301_timer_and_clocksource_hyperv
-
-    #assert
-    assertEquals "CheckWarning? RC" '1' "$?"
-}
-
-test_all_cpu_flags_and_reco_clock_no_vdso() {
-
-    #this will be the standard case
-
-    #arrange
-    cpu_flags=()
-    cpu_flags+=('constant_tsc')
-    cpu_flags+=('nonstop_tsc')
-    cpu_flags+=('rdtscp')
-
-    TEST_CURRENT_CLOCKSOURCE='hyperv_clocksource_tsc_page'
-    TEST_AVAILABLE_CLOCKSOURCE='hyperv_clocksource_tsc_page acpi_pm'
-
-    RC_COMPARE_VERSIONS=2   #no VDSO support
+    OS_LEVEL='4.4.178-94.90'                 #no VDSO support
+    RC_COMPARE_VERSIONS=2
 
     #act
     check_0301_timer_and_clocksource_hyperv
@@ -93,16 +46,10 @@ test_all_cpu_flags_and_reco_clock_no_vdso() {
     assertEquals "CheckError? RC" '2' "$?"
 }
 
-test_all_cpu_flags_and_wrong_clocksource() {
+test_wrong_clocksource() {
 
     #arrange
-    cpu_flags=()
-    cpu_flags+=('constant_tsc')
-    cpu_flags+=('nonstop_tsc')
-    cpu_flags+=('rdtscp')
-
     TEST_CURRENT_CLOCKSOURCE='acpi_pm'
-    TEST_AVAILABLE_CLOCKSOURCE='hyperv_clocksource_tsc_page acpi_pm'
 
     #act
     check_0301_timer_and_clocksource_hyperv
@@ -110,133 +57,6 @@ test_all_cpu_flags_and_wrong_clocksource() {
     #assert
     assertEquals "CheckError? RC" '2' "$?"
 }
-
-test_missing_rdtscp_and_tsc_clocksource() {
-
-    # currently this is not possible - hyperv does not offer TSC
-
-    #arrange
-    cpu_flags=()
-    cpu_flags+=('constant_tsc')
-    cpu_flags+=('nonstop_tsc')
-
-    TEST_CURRENT_CLOCKSOURCE='tsc'
-    TEST_AVAILABLE_CLOCKSOURCE='tsc'
-
-    #act
-    check_0301_timer_and_clocksource_hyperv
-
-    #test
-    assertEquals "CheckWarning? RC" '1' "$?"
-}
-
-test_missing_rdtscp_and_reco_clock_vdso() {
-
-    #this will be the standard case
-
-    #arrange
-    cpu_flags=()
-    cpu_flags+=('constant_tsc')
-    cpu_flags+=('nonstop_tsc')
-
-    TEST_CURRENT_CLOCKSOURCE='hyperv_clocksource_tsc_page'
-    TEST_AVAILABLE_CLOCKSOURCE='hyperv_clocksource_tsc_page acpi_pm'
-
-    RC_COMPARE_VERSIONS=1   #VDSO support
-
-    #act
-    check_0301_timer_and_clocksource_hyperv
-
-    #assert
-    assertEquals "CheckWarning? RC" '1' "$?"
-}
-
-test_missing_rdtscp_and_reco_clock_no-vdso() {
-
-    #this will be the standard case
-
-    #arrange
-    cpu_flags=()
-    cpu_flags+=('constant_tsc')
-    cpu_flags+=('nonstop_tsc')
-
-    TEST_CURRENT_CLOCKSOURCE='hyperv_clocksource_tsc_page'
-    TEST_AVAILABLE_CLOCKSOURCE='hyperv_clocksource_tsc_page acpi_pm'
-
-    RC_COMPARE_VERSIONS=2   #no VDSO support
-
-    #act
-    check_0301_timer_and_clocksource_hyperv
-
-    #assert
-    assertEquals "CheckError? RC" '2' "$?"
-}
-
-test_missing_rdtscp_and_wrong_clocksource() {
-
-    #arrange
-    cpu_flags=()
-    cpu_flags+=('constant_tsc')
-    cpu_flags+=('nonstop_tsc')
-
-    TEST_CURRENT_CLOCKSOURCE='acpi_pm'
-    TEST_AVAILABLE_CLOCKSOURCE='hyperv_clocksource_tsc_page acpi_pm'
-
-    #act
-    check_0301_timer_and_clocksource_hyperv
-
-    #assert
-    assertEquals "CheckError? RC" '2' "$?"
-}
-
-test_missing_constant_tsc() {
-
-    #arrange
-    cpu_flags=()
-    cpu_flags+=('nonstop_tsc')
-    cpu_flags+=('rdtscp')
-
-    #act
-    check_0301_timer_and_clocksource_hyperv
-
-    #assert
-    assertEquals "CheckError? RC" '2' "$?"
-}
-
-test_missing_nonstop_tsc() {
-
-    #arrange
-    cpu_flags=()
-    cpu_flags+=('constant_tsc')
-    cpu_flags+=('rdtsc')
-
-    #act
-    check_0301_timer_and_clocksource_hyperv
-
-    #assert
-    assertEquals "CheckError? RC" '2' "$?"
-}
-
-
-# testCompareTooBigNumbersShouldFail() {
-#     local -i _rc
-
-#     #The following tests should fail (test the tester)
-#     LIB_COMPARE_TOOBIG_NUMBERS '1' '2'
-#     _rc=$?
-#     assertNotEquals 'test[1]: testing the tester failed' '0' "${_rc}"
-#     assertNotEquals 'test[1]: testing the tester failed' '1' "${_rc}"
-
-#     LIB_COMPARE_TOOBIG_NUMBERS '2' '2'
-#     _rc=$?
-#     assertNotEquals 'test[2]: testing the tester failed' '1' "${_rc}"
-#     assertNotEquals 'test[2]: testing the tester failed' '2' "${_rc}"
-
-#     LIB_COMPARE_TOOBIG_NUMBERS '2' '1'
-#     _rc=$?
-#     assertNotEquals 'test[3]: testing the tester failed' '0' "${_rc}"
-#     assertNotEquals 'test[3]: testing the tester failed' '2' "${_rc}"
-# }
 
  oneTimeSetUp() {
 
@@ -249,7 +69,12 @@ test_missing_nonstop_tsc() {
  }
 
 # oneTimeTearDown
-# setUp
+
+setUp() {
+
+    OS_LEVEL=
+}
+
 # tearDown
 
 #Import Libraries
