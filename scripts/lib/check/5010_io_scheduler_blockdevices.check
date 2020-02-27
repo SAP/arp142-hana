@@ -1,0 +1,114 @@
+#!/usr/bin/env bash
+
+function check_5010_io_scheduler_blockdevices {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+    local sapnote
+
+    # MODIFICATION SECTION>>
+    local sapnote_sles='#1944799'
+    local sapnote_rhel='#2009879'
+    local sapnote_vmware='#2161991'
+    local sapnote_azure='#2161991'
+    local sapnote_kvm='1400911'
+
+    local -r reco_io_scheduler='noop|none|deadline|mq-deadline'
+
+    local search_pattern='/sys/block/sd[^a]*/queue/scheduler'           #skip sda = OS
+    local search_pattern_azure='/sys/block/sd[^ab]*/queue/scheduler'    #skip sda = OS and sdb = temp
+    # MODIFICATION SECTION<<
+
+    # 1944799 - SAP HANA Guidelines for SLES Operating System Installation
+    # 1984787 - SUSE LINUX Enterprise Server 12: Installation notes
+    # 2009879 - SAP HANA Guidelines for Red Hat Enterprise Linux (RHEL) Operating System
+    # 2161991 - VMware vSphere configuration guidelines
+    # 1400911 - Linux: SAP NetWeaver on Red Hat KVM - Kernel-based Virtual Machine
+
+    # PRECONDITIONS
+    if [[ ! -d '/sys/block/' ]]; then
+
+        logCheckSkipped 'Block devices IO scheduler configuration NOT readable. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif LIB_FUNC_IS_VIRT_MICROSOFT; then
+
+        sapnote="${sapnote_azure}"
+        #skip sda = OS and sdb = temp
+        search_pattern=${search_pattern_azure}
+
+    elif LIB_FUNC_IS_VIRT_VMWARE; then
+
+        sapnote="${sapnote_vmware}"
+
+    elif LIB_FUNC_IS_VIRT_KVM; then
+
+        sapnote="${sapnote_kvm}"
+
+    elif LIB_FUNC_IS_SLES ; then
+
+        sapnote="${sapnote_sles}"
+
+    elif LIB_FUNC_IS_RHEL ; then
+
+        sapnote="${sapnote_rhel}"
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        logCheckInfo 'Only applicable for HANA Persistence stored on block devices - e.g. local, fiberchannel !'
+        logCheckInfo 'Check not applicable for NAS configurations !'
+        logCheckInfo '---'
+
+        local -a all_io_schedulers
+        # unique value within array
+        # read all_io_schedulers into array (mapfile = bash4+)
+        if [[ ${BASH_VERSINFO[0]:-} -ge 4 ]] ; then
+            # shellcheck disable=SC2086
+            mapfile -t all_io_schedulers < <(grep --no-messages --only-matching --no-filename '\[.*\]' ${search_pattern} | sort --unique)
+        else
+            # shellcheck disable=SC2086
+            while IFS=$'\n' read -r line; do all_io_schedulers+=("$line"); done < <(grep --no-messages --only-matching --no-filename '\[.*\]' ${search_pattern} | sort --unique)
+        fi
+
+        #ToDo: filtering required ?? If <(sg_inq --id /dev/<sdXX> | grep -q "Fibre Channel"; then continue (skip)
+        #ToDo: nvme ?
+
+        case ${#all_io_schedulers[@]} in     #array length
+
+            0)      logCheckWarning "IO schedulers not known.(SAP Note ${sapnote:-})"
+                    _retval=1
+                ;;
+
+            1)      local curr_scheduler=${all_io_schedulers[0]//[\[\]]/} #remove [ ]
+
+                    if ! LIB_FUNC_STRINGCONTAIN "${reco_io_scheduler}" "${curr_scheduler}"; then
+
+                        logCheckWarning "IO schedulers NOT set as recommended (SAP Note ${sapnote:-}) (is: ${curr_scheduler}, should be: ${reco_io_scheduler})"
+                        _retval=1
+
+                    else
+
+                        logCheckOk "IO schedulers set as recommended (SAP Note ${sapnote:-}) (is: ${curr_scheduler})"
+                        _retval=0
+
+                    fi
+                ;;
+
+            *)      local curr_schedulers
+                    #remove [ ]
+                    curr_schedulers="${all_io_schedulers[0]//[\[\]]/}"
+                    curr_schedulers+=",${all_io_schedulers[1]//[\[\]]/}"
+
+                    logCheckWarning "At least one IO scheduler is NOT set as recommended (SAP Note ${sapnote:-}) (is: ${curr_schedulers}, should be: ${reco_io_scheduler})"
+                    _retval=1
+                ;;
+    esac
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+}
