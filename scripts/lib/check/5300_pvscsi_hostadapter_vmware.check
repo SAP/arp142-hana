@@ -29,7 +29,6 @@ function check_5300_pvscsi_hostadapter_vmware {
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-        logCheckInfo '---'
         logCheckInfo 'Only applicable for HANA Persistence behind virtualized SCSI Adapter !'
         logCheckInfo '---'
 

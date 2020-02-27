@@ -47,7 +47,6 @@ function check_3300_network_adapter_vmxnet3_vmware {
 
             elif [[ ${#vmxnet3_adapters[@]} -eq 1 ]]; then
 
-                logCheckInfo '---'
                 logCheckInfo 'In case of HANA Scale-Out or HANA SystemReplication at least 2 vmxnet3 adapters should be configured'
                 logCheckInfo '---'
 
