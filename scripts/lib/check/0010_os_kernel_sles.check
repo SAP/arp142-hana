@@ -16,6 +16,7 @@ function check_0010_os_kernel_sles {
     local -ar sles122=('4.4.120-92.70.1' '#2205917')
     local -ar sles123=('4.4.120-94.17.1' '#2205917')
     local -ar sles124=('4.12.14-94.38.1' '#2205917')
+    local -ar sles125=('4.12.14-122.7.1' '#2205917')
     local -ar sles121power=('3.12.74-60.64.57.1' '#2205917')
     local -ar sles122power=('4.4.121-92.109.2' '#2774105')
     local -ar sles123power=('4.4.178-94.91.1' '#2188482')
@@ -95,6 +96,8 @@ function check_0010_os_kernel_sles {
             12.3*)  _goodversion="${sles123[0]}" ; sapnote="${sles123[1]}" ;;
 
             12.4*)  _goodversion="${sles124[0]}" ; sapnote="${sles124[1]}" ;;
+
+            12.5*)  _goodversion="${sles125[0]}" ; sapnote="${sles125[1]}" ;;
 
             15.0*)  _goodversion="${sles150[0]}" ; sapnote="${sles150[1]}" ;;
 

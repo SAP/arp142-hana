@@ -33,7 +33,7 @@ function check_0220_cgroup_pids_max_sles {
 
         case "${OS_VERSION}" in
 
-            12.[2-4]*)  sapnote="${sapnote12}" ;;
+            12.[2-5]*)  sapnote="${sapnote12}" ;;
             15.*)       sapnote="${sapnote15}" ;;
 
             *)

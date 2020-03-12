@@ -17,7 +17,8 @@ function check_0050_os_release_kernel_sles {
     local -ar sles121=( '3.12.49-11.1' '3.12.74-60.64.999' )
     local -ar sles122=( '4.4.21-69.1' '4.4.121-92.999' )
     local -ar sles123=( '4.4.73-5.1' '4.4.180-94.999' )
-    local -ar sles124=( '4.12.14-94.38.1' '4.12.999' )
+    local -ar sles124=( '4.12.14-94.41.1' '4.12.14-999' )
+    local -ar sles125=( '4.12.14-120.1' '4.12.14-999' )
     local -ar sles150=( '4.12.14-23.1' '4.12.999' )
     local -ar sles151=( '4.12.14-195.1' '4.12.999' )
 
@@ -55,6 +56,8 @@ function check_0050_os_release_kernel_sles {
             12.3*)  kernel_low="${sles123[0]}" ; kernel_high="${sles123[1]}" ;;
 
             12.4*)  kernel_low="${sles124[0]}" ; kernel_high="${sles124[1]}" ;;
+
+            12.5*)  kernel_low="${sles125[0]}" ; kernel_high="${sles125[1]}" ;;
 
             15.0*)  kernel_low="${sles150[0]}" ; kernel_high="${sles150[1]}" ;;
 

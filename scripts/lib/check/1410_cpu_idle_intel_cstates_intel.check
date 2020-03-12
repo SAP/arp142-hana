@@ -68,7 +68,7 @@ function check_1410_cpu_idle_intel_cstates_intel {
                         higher_latency_accepted='FALSE'
                 ;;
 
-            12.[2-4]*)  sapnote="${sapnote_sles12}" ;;
+            12.[2-5]*)  sapnote="${sapnote_sles12}" ;;
 
             15.[0-1]*)  sapnote="${sapnote_sles15}" ;;
 
