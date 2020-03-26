@@ -53,7 +53,7 @@ function check_0021_os_kernel_knownissues_rhel {
 
             _rhel_release="${_rhel_all[$i]}"
 
-            [[ "${_rhel_release}" != "${OS_VERSION}" ]] && continue
+            [[ "${OS_VERSION}" != "${_rhel_release}"* ]] && continue #handle kernel with subversions correctly
 
             _kernel_lower="${_rhel_all[$i+1]}"
             _kernel_higher="${_rhel_all[$i+2]}"

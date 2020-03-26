@@ -88,7 +88,7 @@ function check_0011_os_kernel_knownissue_sles {
 
             _sles_release="${_sles_all[$i]}"
 
-            [[ "${_sles_release}" != "${OS_VERSION}" ]] && continue
+            [[ "${OS_VERSION}" != "${_sles_release}"* ]] && continue    #handle kernel with subversions correctly
 
             _kernel_lower="${_sles_all[$i+1]}"
             _kernel_higher="${_sles_all[$i+2]}"
