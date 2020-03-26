@@ -43,7 +43,7 @@ function __get_platform_x86_64_vendor_details {
         #PRODUCT_NAME
         if [[ -r '/sys/devices/virtual/dmi/id/product_name' ]]; then
             # Platform - "x3950 X6 -[6241ZB5]-", "ProLiant DL785 G6",
-            #          - "VMware Virtual Platform", "RHEV Hypervisor" , "Virtual Machine" , "Google Compute Engine" , "HVM domU" , "VMWare7,1"
+            #          - "VMware Virtual Platform", "RHEV Hypervisor" , "Virtual Machine" , "Google Compute Engine" , "HVM domU" , "VMware7,1"
             local _lib_platf_name
             _lib_platf_name="$(</sys/devices/virtual/dmi/id/product_name)"
             _lib_platf_name=${_lib_platf_name//+([[:space:]])/ }
@@ -68,7 +68,7 @@ function __get_platform_x86_64_vendor_details {
 
                 LIB_PLATF_NAME='Virtual Machine - BIOS'
 
-            elif [[ "${_lib_platf_name}" == 'VMWare7,1' ]]; then
+            elif [[ "${_lib_platf_name}" == 'VMware7,1' ]]; then
 
                 LIB_PLATF_NAME='Virtual Machine - UEFI'
 
