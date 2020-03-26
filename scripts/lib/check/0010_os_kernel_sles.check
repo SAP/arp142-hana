@@ -51,7 +51,7 @@ function check_0010_os_kernel_sles {
             case "${OS_VERSION}" in
 
             11.3)
-                logCheckError "SLESonPower version is not supported - upgrade to SLES4SAP 11.4 (SAP Note #2235581) (is: ${OS_VERSION})"
+                logCheckError "SLESonPower version is not supported - upgrade to SLES 11.4 (SAP Note #2235581) (is: ${OS_VERSION})"
                 _retval=2
                 ;;
 
@@ -82,7 +82,7 @@ function check_0010_os_kernel_sles {
             case "${OS_VERSION}" in
 
             11.[1-2] )
-                    logCheckError "Upgrade to SLES for SAP Applications 11 SP4 (SAP Note #2235581) (is: ${OS_VERSION})"
+                    logCheckError "SLES version is not supported - upgrade to SLES 11 SP4 (SAP Note #2235581) (is: ${OS_VERSION})"
                     _retval=2
                     ;;
 
