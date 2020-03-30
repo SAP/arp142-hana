@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+
+function check_0002_os_support_sles {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    # array 'support general end'  'LTSS end'   'support end reached'   'LTSS end reached'
+    local -ar _sles_11=(\
+                        '11.3' '31 Jan 2016'    '30 Jan 2019'  true     true    \
+                        '11.4' '31 Mar 2019'    '31 Mar 2022'  true     false   \
+                        )
+
+    local -ar _sles_12=(\
+                        '12.0' '30 June 2016'   '01 July 2019'  true    true    \
+                        '12.1' '31 May 2017'    '31 May 2020'   true    false   \
+                        '12.2' '31 Mar 2018'    '31 Mar 2021'   true    false   \
+                        '12.3' '30 Jun 2019'    '30 Jun 2022'   true    false   \
+                        '12.4' '30 Jun 2020'    '30 Jun 2023'   false   false   \
+                        '12.5' '31 Oct 2024'    '31 Oct 2027'   false   false   \
+                        )
+
+    local -ar _sles_15=(\
+                        '15.0' '31 Dec 2019'    '31 Dec 2022'   true    false   \
+                        '15.1' '31 Dec 2020'    '31 Dec 2023'   false   false   \
+                        )
+    # MODIFICATION SECTION<<
+
+    local -r sapnote='#2235581'  #End of maintenance for Linux distributions
+    local -a _sles_all
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_SLES; then
+
+        logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+
+        case "${OS_VERSION}" in
+
+        11.[1-2] )
+                logCheckError "SLES version has reached SUSE's general support end - upgrade to SLES 11 SP4 (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
+                _retval=2
+                ;;
+
+        11.[3-4] )  _sles_all+=("${_sles_11[@]}") ;;
+
+        12.[0-5]*)  _sles_all+=("${_sles_12[@]}") ;;
+
+        15.[0-1] )  _sles_all+=("${_sles_15[@]}") ;;
+
+        *)
+            logCheckError "SLES version is not supported (SAP Note #2235581) (is: ${OS_VERSION})"
+            _retval=2
+            ;;
+        esac
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local _sles_release
+        local _end_support_date
+        local _end_ltss_date
+        local _end_support_reached
+        local _end_ltss_reached
+
+        # i+=5 --> every 5th item
+        for ((i=0; i < ${#_sles_all[@]}; i+=5)); do
+
+            logTrace "<${FUNCNAME[0]}> # ${_sles_all[$i]}>"
+
+            _sles_release="${_sles_all[$i]}"
+
+            [[ "${OS_VERSION}" != "${_sles_release}"* ]] && continue    #handle kernel with subversions correctly
+
+            _end_support_date="${_sles_all[$i+1]}"
+            _end_ltss_date="${_sles_all[$i+2]}"
+            _end_support_reached="${_sles_all[$i+3]}"
+            _end_ltss_reached="${_sles_all[$i+4]}"
+
+            if ${_end_ltss_reached} ; then
+
+                logCheckError "SLES version has reached its end of lifetime by SUSE and must be upgraded (SAP Note ${sapnote:-}) (is: ${OS_VERSION}, LTSS end: ${_end_ltss_date})"
+                _retval=2
+
+            elif ${_end_support_reached} ; then
+
+                logCheckInfo "The following warning can be ignored in case of LTSS contract, verify if LTSS updates are available (LTSS end: ${_end_ltss_date})"
+                logCheckWarning "SLES version has reached SUSE's general support end and should be upgraded (SAP Note ${sapnote:-}) (is: ${OS_VERSION}, GS end: ${_end_support_date})"
+                _retval=1
+
+            else
+
+                logCheckOk "SLES version is in general support by SUSE (SAP Note ${sapnote:-}) (is: ${OS_VERSION}, GS end: ${_end_support_date}, LTSS end: ${_end_ltss_date})"
+                _retval=0
+            fi
+
+            break
+
+        done
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
