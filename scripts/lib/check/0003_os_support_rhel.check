@@ -1,0 +1,121 @@
+#!/usr/bin/env bash
+
+function check_0003_os_support_rhel {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    # array 'REL'   'support general end (EUS)'  'extended support end (E4S/EUS)'
+    local -ar _rhel_6=(\
+                        '6.10'  '30 Nov 2020'    '30 Mar 2024'  \
+                        )
+
+    local -ar _rhel_7=(\
+                        '7.2' '03 Nov 2016'    '30 Nov 2019'    \
+                        '7.3' '31 Jul 2017'    '30 Nov 2020'    \
+                        '7.4' '10 Apr 2018'    '31 Aug 2021'    \
+                        '7.5' '30 Oct 2018'    '30 Apr 2020'    \
+                        '7.6' '06 Aug 2019'    '31 Oct 2022'    \
+                        '7.7' '31 Mar 2020'    '30 Aug 2023'    \
+                        )
+    #RHEL 7.5 has no E4S --> EUS date
+
+    local -ar _rhel_8=(\
+                        '8.0' '05 Nov 2019'    '31 Dec 2020'    \
+                        '8.1' '28 Apr 2020'    '30 Nov 2023'    \
+                        )
+
+    # MODIFICATION SECTION<<
+
+    local -r sapnote='#936887'  #End of maintenance for Linux distributions
+    local -a _rhel_all
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_RHEL; then
+
+        logCheckSkipped 'Linux distribution is not RHEL. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+
+        case "${OS_VERSION}" in
+
+        6.[0-9] )
+                logCheckError "RHEL version has reached Red Hat's general support end - upgrade to RHEL 6.10 (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
+                _retval=2
+                ;;
+
+        6.10    )  _rhel_all+=("${_rhel_6[@]}") ;;
+
+        7.[0-1] )
+                logCheckError "RHEL version has reached Red Hat's general support end - upgrade to RHEL 7.3+ (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
+                _retval=2
+                ;;
+
+        7.[2-7] )  _rhel_all+=("${_rhel_7[@]}") ;;
+
+        8.[0-1] )  _rhel_all+=("${_rhel_8[@]}") ;;
+
+        *)
+            logCheckError "RHEL version is not supported by SAP HANA (SAP Note #2235581) (is: ${OS_VERSION})"
+            _retval=2
+            ;;
+        esac
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local _rhel_release
+        local _end_support_date
+        local _end_e4s_date
+
+        # i+=3 --> every 3rd item
+        for ((i=0; i < ${#_rhel_all[@]}; i+=3)); do
+
+            logTrace "<${FUNCNAME[0]}> # ${_rhel_all[$i]}>"
+
+            _rhel_release="${_rhel_all[$i]}"
+
+            [[ "${OS_VERSION}" != "${_rhel_release}"* ]] && continue    #handle kernel with subversions correctly
+
+            _end_support_date="${_rhel_all[$i+1]}"
+            _end_e4s_date="${_rhel_all[$i+2]}"
+
+            local ft_today
+            local ft_end_support
+            local ft_end_e4s_date
+
+            ft_today=$(date +"%Y%m%d")                                  # = 20200331
+            ft_end_e4s_date=$(date -d "${_end_e4s_date}" +"%Y%m%d")     # = 20201131
+            ft_end_support=$(date -d "${_end_support_date}" +"%Y%m%d")  # = 20191101
+
+            if [[ ${ft_today} -ge ${ft_end_e4s_date:-} ]] ; then
+
+                logCheckError "RHEL version has reached its end of lifetime by Red Hat and must be upgraded (SAP Note ${sapnote:-}) (is: ${OS_VERSION}, E4S end: ${_end_e4s_date})"
+                _retval=2
+
+            elif [[ ${ft_today} -ge ${ft_end_support:-} ]] ; then
+
+                logCheckInfo "The following warning can be ignored in case of E4S contract, verify if E4S updates are available (E4S end: ${_end_e4s_date})"
+                logCheckWarning "RHEL version has reached Red Hat's general support end and should be upgraded (SAP Note ${sapnote:-}) (is: ${OS_VERSION}, GS end: ${_end_support_date})"
+                _retval=1
+
+            else
+
+                logCheckOk "RHEL version is in general support by Red Hat (SAP Note ${sapnote:-}) (is: ${OS_VERSION}, GS end: ${_end_support_date}, E4S end: ${_end_e4s_date})"
+                _retval=0
+            fi
+
+            break
+
+        done
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
