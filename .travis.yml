@@ -73,7 +73,7 @@ after_success:
 before_deploy:
     # Prepare Ownership and Permissions
     - sudo chmod -R 444 build/opt/sap/saphana-checks
-    - sudo chmod 744 build/opt/sap/saphana-checks/bin/saphana-check.sh
+    - sudo chmod 755 build/opt/sap/saphana-checks/bin/saphana-check.sh
     - sudo chown -R root:root build/opt/sap/saphana-checks
 
     # create rpm

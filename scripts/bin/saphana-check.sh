@@ -26,9 +26,6 @@ function die {
     exit 1
 }
 
-# Make sure only root can run our script
-[[ ${UID} -ne 0 ]] && die 'This script must be run as root'
-
 #set POSIX/C locales - date/time/regex format normalized for all platforms
 LC_ALL=POSIX
 export LC_ALL
