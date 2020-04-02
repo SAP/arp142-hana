@@ -19,6 +19,11 @@ function check_3300_network_adapter_vmxnet3_vmware {
         logCheckSkipped 'Not running on VMware vSphere. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
+    elif ! LIB_FUNC_IS_ROOT ; then
+
+        logCheckError "ROOT required - VMware vmxnet3 network driver parameters not readable (SAP Note ${sapnote:-})"
+        _retval=2
+
     fi
 
     # CHECK
