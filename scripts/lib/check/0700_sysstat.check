@@ -27,6 +27,11 @@ function check_0700_sysstat {
             logCheckOk "sysstat cron is enabled (SAP Note ${sapnote:-})"
             _retval=0
 
+        elif systemctl --quiet is-active sysstat-collect.timer; then
+
+            logCheckOk "sysstat-collect.timer is active (SAP Note ${sapnote:-})"
+            _retval=0
+
         else
 
             logCheckWarning "sysstat cron is disabled - make sure sar monitoring is active (SAP Note ${sapnote:-})"
