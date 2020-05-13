@@ -8,8 +8,14 @@ function check_0441_saptune_sles {
 
     # MODIFICATION SECTION>>
     local -r sapnote='#1275776'         #1275776 - Linux: Preparing SLES for SAP environments
-    local -r sles124='2.0.0-3.131.1'   #Version 31 from 19.07.2019
-    local -r sles150='2.0.1-4.6.1'
+
+    local -r sles122='2.0.3-8.24.1'
+    local -r sles123='2.0.3-3.24.1'
+    local -r sles124='2.0.3-3.11.1'
+    local -r sles125='2.0.3-3.11.1'
+
+    local -r sles150='2.0.3-4.14.4'
+    local -r sles151='2.0.3-8.11.1'
     # MODIFICATION SECTION<<
 
     local _goodversion
@@ -29,14 +35,25 @@ function check_0441_saptune_sles {
 
         case "${OS_VERSION}" in
 
-                12.* )  _goodversion="${sles124}" ;;
-                15.* )  _goodversion="${sles150}" ;;
+                11.*)
+                        logCheckSkipped 'Check not applicable for SLES release' "(is: ${OS_NAME} ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
+                        _retval=3
+                        ;;
+
+                12.[0-2]* ) : "${sles122}" ;;
+                12.3 )      : "${sles123}" ;;
+                12.4 )      : "${sles124}" ;;
+                12.5 )      : "${sles125}" ;;
+                15.0 )      : "${sles150}" ;;
+                15.1 )      : "${sles151}" ;;
 
                 *)
-                        logCheckSkipped 'Check not applicable for SLES release' "(SAP Note ${sapnote:-}). Skipping <${FUNCNAME[0]}>"
-                        _retval=3
+                        logCheckWarning 'Check does not support SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                        _retval=1
                     ;;
-            esac
+        esac
+
+        _goodversion="$_"
 
     fi
 

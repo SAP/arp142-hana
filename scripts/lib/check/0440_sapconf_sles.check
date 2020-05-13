@@ -7,13 +7,17 @@ function check_0440_sapconf_sles {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -ar sles121=( '4.1.12-18.24.1' '#1275776' )   #1275776 - Linux: Preparing SLES for SAP environments
-    local -ar sles122=( '4.1.12-33.15.1' '#1275776' )   #Version 21 from 25.05.2018
-    local -ar sles123=( '4.1.12-40.47.1' '#1275776' )
+    local -r sapnote='#1275776'         #1275776 - Linux: Preparing SLES for SAP environments
+
+    local -r sles121='4.1.12-18.24.1'
+    local -r sles122='4.1.14-33.23.4'
+    local -r sles12x='4.1.14-40.56.3'
+
+    local -r sles150='4.2.3-7.9.2'
+    local -r sles15x='4.2.3-7.9.2'
     # MODIFICATION SECTION<<
 
     local _goodversion
-    local sapnote
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_SLES ; then
@@ -35,15 +39,19 @@ function check_0440_sapconf_sles {
                         _retval=3
                         ;;
 
-                12.1* )  _goodversion="${sles121[0]}" ; sapnote="${sles121[1]}" ;;
-                12.2* )  _goodversion="${sles122[0]}" ; sapnote="${sles122[1]}" ;;
-                12.[3-5]* | 15.* )  _goodversion="${sles123[0]}" ; sapnote="${sles123[1]}" ;;
+                12.1* )     : "${sles121}" ;;
+                12.2 )      : "${sles122}" ;;
+                12.* )      : "${sles12x}" ;;
+                15.0 )      : "${sles150}" ;;
+                15.* )      : "${sles15x}" ;;
 
                 *)
                         logCheckWarning 'Check does not support SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
                         _retval=1
                     ;;
-            esac
+        esac
+
+        _goodversion="$_"
 
     fi
 
