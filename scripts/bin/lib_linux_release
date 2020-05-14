@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 umask 0027
+set -u # treat unset variables as an error
 
 #------------------------------------------------------------------
 # Library - Linux distribution / Linux release Functions
 #------------------------------------------------------------------
-# (C) Copyright SAP 2017-2019
+# (C) Copyright SAP 2017-2020
 # Author: DBS - CoE EMEA HANA Platform & Technical Infrastructure
 #
 # Script name: "lib_linux_release"
@@ -14,13 +15,26 @@ umask 0027
 # return if library is already loaded
 [[ -n "${LIB_LINUX_RELEASE:-}" ]] && return 0
 
-LIB_LINUX_RELEASE='2.0-1.b17_g7758cad8'
-#LIB_RELEASE_DATE='2019-APR-25'
+LIB_LINUX_RELEASE='2.1-1.b36_g596d64b2'
+#LIB_RELEASE_DATE='2020-May-14'
 
 
 ##################################################
 # Global functions - to be used in other scripts
 ##################################################
+
+# Returns 0 on SLES4SAP, 1 on other
+function LIB_FUNC_IS_SLES4SAP {
+
+    local -i _retval=1
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    ${lib_release_sles4sap} && _retval=0
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+}
 
 # Returns 0 on SLES, 1 on other
 function LIB_FUNC_IS_SLES {
@@ -102,6 +116,7 @@ function __lib_func_get_linux_distrib {
     OS_LEVEL=$(uname -r)
 
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # ${OS_NAME} ; ${OS_VERSION} ; ${OS_LEVEL}"
+
 }
 
 function __linux_distrib_os_release {
@@ -283,6 +298,23 @@ function __linux_distrib_oracle_release {
     fi
 }
 
+function __lib_func_get_sles4sap {
+
+    local _baseproduct
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    if LIB_FUNC_IS_SLES; then
+
+        _baseproduct=$(readlink /etc/products.d/baseproduct)
+
+        [[ ${_baseproduct} == 'SLES_SAP.prod' ]] && lib_release_sles4sap=true
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # ${lib_release_sles4sap}"
+
+}
 #============================================================
 # LIB MAIN - initialization
 #============================================================
@@ -295,6 +327,10 @@ function _lib_linux_release_main {
     readonly OS_NAME
     readonly OS_VERSION
     readonly OS_LEVEL
+
+    __lib_func_get_sles4sap
+
+    readonly lib_release_sles4sap
 }
 
 #Import libraries
@@ -306,6 +342,8 @@ source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/saphana-logger" ||
 declare -r lib_release_rhel='Linux RHEL'
 declare -r lib_release_sles='Linux SLES'
 declare -r lib_release_ols='Linux OLS'
+
+declare lib_release_sles4sap=false
 
 #GLOBAL
 declare OS_NAME

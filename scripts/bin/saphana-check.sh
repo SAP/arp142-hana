@@ -384,7 +384,11 @@ function main {
     logNotify "## Memory usable:  ${_line_formated}"
     logNotify '##'
 
-    printf -v _line_formated '%-17s - %-11s %-20s' "${OS_NAME} ${OS_VERSION}" 'Kernel:' "${OS_LEVEL}"
+    local _ext_support
+    LIB_FUNC_IS_SLES4SAP && _ext_support='(4SAP)'
+
+    printf -v _line_formated '%-17s - %-11s %-20s' "${OS_NAME/Linux }${_ext_support:-} ${OS_VERSION}" 'Kernel:' "${OS_LEVEL}"
+
     logNotify "## OS:             ${_line_formated}"
 
     logNotify "## ${_line}"
