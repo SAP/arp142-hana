@@ -7,76 +7,126 @@ function check_3011_network_tcp_tw_parameter {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#2382421' # Optimizing the Network Configuration on HANA- and OS-Level for SPS10 and Higher
+    local -r sapnote='#2382421'
 
-    #                               parameter                       recommended_value
-    local -ar _tcp_parameter=(\
-                                    'net.ipv4.tcp_tw_reuse'            0 \
-                                    'net.ipv4.tcp_tw_recycle'          0 \
-    )
+    local -i reco_tcp_tw_reuse=0
+    local -i reco_tcp_tw_recycle=0
     # MODIFICATION SECTION<<
 
     #2382421 - Optimizing the Network Configuration on HANA- and OS-Level for SPS10 and Higher
     #401162  - Linux: Avoiding TCP/IP port conflicts and start problems
     #2789262 - Connection problems between Windows hosts and HANA database on Linux hosts
 
-
     #Starting from SLES 12 SP4 and SLES 15 GA  *tw_recycle configuration is removed without substitution.
+    #Starting from SLES 15.2 and RHEL8.1 - default tcp_tw_reuse=2 (safely reuse loopback)
 
-    local -i _curr_value
-    local -i _reco_value
-    local    _parameter
-    local    _parameter_normalized
+    local _loopback_opt_available
+    _loopback_opt_available=false
 
-    # i+=2 --> every 2nd item
-    for ((i=0; i < ${#_tcp_parameter[@]}; i+=2)); do
+    # PRECONDITIONS
+    if LIB_FUNC_IS_SLES ; then
 
-        logTrace "<${FUNCNAME[0]}> # ${_tcp_parameter[$i]}>"
+        case "${OS_VERSION}" in
 
-        _parameter=${_tcp_parameter[$i]}
-        _parameter_normalized=${_parameter//./\/}
-        logTrace "<${FUNCNAME[0]}> # ${_parameter_normalized}>"
+            11.* | 12.* | 15.[0-1]* )  : ;;
 
-        _reco_value=${_tcp_parameter[$i+1]}
+            *)      _loopback_opt_available=true
+                    reco_tcp_tw_reuse=2 ;;
 
-        if [[ ! -f "/proc/sys/${_parameter_normalized}" ]]; then
 
-            logCheckInfo "sysctl parameter ${_parameter} not available"
+        esac
 
-        else
+    elif LIB_FUNC_IS_RHEL ; then
 
-            _curr_value=$(</proc/sys/"${_parameter_normalized}")
+        case "${OS_VERSION}" in
 
-            if [[ ${_curr_value} -ne ${_reco_value} ]]; then
+            6.* | 7.* | 8.0* )  : ;;
 
-                logCheckWarning "sysctl parameter ${_parameter} is set (is: ${_curr_value}, should be: ${_reco_value})"
-                _retval=1
+            *)      _loopback_opt_available=true
+                    reco_tcp_tw_reuse=2 ;;
+        esac
+
+    fi
+
+
+    # #CHECK
+    local -i _tcp_tw_reuse
+    local -i _tcp_tw_recycle
+
+    ## REUSE
+    _tcp_tw_reuse=$(</proc/sys/net/ipv4/tcp_tw_reuse)
+
+    if [[ ${_tcp_tw_reuse} -ne ${reco_tcp_tw_reuse} ]]; then
+
+        logCheckWarning "Network kernel parameter net.ipv4.tcp_tw_reuse NOT set as recommended (is: ${_tcp_tw_reuse}, should be: ${reco_tcp_tw_reuse})"
+
+        if ${_loopback_opt_available}; then
+
+            if [[ ${_tcp_tw_reuse} -eq 1 ]]; then
+
+                logCheckWarning "Parameter should only considered to be set in a SAP HANA scale-out setup"
+                logCheckWarning '---'
 
             else
 
-                logCheckOk "sysctl parameter ${_parameter} is not set (is: ${_curr_value})"
+                logCheckWarning "Parameter should be set to the new default 2"
+                logCheckWarning '---'
 
             fi
         fi
 
-    done
+        _retval=1
+
+    else
+
+        logCheckOk "Network kernel parameter net.ipv4.tcp_tw_reuse set as recommended (is: ${_tcp_tw_reuse})"
+
+    fi
+
+    ## RECYCLE - anyway deprectated
+    if [[ ! -f '/proc/sys/net/ipv4/tcp_tw_recycle' ]]; then
+
+            logCheckInfo 'Network kernel parameter net.ipv4.tcp_tw_recycle not available'
+
+    else
+        _tcp_tw_recycle=$(</proc/sys/net/ipv4/tcp_tw_recycle)
+
+        if [[ ${_tcp_tw_recycle} -ne ${reco_tcp_tw_recycle} ]]; then
+
+            logCheckWarning "Network kernel parameter net.ipv4.tcp_tw_recycle NOT set as recommended (is: ${_tcp_tw_recycle}, should be: ${reco_tcp_tw_recycle})"
+            _retval=1
+
+        else
+
+            logCheckOk "Network kernel parameter net.ipv4.tcp_tw_recycle set as recommended (is: ${_tcp_tw_recycle})"
+
+        fi
+
+    fi
+
 
     if [[ ${_retval} -eq 99 ]]; then
 
-        logCheckOk "All sysctl net.ipv4.tcp_tw* parameters not set (SAP Note ${sapnote:-})"
+        logCheckOk "Network kernel net.ipv4.tcp_tw* parameters set as recommended (SAP Note ${sapnote:-})"
         _retval=0
 
     else
 
-        logCheckWarning "sysctl net.ipv4.tcp_tw* parameters set (SAP Note ${sapnote:-})"
-        logCheckWarning 'Please note that these setting MUST NOT be applied, if the HANA node'
-        logCheckWarning 'needs to communicate with hosts behind a NAT firewall'
+        logCheckWarning "Network kernel net.ipv4.tcp_tw* parameters NOT set as recommended (SAP Note ${sapnote:-})"
 
-        logCheckInfo "Provide maximum ephemeral ports by configuring the SAP Host Agent port reservation (see check #3120)"
+        if [[ ${_tcp_tw_reuse} -ne 0 || ${_tcp_tw_recycle:-} -ne ${reco_tcp_tw_recycle} ]]; then
+
+            logCheckWarning '---'
+            logCheckWarning 'Please note that these settings MUST NOT be applied, if the HANA node'
+            logCheckWarning 'needs to communicate with hosts behind a NAT firewall'
+
+            logCheckInfo "Provide maximum ephemeral ports by configuring the SAP Host Agent port reservation (see check #3120)"
+            logCheckWarning '---'
+        fi
+
         _retval=1
 
     fi
-
 
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
     return ${_retval}
