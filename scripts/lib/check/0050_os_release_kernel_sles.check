@@ -7,19 +7,19 @@ function check_0050_os_release_kernel_sles {
     local -i _retval=99
 
     # Linux kernel should match release
-    # https://www.novell.com/support/kb/doc.php?id=3594951
+    # https://www.suse.com/support/kb/doc/?id=000019587
 
     # MODIFICATION SECTION>>
     # array 'lowest expected ' 'upper boundary'
     local -ar sles113=( '3.0.76-0.11.1' '3.0.101-0.47.999' )
-    local -ar sles114=( '3.0.101-63.1' '3.0.101-999' '#2240716' )
-    local -ar sles120=( '3.12.28-4.6' '3.12.61-52.9999' )
+    local -ar sles114=( '3.0.101-63.1' '3.0.101-108.999' )
+    local -ar sles120=( '3.12.28-4.6' '3.12.61-52.999' )
     local -ar sles121=( '3.12.49-11.1' '3.12.74-60.64.999' )
     local -ar sles122=( '4.4.21-69.1' '4.4.121-92.999' )
     local -ar sles123=( '4.4.73-5.1' '4.4.180-94.999' )
     local -ar sles124=( '4.12.14-94.41.1' '4.12.14-999' )
     local -ar sles125=( '4.12.14-120.1' '4.12.14-999' )
-    local -ar sles150=( '4.12.14-23.1' '4.12.999' )
+    local -ar sles150=( '4.12.14-23.1' '4.12.14-150.999' )
     local -ar sles151=( '4.12.14-195.1' '4.12.999' )
 
     local -r sapnote='#2235581' #SAP HANA: Supported Operating Systems
