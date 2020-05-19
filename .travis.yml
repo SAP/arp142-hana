@@ -1,4 +1,3 @@
-sudo: required
 dist: xenial
 language: bash
 cache: pip
@@ -15,20 +14,20 @@ os:
 #  - osx
 
 before_install:
-    #MY_RELEASE is not availalbe within env:global
+    #TRAVIS_BRANCH=TRAVIS_TAG if tagged
     - |
-      if [ ${MY_RELEASE} -ne 1 ]; then
-        BUILD_COMMIT=0.beta.${BUILD_COMMIT}  #beta release
-      else
+      if [[ $TRAVIS_BRANCH =~ ^v[0-9]+$ ]]; then
         BUILD_COMMIT=1.${BUILD_COMMIT}  #final release
+      else
+        BUILD_COMMIT=0.beta.${BUILD_COMMIT}  #beta release
       fi
     - VERSION_BUILD_COMMIT=${_VERSION}-${BUILD_COMMIT}
 
-    - echo "[INFO] _VERSION> $_VERSION ; VERSION_BUILD_COMMIT> $VERSION_BUILD_COMMIT"
-    #- sudo apt-add-repository "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse"
-    # - sudo apt-get -qq update
-    # - sudo apt-get -t trusty-backports install shellcheck
+    - echo "[INFO] _BRANCH > $TRAVIS_BRANCH ; _VERSION> $_VERSION ; VERSION_BUILD_COMMIT> $VERSION_BUILD_COMMIT"
+
     # - sudo -H pip install --upgrade pip
+
+install:
     - sudo -H pip install bashate
 
 script:
@@ -67,8 +66,6 @@ after_success:
 
     - ls -R build/
 
-# matrix:
-#   fast_finish: true
 
 before_deploy:
     # Prepare Ownership and Permissions
@@ -90,8 +87,6 @@ before_deploy:
     - ls -l build/
     - tar -tvf build/saphana-checks-*.tgz
 
-    # install SAP certificates to be able to upload to Github
-    # - curl -k -L https://github.wdf.sap.corp/GitHub/Install-Root-Certificates/raw/master/install-certs-ubuntu-12.04.sh | sudo -E sh
 
 deploy:
   provider: releases
