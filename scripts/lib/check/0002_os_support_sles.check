@@ -99,6 +99,9 @@ function check_0002_os_support_sles {
 
             _end_ltss_date="${_sles_all[$i+3]}"
 
+            local _ltss_active=false
+            [[ -f '/etc/products.d/SLES-LTSS.prod' ]] && _ltss_active=true
+
             local ft_today
             local ft_end_support
             local ft_end_ltss_date
@@ -112,9 +115,13 @@ function check_0002_os_support_sles {
                 logCheckError "${_sles_type} version has reached its end of lifetime by SUSE and must be upgraded (SAP Note ${sapnote:-}) (is: ${OS_VERSION}, LTSS end: ${_end_ltss_date})"
                 _retval=2
 
+            elif ${_ltss_active}; then
+
+                logCheckOk "${_sles_type} version is in LTSS support by SUSE (SAP Note ${sapnote:-}) (is: ${OS_VERSION}, LTSS end: ${_end_ltss_date})"
+                _retval=0
+
             elif [[ ${ft_today} -ge ${ft_end_support:-} ]] ; then
 
-                logCheckInfo "The following warning can be ignored in case of LTSS contract, verify if LTSS updates are available (LTSS end: ${_end_ltss_date})"
                 logCheckWarning "${_sles_type} version has reached SUSE's ${_support_type} end and should be upgraded (SAP Note ${sapnote:-}) (is: ${OS_VERSION}, ${_support_type_short} end: ${_end_support_date})"
                 _retval=1
 
