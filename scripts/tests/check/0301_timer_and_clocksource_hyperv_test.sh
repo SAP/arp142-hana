@@ -8,7 +8,12 @@ readonly PROGRAM_DIR
 LIB_FUNC_IS_VIRT_MICROSOFT() { return 0 ; }
 LIB_FUNC_IS_SLES() { return 0 ; }
 LIB_FUNC_IS_RHEL() { return 1 ; }
-LIB_FUNC_NORMALIZE_KERNEL() { LIB_FUNC_NORMALIZE_KERNEL_RETURN="$1" ; }
+
+LIB_FUNC_NORMALIZE_KERNEL() {
+    # shellcheck disable=SC2034
+    LIB_FUNC_NORMALIZE_KERNEL_RETURN="$1" ;
+}
+
 LIB_FUNC_COMPARE_VERSIONS() { return "${RC_COMPARE_VERSIONS}" ; }
 
 # still to mock for tests
@@ -72,6 +77,7 @@ test_wrong_clocksource() {
 
 setUp() {
 
+    # shellcheck disable=SC2034
     OS_LEVEL=
 }
 
