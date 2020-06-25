@@ -5,7 +5,7 @@ umask 0027
 # Library - PowerLinux configuration
 #------------------------------------------------------------------
 # (C) Copyright SAP 2018-2020
-# Author: DBS - CoE EMEA HANA Platform & Technical Infrastructure
+# Author: CS IDG - CoE EMEA HANA Platform & Technical Infrastructure
 #
 # Script name: "lib_platf_power"
 #

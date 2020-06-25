@@ -6,18 +6,18 @@ set -u # treat unset variables as an error
 # SAP HANA OS checks
 #------------------------------------------------------------------
 # (C) Copyright SAP 2017-2020
-# Author: DBS - CoE EMEA HANA Platform & Technical Infrastructure
+# Author: CS IDG - CoE EMEA HANA Platform & Technical Infrastructure
 #
 # Script name: "saphana-check.sh"
 #
 # tool to check OS parameter recommendations for SAP HANA environments
-# supports SLES and RHEL on Intel and SLES on Power
+# supports SLES and RHEL on Intel and IBM Power
 #
 # inspired by Lenovo's saphana-support-lenovo.sh Support script
 #------------------------------------------------------------------
 
-PROGVERSION='2005.0-dev'
-PROGDATE='2020-APR-01'
+PROGVERSION='2007.0-dev'
+PROGDATE='2020-JUN-01'
 #------------------------------------------------------------------
 
 
