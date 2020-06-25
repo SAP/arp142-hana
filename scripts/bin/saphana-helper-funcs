@@ -173,6 +173,104 @@ function LIB_FUNC_IS_IBMPOWER {
     return ${_retval}
 }
 
+# Hyperconverged Clouds
+# Returns 0 on TRUE, 1 FALSE
+function LIB_FUNC_IS_CLOUD_ALIBABA {
+
+    local -i _retval=1
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    [[ ( "${LIB_PLATF_VENDOR:-}" == 'Alibaba Cloud ECS' ) ]] && _retval=0
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+}
+
+function LIB_FUNC_IS_CLOUD_AMAZON {
+
+    local -i _retval=1
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    [[ ( "${LIB_PLATF_VENDOR:-}" == 'Amazon EC2' ) ]] && _retval=0
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+}
+
+function LIB_FUNC_IS_CLOUD_GOOGLE {
+
+    local -i _retval=1
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    [[ ( "${LIB_PLATF_VENDOR:-}" == 'Google GCP' ) ]] && _retval=0
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+}
+
+function LIB_FUNC_IS_CLOUD_IBM {
+
+    local -i _retval=1
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    [[ ( "${LIB_PLATF_VENDOR:-}" == 'IBM Cloud' ) ]] && _retval=0
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+}
+
+function LIB_FUNC_IS_CLOUD_MICROSOFT {
+
+    local -i _retval=1
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    [[ ( "${LIB_PLATF_VENDOR:-}" == 'Microsoft Azure' ) ]] && _retval=0
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+}
+
+function LIB_FUNC_IS_CLOUD_SAPCC {
+
+    local -i _retval=1
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    [[ ( "${LIB_PLATF_VENDOR:-}" == 'SAP Converged Cloud' ) ]] && _retval=0
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+}
+
+function LIB_FUNC_IS_CLOUD_TELEKOM {
+
+    local -i _retval=1
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    [[ ( "${LIB_PLATF_VENDOR:-}" == 'OpenTelekomCloud' ) ]] && _retval=0
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+}
+
+function LIB_FUNC_IS_CLOUD_HUAWEI {
+
+    local -i _retval=1
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    [[ ( "${LIB_PLATF_VENDOR:-}" == 'Huawei Cloud' ) ]] && _retval=0
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+}
+
 # Compares two version strings
 # Two version strings as parameters.
 # Echos & returns 0 if equal, 1 if first is higher, 2 if second is higher
