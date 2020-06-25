@@ -26,6 +26,9 @@ function die {
     exit 1
 }
 
+[[ -z "${BASH_VERSION:-}" ]] && die 'This script requires a bash shell'
+[[ ${POSIXLY_CORRECT:-} = 'y' ]] && die 'This script requires bash in non-posix mode, use <bash> not <sh>'
+
 #set POSIX/C locales - date/time/regex format normalized for all platforms
 LC_ALL=POSIX
 export LC_ALL
