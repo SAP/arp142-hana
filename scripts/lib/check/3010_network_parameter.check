@@ -15,7 +15,7 @@ function check_3010_network_parameter {
     #                               parameter                               recommended_value   RC_expected
     local -ar _tcp_parameter=(\
                                     'net.core.somaxconn'                    4096                1   \
-                                    'net.ipv4.tcp_max_syn_backlog'          8192                0   \
+                                    'net.ipv4.tcp_max_syn_backlog'          8192                1   \
                                     'net.ipv4.tcp_window_scaling'           1                   0   \
                                     'net.ipv4.tcp_slow_start_after_idle'    0                   0   \
     )
