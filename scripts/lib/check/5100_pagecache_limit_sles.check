@@ -43,8 +43,13 @@ function check_5100_pagecache_limit_sles {
 
         else
 
-            logCheckWarning "vm.pagecache_limit_mb is set - should only be set to address a certain issue (SAP Note ${sapnote:-}) (is: ${pgcache_limit_mb}, should be: 0)"
-            _retval=1
+            if ! LIB_FUNC_IS_SLES4SAP ; then
+                logCheckError "vm.pagecache_limit_mb only supported by SLES4SAP (SAP Note ${sapnote:-}) (is: ${pgcache_limit_mb}, must be: 0)"
+                _retval=2
+            else
+                logCheckWarning "vm.pagecache_limit_mb is set - should only be set to address a certain issue (SAP Note ${sapnote:-}) (is: ${pgcache_limit_mb}, should be: 0)"
+                _retval=1
+            fi
 
             # to avoid errors of small difference
             local -i pg_fuzzy_lower
@@ -54,13 +59,13 @@ function check_5100_pagecache_limit_sles {
 
             if [[ ${pg_fuzzy_lower} -lt ${reco_pgcache_limit} ]]; then
 
-                logCheckError "vm.pagecache_limit_mb is set to low (SAP Note ${sapnote:-}) (is: ${pgcache_limit_mb}, should be: ${reco_pgcache_limit})"
+                logCheckError "Additionally vm.pagecache_limit_mb is set to low (should be: ${reco_pgcache_limit})"
                 _retval=2
 
             elif [[ ${pg_fuzzy_upper} -gt ${reco_pgcache_limit} ]]; then
 
-                logCheckWarning "vm.pagecache_limit_mb is set to high (SAP Note ${sapnote:-}) (is: ${pgcache_limit_mb}, should be: ${reco_pgcache_limit})"
-                _retval=1
+                logCheckWarning "Additionally vm.pagecache_limit_mb is set to high (should be: ${reco_pgcache_limit})"
+                [[ ${_retval} -ne 2 ]] && _retval=1
 
             fi
         fi
