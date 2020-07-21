@@ -8,23 +8,16 @@ function check_0021_os_kernel_knownissues_rhel {
 
     # MODIFICATION SECTION>>
     # array 'release' 'lower boundary' 'upper boundary' 'SAP Note'
-    local -ar _rhel_common=(\
+    local -a _rhel_all=(\
                         '6.10'  '2.6.32-754.15.3.el6'       '2.6.32-754.22.0.el6'   '#2812427' \
                         '7.4'   '3.10.0-693.50.3.el7'       '3.10.0-693.58.0.el7'   '#2812427' \
                         '7.5'   '3.10.0-862.34.2.el7'       '3.10.0-862.43.0.el7'   '#2812427' \
                         '7.6'   '3.10.0-957.21.3.el7'       '3.10.0-957.35.0.el7'   '#2812427' \
                         '8.0'   '4.18.0-80.el8'             '4.18.0-80.15.0.el8'    '#2812427' \
                         )
-
-    local -a _rhel_all
-
     # MODIFICATION SECTION<<
 
     #2812427 - Timeout or connection failure in SAP process after Linux kernel update
-
-    local _rhel_release
-    local _kernel_lower
-    local _kernel_higher
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_RHEL; then
@@ -32,15 +25,14 @@ function check_0021_os_kernel_knownissues_rhel {
         logCheckSkipped 'Linux distribution is not RHEL. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    else
-
-        _rhel_all+=("${_rhel_common[@]}")
-
     fi
 
     #CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
+        local _rhel_release
+        local _kernel_lower
+        local _kernel_higher
         local kernelversion
 
         LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
