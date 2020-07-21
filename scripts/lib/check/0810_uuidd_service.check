@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+
+function check_0810_uuidd_service {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#1391070' #Linux UUID solutions
+    # MODIFICATION SECTION<<
+
+    local cmdline
+
+    # PRECONDITIONS
+    if [[ ! -x '/usr/sbin/uuidd' ]]; then
+
+        logCheckError "Userspace daemon uuidd not installed (SAP Note ${sapnote:-})"
+        _retval=2
+
+    elif LIB_FUNC_IS_SLES ; then
+
+        case "${OS_VERSION}" in
+
+            11.*)   cmdline='systemd' ;;
+            *)      cmdline='systemctl' ;;
+
+        esac
+
+    elif LIB_FUNC_IS_RHEL ; then
+
+        case "${OS_VERSION}" in
+
+            6.*)    cmdline='systemd' ;;
+            *)      cmdline='systemctl' ;;
+
+        esac
+
+    else
+
+        logCheckError "Linux distribution NOT supported (SAP Note #2235581) (is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
+        _retval=2
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local cmdline_service
+
+        if [[ ${cmdline} == 'systemctl' ]]; then
+
+            cmdline_service='systemctl is-active "uuidd.socket" --quiet'
+
+        elif [[ ${cmdline} == 'systemd' ]]; then
+
+            cmdline_service='service uuidd status &>/dev/null'
+
+        fi
+
+        if eval "${cmdline_service}"; then
+
+            logCheckOk "Userspace daemon uuidd is active (SAP Note ${sapnote:-})"
+            _retval=0
+
+        else
+
+            logCheckError "Userspace daemon uuidd is NOT active (SAP Note ${sapnote:-})"
+            _retval=2
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}

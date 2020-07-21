@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+function check_0811_uuidd_version {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -ar sles122=( '228-142.1' '#1984787' )    #SAP HANA DB: Recommended OS settings for SLES 12
+    # MODIFICATION SECTION>>
+
+    local -r sapnote='#1984787'
+    # 1391070 - Linux UUID solutions
+    # 1984787 - SUSE LINUX Enterprise Server 12: Installation notes
+    # 1984787 - SAP HANA DB: Recommended OS settings for SLES 12
+
+    #                               parameter                       recommended_value
+    local -ar _uuidd_packages=(\
+                                    'uuidd-2.25-22.1'           \
+    )
+    # MODIFICATION SECTION<<
+
+    local _goodversion
+    local sapnote
+
+
+    case "${OS_VERSION}" in
+
+        12.[2-3]*)  _goodversion="${sles122[0]}" ; sapnote="${sles122[1]}" ;;
+
+        7.*)    _goodversion="${rhel7[0]}" ; sapnote="${rhel7[1]}" ;;
+
+        *)      logCheckSkipped "Check not applicable for Linux release (is: ${OS_NAME} ${OS_VERSION}). Skipping" "<${FUNCNAME[0]}>"
+                _retval=3
+            ;;
+    esac
+
+
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local normalized_goodversion
+        local normalized_fullversion
+
+        local -r _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" systemd)
+
+        #normalize good version
+        LIB_FUNC_NORMALIZE_RPM "${_goodversion}"
+        normalized_goodversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+        #normalize full version - e.g. 219-19.el7_2.4
+        LIB_FUNC_NORMALIZE_RPM "${_fullversion}"
+        normalized_fullversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+        LIB_FUNC_COMPARE_VERSIONS "${normalized_fullversion}" "${normalized_goodversion}"
+
+        if [[ $? -ne 2 ]]; then
+            logCheckOk "SYSTEMD version seems to be ok (SAP Note ${sapnote:-}) (is: ${_fullversion})"
+            _retval=0
+        else
+            logCheckError "SYSTEMD must be updated (SAP Note ${sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
+            _retval=2
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}

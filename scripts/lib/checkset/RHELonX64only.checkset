@@ -12,6 +12,7 @@
 0600_systemd_version
 0700_sysstat
 0800_sap_host_agent
+0810_uuidd_service
 1210_cpu_subnuma_intel
 1250_cpu_hyperthreading_intel
 1300_cpu_governor_x64
