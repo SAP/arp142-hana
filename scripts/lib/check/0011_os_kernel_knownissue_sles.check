@@ -49,17 +49,17 @@ function check_0011_os_kernel_knownissue_sles {
         logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif LIB_FUNC_IS_VIRT_MICROSOFT; then
+    # elif LIB_FUNC_IS_CLOUD_MICROSOFT; then
 
-        _sles_all+=("${_sles_common[@]}" "${_sles_azure[@]}")
+    #     _sles_all+=("${_sles_azure[@]}")
 
     elif LIB_FUNC_IS_IBMPOWER; then
 
-        _sles_all+=("${_sles_common[@]}" "${_sles_ibmpower[@]}")
+        _sles_all+=("${_sles_ibmpower[@]}")
 
     elif LIB_FUNC_IS_VIRT_KVM || LIB_FUNC_IS_VIRT_XEN ; then
 
-        _sles_all+=("${_sles_common[@]}" "${_sles_kvm_or_xen[@]}")
+        _sles_all+=("${_sles_kvm_or_xen[@]}")
 
 
 
