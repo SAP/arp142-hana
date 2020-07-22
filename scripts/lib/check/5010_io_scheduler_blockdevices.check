@@ -8,16 +8,23 @@ function check_5010_io_scheduler_blockdevices {
     local sapnote
 
     # MODIFICATION SECTION>>
-    local sapnote_sles='#1944799'
+    local sapnote_sles='#1984787'
     local sapnote_rhel='#2009879'
     local sapnote_vmware='#2161991'
+    local sapnote_aws='#1656099'
     local sapnote_azure='#2161991'
-    local sapnote_kvm='1400911'
+    local sapnote_kvm='#1400911'
+    local sapnote_xen='#1788665'
 
     local -r reco_io_scheduler='noop|none|deadline|mq-deadline'
 
-    local search_pattern='/sys/block/sd[^a]*/queue/scheduler'           #skip sda = OS
-    local search_pattern_azure='/sys/block/sd[^ab]*/queue/scheduler'    #skip sda = OS and sdb = temp
+    local search_pattern
+    #local search_pattern_skip_none='/sys/block/sd*/queue/scheduler'             #skip none
+    local search_pattern_skip_first1='/sys/block/sd[^a]*/queue/scheduler'       #skip sda = OS
+    local search_pattern_skip_first2='/sys/block/sd[^ab]*/queue/scheduler'      #skip sda = OS and sdb = temp
+    local search_pattern_xen='/sys/block/xvd[^a]*/queue/scheduler'              #skip xvda = OS
+    local search_pattern_aws_xen='/sys/block/xvd[^ab]*/queue/scheduler'         #skip xvda = OS and xvdb = swap
+    local search_pattern_aws_kvm='/sys/block/nvme*/queue/scheduler'             #skip none, search nvme
     # MODIFICATION SECTION<<
 
     # 1944799 - SAP HANA Guidelines for SLES Operating System Installation
@@ -25,6 +32,10 @@ function check_5010_io_scheduler_blockdevices {
     # 2009879 - SAP HANA Guidelines for Red Hat Enterprise Linux (RHEL) Operating System
     # 2161991 - VMware vSphere configuration guidelines
     # 1400911 - Linux: SAP NetWeaver on Red Hat KVM - Kernel-based Virtual Machine
+    # 1656099 - SAP Applications on AWS: Supported DB/OS and AWS EC2 products
+    # 1788665 - SAP HANA Support for virtualized / partitioned (multi-tenant) environments
+
+    search_pattern="${search_pattern_skip_first1}"
 
     # PRECONDITIONS
     if [[ ! -d '/sys/block/' ]]; then
@@ -32,11 +43,18 @@ function check_5010_io_scheduler_blockdevices {
         logCheckSkipped 'Block devices IO scheduler configuration NOT readable. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif LIB_FUNC_IS_VIRT_MICROSOFT; then
+    elif LIB_FUNC_IS_CLOUD_MICROSOFT; then
 
         sapnote="${sapnote_azure}"
         #skip sda = OS and sdb = temp
-        search_pattern=${search_pattern_azure}
+        search_pattern="${search_pattern_skip_first2}"
+
+    elif LIB_FUNC_IS_CLOUD_AMAZON; then
+
+            sapnote="${sapnote_aws}"
+
+            LIB_FUNC_IS_VIRT_KVM && search_pattern=${search_pattern_aws_kvm}
+            LIB_FUNC_IS_VIRT_XEN && search_pattern=${search_pattern_aws_xen}
 
     elif LIB_FUNC_IS_VIRT_VMWARE; then
 
@@ -45,6 +63,11 @@ function check_5010_io_scheduler_blockdevices {
     elif LIB_FUNC_IS_VIRT_KVM; then
 
         sapnote="${sapnote_kvm}"
+
+    elif LIB_FUNC_IS_VIRT_XEN; then
+
+        sapnote="${sapnote_xen}"
+        search_pattern=${search_pattern_xen}
 
     elif LIB_FUNC_IS_SLES ; then
 
