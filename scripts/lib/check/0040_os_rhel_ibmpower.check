@@ -27,7 +27,7 @@ function check_0040_os_rhel_ibmpower {
 
             case "${OS_VERSION}" in
 
-                7.[3-6]* | 8.[0-1] )
+                7.[3-7]* | 8.[0-1] )
                         logCheckOk "RHELonPower version is supported (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
                         _retval=0
                     ;;

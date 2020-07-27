@@ -57,7 +57,7 @@ function check_0400_glibc_x64 {
 
                 7.2* )  _goodversion="${rhel72[0]}" ; sapnote="${rhel72[1]}" ;;
 
-                7.[3-6]* )  _goodversion="${rhel73[0]}" ; sapnote="${rhel73[1]}" ;;
+                7.[3-7]* )  _goodversion="${rhel73[0]}" ; sapnote="${rhel73[1]}" ;;
 
                 8.* )  _goodversion="${rhel80[0]}" ; sapnote="${rhel80[1]}" ;;
 

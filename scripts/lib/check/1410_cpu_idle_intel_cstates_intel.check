@@ -81,9 +81,9 @@ function check_1410_cpu_idle_intel_cstates_intel {
     elif LIB_FUNC_IS_RHEL ; then
         case "${OS_VERSION}" in
 
-            7.[2-6]* )  sapnote="${sapnote_rhel7}" ;;
+            7.* )  sapnote="${sapnote_rhel7}" ;;
 
-            8.[0-1]* )  sapnote="${sapnote_rhel8}" ;;
+            8.* )  sapnote="${sapnote_rhel8}" ;;
 
             *)
                     logCheckWarning 'CHECK does NOT support RHEL release' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"

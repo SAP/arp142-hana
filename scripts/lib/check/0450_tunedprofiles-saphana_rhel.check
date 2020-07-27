@@ -36,7 +36,7 @@ function check_0450_tunedprofiles-saphana_rhel {
 
             7.3* )  _goodversion="${rhel73[0]}" ; sapnote="${rhel73[1]}" ;;
 
-            7.[4-6]* )  _goodversion="${rhel74[0]}" ; sapnote="${rhel74[1]}" ;;
+            7.* )  _goodversion="${rhel74[0]}" ; sapnote="${rhel74[1]}" ;;
 
             8.0 )  _goodversion="${rhel80[0]}" ; sapnote="${rhel80[1]}" ;;
 
