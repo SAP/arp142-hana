@@ -17,20 +17,34 @@ function check_0600_systemd_version {
     local sapnote
 
     # PRECONDITIONS
-    case "${OS_VERSION}" in
+    if LIB_FUNC_IS_SLES ; then
+        case "${OS_VERSION}" in
 
-        12.[2-5]*)  _goodversion="${sles122[0]}" ; sapnote="${sles122[1]}" ;;
+            12.[2-5]*)  _goodversion="${sles122[0]}" ; sapnote="${sles122[1]}" ;;
 
-        15.*)   _goodversion="${sles150[0]}" ; sapnote="${sles150[1]}" ;;
+            15.*)   _goodversion="${sles150[0]}" ; sapnote="${sles150[1]}" ;;
 
-        7.*)    _goodversion="${rhel7[0]}" ; sapnote="${rhel7[1]}" ;;
+            *)      logCheckSkipped 'CHECK not applicable for SLES release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
+                    _retval=3
+                ;;
+        esac
 
-        8.*)    _goodversion="${rhel8[0]}" ; sapnote="${rhel8[1]}" ;;
+    elif LIB_FUNC_IS_RHEL ; then
+        case "${OS_VERSION}" in
 
-        *)      logCheckSkipped "CHECK not applicable for Linux release (is: ${OS_NAME} ${OS_VERSION}). Skipping" "<${FUNCNAME[0]}>"
-                _retval=3
-            ;;
-    esac
+            7.*)    _goodversion="${rhel7[0]}" ; sapnote="${rhel7[1]}" ;;
+
+            8.*)    _goodversion="${rhel8[0]}" ; sapnote="${rhel8[1]}" ;;
+
+            *)      logCheckSkipped 'CHECK not applicable for RHEL release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
+                    _retval=3
+                ;;
+        esac
+
+    else
+            logCheckError "Linux distribution NOT supported (SAP Note #2235581) (is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
+            _retval=2
+    fi
 
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
