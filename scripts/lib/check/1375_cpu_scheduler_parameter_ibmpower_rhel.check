@@ -11,7 +11,6 @@ function check_1375_cpu_scheduler_parameter_ibmpower_rhel {
     #2777782 v10 - 2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
 
     # LIB_COMPARE_TOOBIG_NUMBERS returns 0 if equal, 1 if first is higher, 2 if second is higher
-    # returns 0 if equal, 1 if first is higher, 2 if second is higher
 
     #                               parameter                               recommended_value       RC
     local -ar _sched_parameters=(\

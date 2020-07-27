@@ -10,7 +10,6 @@ function check_5301_pvscsi_parameter_vmware {
     local -r sapnote='#2652670'
 
     # LIB_COMPARE_TOOBIG_NUMBERS returns 0 if equal, 1 if first is higher, 2 if second is higher
-    # returns 0 if equal, 1 if first is higher, 2 if second is higher
 
     #                               parameter           recommended_value   RC_expected
     local -ar _vmw_pvscsi=(\

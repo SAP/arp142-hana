@@ -10,7 +10,6 @@ function check_3010_network_parameter {
     local -r sapnote='#2382421' # Optimizing the Network Configuration on HANA- and OS-Level for SPS10 and Higher
 
     # LIB_COMPARE_TOOBIG_NUMBERS returns 0 if equal, 1 if first is higher, 2 if second is higher
-    # returns 0 if equal, 1 if first is higher, 2 if second is higher
 
     #                               parameter                               recommended_value   RC_expected
     local -ar _tcp_parameter=(\

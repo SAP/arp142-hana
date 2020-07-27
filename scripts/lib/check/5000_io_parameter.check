@@ -10,7 +10,7 @@ function check_5000_io_parameter {
     local -r sapnote='#2600030' # Parameter Recommendations in SAP HANA Environments
 
     # LIB_COMPARE_TOOBIG_NUMBERS returns 0 if equal, 1 if first is higher, 2 if second is higher
-    # returns 0 if equal, 1 if first is higher, 2 if second is higher
+
     #                               parameter                  recommended_value           RC   SAPNote
     local -ar _io_parameter=(\
                                     'fs.aio-max-nr'            18446744073709551615        1    '#1868829'  \

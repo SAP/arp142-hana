@@ -12,7 +12,6 @@ function check_2500_kernel_sharedmemory {
     #941735  v10 - SAP memory management system for 64-bit Linux systems
 
     # LIB_COMPARE_TOOBIG_NUMBERS returns 0 if equal, 1 if first is higher, 2 if second is higher
-    # returns 0 if equal, 1 if first is higher, 2 if second is higher
 
     #                               parameter              recommended_value    RC
     local -ar _shm_parameter=(\
