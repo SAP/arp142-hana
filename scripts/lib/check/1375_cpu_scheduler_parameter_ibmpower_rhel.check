@@ -41,7 +41,7 @@ function check_1375_cpu_scheduler_parameter_ibmpower_rhel {
 
         case "${OS_VERSION}" in
 
-            8.0)   _retval=99 ;;
+            8.0)   : ;;
 
             *)      logCheckSkipped 'Check not applicable for RHEL release' "(is: ${OS_NAME} ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
                     _retval=3 ;;

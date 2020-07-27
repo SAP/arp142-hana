@@ -29,7 +29,7 @@ function check_2220_numa_topology_updates_ibmpower_sles {
 
         case "${OS_VERSION}" in
 
-            12.[3-4] | 15.0 )   _retval=99 ;;
+            12.[3-4] | 15.0 )   : ;;
             *)
                     logCheckSkipped "Check not applicable for SLES release (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
                     _retval=3
