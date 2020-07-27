@@ -54,7 +54,7 @@ function check_0003_os_support_rhel {
                 _retval=2
                 ;;
 
-        7.[2-6] )  _rhel_all+=("${_rhel_7[@]}") ;;
+        7.[2-7] )  _rhel_all+=("${_rhel_7[@]}") ;;
 
         8.[0-1] )  _rhel_all+=("${_rhel_8[@]}") ;;
 
