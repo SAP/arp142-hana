@@ -18,7 +18,7 @@ function check_1200_shared_processor_mode_ibmpower {
 
     elif [[ -z ${LIB_PLATF_POWER_CPUMODE:-} ]]; then
 
-            logCheckError "Shared Processor Mode configuration NOT known. (SAP Note ${sapnote:-}) (is: Unknown, should be: DEDICATED*)"
+            logCheckError "Shared Processor Mode configuration NOT known (SAP Note ${sapnote:-}) (is: Unknown, should be: DEDICATED*)"
             _retval=2
     fi
 
@@ -27,7 +27,7 @@ function check_1200_shared_processor_mode_ibmpower {
 
         if [[ "${LIB_PLATF_POWER_CPUMODE}" == 'DEDICATED' ]]; then
 
-            logCheckOk "Shared Processor Mode configuration set as recommended. (SAP Note ${sapnote:-}) (is: DEDICATED)"
+            logCheckOk "Shared Processor Mode configuration set as recommended (SAP Note ${sapnote:-}) (is: DEDICATED)"
             _retval=0
 
             if [[ "${LIB_PLATF_POWER_CPUMODE_DEDDON:-}" != 'DONATING' ]]; then
@@ -38,7 +38,7 @@ function check_1200_shared_processor_mode_ibmpower {
 
         else
 
-            logCheckError "Shared Processor Mode configuration NOT set as recommended. (SAP Note ${sapnote:-}) (is: SHARED, should be: DEDICATED*)"
+            logCheckError "Shared Processor Mode configuration NOT set as recommended (SAP Note ${sapnote:-}) (is: SHARED, should be: DEDICATED*)"
             _retval=2
 
         fi

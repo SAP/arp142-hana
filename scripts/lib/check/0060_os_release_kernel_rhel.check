@@ -70,7 +70,7 @@ function check_0060_os_release_kernel_rhel {
             8.0)    expected_kernel="${rhel80[0]}" ;;
             8.1)    expected_kernel="${rhel81[0]}" ;;
 
-            *)      logCheckWarning 'CHECK does not support RHEL release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+            *)      logCheckWarning 'CHECK does not support RHEL release' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
                     _retval=1
                 ;;
         esac
@@ -90,12 +90,12 @@ function check_0060_os_release_kernel_rhel {
             # returns 0 if equal, 1 if first is higher, 2 if second is higher
             if ! LIB_FUNC_COMPARE_VERSIONS "${normalized_kernelversion}" "${expected_kernel}" ; then
 
-                logCheckError "Linux kernel does NOT match RHEL release and must be changed. (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${OS_LEVEL}, must be: ${expected_kernel}.*)"
+                logCheckError "Linux kernel does NOT match RHEL release and must be changed (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${OS_LEVEL}, must be: ${expected_kernel}.*)"
                 _retval=2
 
             else
 
-                logCheckOk "Linux kernel matches RHEL release. (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${expected_kernel})"
+                logCheckOk "Linux kernel matches RHEL release (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${expected_kernel})"
                 _retval=0
 
             fi

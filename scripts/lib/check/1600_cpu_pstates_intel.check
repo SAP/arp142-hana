@@ -54,7 +54,7 @@ function check_1600_cpu_pstates_intel {
         case ${#cpufreq_drivers[@]} in      #array length
 
             0)
-                        logCheckWarning "CPU scaling driver not set.(SAP Note  ${sapnote:-}) (is: -, should be: intel_pstate)"
+                        logCheckWarning "CPU scaling driver not set (SAP Note  ${sapnote:-}) (is: -, should be: intel_pstate)"
                         _retval=1
                 ;;
 

@@ -53,7 +53,7 @@ function check_5200_fstrim-service_sles {
         LIB_FUNC_COMPARE_VERSIONS "${normalized_kernelversion}" "${normalized_goodversion}"
         if [[ $? -lt 2 ]]; then
 
-            logCheckOk "Linux kernel with fstrim fix running. (SAP Note ${sapnote:-})"
+            logCheckOk "Linux kernel with fstrim fix running (SAP Note ${sapnote:-})"
             _retval=0
 
         else

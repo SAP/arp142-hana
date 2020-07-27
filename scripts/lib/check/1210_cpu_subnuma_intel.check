@@ -64,7 +64,7 @@ function check_1210_cpu_subnuma_intel {
 
         if [[ ${LIB_PLATF_CPU_NUMANODES} -gt ${LIB_PLATF_CPU_SOCKETS} ]]; then
 
-            logCheckError "Intel's <SubNUMA/CoD> NOT disabled. (SAP Note ${sapnote:-})"
+            logCheckError "Intel's <SubNUMA/CoD> NOT disabled (SAP Note ${sapnote:-})"
             _retval=2
 
         elif [[ ${LIB_PLATF_CPU_NUMANODES} -lt ${LIB_PLATF_CPU_SOCKETS} ]]; then
@@ -73,7 +73,7 @@ function check_1210_cpu_subnuma_intel {
             _retval=2
 
         else
-            logCheckOk "Intel's <SubNUMA/CoD> is disabled. (SAP Note ${sapnote:-})"
+            logCheckOk "Intel's <SubNUMA/CoD> is disabled (SAP Note ${sapnote:-})"
             _retval=0
         fi
 

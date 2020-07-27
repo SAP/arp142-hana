@@ -44,12 +44,12 @@ function check_1250_cpu_hyperthreading_intel {
 
             if [[ ${LIB_PLATF_CPU_THREADSPERCORE:-} -eq 1 ]]; then
 
-                logCheckWarning "Intel's Hyperthreading on ${LIB_PLATF_CPU_SOCKETS} Socket system NOT enabled. (SAP Note ${sapnote:-})"
+                logCheckWarning "Intel's Hyperthreading on ${LIB_PLATF_CPU_SOCKETS} Socket system NOT enabled (SAP Note ${sapnote:-})"
                 _retval=1
 
             else
 
-                logCheckOk "Intel's Hyperthreading on ${LIB_PLATF_CPU_SOCKETS} Socket system enabled. (SAP Note ${sapnote:-})"
+                logCheckOk "Intel's Hyperthreading on ${LIB_PLATF_CPU_SOCKETS} Socket system enabled (SAP Note ${sapnote:-})"
                 _retval=0
 
             fi
@@ -66,12 +66,12 @@ function check_1250_cpu_hyperthreading_intel {
 
             if [[ ${LIB_PLATF_CPU_THREADSPERCORE:-} -lt 1 ]]; then
 
-                logCheckError "Intel's Hyperthreading on ${max_cpu_sockets_with_hyperthreads}+ Socket system NOT disabled. (SAP Note ${sapnote:-})"
+                logCheckError "Intel's Hyperthreading on ${max_cpu_sockets_with_hyperthreads}+ Socket system NOT disabled (SAP Note ${sapnote:-})"
                 _retval=2
 
             else
 
-                logCheckOk "Intel's Hyperthreading on ${max_cpu_sockets_with_hyperthreads}+ Socket system disabled. (SAP Note ${sapnote:-})"
+                logCheckOk "Intel's Hyperthreading on ${max_cpu_sockets_with_hyperthreads}+ Socket system disabled (SAP Note ${sapnote:-})"
                 _retval=0
 
             fi

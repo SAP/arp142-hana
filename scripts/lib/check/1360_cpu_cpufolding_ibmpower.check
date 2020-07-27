@@ -23,7 +23,7 @@ function check_1360_cpu_cpufolding_ibmpower {
             logCheckError "pseries-energy RPM is installed. Remove this RPM (SAP Note ${sapnote:-})"
             _retval=2
         else
-            logCheckOk "pseries-energy RPM is not installed. (SAP Note ${sapnote:-})"
+            logCheckOk "pseries-energy RPM is not installed (SAP Note ${sapnote:-})"
             _retval=0
         fi
 

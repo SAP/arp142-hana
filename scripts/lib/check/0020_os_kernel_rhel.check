@@ -129,10 +129,10 @@ function check_0020_os_kernel_rhel {
             # returns 0 if equal, 1 if first is higher, 2 if second is higher
             LIB_FUNC_COMPARE_VERSIONS "${normalized_kernelversion}" "${normalized_goodversion}"
             if [[ $? -eq 2 ]]; then
-                logCheckError "Linux kernel must be upgraded. (SAP Note ${sapnote:-}) (is: ${OS_LEVEL}, should be: >=${_goodversion})"
+                logCheckError "Linux kernel must be upgraded (SAP Note ${sapnote:-}) (is: ${OS_LEVEL}, should be: >=${_goodversion})"
                 _retval=2
             else
-                logCheckOk "Linux kernel version is at required level. (SAP Note ${sapnote:-}) (is: ${OS_LEVEL})"
+                logCheckOk "Linux kernel version is at required level (SAP Note ${sapnote:-}) (is: ${OS_LEVEL})"
                 _retval=0
             fi
 

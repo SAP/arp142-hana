@@ -43,7 +43,7 @@ function check_2220_numa_topology_updates_ibmpower_sles {
 
         if [[ ! -r '/proc/powerpc/topology_updates' ]]; then
 
-            logCheckWarning "Parameter </proc/powerpc/topology_updates> NOT readable. (SAP Note ${sapnote:-}) (is: Unknown, should be: off)"
+            logCheckWarning "Parameter </proc/powerpc/topology_updates> NOT readable (SAP Note ${sapnote:-}) (is: Unknown, should be: off)"
             _retval=1
 
         else
@@ -53,12 +53,12 @@ function check_2220_numa_topology_updates_ibmpower_sles {
 
             if [[ "${topology_updates:-}" == 'off' ]]; then
 
-                logCheckOk "Parameter </proc/powerpc/topology_updates> set as recommended. (SAP Note ${sapnote:-}) (is: off)"
+                logCheckOk "Parameter </proc/powerpc/topology_updates> set as recommended (SAP Note ${sapnote:-}) (is: off)"
                 _retval=0
 
             else
 
-                logCheckError "Parameter </proc/powerpc/topology_updates> NOT set as recommended. (SAP Note ${sapnote:-}) (is: on, should be: off)"
+                logCheckError "Parameter </proc/powerpc/topology_updates> NOT set as recommended (SAP Note ${sapnote:-}) (is: on, should be: off)"
                 _retval=2
 
             fi

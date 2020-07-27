@@ -46,7 +46,7 @@ function check_1310_cpu_powersavings_ibmpower {
 
     if [[ ${_retval} -eq 99 && -z ${LIB_PLATF_POWER_POWERMODE:-} ]]; then
 
-            logCheckError "Power Savings Mode NOT known. (SAP Note ${sapnote:-}) (is: Unknown, should be: None)"
+            logCheckError "Power Savings Mode NOT known (SAP Note ${sapnote:-}) (is: Unknown, should be: None)"
             _retval=2
     fi
 
@@ -84,13 +84,13 @@ function check_1310_cpu_powersavings_ibmpower {
 
         if [[ "${pwr_system_mode}" == '0002' ]]; then
 
-            logCheckOk "Power Savings Mode set as recommended. (SAP Note ${sapnote:-}) (is: None)"
+            logCheckOk "Power Savings Mode set as recommended (SAP Note ${sapnote:-}) (is: None)"
             _retval=0
 
         else
 
             pwr_system_txt=$(LIB_FUNC_TRANSFORM_POWER_POWERMODE "${pwr_system_mode}")
-            logCheckError "Power Savings Mode NOT set as recommended. (SAP Note ${sapnote:-}) (is: ${pwr_system_txt}, should be: None)"
+            logCheckError "Power Savings Mode NOT set as recommended (SAP Note ${sapnote:-}) (is: ${pwr_system_txt}, should be: None)"
             _retval=2
 
         fi

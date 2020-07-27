@@ -64,7 +64,7 @@ function check_0050_os_release_kernel_sles {
             15.1*)  kernel_low="${sles151[0]}" ; kernel_high="${sles151[1]}" ;;
 
             *)
-                    logCheckWarning 'CHECK does not support SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                    logCheckWarning 'CHECK does not support SLES release' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
                     _retval=1
                 ;;
         esac
@@ -83,7 +83,7 @@ function check_0050_os_release_kernel_sles {
         LIB_FUNC_COMPARE_VERSIONS "${kernelversion}" "${kernel_low}"
         if [[ $? -eq 2 ]]; then
 
-            logCheckError "Linux kernel does NOT match SLES release and must be changed. (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${OS_LEVEL}, must be >= ${kernel_low}.*)"
+            logCheckError "Linux kernel does NOT match SLES release and must be changed (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${OS_LEVEL}, must be >= ${kernel_low}.*)"
             _retval=2
 
         else
@@ -91,12 +91,12 @@ function check_0050_os_release_kernel_sles {
             LIB_FUNC_COMPARE_VERSIONS "${kernelversion}" "${kernel_high}"
             if [[ $? -eq 1 ]]; then
 
-            logCheckError "Linux kernel does NOT match SLES release and must be changed. (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${OS_LEVEL}, must be <= ${kernel_high}.*)"
+            logCheckError "Linux kernel does NOT match SLES release and must be changed (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${OS_LEVEL}, must be <= ${kernel_high}.*)"
             _retval=2
 
             else
 
-                logCheckOk "Linux kernel matches SLES release. (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${OS_LEVEL})"
+                logCheckOk "Linux kernel matches SLES release (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${OS_LEVEL})"
                 _retval=0
 
             fi

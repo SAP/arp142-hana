@@ -84,7 +84,7 @@ function check_0800_sap_host_agent {
                 LIB_FUNC_COMPARE_VERSIONS "${normalized_hostagent_version_curr}" "${normalized_hostagent_buggy_low}"
                 if [[ $? -lt 2 ]]; then
 
-                    logCheckError "SAP Host Agent must be upgraded. (SAP Note ${sapnoteFIX:-},${sapnoteLATEST:-}) (is: ${hostagent_version_curr}, should be: >=${hostagent_version_exp})"
+                    logCheckError "SAP Host Agent must be upgraded (SAP Note ${sapnoteFIX:-},${sapnoteLATEST:-}) (is: ${hostagent_version_curr}, should be: >=${hostagent_version_exp})"
                     _retval=2
                 fi
 
@@ -97,10 +97,10 @@ function check_0800_sap_host_agent {
 
             LIB_FUNC_COMPARE_VERSIONS "${normalized_hostagent_version_curr}" "${normalized_hostagent_version_exp}"
             if [[ $? -eq 2 ]]; then
-                logCheckWarning "SAP Host Agent should be upgraded. (SAP Note ${sapnoteLATEST:-}) (is: ${hostagent_version_curr}, should be: >=${hostagent_version_exp})"
+                logCheckWarning "SAP Host Agent should be upgraded (SAP Note ${sapnoteLATEST:-}) (is: ${hostagent_version_curr}, should be: >=${hostagent_version_exp})"
                 _retval=1
             else
-                logCheckOk "SAP Host Agent is at required level. (SAP Note ${sapnoteLATEST:-}) (is: ${hostagent_version_curr})"
+                logCheckOk "SAP Host Agent is at required level (SAP Note ${sapnoteLATEST:-}) (is: ${hostagent_version_curr})"
                 _retval=0
             fi
 
