@@ -23,7 +23,6 @@ function check_1700_irqbalance_service {
 
     local sapnote
     local cmdline
-    local service
 
     # PRECONDITION
     if LIB_FUNC_IS_SLES ; then
@@ -59,6 +58,7 @@ function check_1700_irqbalance_service {
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
+        local service
         local cmdline_service
 
         for service in "${_irq_balance[@]}"; do
