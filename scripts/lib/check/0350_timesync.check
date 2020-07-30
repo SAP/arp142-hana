@@ -15,30 +15,20 @@ function check_0350_timesync {
     #2009879 - SAP HANA Guidelines for Red Hat Enterprise Linux (RHEL) Operating System
 
     local sapnote
-    local cmdline
+    local cmdline='systemctl'
 
     # PRECONDITION
     if LIB_FUNC_IS_SLES ; then
 
         sapnote="${sapnote_sles}"
 
-        case "${OS_VERSION}" in
-
-            11.*)   cmdline='systemd' ;;
-            *)      cmdline='systemctl' ;;
-
-        esac
+        [[ "${OS_VERSION}" == '11.'* ]] && cmdline='systemd'
 
     elif LIB_FUNC_IS_RHEL ; then
 
         sapnote="${sapnote_rhel}"
 
-        case "${OS_VERSION}" in
-
-            6.*)    cmdline='systemd' ;;
-            *)      cmdline='systemctl' ;;
-
-        esac
+        [[ "${OS_VERSION}" == '6.'* ]] && cmdline='systemd'
 
     else
 
