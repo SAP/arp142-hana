@@ -7,12 +7,10 @@ function check_1700_irqbalance_service {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote_sles='#1944799'
-    local -r sapnote_rhel='#2009879'
+    local -r sapnote='#2369910'
     # MODIFICATION SECTION<<
 
-    #1944799 - SAP HANA Guidelines for SLES Operating System Installation
-    #2009879 - SAP HANA Guidelines for Red Hat Enterprise Linux (RHEL) Operating System
+    #2369910 - SAP Software on Linux: General information
 
     local -ar _irq_balance=(\
                         'irqbalance' \
@@ -21,33 +19,16 @@ function check_1700_irqbalance_service {
                         'sgi_irqbalance' \
                         )
 
-    local sapnote
-    local cmdline
+    local cmdline='systemctl'
 
     # PRECONDITION
     if LIB_FUNC_IS_SLES ; then
 
-        sapnote="${sapnote_sles}"
-
-        case "${OS_VERSION}" in
-
-            11.*)   cmdline='systemd' ;;
-
-            *)      cmdline='systemctl' ;;
-
-        esac
+        [[ "${OS_VERSION}" == '11.'* ]] && cmdline='systemd'
 
     elif LIB_FUNC_IS_RHEL ; then
 
-        sapnote="${sapnote_rhel}"
-
-        case "${OS_VERSION}" in
-
-            6.*)    cmdline='systemd' ;;
-
-            *)      cmdline='systemctl' ;;
-
-        esac
+        [[ "${OS_VERSION}" == '6.'* ]] && cmdline='systemd'
 
     else
 
@@ -84,7 +65,7 @@ function check_1700_irqbalance_service {
 
     fi
 
-    #time sync active?
+    #irq balancing active?
     if [[ ${_retval} -eq 0 ]]; then
 
         logCheckOk "IRQ balancing is active (SAP Note ${sapnote:-}) (is: ${service})"
