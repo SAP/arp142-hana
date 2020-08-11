@@ -25,7 +25,7 @@ function check_0010_os_kernel_sles {
     local -ar sles150=('4.12.14-23.1' '#2684254')
     local -ar sles150power=('4.12.14-150.17.1' '#2188482')
     local -ar sles151=('4.12.14-195.1' '#2684254')
-    local -ar sles151power=('4.12.14-195.1' '#2774105')
+    local -ar sles151power=('4.12.14-197.34.1' '#2945828')
     # MODIFICATION SECTION<<
 
     #2240716 - SAP HANA DB: Recommended OS settings for SLES 11 / SLES for SAP Applications 11 SP4
@@ -34,6 +34,7 @@ function check_0010_os_kernel_sles {
     #2774105 - Kernel Panic With Hardware Transactional Memory on Linux on Power
     #2588395 - Erroneous Accounting of Shared Memory in Multitenant Database Container Systems Running in High Isolation Level on Linux
     #2188482 - SAP HANA on IBM Power Systems: Allowed Hardware
+    #2945828 - Virtual PMEM on IBM POWER Systems - Patch Recommendations
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_SLES; then
