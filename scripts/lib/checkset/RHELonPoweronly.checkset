@@ -20,6 +20,7 @@
 1375_cpu_scheduler_parameter_ibmpower_rhel
 1700_irqbalance_service
 2000_transparent_hugepages
+2001_persistent_hugepages
 2100_active_memory_sharing_ibmpower
 2150_transactional_memory_ibmpower
 2200_numa_balancing

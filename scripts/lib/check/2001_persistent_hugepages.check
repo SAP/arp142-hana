@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+function check_2001_persistent_hugepages {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2563075'     # 2563075 - Missing memory on Hugepages enabled Linux system
+    # MODIFICATION SECTION<<
+
+    # PRECONDITIONS
+    if [[ ! -f '/proc/sys/vm/nr_hugepages' ]]; then
+
+        logCheckSkipped "Persistent Hugepages not configurable (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+        # CHECK
+
+        local nr_hugepages
+        nr_hugepages="$(</proc/sys/vm/nr_hugepages)"
+
+        if [[ ${nr_hugepages} -ne 0 ]] ; then
+            logCheckError "Persistent Hugepages are configured (SAP Note ${sapnote:-})(is: ${nr_hugepages}, must be: 0)"
+            _retval=2
+        else
+            logCheckOk "Persistent Hugepages are not configured (SAP Note ${sapnote:-})"
+            _retval=0
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
