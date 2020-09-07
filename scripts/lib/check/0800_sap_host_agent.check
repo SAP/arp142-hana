@@ -49,22 +49,32 @@ function check_0800_sap_host_agent {
             while IFS=$'\n' read -r line; do versions+=("$line"); done < <(($saphostexec_path -version |  grep -iE '(kernel release|patch number|change number)') 2>/dev/null)
         fi
 
-        versions[0]=$(LIB_FUNC_TRIM_LEFT "${versions[0]/kernel release}")
-        versions[1]=$(LIB_FUNC_TRIM_LEFT "${versions[1]/patch number}")
-        versions[2]=$(LIB_FUNC_TRIM_LEFT "${versions[2]/*change number}")
-        local hostagent_version_curr="${versions[0]}.${versions[1]}.${versions[2]}"
-
+        local _version
+        local hostagent_version_curr
         local normalized_hostagent_version_curr
+
+        if [ ${#versions[@]} -ne 0 ]; then
+
+            local _patch; local _change
+            _version=$(LIB_FUNC_TRIM_LEFT "${versions[0]/kernel release}")
+            _patch=$(LIB_FUNC_TRIM_LEFT "${versions[1]/patch number}")
+            _change=$(LIB_FUNC_TRIM_LEFT "${versions[2]/*change number}")
+            hostagent_version_curr="${_version}.${_patch}.${_change}"
+
+            LIB_FUNC_NORMALIZE_KERNEL "${hostagent_version_curr}"
+            normalized_hostagent_version_curr="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
+
+        else
+            _version='0'
+            hostagent_version_curr='0.0.0'
+        fi
+
         local normalized_hostagent_version_exp
-
-        LIB_FUNC_NORMALIZE_KERNEL "${hostagent_version_curr}"
-        normalized_hostagent_version_curr="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
-
         LIB_FUNC_NORMALIZE_KERNEL "${hostagent_version_exp}"
         normalized_hostagent_version_exp="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
 
         #deprecated version 7.20?
-        if [[ ${versions[0]} -lt 721 ]]; then
+        if [[ ${_version} -lt 721 ]]; then
             logCheckError "SAP Host Agent Version is deprecated, please upgrade to >=7.21 (SAP Note ${sapnote721:-})"
             _retval=2
 
