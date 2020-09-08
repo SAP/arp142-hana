@@ -1,0 +1,177 @@
+#!/usr/bin/env bash
+
+function check_2230_numa_distribution_ibmpower {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2923962'
+    # MODIFICATION SECTION<<
+
+    #2923962 - Check SAP HANA NUMA Layout on IBM Power Systems Virtual Servers
+
+    # Detailed IBM Documentation can be found on IBM Techdocs in the
+    # "SAP HANA on IBM Power Systems and IBM System Storage - Guides"
+    # (http://www.ibm.com/support/techdocs/atsmastr.nsf/WebIndex/WP102502).
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_IBMPOWER ; then
+
+        logCheckSkipped 'Not running on IBM Power. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+
+        local -a numa_memory_totals
+        local -a numa_lcpu_lists
+
+        #\K remove MATCH til this position .. keep number only | -h no file name
+        #<(grep -h -oP -m1 'MemTotal: +\K([0-9]+)' -r /sys/devices/system/node/node*/meminfo)
+        #<(grep . -hr /sys/devices/system/node/node*/cpulist)
+
+        # read into arrays (mapfile = bash4+)
+        if [[ ${BASH_VERSINFO[0]:-} -ge 4 ]] ; then
+            mapfile -t numa_memory_totals < <(grep -h -m1 'MemTotal' -r /sys/devices/system/node/node*/meminfo)
+            mapfile -t numa_lcpu_lists < <(grep . -r /sys/devices/system/node/node*/cpulist)
+        else
+            while IFS=$'\n' read -r line; do numa_memory_totals+=("$line"); done < <(grep -h -m1 'MemTotal' -r /sys/devices/system/node/node*/meminfo)
+            while IFS=$'\n' read -r line; do numa_lcpu_lists+=("$line"); done < <(grep . -r /sys/devices/system/node/node*/cpulist)
+        fi
+
+        if [[ ${#numa_memory_totals[@]} -ne ${#numa_lcpu_lists[@]} ]]; then
+
+            logCheckWarning "Different Number of Memory-NUMA and CPU-NUMA nodes extracted !"
+            _retval=77
+
+        fi
+
+    fi
+
+    #CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local -i curr_node
+        local -i curr_node_memory
+        local -i curr_node_cpu
+
+        local -i total_memory=0
+        local -i total_cpus=0
+        local -a totals=()
+
+        local rx_memory='^Node +([0-9]+) +MemTotal: +([0-9]+) +(.*)$'       #Node 0 MemTotal:       759310156 kB
+        local rx_cpu='node([0-9]+).*:([0-9]+)-([0-9]+)'                     #/sys/devices/system/node/node0/cpulist:0-9
+
+        for ((i=0; i < ${#numa_memory_totals[@]}; i+=1)); do
+
+            if [[ ${numa_memory_totals[$i]} =~ ${rx_memory} ]]; then
+
+                logTrace "${BASH_REMATCH[0]}"
+                #Node 0 MemTotal:       759310156 kB
+                # "Node matched part is ${BASH_REMATCH[1]}"     = 0
+                # "Value matched part is ${BASH_REMATCH[2]}"    = 759310156
+                # "Unit matched part is ${BASH_REMATCH[3]}"     = kB
+
+                curr_node=${BASH_REMATCH[1]:-}
+                curr_node_memory=${BASH_REMATCH[2]:0}
+
+                if [[ ${numa_lcpu_lists[$i]} =~ ${rx_cpu} ]]; then
+
+                    logTrace "${BASH_REMATCH[0]}"
+                    #/sys/devices/system/node/node4/cpulist:0-87
+                    # "Node matched part is ${BASH_REMATCH[1]}"     = 4
+                    # "Value lower matched part is ${BASH_REMATCH[2]}"    = 0
+                    # "Value upper matched part is ${BASH_REMATCH[3]}"    = 87
+
+                    if [[ ${curr_node} -eq ${BASH_REMATCH[1]} ]]; then
+                        curr_node_cpu=$((BASH_REMATCH[3]+1-BASH_REMATCH[2]))
+                    else
+                        logCheckWarning "NUMA Memory Node <${curr_node}> does NOT match NUMA CPU Node <${BASH_REMATCH[1]}>!"
+                        curr_node_cpu=0
+                    fi
+
+                else
+
+                    logCheckWarning "NUMA CPU Node NOT processed <${numa_lcpu_lists[$i]}>!"
+                    _retval=77
+                    break
+
+                fi
+
+                logTrace "NUMA node ${curr_node}, MEM: ${curr_node_memory}, #CPU: ${curr_node_cpu}"
+
+                if [[ ${curr_node_memory} -eq 0 && ${curr_node_cpu} -eq 0 ]]; then
+
+                    continue   # ignore NUMA 0
+
+                elif [[ ${curr_node_memory} -eq 0 ]]; then
+
+                    logCheckError "NUMA node without memory (Node ${curr_node}, MEM: 0, #CPU: ${curr_node_cpu})"
+                    _retval=88
+                    break
+                fi
+
+            else
+
+                logCheckWarning "NUMA Memory Node NOT processed <${numa_memory_totals[$i]}>!"
+                _retval=77
+                break
+
+            fi
+
+            ((total_memory+=curr_node_memory))
+            ((total_cpus+=curr_node_cpu))
+            totals+=( $((curr_node_memory/curr_node_cpu)) )
+
+        done
+
+        local -i avg_ratio
+        local -i margin
+        local -i upper_bound
+        local -i lower_bound
+
+        avg_ratio=$((total_memory/total_cpus))
+        margin=$((avg_ratio*1/10))  #50% margin ??
+        upper_bound=$((avg_ratio+margin))
+        lower_bound=$((avg_ratio-margin))
+
+        for ((i=0; i < ${#totals[@]}; i+=1)); do
+
+            if [[ ${totals[$i]} -lt ${lower_bound} || ${totals[$i]} -gt ${upper_bound} ]]; then
+
+                logCheckWarning "NUMA distribution - avgRatio ${avg_ratio}, margin +/-${margin} - Index $i: ${totals[$i]}"
+                _retval=66
+                break
+            fi
+
+        done
+
+    fi
+
+    if [[ ${_retval} -eq 99 ]]; then
+
+            logCheckOk "NUMA distribution - Memory/Core as expected (SAP Note ${sapnote:-})"
+            _retval=0
+
+    elif [[ ${_retval} -eq 88 ]]; then
+
+            logCheckError "NUMA distribution - node without memory detected (SAP Note ${sapnote:-})"
+            _retval=2
+
+    elif [[ ${_retval} -eq 77 ]]; then
+
+            logCheckWarning "NUMA distribution - check not possible. Verify manually (SAP Note ${sapnote:-})"
+            _retval=1
+
+    elif [[ ${_retval} -eq 66 ]]; then
+
+            logCheckWarning "NUMA distribution - unbalanced NUMA core/memory ratio (SAP Note ${sapnote:-})"
+            _retval=1
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
