@@ -24,7 +24,7 @@ function check_0002_os_support_sles {
 
     local -ar _sles_15=(\
                         '15.0' '31 Dec 2019'    '31 Dec 2022'   '31 Dec 2022'   \
-                        '15.1' '31 Dec 2020'    '31 Dec 2023'   '31 Dec 2023'   \
+                        '15.1' '31 Jan 2021'    '31 Jan 2024'   '31 Jan 2024'   \
                         )
     # MODIFICATION SECTION<<
 
@@ -49,12 +49,12 @@ function check_0002_os_support_sles {
 
         11.4 )      _sles_all+=("${_sles_11[@]}") ;;
 
-        12.[0] )
+        12.[0-1] )
                 logCheckError "SLES version has reached its end of lifetime by SUSE - upgrade to SLES 12.2+ (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
                 _retval=2
                 ;;
 
-        12.[1-5]*)  _sles_all+=("${_sles_12[@]}") ;;
+        12.[2-5]*)  _sles_all+=("${_sles_12[@]}") ;;
 
         15.[0-1] )  _sles_all+=("${_sles_15[@]}") ;;
 
