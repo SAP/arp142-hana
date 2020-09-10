@@ -7,8 +7,11 @@ function check_0040_os_rhel_ibmpower {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#2235581'     # 2235581 - SAP HANA: Supported Operating Systems
+    local -r sapnote='#2235581,2055470'
     # MODIFICATION SECTION<<
+
+    #2235581 - SAP HANA: Supported Operating Systems
+    #2055470 - HANA on POWER Planning and Installation Specifics - Central Note
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_IBMPOWER ; then
@@ -22,18 +25,44 @@ function check_0040_os_rhel_ibmpower {
         _retval=3
 
     else
-        # CHECK
-        if [[ "${LIB_PLATF_ARCHITECTURE}" == 'ppc64le' ]] ; then
+    # CHECK
+        if [[ "${LIB_PLATF_ARCHITECTURE}" != 'ppc64le' ]] ; then
+
+            logCheckError "RHEL on IBM POWER with BigEndian architecture is NOT supported (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
+            _retval=2
+
+        elif [[ "${_lib_platf_cpu:-}" =~ POWER7 ]]; then
+
+            logCheckError "RHEL on IBM POWER7 is NOT supported (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
+            _retval=2
+
+        elif [[ "${_lib_platf_cpu:-}" =~ POWER8 ]]; then
 
             case "${OS_VERSION}" in
 
                 7.[3-7]* | 8.[0-1] )
-                        logCheckOk "RHELonPower version is supported (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
+                        logCheckOk "RHEL release on IBM POWER8 is supported (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
                         _retval=0
                     ;;
 
                 *)
-                        logCheckError "RHELonPower version with LittleEndian architecture is NOT supported (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
+                        logCheckError "RHEL release on IBM POWER8 is NOT supported (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
+                        _retval=2
+                    ;;
+
+            esac
+
+        elif [[ "${_lib_platf_cpu:-}" =~ POWER9 ]]; then
+
+            case "${OS_VERSION}" in
+
+                8.[0-1] )
+                        logCheckOk "RHEL release on IBM POWER9 is supported (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
+                        _retval=0
+                    ;;
+
+                *)
+                        logCheckError "RHEL release on IBM POWER9 is NOT supported (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
                         _retval=2
                     ;;
 
@@ -41,10 +70,11 @@ function check_0040_os_rhel_ibmpower {
 
         else
 
-                logCheckError "RHELonPower with BigEndian architecture is NOT supported (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
-                _retval=2
+            logCheckError "CHECK does not support IBM POWER platform (SAP Note ${sapnote:-}) (is: ${_lib_platf_cpu:-},${LIB_PLATF_ARCHITECTURE})"
+            _retval=2
 
         fi
+
     fi
 
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
