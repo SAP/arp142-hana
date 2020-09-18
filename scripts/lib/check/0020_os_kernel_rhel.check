@@ -37,8 +37,6 @@ function check_0020_os_kernel_rhel {
     #2694292 - SAP HANA DB: Recommended OS settings for RHEL 6.10
     #2292690 - SAP HANA DB: Recommended OS settings for RHEL 7
     #2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
-    #2588395 - Erroneous Accounting of Shared Memory in Multitenant Database Container Systems Running in High Isolation Level on Linux
-
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_RHEL; then

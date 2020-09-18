@@ -29,6 +29,7 @@ function check_5010_io_scheduler_blockdevices {
 
     # 1944799 - SAP HANA Guidelines for SLES Operating System Installation
     # 1984787 - SUSE LINUX Enterprise Server 12: Installation notes
+    # 2578899 - SUSE Linux Enterprise Server 15: Installation Note
     # 2009879 - SAP HANA Guidelines for Red Hat Enterprise Linux (RHEL) Operating System
     # 2161991 - VMware vSphere configuration guidelines
     # 1400911 - Linux: SAP NetWeaver on Red Hat KVM - Kernel-based Virtual Machine
