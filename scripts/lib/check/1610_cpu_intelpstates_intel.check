@@ -7,7 +7,8 @@ function check_1610_cpu_intelpstates_intel {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#1275776,#2684254'
+    local -r sapnote_12='#2205917,#1275776'
+    local -r sapnote_15='#2684254,#1275776'
 
     local -ar _intel_pstate_parameter=(\
                                     'no_turbo'            0 \
@@ -18,6 +19,7 @@ function check_1610_cpu_intelpstates_intel {
 
     #set by sapconf/saptune
     #1275776 - Linux: Preparing SLES for SAP environments
+    #2205917 - SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
     #2684254 - SAP HANA DB: Recommended OS settings for SLES 15 / SLES for SAP Applications 15
 
     # PRECONDITIONS
@@ -37,7 +39,21 @@ function check_1610_cpu_intelpstates_intel {
         _retval=3
 
     else
-        # CHECK
+
+        local sapnote
+
+        case "${OS_VERSION}" in
+
+            11.* | 12.*) sapnote="${sapnote_12}" ;;
+            *)           sapnote="${sapnote_15}" ;;
+
+        esac
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
         local -i _curr_value
         local -i _reco_value
         local    _parameter
