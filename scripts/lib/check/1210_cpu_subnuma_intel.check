@@ -6,6 +6,9 @@ function check_1210_cpu_subnuma_intel {
 
     local -i _retval=99
 
+    #CoD - Cluster on Die       - v3/v4
+    #SNC - Sub NUMA Clustering  - Skylake+
+
     # MODIFICATION SECTION>>
     local -r sapnote_sles12='#2205917'  # SAP HANA DB: Recommended OS settings for SLES 12
     local -r sapnote_sles15='#2684254'  # SAP HANA DB: Recommended OS settings for SLES 15
@@ -68,8 +71,8 @@ function check_1210_cpu_subnuma_intel {
             _retval=2
 
         elif [[ ${LIB_PLATF_CPU_NUMANODES} -lt ${LIB_PLATF_CPU_SOCKETS} ]]; then
-            #e.g. cmdline numa=off
-            logCheckError "NUMA configuration looks strange. NUMA nodes < CPU Sockets (SAP Note ${sapnote:-}) (is: ${LIB_PLATF_CPU_NUMANODES}, must be: ${LIB_PLATF_CPU_SOCKETS})"
+            #e.g. cmdline numa=off, NUMA switched off by BIOS interleave enabled
+            logCheckError "NUMA optimizations disabled. NUMA nodes < CPU Sockets (SAP Note ${sapnote:-}) (is: ${LIB_PLATF_CPU_NUMANODES}, must be: ${LIB_PLATF_CPU_SOCKETS})"
             _retval=2
 
         else
