@@ -11,6 +11,9 @@ function check_0620_systemd_pam_config_sles {
     local -r susekb='#7022001'  #"cgroup: fork rejected by pids controller in..." found in system log
     # MODIFICATION SECTION<<
 
+    #https://www.suse.com/de-de/support/kb/doc/?id=7022001
+    #https://documentation.suse.com/sles/15-SP1/single-html/SLES-security/index.html#sec-pam-manual-config
+
     # PRECONDITIONS
     if ! LIB_FUNC_IS_SLES ; then
 
@@ -22,17 +25,18 @@ function check_0620_systemd_pam_config_sles {
         logCheckSkipped 'systemd RPM is not installed. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif [[ ! -e  '/etc/pam.d/common-session' ]] ; then
-
-        logCheckSkipped 'PAM common-session does not exist. Skipping' "<${FUNCNAME[0]}>"
-        _retval=3
-
     fi
 
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-        if grep -q -E "${reco_regex}" /etc/pam.d/common-session ; then
+        if [[ ! -e  '/etc/pam.d/common-session' ]] ; then
+
+            logCheckError 'PAM common-session does not exist' "(SUSE KB ${susekb:-})"
+            logCheckError 'more information - https://www.suse.com/de-de/support/kb/doc/?id=7022001'
+            _retval=2
+
+        elif grep -q -E "${reco_regex}" /etc/pam.d/common-session ; then
 
             logCheckOk "PAM common-session has expected <pam_systemd.so> entry (SUSE KB ${susekb:-})"
             _retval=0
@@ -40,6 +44,7 @@ function check_0620_systemd_pam_config_sles {
         else
 
             logCheckError "PAM common-session does NOT have expected <pam_systemd.so> entry (SUSE KB ${susekb:-})"
+            logCheckError 'Not including the pam_systemd.so can cause problems with systemd task limits'
             logCheckError 'more information - https://www.suse.com/de-de/support/kb/doc/?id=7022001'
             _retval=2
 
