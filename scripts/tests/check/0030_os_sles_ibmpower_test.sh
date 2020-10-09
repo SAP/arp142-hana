@@ -9,7 +9,7 @@ LIB_FUNC_IS_IBMPOWER() { return 0 ; }
 LIB_FUNC_IS_SLES() { return 0 ; }
 
 LIB_PLATF_ARCHITECTURE=''
-_lib_platf_cpu=''
+LIB_PLATF_CPU=''
 OS_VERSION=''
 OS_LEVEL=''
 declare -i LIB_PLATF_RAM_MIB_AVAILABLE
@@ -19,7 +19,7 @@ test_power6_bigendian_not_supported() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64'
-    _lib_platf_cpu='POWER6 (architected), altivec supported'
+    LIB_PLATF_CPU='POWER6 (architected), altivec supported'
 
     #act
     check_0030_os_sles_ibmpower
@@ -32,7 +32,7 @@ test_power7_bigendian_sles_not_supported() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64'
-    _lib_platf_cpu='POWER7 (architected), altivec supported'
+    LIB_PLATF_CPU='POWER7 (architected), altivec supported'
     OS_VERSION='11.3'
 
     #act
@@ -46,7 +46,7 @@ test_power8_bigendian_no_bigmem_less4T() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64'
-    _lib_platf_cpu='POWER8 (architected), altivec supported'
+    LIB_PLATF_CPU='POWER8 (architected), altivec supported'
     OS_VERSION='11.4'
     OS_LEVEL='xxx'
     LIB_PLATF_RAM_MIB_AVAILABLE=4194304
@@ -62,7 +62,7 @@ test_power8_bigendian_no_bigmem_great4T() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64'
-    _lib_platf_cpu='POWER8 (architected), altivec supported'
+    LIB_PLATF_CPU='POWER8 (architected), altivec supported'
     OS_VERSION='11.4'
     OS_LEVEL='xxx'
     LIB_PLATF_RAM_MIB_AVAILABLE=4194305
@@ -78,7 +78,7 @@ test_power8_bigendian_sles_bigmem_ok() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64'
-    _lib_platf_cpu='POWER8 (architected), altivec supported'
+    LIB_PLATF_CPU='POWER8 (architected), altivec supported'
     OS_VERSION='11.4'
     OS_LEVEL='xxx-bigmem'
 
@@ -93,7 +93,7 @@ test_power6_littleendian_not_supported() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
-    _lib_platf_cpu='POWER6 (architected), altivec supported'
+    LIB_PLATF_CPU='POWER6 (architected), altivec supported'
 
     #act
     check_0030_os_sles_ibmpower
@@ -106,7 +106,7 @@ test_power7_littleendian_sles_not_supported() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
-    _lib_platf_cpu='POWER7 (architected), altivec supported'
+    LIB_PLATF_CPU='POWER7 (architected), altivec supported'
     OS_VERSION='11.4'
 
     #act
@@ -120,7 +120,7 @@ test_power8_littleendian_sles_supported() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
-    _lib_platf_cpu='POWER8 (architected), altivec supported'
+    LIB_PLATF_CPU='POWER8 (architected), altivec supported'
     OS_VERSION='12.1'
 
     #act
@@ -134,7 +134,7 @@ test_power9_littleendian_sles_not_supported() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
-    _lib_platf_cpu='POWER9 (architected), altivec supported'
+    LIB_PLATF_CPU='POWER9 (architected), altivec supported'
     OS_VERSION='12.2'
 
     #act
@@ -148,7 +148,7 @@ test_power9_littleendian_sles_supported() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
-    _lib_platf_cpu='POWER9 (architected), altivec supported'
+    LIB_PLATF_CPU='POWER9 (architected), altivec supported'
     OS_VERSION='15.1'
 
     #act
@@ -162,7 +162,7 @@ test_powerX_not_supported() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
-    _lib_platf_cpu='POWERx (architected), altivec supported'
+    LIB_PLATF_CPU='POWERx (architected), altivec supported'
 
     #act
     check_0030_os_sles_ibmpower
@@ -187,7 +187,7 @@ oneTimeSetUp() {
 setUp() {
 
     LIB_PLATF_ARCHITECTURE=
-    _lib_platf_cpu=
+    LIB_PLATF_CPU=
     OS_VERSION=
     OS_LEVEL=
     LIB_PLATF_RAM_MIB_AVAILABLE=0

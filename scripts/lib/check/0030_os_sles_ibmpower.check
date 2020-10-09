@@ -30,6 +30,9 @@ function check_0030_os_sles_ibmpower {
 
     else
     # CHECK
+
+        local -r _lib_platf_cpu=${LIB_PLATF_CPU%%[[:space:]]*}
+
         if [[ "${LIB_PLATF_ARCHITECTURE}" == 'ppc64' ]]; then
 
             #BigEndian
