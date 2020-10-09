@@ -9,7 +9,7 @@ LIB_FUNC_IS_IBMPOWER() { return 0 ; }
 LIB_FUNC_IS_RHEL() { return 0 ; }
 
 LIB_PLATF_ARCHITECTURE=''
-_lib_platf_cpu=''
+LIB_PLATF_CPU=''
 OS_VERSION=''
 
 test_bigendian_not_supported() {
@@ -28,7 +28,7 @@ test_power7_not_supported() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
-    _lib_platf_cpu='POWER7 (architected), altivec supported'
+    LIB_PLATF_CPU='POWER7 (architected), altivec supported'
 
     #act
     check_0040_os_rhel_ibmpower
@@ -41,7 +41,7 @@ test_power8_rhel_not_supported() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
-    _lib_platf_cpu='POWER8 (architected), altivec supported'
+    LIB_PLATF_CPU='POWER8 (architected), altivec supported'
     OS_VERSION='7.2'
 
     #act
@@ -55,7 +55,7 @@ test_power8_rhel_supported() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
-    _lib_platf_cpu='POWER8 (architected), altivec supported'
+    LIB_PLATF_CPU='POWER8 (architected), altivec supported'
     OS_VERSION='7.3'
 
     #act
@@ -69,7 +69,7 @@ test_power9_rhel_not_supported() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
-    _lib_platf_cpu='POWER9 (architected), altivec supported'
+    LIB_PLATF_CPU='POWER9 (architected), altivec supported'
     OS_VERSION='7.3'
 
     #act
@@ -83,7 +83,7 @@ test_power9_rhel_supported() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
-    _lib_platf_cpu='POWER9 (architected), altivec supported'
+    LIB_PLATF_CPU='POWER9 (architected), altivec supported'
     OS_VERSION='8.0'
 
     #act
@@ -97,7 +97,7 @@ test_powerX_not_supported() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
-    _lib_platf_cpu='POWERx (architected), altivec supported'
+    LIB_PLATF_CPU='POWERx (architected), altivec supported'
 
     #act
     check_0040_os_rhel_ibmpower
@@ -122,7 +122,7 @@ oneTimeSetUp() {
 setUp() {
 
     LIB_PLATF_ARCHITECTURE=
-    _lib_platf_cpu=
+    LIB_PLATF_CPU=
     OS_VERSION=
 
 }
