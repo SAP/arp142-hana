@@ -151,6 +151,42 @@ test_2numa_with_numa0_cpu_but_no_memory() {
     assertEquals "CheckError? RC" '2' "$?"
 }
 
+test_2numa_with_numa0_multiple_cpu_ranges_simple() {
+
+    #arrange
+    mem_nodes=()
+    mem_nodes+=('Node 0 MemTotal:       502777024 kB')
+    mem_nodes+=('Node 6 MemTotal:       502777024 kB')
+
+    cpu_nodes=()
+    cpu_nodes+=('/sys/devices/system/node/node0/cpulist:40-59,60-79')
+    cpu_nodes+=('/sys/devices/system/node/node6/cpulist:0-39')
+
+    #act
+    check_2230_numa_distribution_ibmpower
+
+    #assert
+    assertEquals "CheckOk? RC" '0' "$?"
+}
+
+test_2numa_with_numa0_multiple_cpu_ranges_complicated() {
+
+    #arrange
+    mem_nodes=()
+    mem_nodes+=('Node 0 MemTotal:       502777024 kB')
+    mem_nodes+=('Node 6 MemTotal:       502777024 kB')
+
+    cpu_nodes=()
+    cpu_nodes+=('/sys/devices/system/node/node0/cpulist:0-7,16-23,32-39,48-55')
+    cpu_nodes+=('/sys/devices/system/node/node6/cpulist:0-31')
+
+    #act
+    check_2230_numa_distribution_ibmpower
+
+    #assert
+    assertEquals "CheckOk? RC" '0' "$?"
+}
+
 test_2numa_with_numa0_memory_lt_margin() {
 
     #arrange

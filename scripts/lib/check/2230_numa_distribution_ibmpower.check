@@ -61,7 +61,8 @@ function check_2230_numa_distribution_ibmpower {
         local -a totals=()
 
         local rx_memory='^Node +([0-9]+) +MemTotal: +([0-9]+) +(.*)$'       #Node 0 MemTotal:       759310156 kB
-        local rx_cpu='node([0-9]+).*:(([0-9]+)\-([0-9]+))*'                 #/sys/devices/system/node/node0/cpulist:0-9
+        local rx_cpu='node([0-9]+).*:(.*)$'                                 #/sys/devices/system/node/node0/cpulist:40-59,60-79
+        local rx_cpu_range='([0-9]+)\-([0-9]+)'                             #40-59,60-79
 
         for ((i=0; i < ${#numa_memory_totals[@]}; i+=1)); do
 
@@ -78,12 +79,12 @@ function check_2230_numa_distribution_ibmpower {
 
                 if [[ ${numa_lcpu_lists[$i]} =~ ${rx_cpu} ]]; then
 
-                    logTrace "CPU node rx.match <${BASH_REMATCH[0]}>,<${BASH_REMATCH[1]}>,<${BASH_REMATCH[2]}>,<${BASH_REMATCH[3]}>,<${BASH_REMATCH[4]}>"
-                    #/sys/devices/system/node/node4/cpulist:0-87
+                    curr_node_cpu=0 #reset
+
+                    logTrace "CPU node rx.match <${BASH_REMATCH[0]}> <${BASH_REMATCH[1]}> <${BASH_REMATCH[2]}>"
+                    #/sys/devices/system/node/node4/cpulist:0-87,100-187
                     # "Node matched part is ${BASH_REMATCH[1]}"         = 4
-                    # "Value matched part is ${BASH_REMATCH[2]}"        = 0-87 or Empty
-                    # "Value lower matched part is ${BASH_REMATCH[3]}"  = 0 or Empty
-                    # "Value upper matched part is ${BASH_REMATCH[4]}"  = 87 or Empty
+                    # "Value matched part is ${BASH_REMATCH[2]}"        = 0-87,100-187 or Empty
 
                     if [[ ${curr_node} -ne ${BASH_REMATCH[1]} ]]; then
 
@@ -93,8 +94,23 @@ function check_2230_numa_distribution_ibmpower {
 
                     elif [[ -z ${BASH_REMATCH[2]} ]]; then
                         curr_node_cpu=0
+
                     else
-                        curr_node_cpu=$((BASH_REMATCH[4]-BASH_REMATCH[3]+1))    # 0-87
+
+                        IFS="," read -ra ranges <<< "${BASH_REMATCH[2]}"
+                        for element in "${ranges[@]}"
+                        do
+                            if [[ ${element} =~ ${rx_cpu_range} ]]; then
+                                logTrace "CPU range rx.match <${BASH_REMATCH[0]}> <${BASH_REMATCH[1]}> <${BASH_REMATCH[2]}>"
+                                # 0-87  or  100-187
+                                # "Value lower matched part is ${BASH_REMATCH[1]}"  = 0     or 100
+                                # "Value upper matched part is ${BASH_REMATCH[2]}"  = 87    or 187
+
+                                curr_node_cpu+=$((BASH_REMATCH[2]-BASH_REMATCH[1]+1))    # 0-87
+
+                            fi
+                        done
+
                     fi
 
                 else
