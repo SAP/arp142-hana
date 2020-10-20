@@ -33,3 +33,15 @@ logCheckOk()  { : ; }
 logCheckError()  { : ; }
 logCheckWarning()  { : ; }
 
+# logNotify()  { printf "N: %s\n" "$*" ; }
+# logError()  { printf "E: %s\n" "$*" ; }
+# logWarn()  { printf "W: %s\n" "$*" ; }
+# logInfo()  { printf "I: %s\n" "$*" ; }
+# logDebug()  { printf "D: %s\n" "$*" ; }
+# logTrace()  { printf "T: %s\n" "$*" ; }
+
+# logCheckSkipped()  { printf "ChS: %s\n" "$*" ; }
+# logCheckInfo()  { printf "ChI: %s\n" "$*" ; }
+# logCheckOk()  { printf "ChO: %s\n" "$*" ; }
+# logCheckError()  { printf "ChE: %s\n" "$*" ; }
+# logCheckWarning()  { printf "ChW: %s\n" "$*" ; }
