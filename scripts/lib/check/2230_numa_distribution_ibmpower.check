@@ -34,16 +34,16 @@ function check_2230_numa_distribution_ibmpower {
         # read into arrays (mapfile = bash4+)
         if [[ ${BASH_VERSINFO[0]:-} -ge 4 ]] ; then
             mapfile -t numa_memory_totals < <(grep -h -m1 'MemTotal' -r /sys/devices/system/node/node*/meminfo)
-            mapfile -t numa_lcpu_lists < <(grep . -r /sys/devices/system/node/node*/cpulist)
+            mapfile -t numa_lcpu_lists < <(grep -H "^.*$" -r /sys/devices/system/node/node*/cpulist)
         else
             while IFS=$'\n' read -r line; do numa_memory_totals+=("$line"); done < <(grep -h -m1 'MemTotal' -r /sys/devices/system/node/node*/meminfo)
-            while IFS=$'\n' read -r line; do numa_lcpu_lists+=("$line"); done < <(grep . -r /sys/devices/system/node/node*/cpulist)
+            while IFS=$'\n' read -r line; do numa_lcpu_lists+=("$line"); done < <(grep -H "^.*$" -r /sys/devices/system/node/node*/cpulist)
         fi
 
         if [[ ${#numa_memory_totals[@]} -ne ${#numa_lcpu_lists[@]} ]]; then
 
             logCheckWarning "Different Number of Memory-NUMA and CPU-NUMA nodes extracted !"
-            _retval=77
+            _retval=66
 
         fi
 
@@ -61,13 +61,13 @@ function check_2230_numa_distribution_ibmpower {
         local -a totals=()
 
         local rx_memory='^Node +([0-9]+) +MemTotal: +([0-9]+) +(.*)$'       #Node 0 MemTotal:       759310156 kB
-        local rx_cpu='node([0-9]+).*:([0-9]+)-([0-9]+)'                     #/sys/devices/system/node/node0/cpulist:0-9
+        local rx_cpu='node([0-9]+).*:(([0-9]+)\-([0-9]+))*'                 #/sys/devices/system/node/node0/cpulist:0-9
 
         for ((i=0; i < ${#numa_memory_totals[@]}; i+=1)); do
 
             if [[ ${numa_memory_totals[$i]} =~ ${rx_memory} ]]; then
 
-                logTrace "${BASH_REMATCH[0]}"
+                logTrace "Memory node rx.match <${BASH_REMATCH[0]}>,<${BASH_REMATCH[1]}>,<${BASH_REMATCH[2]}>"
                 #Node 0 MemTotal:       759310156 kB
                 # "Node matched part is ${BASH_REMATCH[1]}"     = 0
                 # "Value matched part is ${BASH_REMATCH[2]}"    = 759310156
@@ -78,28 +78,34 @@ function check_2230_numa_distribution_ibmpower {
 
                 if [[ ${numa_lcpu_lists[$i]} =~ ${rx_cpu} ]]; then
 
-                    logTrace "${BASH_REMATCH[0]}"
+                    logTrace "CPU node rx.match <${BASH_REMATCH[0]}>,<${BASH_REMATCH[1]}>,<${BASH_REMATCH[2]}>,<${BASH_REMATCH[3]}>,<${BASH_REMATCH[4]}>"
                     #/sys/devices/system/node/node4/cpulist:0-87
-                    # "Node matched part is ${BASH_REMATCH[1]}"     = 4
-                    # "Value lower matched part is ${BASH_REMATCH[2]}"    = 0
-                    # "Value upper matched part is ${BASH_REMATCH[3]}"    = 87
+                    # "Node matched part is ${BASH_REMATCH[1]}"         = 4
+                    # "Value matched part is ${BASH_REMATCH[2]}"        = 0-87 or Empty
+                    # "Value lower matched part is ${BASH_REMATCH[3]}"  = 0 or Empty
+                    # "Value upper matched part is ${BASH_REMATCH[4]}"  = 87 or Empty
 
-                    if [[ ${curr_node} -eq ${BASH_REMATCH[1]} ]]; then
-                        curr_node_cpu=$((BASH_REMATCH[3]+1-BASH_REMATCH[2]))
-                    else
-                        logCheckWarning "NUMA Memory Node <${curr_node}> does NOT match NUMA CPU Node <${BASH_REMATCH[1]}>!"
+                    if [[ ${curr_node} -ne ${BASH_REMATCH[1]} ]]; then
+
+                        logCheckWarning "NUMA Memory node <${curr_node}> does NOT match NUMA CPU node <${BASH_REMATCH[1]}>!"
+                        _retval=66
+                        break
+
+                    elif [[ -z ${BASH_REMATCH[2]} ]]; then
                         curr_node_cpu=0
+                    else
+                        curr_node_cpu=$((BASH_REMATCH[4]-BASH_REMATCH[3]+1))    # 0-87
                     fi
 
                 else
 
-                    logCheckWarning "NUMA CPU Node NOT processed <${numa_lcpu_lists[$i]}>!"
-                    _retval=77
+                    logCheckWarning "NUMA CPU node NOT processed <${numa_lcpu_lists[$i]}>!"
+                    _retval=66
                     break
 
                 fi
 
-                logTrace "NUMA node ${curr_node}, MEM: ${curr_node_memory}, #CPU: ${curr_node_cpu}"
+                logDebug "NUMA node ${curr_node}, MEM: ${curr_node_memory}, #CPU: ${curr_node_cpu}"
 
                 if [[ ${curr_node_memory} -eq 0 && ${curr_node_cpu} -eq 0 ]]; then
 
@@ -110,12 +116,19 @@ function check_2230_numa_distribution_ibmpower {
                     logCheckError "NUMA node without memory (Node ${curr_node}, MEM: 0, #CPU: ${curr_node_cpu})"
                     _retval=88
                     break
+
+                elif [[ ${curr_node_cpu} -eq 0 ]]; then
+
+                    logCheckWarning "NUMA node without CPU (Node ${curr_node}, MEM: ${curr_node_memory}, #CPU: 0)"
+                    _retval=77
+                    break
+
                 fi
 
             else
 
-                logCheckWarning "NUMA Memory Node NOT processed <${numa_memory_totals[$i]}>!"
-                _retval=77
+                logCheckWarning "NUMA Memory node NOT processed <${numa_memory_totals[$i]}>!"
+                _retval=66
                 break
 
             fi
@@ -126,13 +139,18 @@ function check_2230_numa_distribution_ibmpower {
 
         done
 
+    fi
+
+    #calc node deviation
+    if [[ ${_retval} -eq 99 ]]; then
+
         local -i avg_ratio
         local -i margin
         local -i upper_bound
         local -i lower_bound
 
         avg_ratio=$((total_memory/total_cpus))
-        margin=$((avg_ratio*1/10))  #50% margin ??
+        margin=$((avg_ratio*1/10))  #10% margin ??
         upper_bound=$((avg_ratio+margin))
         lower_bound=$((avg_ratio-margin))
 
@@ -141,7 +159,7 @@ function check_2230_numa_distribution_ibmpower {
             if [[ ${totals[$i]} -lt ${lower_bound} || ${totals[$i]} -gt ${upper_bound} ]]; then
 
                 logCheckWarning "NUMA distribution - avgRatio ${avg_ratio}, margin +/-${margin} - Index $i: ${totals[$i]}"
-                _retval=66
+                _retval=55
                 break
             fi
 
@@ -161,13 +179,18 @@ function check_2230_numa_distribution_ibmpower {
 
     elif [[ ${_retval} -eq 77 ]]; then
 
-            logCheckWarning "NUMA distribution - check not possible. Verify manually (SAP Note ${sapnote:-})"
+            logCheckWarning "NUMA distribution - node without CPU detected (SAP Note ${sapnote:-})"
             _retval=1
 
     elif [[ ${_retval} -eq 66 ]]; then
 
-            logCheckWarning "NUMA distribution - unbalanced NUMA core/memory ratio (SAP Note ${sapnote:-})"
+            logCheckWarning "NUMA distribution - check not possible. Verify manually (SAP Note ${sapnote:-})"
             _retval=1
+
+    elif [[ ${_retval} -eq 55 ]]; then
+
+            logCheckError "NUMA distribution - unbalanced NUMA core/memory ratio (SAP Note ${sapnote:-})"
+            _retval=2
 
     fi
 
