@@ -7,7 +7,6 @@ env:
     - OCTOKIT_API_ENDPOINT="https://github.wdf.sap.corp/api/v3"
     - SHUNIT_COLOR='always'
     - COMMIT=${TRAVIS_COMMIT::8}
-    - BUILD_COMMIT=b${TRAVIS_BUILD_NUMBER}_g${COMMIT}
 
 os:
   - linux
@@ -16,12 +15,15 @@ os:
 before_install:
     #TRAVIS_BRANCH=TRAVIS_TAG if tagged
     - |
-      if [[ $TRAVIS_BRANCH =~ ^v[0-9]+$ ]]; then
-        BUILD_COMMIT=1.${BUILD_COMMIT}  #final release
+      if [[ $TRAVIS_BRANCH =~ ^v([0-9]+)\-(.*)$ ]]; then
+        _VERSION=${BASH_REMATCH[1]}
+        _RELEASE=${BASH_REMATCH[2]}
       else
-        BUILD_COMMIT=0.beta.${BUILD_COMMIT}  #beta release
+        _VERSION='9999'
+        _RELEASE='0.1.beta0'
       fi
-    - VERSION_BUILD_COMMIT=${_VERSION}-${BUILD_COMMIT}
+    - RELEASE_COMMIT=${_RELEASE}.g${COMMIT}
+    - VERSION_BUILD_COMMIT=${_VERSION}-${RELEASE_COMMIT}
 
     - echo "[INFO] _BRANCH > $TRAVIS_BRANCH ; _VERSION> $_VERSION ; VERSION_BUILD_COMMIT> $VERSION_BUILD_COMMIT"
 
@@ -77,8 +79,8 @@ before_deploy:
     - sudo apt-get install --no-install-recommends -y rpm
     - echo "[INFO] PWD> $PWD"
     - echo "[INFO] _VERSION> $_VERSION"
-    - echo "[INFO] BUILD_COMMIT> $BUILD_COMMIT"
-    - sudo rpmbuild -v -bb --buildroot='/home/travis/build/SAP-COE-HPTI/saphana-checks/build' --define "_version ${_VERSION}" --define "_release ${BUILD_COMMIT}" ./buildscripts/saphana-checks-rpm.spec
+    - echo "[INFO] RELEASE_COMMIT> $RELEASE_COMMIT"
+    - sudo rpmbuild -v -bb --buildroot='/home/travis/build/SAP-COE-HPTI/saphana-checks/build' --define "_version ${_VERSION}" --define "_release ${RELEASE_COMMIT}" ./buildscripts/saphana-checks-rpm.spec
     - bash -c "cd /home/travis/rpmbuild/RPMS/noarch; rpm -Kv saphana-checks-${VERSION_BUILD_COMMIT}.noarch.rpm > /home/travis/build/SAP-COE-HPTI/saphana-checks/build/saphana-checks-${VERSION_BUILD_COMMIT}.noarch.rpm.digest"
 
     # create zipped tarball
