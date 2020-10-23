@@ -149,8 +149,9 @@ function check_2230_numa_distribution_ibmpower {
 
             fi
 
-            ((total_memory+=curr_node_memory))
-            ((total_cpus+=curr_node_cpu))
+            _=$(( total_memory+=curr_node_memory ))
+            _=$(( total_cpus+=curr_node_cpu ))
+
             totals+=( $((curr_node_memory/curr_node_cpu)) )
 
         done
@@ -169,6 +170,8 @@ function check_2230_numa_distribution_ibmpower {
         margin=$((avg_ratio*1/10))  #10% margin ??
         upper_bound=$((avg_ratio+margin))
         lower_bound=$((avg_ratio-margin))
+
+        logDebug "Total MEM: ${total_memory}, Total #CPU: ${total_cpus}, avg ratio: ${avg_ratio}, +/- margin ${margin}"
 
         for ((i=0; i < ${#totals[@]}; i+=1)); do
 
