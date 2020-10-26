@@ -7,12 +7,11 @@ function check_1310_cpu_powersavings_ibmpower {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote_sles114='#2240716' # SAP HANA DB: Recommended OS settings for SLES 11 SP4
-    local -r sapnote_sles12='#2205917'  # SAP HANA DB: Recommended OS settings for SLES 12
-    local -r sapnote_sles15='#2684254'  # SAP HANA DB: Recommended OS settings for SLES 15
-    local -r sapnote_rhel7='#2292690'   # SAP HANA DB: Recommended OS settings for RHEL 7
-    local -r sapnote_rhel8='#2777782'   # SAP HANA DB: Recommended OS Settings for RHEL 8
+    local -r sapnote='#2055470'
     # MODIFICATION SECTION<<
+
+    #2055470 - HANA on POWER Planning and Installation Specifics - Central Note
+    ## HWCCT + IBM Documention "HANA operations guide"
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_IBMPOWER ; then
@@ -20,34 +19,11 @@ function check_1310_cpu_powersavings_ibmpower {
         logCheckSkipped 'Not running on IBM Power. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif LIB_FUNC_IS_SLES ; then
-        case "${OS_VERSION}" in
+    elif [[ -z ${LIB_PLATF_POWER_POWERMODE:-} ]]; then
 
-            11.4 )  sapnote="${sapnote_sles114}" ;;
-            12.* )  sapnote="${sapnote_sles12}" ;;
-            15.* )  sapnote="${sapnote_sles15}" ;;
+        logCheckError "Power Savings Mode NOT known (SAP Note ${sapnote:-}) (is: Unknown, should be: None, PerfMode)"
+        _retval=2
 
-            *)      sapnote="${sapnote_sles114}" ;;
-        esac
-
-    elif LIB_FUNC_IS_RHEL ; then
-        case "${OS_VERSION}" in
-
-                8.*)    sapnote="${sapnote_rhel8}" ;;
-
-                *)      sapnote="${sapnote_rhel7}" ;;
-
-        esac
-
-    else
-            logCheckError 'Linux distribution NOT supported (SAP Note #2235581)' "(is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
-            _retval=2
-    fi
-
-    if [[ ${_retval} -eq 99 && -z ${LIB_PLATF_POWER_POWERMODE:-} ]]; then
-
-            logCheckError "Power Savings Mode NOT known (SAP Note ${sapnote:-}) (is: Unknown, should be: None)"
-            _retval=2
     fi
 
     #CHECK
@@ -70,28 +46,51 @@ function check_1310_cpu_powersavings_ibmpower {
         # 0x0003: "Static"
         # 0x00ff: "Dynamic, Favor Power"
         # default: "Unknown"
+
         local pwr_system_txt
+        pwr_system_txt=$(LIB_FUNC_TRANSFORM_POWER_POWERMODE "${pwr_system_mode}")
+
+        logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # PowerSystemMode : ${pwr_system_mode:-}; PowerSystemText : ${pwr_system_txt:-}; PowerPartMode : ${pwr_partition_mode:-}}"
+
 
         if [[ "${pwr_system_mode}" != "${pwr_partition_mode}" ]]; then
 
             local pwr_partition_txt
             pwr_partition_txt=$(LIB_FUNC_TRANSFORM_POWER_POWERMODE "${pwr_partition_mode}")
-            pwr_system_txt=$(LIB_FUNC_TRANSFORM_POWER_POWERMODE "${pwr_system_mode}")
 
             logCheckInfo "Power Savings Mode different for System and Partition. (System: ${pwr_system_txt:-}, Partition: ${pwr_partition_txt:-})"
 
         fi
 
-        if [[ "${pwr_system_mode}" == '0002' ]]; then
+        local -r _lib_platf_cpu=${LIB_PLATF_CPU%%[[:space:]]*}
 
-            logCheckOk "Power Savings Mode set as recommended (SAP Note ${sapnote:-}) (is: None)"
-            _retval=0
+        if [[ ! "${_lib_platf_cpu:-}" =~ POWER8|POWER7 ]]; then
+
+            if [[ "${pwr_system_mode}" == '0001' || "${pwr_system_mode}" == '0002' ]]; then
+
+                logCheckOk "Power Savings Mode set as recommended (SAP Note ${sapnote:-}) (is: ${pwr_system_txt})"
+                _retval=0
+
+            else
+
+                logCheckError "Power Savings Mode NOT set as recommended (SAP Note ${sapnote:-}) (is: ${pwr_system_txt}, should be: None, *Perf mode)"
+                _retval=2
+
+            fi
 
         else
 
-            pwr_system_txt=$(LIB_FUNC_TRANSFORM_POWER_POWERMODE "${pwr_system_mode}")
-            logCheckError "Power Savings Mode NOT set as recommended (SAP Note ${sapnote:-}) (is: ${pwr_system_txt}, should be: None)"
-            _retval=2
+            if [[ "${pwr_system_mode}" == '0002' ]]; then
+
+                logCheckOk "Power Savings Mode set as recommended (SAP Note ${sapnote:-}) (is: None)"
+                _retval=0
+
+            else
+
+                logCheckError "Power Savings Mode NOT set as recommended (SAP Note ${sapnote:-}) (is: ${pwr_system_txt}, should be: None)"
+                _retval=2
+
+            fi
 
         fi
 
