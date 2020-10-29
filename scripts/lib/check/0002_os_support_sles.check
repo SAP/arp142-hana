@@ -25,6 +25,7 @@ function check_0002_os_support_sles {
     local -ar _sles_15=(\
                         '15.0' '31 Dec 2019'    '31 Dec 2022'   '31 Dec 2022'   \
                         '15.1' '31 Jan 2021'    '31 Jan 2024'   '31 Jan 2024'   \
+                        '15.2' '31 Jan 2021'    '31 Dec 2024'   '31 Dec 2024'   \
                         )
     # MODIFICATION SECTION<<
 
@@ -56,7 +57,7 @@ function check_0002_os_support_sles {
 
         12.[2-5]*)  _sles_all+=("${_sles_12[@]}") ;;
 
-        15.[0-1] )  _sles_all+=("${_sles_15[@]}") ;;
+        15.[0-2] )  _sles_all+=("${_sles_15[@]}") ;;
 
         *)
             logCheckError "SLES version is not supported by SAP HANA (SAP Note #2235581) (is: ${OS_VERSION})"
