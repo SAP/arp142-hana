@@ -15,8 +15,7 @@ function check_0441_saptune_sles {
     local -r sles125='2.0.3-3.11.1'
 
     local -r sles150='2.0.3-4.14.4'
-    local -r sles151='2.0.3-8.11.1'
-    local -r sles152='2.0.3-8.11.1'
+    local -r sles15x='2.0.3-8.11.1'
     # MODIFICATION SECTION<<
 
     local _goodversion
@@ -46,8 +45,7 @@ function check_0441_saptune_sles {
                 12.4 )      : "${sles124}" ;;
                 12.5 )      : "${sles125}" ;;
                 15.0 )      : "${sles150}" ;;
-                15.1 )      : "${sles151}" ;;
-                15.2 )      : "${sles152}" ;;
+                15.* )      : "${sles15x}" ;;
 
                 *)
                         logCheckWarning 'Check does not support SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
