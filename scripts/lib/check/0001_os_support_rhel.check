@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function check_0003_os_support_rhel {
+function check_0001_os_support_rhel {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
@@ -49,12 +49,12 @@ function check_0003_os_support_rhel {
 
         6.10    )  _rhel_all+=("${_rhel_6[@]}") ;;
 
-        7.[0-1] )
+        7.[0-2] )
                 logCheckError "RHEL version has reached Red Hat's general support end - upgrade to RHEL 7.3+ (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
                 _retval=2
                 ;;
 
-        7.[2-7] )  _rhel_all+=("${_rhel_7[@]}") ;;
+        7.[3-7] )  _rhel_all+=("${_rhel_7[@]}") ;;
 
         8.[0-1] )  _rhel_all+=("${_rhel_8[@]}") ;;
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function check_0002_os_support_sles {
+function check_0000_os_support_sles {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
