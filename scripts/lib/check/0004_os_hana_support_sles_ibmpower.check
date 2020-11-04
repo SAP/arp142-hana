@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function check_0030_os_sles_ibmpower {
+function check_0004_os_hana_support_sles_ibmpower {
 # only certain SLES version are supported
 # in case 11.4 kernel - bigmem kernel should be used, must be used >4 TiB systems
 

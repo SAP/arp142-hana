@@ -22,7 +22,7 @@ test_power6_bigendian_not_supported() {
     LIB_PLATF_CPU='POWER6 (architected), altivec supported'
 
     #act
-    check_0030_os_sles_ibmpower
+    check_0004_os_hana_support_sles_ibmpower
 
     #assert
     assertEquals "CheckError? RC" '2' "$?"
@@ -36,7 +36,7 @@ test_power7_bigendian_sles_not_supported() {
     OS_VERSION='11.3'
 
     #act
-    check_0030_os_sles_ibmpower
+    check_0004_os_hana_support_sles_ibmpower
 
     #assert
     assertEquals "CheckError? RC" '2' "$?"
@@ -52,7 +52,7 @@ test_power8_bigendian_no_bigmem_less4T() {
     LIB_PLATF_RAM_MIB_AVAILABLE=4194304
 
     #act
-    check_0030_os_sles_ibmpower
+    check_0004_os_hana_support_sles_ibmpower
 
     #assert
     assertEquals "CheckWarning? RC" '1' "$?"
@@ -68,7 +68,7 @@ test_power8_bigendian_no_bigmem_great4T() {
     LIB_PLATF_RAM_MIB_AVAILABLE=4194305
 
     #act
-    check_0030_os_sles_ibmpower
+    check_0004_os_hana_support_sles_ibmpower
 
     #assert
     assertEquals "CheckError? RC" '2' "$?"
@@ -83,7 +83,7 @@ test_power8_bigendian_sles_bigmem_ok() {
     OS_LEVEL='xxx-bigmem'
 
     #act
-    check_0030_os_sles_ibmpower
+    check_0004_os_hana_support_sles_ibmpower
 
     #assert
     assertEquals "CheckOk? RC" '0' "$?"
@@ -96,7 +96,7 @@ test_power6_littleendian_not_supported() {
     LIB_PLATF_CPU='POWER6 (architected), altivec supported'
 
     #act
-    check_0030_os_sles_ibmpower
+    check_0004_os_hana_support_sles_ibmpower
 
     #assert
     assertEquals "CheckError? RC" '2' "$?"
@@ -110,7 +110,7 @@ test_power7_littleendian_sles_not_supported() {
     OS_VERSION='11.4'
 
     #act
-    check_0030_os_sles_ibmpower
+    check_0004_os_hana_support_sles_ibmpower
 
     #assert
     assertEquals "CheckError? RC" '2' "$?"
@@ -124,7 +124,7 @@ test_power8_littleendian_sles_supported() {
     OS_VERSION='12.1'
 
     #act
-    check_0030_os_sles_ibmpower
+    check_0004_os_hana_support_sles_ibmpower
 
     #assert
     assertEquals "CheckOk? RC" '0' "$?"
@@ -138,7 +138,7 @@ test_power9_littleendian_sles_not_supported() {
     OS_VERSION='12.2'
 
     #act
-    check_0030_os_sles_ibmpower
+    check_0004_os_hana_support_sles_ibmpower
 
     #assert
     assertEquals "CheckError? RC" '2' "$?"
@@ -152,7 +152,7 @@ test_power9_littleendian_sles_supported() {
     OS_VERSION='15.1'
 
     #act
-    check_0030_os_sles_ibmpower
+    check_0004_os_hana_support_sles_ibmpower
 
     #assert
     assertEquals "CheckOk? RC" '0' "$?"
@@ -165,7 +165,7 @@ test_powerX_not_supported() {
     LIB_PLATF_CPU='POWERx (architected), altivec supported'
 
     #act
-    check_0030_os_sles_ibmpower
+    check_0004_os_hana_support_sles_ibmpower
 
     #assert
     assertEquals "CheckError? RC" '2' "$?"
@@ -177,8 +177,8 @@ oneTimeSetUp() {
     #shellcheck source=../saphana-logger-stubs
     source "${PROGRAM_DIR}/../saphana-logger-stubs"
 
-    #shellcheck source=../../lib/check/0030_os_sles_ibmpower.check
-    source "${PROGRAM_DIR}/../../lib/check/0030_os_sles_ibmpower.check"
+    #shellcheck source=../../lib/check/0004_os_hana_support_sles_ibmpower.check
+    source "${PROGRAM_DIR}/../../lib/check/0004_os_hana_support_sles_ibmpower.check"
 
 }
 

@@ -18,7 +18,7 @@ test_bigendian_not_supported() {
     LIB_PLATF_ARCHITECTURE='ppc64'
 
     #act
-    check_0040_os_rhel_ibmpower
+    check_0005_os_hana_support_rhel_ibmpower
 
     #assert
     assertEquals "CheckError? RC" '2' "$?"
@@ -31,7 +31,7 @@ test_power7_not_supported() {
     LIB_PLATF_CPU='POWER7 (architected), altivec supported'
 
     #act
-    check_0040_os_rhel_ibmpower
+    check_0005_os_hana_support_rhel_ibmpower
 
     #assert
     assertEquals "CheckError? RC" '2' "$?"
@@ -45,7 +45,7 @@ test_power8_rhel_not_supported() {
     OS_VERSION='7.2'
 
     #act
-    check_0040_os_rhel_ibmpower
+    check_0005_os_hana_support_rhel_ibmpower
 
     #assert
     assertEquals "CheckError? RC" '2' "$?"
@@ -59,7 +59,7 @@ test_power8_rhel_supported() {
     OS_VERSION='7.3'
 
     #act
-    check_0040_os_rhel_ibmpower
+    check_0005_os_hana_support_rhel_ibmpower
 
     #assert
     assertEquals "CheckOk? RC" '0' "$?"
@@ -73,7 +73,7 @@ test_power9_rhel_not_supported() {
     OS_VERSION='7.3'
 
     #act
-    check_0040_os_rhel_ibmpower
+    check_0005_os_hana_support_rhel_ibmpower
 
     #assert
     assertEquals "CheckError? RC" '2' "$?"
@@ -87,7 +87,7 @@ test_power9_rhel_supported() {
     OS_VERSION='8.0'
 
     #act
-    check_0040_os_rhel_ibmpower
+    check_0005_os_hana_support_rhel_ibmpower
 
     #assert
     assertEquals "CheckOk? RC" '0' "$?"
@@ -100,7 +100,7 @@ test_powerX_not_supported() {
     LIB_PLATF_CPU='POWERx (architected), altivec supported'
 
     #act
-    check_0040_os_rhel_ibmpower
+    check_0005_os_hana_support_rhel_ibmpower
 
     #assert
     assertEquals "CheckError? RC" '2' "$?"
@@ -112,8 +112,8 @@ oneTimeSetUp() {
     #shellcheck source=../saphana-logger-stubs
     source "${PROGRAM_DIR}/../saphana-logger-stubs"
 
-    #shellcheck source=../../lib/check/0040_os_rhel_ibmpower.check
-    source "${PROGRAM_DIR}/../../lib/check/0040_os_rhel_ibmpower.check"
+    #shellcheck source=../../lib/check/0005_os_hana_support_rhel_ibmpower.check
+    source "${PROGRAM_DIR}/../../lib/check/0005_os_hana_support_rhel_ibmpower.check"
 
 }
 
