@@ -53,6 +53,7 @@ function check_0011_os_kernel_knownissue_sles {
     #1880960 - Lenovo Systems Solution for SAP HANA Platform Edition FW/OS/Driver Maintenance - better would be
     #1557506 - Linux paging improvements - but this requires adjustment first
     #bsc#1170457 - NFS: Do not call generic_error_remove_page() while holding locks (bsc#1170457)
+    #bsc#1160560 - tcp: clear tp->packets_out when purging write queue / exit if nothing to retransmit on RTO timeout
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_SLES; then
