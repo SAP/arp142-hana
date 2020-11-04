@@ -1,0 +1,136 @@
+#!/usr/bin/env bash
+
+function check_0003_os_hana_support_rhel_intel {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2235581'  #SAP HANA: Supported Operating Systems
+
+    #                                           0 = not supported; 1 = supported
+    # array             'Platform'              '0123456789A' (Minor Release)
+    local -ar _rhel_6=(\
+                        'Microsoft Azure'       '00000000000'   \
+                        'Amazon EC2'            '00000000000'   \
+                        'IBM Cloud'             '00000000000'   \
+                        'Google GCP'            '00000000000'   \
+                        'Alibaba Cloud ECS'     '00000000000'   \
+                        'Open Telekom Cloud'    '00000000000'   \
+                        'Huawei Cloud'          '00000000000'   \
+                        ''                      '00000000001'   \          #all others, e.g. TDI, Bare-Metal
+                        )
+
+    # array             'Platform'              '01234567' (Minor Release)
+    local -ar _rhel_7=(\
+                        'Microsoft Azure'       '00001111'   \
+                        'Amazon EC2'            '00000010'   \
+                        'IBM Cloud'             '00001010'   \
+                        'Google GCP'            '00001010'   \
+                        'Alibaba Cloud ECS'     '00000010'   \
+                        'Open Telekom Cloud'    '00000000'   \
+                        'Huawei Cloud'          '00000010'   \
+                        ''                      '00001111'   \          #all others, e.g. TDI, Bare-Metal
+                        )
+
+    # array             'Platform'              '01' (Minor Release)
+    local -ar _rhel_8=(\
+                        'Microsoft Azure'       '01'   \
+                        'Amazon EC2'            '01'   \
+                        'IBM Cloud'             '00'   \
+                        'Google GCP'            '00'   \
+                        'Alibaba Cloud ECS'     '00'   \
+                        'Open Telekom Cloud'    '00'   \
+                        'Huawei Cloud'          '00'   \
+                        ''                      '11'   \          #all others, e.g. TDI, Bare-Metal
+                        )
+    # MODIFICATION SECTION<<
+
+    local -a _rhel_matrix
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_INTEL ; then
+
+        logCheckSkipped 'Not running on Intel CPU. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif ! LIB_FUNC_IS_RHEL; then
+
+        logCheckSkipped 'Linux distribution is not RHEL. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+
+        case "${OS_VERSION}" in
+
+        6.[0-9] )
+                logCheckError "RHEL version has reached Red Hat's general support end and must be upgraded (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
+                _retval=2
+                ;;
+
+        6.10    )   _rhel_matrix+=("${_rhel_6[@]}") ;;
+
+        7.[0-3] )
+                logCheckError "RHEL version has reached Red Hat's general support end and must be upgraded (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
+                _retval=2
+                ;;
+
+        7.[4-7] )  _rhel_matrix+=("${_rhel_7[@]}") ;;
+
+        8.[0-1] )  _rhel_matrix+=("${_rhel_8[@]}") ;;
+
+        *)
+            logCheckError "RHEL version is NOT supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
+            _retval=2
+            ;;
+        esac
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local _platform
+        local _os_bit_pattern
+        local _os_minor_version
+        local -i _os_supported
+
+        _os_minor_version=${OS_VERSION#*.}
+        _os_minor_version=${_os_minor_version##.*}
+
+        # i+=2 --> every 2nd item
+        for ((i=0; i < ${#_rhel_matrix[@]}; i+=2)); do
+
+            logTrace "<${FUNCNAME[0]}> # ${_rhel_matrix[$i]}>"
+
+            _platform="${_rhel_matrix[$i]}"
+
+            [[ "${LIB_PLATF_VENDOR}" != "${_platform}"* ]] && continue
+
+            _os_bit_pattern="${_rhel_matrix[$i+1]}"
+            _os_supported="${_os_bit_pattern:${_os_minor_version}:1}"
+
+            logTrace "<${FUNCNAME[0]}> # BitPattern <${_os_bit_pattern}> - OS.minor <${_os_minor_version}> - supported? <${_os_supported}>"
+
+            if [[ ${_os_supported} -eq 0 ]] ; then
+
+                logCheckError "RHEL version is NOT supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${OS_VERSION} @ ${LIB_PLATF_VENDOR})"
+                _retval=2
+
+            else
+
+                logCheckOk "RHEL version is supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${OS_VERSION} @ ${LIB_PLATF_VENDOR})"
+                _retval=0
+
+            fi
+
+            break
+
+        done
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
