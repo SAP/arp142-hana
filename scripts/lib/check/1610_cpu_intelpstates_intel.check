@@ -9,10 +9,12 @@ function check_1610_cpu_intelpstates_intel {
     # MODIFICATION SECTION>>
     local -r sapnote_12='#2205917,#1275776'
     local -r sapnote_15='#2684254,#1275776'
+    local -r sapnote_rhel6='#2694292,#1275776'
+    local -r sapnote_rhel7='#2292690,#1275776'
+    local -r sapnote_rhel8='#2777782,#1275776'
 
     local -ar _intel_pstate_parameter=(\
                                     'no_turbo'            0 \
-                                    'min_perf_pct'      100 \
                                     'max_perf_pct'      100 \
     )
     # MODIFICATION SECTION<<
@@ -21,6 +23,11 @@ function check_1610_cpu_intelpstates_intel {
     #1275776 - Linux: Preparing SLES for SAP environments
     #2205917 - SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
     #2684254 - SAP HANA DB: Recommended OS settings for SLES 15 / SLES for SAP Applications 15
+    #2694292 - SAP HANA DB: Recommended OS settings for RHEL 6.10
+    #2292690 - SAP HANA DB: Recommended OS settings for RHEL 7
+    #2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
+
+    local sapnote
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_INTEL ; then
@@ -33,20 +40,39 @@ function check_1610_cpu_intelpstates_intel {
         logCheckSkipped 'Running virtualized. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif [[ ! -d  '/sys/devices/system/cpu/intel_pstate' ]]; then
+    elif [[ ! -f '/sys/devices/system/cpu/intel_pstate/status' ]]; then
 
         logCheckSkipped 'CPU scaling driver <intel_pstate> NOT active. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    else
+    elif ! grep 'active' -q '/sys/devices/system/cpu/intel_pstate/status'; then
 
-        local sapnote
+        logCheckSkipped 'CPU scaling driver <intel_pstate> NOT active. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif LIB_FUNC_IS_SLES ; then
 
         case "${OS_VERSION}" in
 
             11.* | 12.*) sapnote="${sapnote_12}" ;;
-            *)           sapnote="${sapnote_15}" ;;
+            15.*)        sapnote="${sapnote_15}" ;;
+            *)
+                    logCheckWarning 'CHECK does NOT support SLES release' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                    _retval=1
+                ;;
+        esac
 
+    elif LIB_FUNC_IS_RHEL ; then
+
+        case "${OS_VERSION}" in
+
+            6.* ) sapnote="${sapnote_rhel6}" ;;
+            7.* ) sapnote="${sapnote_rhel7}" ;;
+            8.* ) sapnote="${sapnote_rhel8}" ;;
+            *)
+                    logCheckWarning 'CHECK does NOT support RHEL release' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                    _retval=1
+                ;;
         esac
 
     fi
@@ -81,12 +107,12 @@ function check_1610_cpu_intelpstates_intel {
 
         if [[ ${_retval} -eq 99 ]]; then
 
-            logCheckOk "All CPU scaling driver parameters set as recommended (SAP Note ${sapnote:-})"
+            logCheckOk "All CPU scaling driver <intel_pstate> parameters set as recommended (SAP Note ${sapnote:-})"
             _retval=0
 
         else
 
-            logCheckWarning "NOT all CPU scaling driver parameters set as recommended (SAP Note ${sapnote:-})"
+            logCheckWarning "NOT all CPU scaling driver <intel_pstate> parameters set as recommended (SAP Note ${sapnote:-})"
 
         fi
 
