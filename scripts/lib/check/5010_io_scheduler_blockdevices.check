@@ -11,7 +11,7 @@ function check_5010_io_scheduler_blockdevices {
     local sapnote_sles='#1984787'
     local sapnote_rhel='#2009879'
     local sapnote_vmware='#2161991'
-    local sapnote_aws='#1656099'
+    local sapnote_aws='#1656250'
     local sapnote_azure='#2161991'
     local sapnote_kvm='#1400911'
     local sapnote_xen='#1788665'
@@ -33,7 +33,7 @@ function check_5010_io_scheduler_blockdevices {
     # 2009879 - SAP HANA Guidelines for Red Hat Enterprise Linux (RHEL) Operating System
     # 2161991 - VMware vSphere configuration guidelines
     # 1400911 - Linux: SAP NetWeaver on Red Hat KVM - Kernel-based Virtual Machine
-    # 1656099 - SAP Applications on AWS: Supported DB/OS and AWS EC2 products
+    # 1656250 - SAP on AWS: Support prerequisites
     # 1788665 - SAP HANA Support for virtualized / partitioned (multi-tenant) environments
 
     search_pattern="${search_pattern_skip_first1}"
