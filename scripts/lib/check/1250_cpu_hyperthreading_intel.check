@@ -35,6 +35,38 @@ function check_1250_cpu_hyperthreading_intel {
 
     fi
 
+    #EXCEPTIONS
+    #Family 6 Model 85 Stepping x: Skylake 4, Cascade Lake 5-7, Cooper Lake 8+
+    #Family 6 Model 106/108 : Ice Lake
+
+    local rx_sdflex='Superdome Flex$'
+    if [[ "${LIB_PLATF_NAME:-}" =~ ${rx_sdflex} ]]; then
+
+        # Superdome Flex - Skylake/CascadeLake
+        if  [[ ${LIB_PLATF_CPU_MODELID:-} -eq 85 && ${LIB_PLATF_CPU_STEPID:-} -ge 4 && ${LIB_PLATF_CPU_STEPID:-} -le 7 ]]; then
+
+            max_cpu_sockets_with_hyperthreads=12
+
+            if [[ ${LIB_PLATF_CPU_SOCKETS} -gt ${max_cpu_sockets_with_hyperthreads} ]]; then
+                logCheckInfo 'For SAP S/4HANA (analytical and transactional workloads). For 16s Systems and above, Hyperthreading should be disabled.'
+                logCheckInfo 'For SAP S/4HANA (*). Hyperthreading could be enabled for 16s (but not above) Systems starting with HANA 2 Rev.48.01 or 51'
+                logCheckInfo 'For SAP BW/4HANA (analytical workloads), Hyperthreading should be enabled for all system sizes (4s, 8s, 12s and above).'
+            fi
+
+        fi
+
+    elif [[ "${LIB_PLATF_NAME:-}" =~ Sequana|DS7160 ]]; then
+
+        # ATOS/Bull Sequana; Hitachi DS7160 - CascadeLake
+        if  [[ ${LIB_PLATF_CPU_MODELID:-} -eq 85 && ${LIB_PLATF_CPU_STEPID:-} -ge 5 && ${LIB_PLATF_CPU_STEPID:-} -le 7 ]]; then
+
+            logCheckInfo "${LIB_PLATF_NAME:-} - Hyperthreading should be enabled for all system sizes."
+            max_cpu_sockets_with_hyperthreads=16
+
+        fi
+
+    fi
+
     #CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
@@ -55,14 +87,6 @@ function check_1250_cpu_hyperthreading_intel {
             fi
 
         else
-
-            if [[ "${LIB_PLATF_NAME:-}" =~ Flex ]]; then
-
-                # Superdome Flex
-                logCheckInfo 'For SAP S/4HANA (analytical and transactional workloads). For 12s Systems and above, Hyperthreading should be disabled.'
-                logCheckInfo 'For SAP BW/4HANA (analytical workloads), Hyperthreading should be enabled for all system sizes (4s, 8s, 12s and above).'
-
-            fi
 
             if [[ ${LIB_PLATF_CPU_THREADSPERCORE:-} -gt 1 ]]; then
 
