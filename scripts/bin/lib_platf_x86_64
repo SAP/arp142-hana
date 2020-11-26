@@ -228,6 +228,11 @@ function __get_platform_x86_64_cpu_details {
                             fi
         ;;
 
+        'Stepping:'*)
+                            LIB_PLATF_CPU_STEPID=$(LIB_FUNC_TRIM_LEFT "${line/Stepping:}")
+                            readonly LIB_PLATF_CPU_STEPID
+        ;;
+
         # Virtualization information provided by lscpu version >=2.19 and only if virtualized
         # x64:  ( VMware - full ) ; ( KVM - full ) = RHEV ; ( Xen - none ) ; ( Xen - full ) = Amazon EC2
 

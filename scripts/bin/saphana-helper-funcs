@@ -520,6 +520,7 @@ declare     LIB_PLATF_NAME
 declare     LIB_PLATF_CPU_VENDOR
 declare     LIB_PLATF_CPU
 declare -i  LIB_PLATF_CPU_MODELID
+declare -i  LIB_PLATF_CPU_STEPID
 declare -i  LIB_PLATF_RAM_MIB_PHYS
 declare -i  LIB_PLATF_RAM_MiB_AVAILABLE
 
