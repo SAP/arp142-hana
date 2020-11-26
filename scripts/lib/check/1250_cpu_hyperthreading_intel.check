@@ -64,7 +64,7 @@ function check_1250_cpu_hyperthreading_intel {
 
             fi
 
-            if [[ ${LIB_PLATF_CPU_THREADSPERCORE:-} -lt 1 ]]; then
+            if [[ ${LIB_PLATF_CPU_THREADSPERCORE:-} -gt 1 ]]; then
 
                 logCheckError "Intel's Hyperthreading on ${max_cpu_sockets_with_hyperthreads}+ Socket system NOT disabled (SAP Note ${sapnote:-})"
                 _retval=2
