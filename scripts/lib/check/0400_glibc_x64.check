@@ -2,9 +2,6 @@
 
 function check_0400_glibc_x64 {
 
-    #SLES11.2/3/4 - #2263929
-    #Security advise SCN-2016-257 https://listserv.sap.corp/pipermail/cert.linux.suse/2016/000959.html
-
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
     local -i _retval=99
@@ -14,12 +11,20 @@ function check_0400_glibc_x64 {
     local -ar sles121=( '2.19-38.2' '#2205917' )
     local -ar sles122=( '2.22-61.3' '#2205917' )
     local -ar sles124=( '2.22-15.3' '#2205917' )
-    local -ar sles150=( '2.22-61.3' '#2684254' )
+    local -ar sles150=( '2.26-13.24.1' '#2997843' )
     local -ar rhel6x=( '2.12-1.149.el6_6.4' '#2292690' )
     local -ar rhel72=( '2.17-106.el7_2.9' '#2292690' )
-    local -ar rhel73=( '2.17-157.el7_3.5' '#2292690' )      # 2292690 - SAP HANA DB: Recommended OS settings for RHEL 7
-    local -ar rhel80=( '2.28-42.el8' '#2777782' )           # 2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
+    local -ar rhel73=( '2.17-157.el7_3.5' '#2292690' )
+    local -ar rhel80=( '2.28-42.el8' '#2777782' )
     # MODIFICATION SECTION<<
+
+    #SLES11.2/3/4 - #2263929
+    #Security advise SCN-2016-257 https://listserv.sap.corp/pipermail/cert.linux.suse/2016/000959.html
+
+    #2205917 - SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
+    #2292690 - SAP HANA DB: Recommended OS settings for RHEL 7
+    #2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
+    #2997843 - Indexserver Crashes at Catalyst::HashMap Due to Bug in glibc
 
     local _goodversion
     local sapnote
