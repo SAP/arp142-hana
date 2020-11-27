@@ -11,20 +11,19 @@ function check_0410_glibc_ibmpower {
     local -ar sles121=('2.19-38.2' '#2263929')
     local -ar sles122=('2.22-61.3' '#2205917')
     local -ar sles123=('2.22-62.16.2' '#2686011')
-    local -ar sles124=('2.22-15.3' '#2205917')
-    local -ar sles150=('2.22-61.3' '#2684254')
+    local -ar sles150=('2.26-13.24.1' '#2997843')
     local -ar rhel73=('2.17-157.el7_3.5' '#2292690')
     local -ar rhel74=('2.17-196.el7' '#1943937')        #LandscapeTest_2018_11_15.py
-    local -ar rhel80=('2.17-196.el8' '#2777782')
+    local -ar rhel80=('2.28-42.el8' '#2777782')
     # MODIFICATION SECTION<<
 
     #2263929 - SAP HANA DB: Hang during out-of-memory situation
-    #2240716 - SAP HANA DB: Recommended OS settings for SLES 11 / SLES for SAP Applications 11 SP4
     #2205917 - SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
-    #2684254 - SAP HANA DB: Recommended OS settings for SLES 15 / SLES for SAP Applications 15
     #2292690 - SAP HANA DB: Recommended OS settings for RHEL 7
     #2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
     #1943937 - Hardware Configuration Check Tool - Central Note
+    #2686011 - Accounting for Shared Memory Size is Wrong on IBM Power
+    #2997843 - Indexserver Crashes at Catalyst::HashMap Due to Bug in glibc
 
     local _goodversion
     local sapnote
@@ -46,9 +45,7 @@ function check_0410_glibc_ibmpower {
 
                 12.2*)      _goodversion="${sles122[0]}" ; sapnote="${sles122[1]}" ;;
 
-                12.3*)      _goodversion="${sles123[0]}" ; sapnote="${sles123[1]}" ;;
-
-                12.[4-5]*)  _goodversion="${sles124[0]}" ; sapnote="${sles124[1]}" ;;
+                12.[3-5]*)  _goodversion="${sles123[0]}" ; sapnote="${sles123[1]}" ;;
 
                 15.*)       _goodversion="${sles150[0]}" ; sapnote="${sles150[1]}" ;;
 
