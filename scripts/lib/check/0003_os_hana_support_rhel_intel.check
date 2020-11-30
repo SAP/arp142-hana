@@ -27,8 +27,8 @@ function check_0003_os_hana_support_rhel_intel {
                         'Microsoft Azure'       '00001111'   \
                         'Amazon EC2'            '00000010'   \
                         'IBM Cloud'             '00001010'   \
-                        'Google GCP'            '00001010'   \
-                        'Alibaba Cloud ECS'     '00000010'   \
+                        'Google GCP'            '00001011'   \
+                        'Alibaba Cloud ECS'     '00000000'   \
                         'Open Telekom Cloud'    '00000000'   \
                         'Huawei Cloud'          '00000010'   \
                         ''                      '00001111'   \          #all others, e.g. TDI, Bare-Metal
@@ -39,7 +39,7 @@ function check_0003_os_hana_support_rhel_intel {
                         'Microsoft Azure'       '01'   \
                         'Amazon EC2'            '01'   \
                         'IBM Cloud'             '00'   \
-                        'Google GCP'            '00'   \
+                        'Google GCP'            '01'   \
                         'Alibaba Cloud ECS'     '00'   \
                         'Open Telekom Cloud'    '00'   \
                         'Huawei Cloud'          '00'   \
