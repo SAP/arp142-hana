@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 umask 0027
+set -u # treat unset variables as an error
 
 #------------------------------------------------------------------
 # Library - PowerLinux configuration
 #------------------------------------------------------------------
-# (C) Copyright SAP 2018-2020
+# (C) Copyright SAP 2018-2021
 # Author: CS IDG - CoE EMEA HANA Platform & Technical Infrastructure
 #
 # Script name: "lib_platf_power"
