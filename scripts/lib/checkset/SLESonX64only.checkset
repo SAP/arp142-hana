@@ -45,6 +45,7 @@
 3110_ip_port_range_parity
 3120_ip_port_hostagent
 3300_network_adapter_vmxnet3_vmware
+4110_xfs_nobarrier
 4500_ibm-gpfs_version_intel
 5000_io_parameter
 5010_io_scheduler_blockdevices

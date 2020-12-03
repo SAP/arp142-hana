@@ -42,6 +42,7 @@
 3105_ip_port_range_width
 3110_ip_port_range_parity
 3120_ip_port_hostagent
+4110_xfs_nobarrier
 5000_io_parameter
 5010_io_scheduler_blockdevices
 5050_vm_dirty_bytes_sles

@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+
+function check_4110_xfs_nobarrier {
+
+# xfs mount option "nobarrier" ignored since 4.10 Kernel, removed since 5.0 RHEL8/SLES15
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#n/a'
+    # MODIFICATION SECTION<<
+
+    local _nobarrier_nofunction
+    _nobarrier_nofunction=false
+
+    local _nobarrier_removed
+    _nobarrier_removed=false
+
+    # PRECONDITIONS
+    if ! grep -q 'xfs' '/proc/mounts'; then
+
+        logCheckSkipped "No xfs filesystem mounted (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif LIB_FUNC_IS_SLES ; then
+        case "${OS_VERSION}" in
+
+            11.*      ) : ;;
+            12.[0-3]* ) : ;;
+
+            12.[4-5]* ) _nobarrier_nofunction=true ;;
+            15.[0-1]* ) _nobarrier_nofunction=true ;;
+
+            * )         _nobarrier_removed=true ;;
+
+        esac
+
+    elif LIB_FUNC_IS_RHEL ; then
+        case "${OS_VERSION}" in
+
+            6.* )       : ;;
+            7.[0-5]* )  : ;;
+
+            7.[6-9]* )  _nobarrier_nofunction=true ;;
+
+            * )         _nobarrier_removed=true ;;
+
+        esac
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        logCheckInfo 'Only applicable for HANA Persistence stored on xfs filesystem!'
+        logCheckInfo '---'
+        logCheckInfo 'write barrier degrades I/O performance by requiring data to be flushed more often than necessary'
+        logCheckInfo 'On non-volatile storage (battery-backed caches) this is NOT required'
+        logCheckInfo 'xfs option nobarrier was used to disable write barriers in the past, which is now'
+        logCheckInfo 'deprecated and without function or entirely removed from xfs package!'
+        logCheckInfo '---'
+
+        _retval=1
+
+        if ${_nobarrier_removed}; then
+
+            logCheckOk 'xfs filesystem mount option nobarrier removed from kernel'
+
+        elif grep -q 'xfs.*nobarrier' '/proc/mounts'; then
+
+            if ${_nobarrier_nofunction}; then
+
+                logCheckError 'xfs filesystem mount option nobarrier is specified, but without function!'
+                _retval=2
+
+            else
+
+                logCheckWarning 'xfs filesystem mount option nobarrier functional and specified'
+
+            fi
+
+        else
+
+            if ${_nobarrier_nofunction}; then
+
+                logCheckOk 'xfs filesystem mount option nobarrier not specified but also not functional'
+
+            else
+
+                logCheckError 'xfs filesystem mount option nobarrier functional but NOT specified!'
+                _retval=2
+
+            fi
+
+        fi
+
+        logCheckWarning "On non-volatile storage - ensure proper disk device cache_type setting (SAP Note ${sapnote:-})"
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
