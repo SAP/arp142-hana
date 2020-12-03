@@ -41,7 +41,7 @@ function check_3020_network_memory_max {
 
     #ipv4_tcp_rmem_max
     if [[ ${ipv4_tcp_rmem_max} -lt ${reco_ipv4_tcp_rmem_max} ]]; then
-        logCheckError 'Network kernel parameter net.ipv4.tcp_rmem max value NOT set as recommended (is: '"${ipv4_tcp_rmem_max}, should be >=: ${reco_ipv4_tcp_rmem_max})"
+        logCheckError 'Network kernel parameter net.ipv4.tcp_rmem max value NOT set as recommended (is: '"${ipv4_tcp_rmem_max}, should be: >=${reco_ipv4_tcp_rmem_max})"
         _retval=2
     else
         logCheckOk 'Network kernel parameter net.ipv4.tcp_rmem max value set as recommended (is: '"${ipv4_tcp_rmem_max})"
@@ -49,7 +49,7 @@ function check_3020_network_memory_max {
 
     #ipv4_tcp_wmem_max
     if [[ ${ipv4_tcp_wmem_max} -lt ${reco_ipv4_tcp_wmem_max} ]]; then
-        logCheckError 'Network kernel parameter net.ipv4.tcp_wmem max value NOT set as recommended (is: '"${ipv4_tcp_wmem_max}, should be >=: ${reco_ipv4_tcp_wmem_max})"
+        logCheckError 'Network kernel parameter net.ipv4.tcp_wmem max value NOT set as recommended (is: '"${ipv4_tcp_wmem_max}, should be: >=${reco_ipv4_tcp_wmem_max})"
         _retval=2
     else
         logCheckOk 'Network kernel parameter net.ipv4.tcp_wmem max value set as recommended (is: '"${ipv4_tcp_wmem_max})"
@@ -62,7 +62,7 @@ function check_3020_network_memory_max {
     reco_core_rmem_max=$(( ipv4_tcp_rmem_max > reco_ipv4_tcp_rmem_max ? ipv4_tcp_rmem_max : reco_ipv4_tcp_rmem_max ))
 
     if [[ ${core_rmem_max} -lt ${reco_core_rmem_max} ]]; then
-        logCheckError 'Network kernel parameter net.core.rmem_max NOT set as recommended (is: '"${core_rmem_max}, should be >=: ${reco_core_rmem_max})"
+        logCheckError 'Network kernel parameter net.core.rmem_max NOT set as recommended (is: '"${core_rmem_max}, must be: >=${reco_core_rmem_max})"
         _retval=2
     else
         logCheckOk 'Network kernel parameter net.core.rmem_max set as recommended (is: '"${core_rmem_max})"
@@ -75,7 +75,7 @@ function check_3020_network_memory_max {
     reco_core_wmem_max=$(( ipv4_tcp_wmem_max > reco_ipv4_tcp_wmem_max ? ipv4_tcp_wmem_max : reco_ipv4_tcp_wmem_max ))
 
     if [[ ${core_wmem_max} -lt ${reco_core_wmem_max} ]]; then
-        logCheckError 'Network kernel parameter net.core.wmem_max NOT set as recommended (is: '"${core_wmem_max}, should be >=: ${reco_core_wmem_max})"
+        logCheckError 'Network kernel parameter net.core.wmem_max NOT set as recommended (is: '"${core_wmem_max}, must be: >=${reco_core_wmem_max})"
         _retval=2
     else
         logCheckOk 'Network kernel parameter net.core.wmem_max set as recommended (is: '"${core_wmem_max})"
@@ -90,7 +90,7 @@ function check_3020_network_memory_max {
         logCheckInfo 'In case of 10G+ networks with high bandwidth demand for certain traffic'
         logCheckInfo 'e.g HANA internode, HANA system replication, HANA network backup'
         logCheckInfo 'Parameters net.ipv4.tcp_rmem and net.ipv4.tcp_wmem max respectively net.core.*mem_max values'
-        logCheckInfo 'should be further increased. (should be >=: '"${highspeed_ipv4_tcp_mem_max})"
+        logCheckInfo 'should be further increased. (should be: >='"${highspeed_ipv4_tcp_mem_max})"
         logCheckInfo '---'
     fi
 
