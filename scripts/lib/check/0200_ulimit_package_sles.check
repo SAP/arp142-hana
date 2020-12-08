@@ -7,8 +7,6 @@ function check_0200_ulimit_package_sles {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote_sles112='#1824819' # SAP HANA DB: Recommended OS settings for RHEL 11.2
-    local -r sapnote_sles113='#1954788' # SAP HANA DB: Recommended OS settings for RHEL 11.3
     local -r sapnote_sles114='#2240716' # SAP HANA DB: Recommended OS settings for RHEL 11.4
     # MODIFICATION SECTION<<
 
@@ -24,8 +22,6 @@ function check_0200_ulimit_package_sles {
 
         case "${OS_VERSION}" in
 
-            11.2)   sapnote="${sapnote_sles112}" ;;
-            11.3)   sapnote="${sapnote_sles113}" ;;
             11.4)   sapnote="${sapnote_sles114}" ;;
             *)
                     logCheckSkipped 'Check not applicable for SLES release' "(is: ${OS_NAME} ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"

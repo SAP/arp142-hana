@@ -7,11 +7,10 @@ function check_1300_cpu_governor_x64 {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote_sles='#1944799'    # SAP HANA Guidelines for SLES Operating System Installation
+    local -r sapnote_sles11='#1944799'  # SAP HANA Guidelines for SLES Operating System Installation
     local -r sapnote_sles12='#2205917'  # SAP HANA DB: Recommended OS settings for SLES 12
     local -r sapnote_sles15='#2684254'  # SAP HANA DB: Recommended OS settings for SLES 15
-    local -r sapnote_rhel67='#2247020'  # SAP HANA DB: Recommended OS settings for RHEL 6.7
-    local -r sapnote_rhel610='#2694292' # SAP HANA DB: Recommended OS settings for RHEL 6.10
+    local -r sapnote_rhel6='#2694292'   # SAP HANA DB: Recommended OS settings for RHEL 6.10
     local -r sapnote_rhel7='#2292690'   # SAP HANA DB: Recommended OS settings for RHEL 7
     local -r sapnote_rhel8='#2777782'   # SAP HANA DB: Recommended OS Settings for RHEL 8
     # MODIFICATION SECTION<<
@@ -32,7 +31,7 @@ function check_1300_cpu_governor_x64 {
     elif LIB_FUNC_IS_SLES ; then
         case "${OS_VERSION}" in
 
-            11.4* ) sapnote="${sapnote_sles}" ;;
+            11.4* ) sapnote="${sapnote_sles11}" ;;
             12.*  ) sapnote="${sapnote_sles12}" ;;
             15.*  ) sapnote="${sapnote_sles15}" ;;
 
@@ -42,8 +41,7 @@ function check_1300_cpu_governor_x64 {
     elif LIB_FUNC_IS_RHEL ; then
         case "${OS_VERSION}" in
 
-            6.7)    sapnote="${sapnote_rhel67}" ;;
-            6.10)   sapnote="${sapnote_rhel610}" ;;
+            6.*)    sapnote="${sapnote_rhel6}" ;;
             7.*)    sapnote="${sapnote_rhel7}";;
             8.*)    sapnote="${sapnote_rhel8}";;
 

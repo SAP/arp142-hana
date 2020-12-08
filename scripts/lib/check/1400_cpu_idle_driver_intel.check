@@ -7,13 +7,9 @@ function check_1400_cpu_idle_driver_intel {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote_sles113='#1954788' # SAP HANA DB: Recommended OS settings for SLES 11.3
     local -r sapnote_sles114='#2240716' # SAP HANA DB: Recommended OS settings for SLES 11.4
     local -r sapnote_sles12='#2205917'  # SAP HANA DB: Recommended OS settings for SLES 12
     local -r sapnote_sles15='#2684254'  # SAP HANA DB: Recommended OS settings for SLES 15
-    local -r sapnote_rhel65='#2013638'  # SAP HANA DB: Recommended OS settings for RHEL 6.5
-    local -r sapnote_rhel66='#2136965'  # SAP HANA DB: Recommended OS settings for RHEL 6.6
-    local -r sapnote_rhel67='#2247020'  # SAP HANA DB: Recommended OS settings for RHEL 6.7
     local -r sapnote_rhel610='#2694292' # SAP HANA DB: Recommended OS settings for RHEL 6.10
     local -r sapnote_rhel7='#2292690'   # SAP HANA DB: Recommended OS settings for RHEL 7
     local -r sapnote_rhel8='#2777782'   # SAP HANA DB: Recommended OS Settings for RHEL 8
@@ -36,7 +32,6 @@ function check_1400_cpu_idle_driver_intel {
     elif LIB_FUNC_IS_SLES ; then
         case "${OS_VERSION}" in
 
-            11.3)   sapnote="${sapnote_sles113}"    expected_driver='acpi_idle';;
             11.4)   sapnote="${sapnote_sles114}"    expected_driver='acpi_idle';;
             12.*)   sapnote="${sapnote_sles12}"     expected_driver='intel_idle';;
             15.*)   sapnote="${sapnote_sles15}"     expected_driver='intel_idle';;
@@ -50,9 +45,6 @@ function check_1400_cpu_idle_driver_intel {
     elif LIB_FUNC_IS_RHEL ; then
         case "${OS_VERSION}" in
 
-            6.5)    sapnote="${sapnote_rhel65}"     expected_driver='acpi_idle';;
-            6.6)    sapnote="${sapnote_rhel66}"     expected_driver='acpi_idle';;
-            6.7)    sapnote="${sapnote_rhel67}"     expected_driver='acpi_idle';;
             6.10)   sapnote="${sapnote_rhel610}"    expected_driver='acpi_idle';;
             7.*)    sapnote="${sapnote_rhel7}"      expected_driver='intel_idle';;
             8.*)    sapnote="${sapnote_rhel8}"      expected_driver='intel_idle';;
