@@ -6,8 +6,9 @@ function check_0003_os_hana_support_rhel_intel {
 
     local -i _retval=99
 
+    # https://www.sap.com/dmc/exp/2014-09-02-hana-hardware/enEN/#/solutions?filters=iaas
+
     # MODIFICATION SECTION>>
-    local -r sapnote='#2235581'  #SAP HANA: Supported Operating Systems
 
     #                                           0 = not supported; 1 = supported
     # array             'Platform'              '0123456789A' (Minor Release)
@@ -45,7 +46,12 @@ function check_0003_os_hana_support_rhel_intel {
                         'Huawei Cloud'          '00'   \
                         ''                      '11'   \          #all others, e.g. TDI, Bare-Metal
                         )
+
+    local -r sapnote='#2235581'
     # MODIFICATION SECTION<<
+
+    #2235581 - SAP HANA: Supported Operating Systems
+    #936887 - End of maintenance for Linux distributions
 
     local -a _rhel_matrix
 
@@ -65,14 +71,14 @@ function check_0003_os_hana_support_rhel_intel {
         case "${OS_VERSION}" in
 
         6.[0-9] )
-                logCheckError "RHEL version has reached Red Hat's general support end and must be upgraded (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
+                logCheckError "RHEL version has reached Red Hat's general support end and must be upgraded (SAP Note #936887) (is: ${OS_VERSION})"
                 _retval=2
                 ;;
 
         6.10    )   _rhel_matrix+=("${_rhel_6[@]}") ;;
 
         7.[0-3] )
-                logCheckError "RHEL version has reached Red Hat's general support end and must be upgraded (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
+                logCheckError "RHEL version has reached Red Hat's general support end and must be upgraded (SAP Note #936887) (is: ${OS_VERSION})"
                 _retval=2
                 ;;
 

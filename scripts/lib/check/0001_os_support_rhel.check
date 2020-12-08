@@ -27,9 +27,12 @@ function check_0001_os_support_rhel {
                         '8.1' '28 Apr 2020'    '30 Nov 2023'    \
                         )
 
+    local -r sapnote='#936887'
     # MODIFICATION SECTION<<
 
-    local -r sapnote='#936887'  #End of maintenance for Linux distributions
+    #2235581- SAP HANA: Supported Operating Systems
+    #936887 - End of maintenance for Linux distributions
+
     local -a _rhel_all
 
     # PRECONDITIONS
@@ -43,16 +46,14 @@ function check_0001_os_support_rhel {
         case "${OS_VERSION}" in
 
         6.[0-9] )
-                logCheckError "RHEL version has reached Red Hat's general support end - upgrade to RHEL 6.10 (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
-                _retval=2
-                ;;
+                logCheckError "RHEL version has reached Red Hat's general support end and must be upgraded (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
+                _retval=2 ;;
 
         6.10    )  _rhel_all+=("${_rhel_6[@]}") ;;
 
         7.[0-2] )
-                logCheckError "RHEL version has reached Red Hat's general support end - upgrade to RHEL 7.3+ (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
-                _retval=2
-                ;;
+                logCheckError "RHEL version has reached Red Hat's general support end and must be upgraded (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
+                _retval=2 ;;
 
         7.[3-7] )  _rhel_all+=("${_rhel_7[@]}") ;;
 
@@ -60,8 +61,7 @@ function check_0001_os_support_rhel {
 
         *)
             logCheckError "RHEL version is not supported by SAP HANA (SAP Note #2235581) (is: ${OS_VERSION})"
-            _retval=2
-            ;;
+            _retval=2 ;;
         esac
 
     fi
