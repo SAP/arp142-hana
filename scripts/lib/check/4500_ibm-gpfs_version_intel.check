@@ -8,13 +8,12 @@ function check_4500_ibm-gpfs_version_intel {
 
     # MODIFICATION SECTION>>
     local -r sapnote='#1880960,#2533550'
-    local -r _goodversion5='5.0.4.3'    #Note version  36 10.06.2020
-    local -r _goodversion5_SLES152='5.0.5.2'    #Note version  36 10.06.2020
-    local -r _goodversion5_RHEL82='5.0.5.1'    #Note version  36 10.06.2020
+    local -r _goodversion5='5.0.5.1'
     # MODIFICATION SECTION<<
 
     #1880960 - Lenovo Systems Solution for SAP HANA Platform Edition FW/OS/Driver Maintenance
     #2533550 - Lenovo Systems Solution for SAP HANA Platform Edition FW/OS/Driver Maintenance (SR950)
+    #2533844 - Lenovo Support Tool for SAP HANA solutions
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_INTEL ; then
@@ -47,20 +46,6 @@ function check_4500_ibm-gpfs_version_intel {
         esac
 
         _goodversion=${_goodversion5}
-
-        if LIB_FUNC_IS_SLES; then
-
-            # returns 0 if equal, 1 if first is higher, 2 if second is higher
-            LIB_FUNC_COMPARE_VERSIONS "${OS_VERSION}" '15.2'
-            [[ $? -ne 2 ]] && _goodversion=${_goodversion5_SLES152}
-
-        elif LIB_FUNC_IS_RHEL; then
-
-             # returns 0 if equal, 1 if first is higher, 2 if second is higher
-            LIB_FUNC_COMPARE_VERSIONS "${OS_VERSION}" '8.2'
-            [[ $? -ne 2 ]] && _goodversion=${_goodversion5_RHEL82}
-
-        fi
 
         #normalize good version
         LIB_FUNC_NORMALIZE_RPM "${_goodversion}"
