@@ -102,34 +102,42 @@ function check_5010_io_scheduler_blockdevices {
 
         case ${#all_io_schedulers[@]} in     #array length
 
-            0)      logCheckWarning "IO schedulers not known (SAP Note ${sapnote:-})"
+            0)      logCheckWarning "IO scheduler not known (SAP Note ${sapnote:-})"
                     _retval=1
                 ;;
 
-            1)      local curr_scheduler=${all_io_schedulers[0]//[\[\]]/} #remove [ ]
+            *)      [[ ${#all_io_schedulers[@]} -gt 1 ]] && logCheckInfo "Multiple IO scheduler set - ${all_io_schedulers[*]}"
 
-                    if ! LIB_FUNC_STRINGCONTAIN "${reco_io_scheduler}" "${curr_scheduler}"; then
+                    for _scheduler in "${all_io_schedulers[@]}" ; do
 
-                        logCheckWarning "IO schedulers NOT set as recommended (SAP Note ${sapnote:-}) (is: ${curr_scheduler}, should be: ${reco_io_scheduler})"
-                        _retval=1
+                        _scheduler="${_scheduler//[\[\]]/}" #remove [ ]
 
-                    else
+                        if ! LIB_FUNC_STRINGCONTAIN "${reco_io_scheduler}" "${_scheduler}"; then
 
-                        logCheckOk "IO schedulers set as recommended (SAP Note ${sapnote:-}) (is: ${curr_scheduler})"
-                        _retval=0
+                            logCheckWarning "IO scheduler NOT set as recommended (is: ${_scheduler})"
+                            _retval=1
 
-                    fi
+                        else
+
+                            logCheckOk "IO scheduler set as recommended (is: ${_scheduler})"
+
+                        fi
+
+                    done
+
                 ;;
+        esac
 
-            *)      local curr_schedulers
-                    #remove [ ]
-                    curr_schedulers="${all_io_schedulers[0]//[\[\]]/}"
-                    curr_schedulers+=",${all_io_schedulers[1]//[\[\]]/}"
+        if [[ ${_retval} -eq 99 ]]; then
 
-                    logCheckWarning "At least one IO scheduler is NOT set as recommended (SAP Note ${sapnote:-}) (is: ${curr_schedulers}, should be: ${reco_io_scheduler})"
-                    _retval=1
-                ;;
-    esac
+            logCheckOk "All IO scheduler set as recommended (SAP Note ${sapnote:-}) (should be: ${reco_io_scheduler})"
+            _retval=0
+
+        else
+
+            logCheckWarning "NOT all IO scheduler set as recommended (SAP Note ${sapnote:-}) (should be: ${reco_io_scheduler})"
+
+        fi
 
     fi
 
