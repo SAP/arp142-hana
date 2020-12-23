@@ -36,9 +36,9 @@ function check_5300_pvscsi_hostadapter_vmware {
 
         # read pvscsi HBAs into array (mapfile = bash4+)
         if [[ ${BASH_VERSINFO[0]:-} -ge 4 ]] ; then
-            mapfile -t pvscsi_hbas < <(find -L /sys/class/scsi_host/* -maxdepth 1 -name proc_name -exec grep -H vmw_pvscsi {} \;)
+            mapfile -t pvscsi_hbas < <(grep vmw_pvscsi -r /sys/class/scsi_host/host*/proc_name)
         else
-            while IFS=$'\n' read -r line; do pvscsi_hbas+=("$line"); done < <(find -L /sys/class/scsi_host/* -maxdepth 1 -name proc_name -exec grep -H vmw_pvscsi {} \;)
+            while IFS=$'\n' read -r line; do pvscsi_hbas+=("$line"); done < <(grep vmw_pvscsi -r /sys/class/scsi_host/host*/proc_name)
         fi
 
         case ${#pvscsi_hbas[@]} in     #array length
