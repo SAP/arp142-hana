@@ -9,36 +9,43 @@ function check_3021_network_memory_minmid {
     # MODIFICATION SECTION>>
     local -r sapnote='#2382421' # Optimizing the Network Configuration on HANA- and OS-Level for SPS10 and Higher
 
-    local reco_ipv4_tcp_rmem_minmid
-    local reco_ipv4_tcp_wmem_minmid
+    # SLES15.2 - 5.3.18-24.43-default  --> 4096 131072
+    #LIB_FUNC_IS_RHEL && kernel_applicable=>'4.18.0-295' - RHEL8.4 does NOT have it
+    local reco_ipv4_tcp_rmem_minmid="4096 131072"
+    local reco_ipv4_tcp_wmem_minmid="4096 16384"
 
-    #PAGE_SIZE = SK_MEM_QUANTUM = 4K (Intel and newer IBMPower kernels)
-    reco_ipv4_tcp_rmem_minmid="4096 87380"
-    reco_ipv4_tcp_wmem_minmid="4096 16384"
+    #SK_MEM_QUANTUM = 4K (Intel and newer IBMPower kernels)
+    local SKMQ4K_kernel_lower='4.20'
+    local SKMQ4K_tcp_rmem_minmid="4096 87380"
+
+    #IBM Power only - old behavior PAGE_SIZE instead of SK_MEM_QUANTUM=4K
+    local PS64K_kernel_lower='4.10'
+    local PS64K_tcp_rmem_minmid="65536 87380"
+    local PS64K_tcp_wmem_minmid="65536 16384"
+    # MODIFICATION SECTION<<
+
+    # PRECONDITIONS
+    LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
+    kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
+
+    # returns 0 if equal, 1 if first is higher, 2 if second is higher
+    LIB_FUNC_COMPARE_VERSIONS "${kernelversion}" "${SKMQ4K_kernel_lower}"
+    [[ $? -eq 2 ]] && reco_ipv4_tcp_rmem_minmid=${SKMQ4K_tcp_rmem_minmid}
 
     if LIB_FUNC_IS_IBMPOWER ; then
 
-        local kernel_applicable='4.10'
-
-        LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
-        kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
-
-        # returns 0 if equal, 1 if first is higher, 2 if second is higher
-        LIB_FUNC_COMPARE_VERSIONS "${kernelversion}" "${kernel_applicable}"
+        LIB_FUNC_COMPARE_VERSIONS "${kernelversion}" "${PS64K_kernel_lower}"
         if [[ $? -eq 2 ]]; then
 
-            #old behavior PAGE_SIZE instead of SK_MEM_QUANTUM=4K
-            reco_ipv4_tcp_rmem_minmid="65536 87380"
-            reco_ipv4_tcp_wmem_minmid="65536 16384"
+            reco_ipv4_tcp_rmem_minmid=${PS64K_tcp_rmem_minmid}
+            reco_ipv4_tcp_wmem_minmid=${PS64K_tcp_wmem_minmid}
 
         fi
 
     fi
+
     readonly reco_ipv4_tcp_rmem_minmid
     readonly reco_ipv4_tcp_wmem_minmid
-    # MODIFICATION SECTION<<
-
-    # PRECONDITIONS
 
     # #CHECK
 
