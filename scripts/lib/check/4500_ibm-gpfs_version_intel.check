@@ -7,12 +7,11 @@ function check_4500_ibm-gpfs_version_intel {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#1880960,#2533550'
-    local -r _goodversion5='5.0.5.1'
+    local -r sapnote='#2908360,#2533844'
+    local -r _goodversion5='5.0.5.4'
     # MODIFICATION SECTION<<
 
-    #1880960 - Lenovo Systems Solution for SAP HANA Platform Edition FW/OS/Driver Maintenance
-    #2533550 - Lenovo Systems Solution for SAP HANA Platform Edition FW/OS/Driver Maintenance (SR950)
+    #2908360 - Spectrum Scale Software Lenovo ESD Platform
     #2533844 - Lenovo Support Tool for SAP HANA solutions
 
     # PRECONDITIONS
