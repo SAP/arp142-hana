@@ -11,18 +11,21 @@ testNormalizeRpmEqualTo() {
 
     while read -ra _test
     do
-        #printf "test[$i]: orig <%s> <%s>\n" "${_test[1]}" "${_test[0]}"
+        # printf "test[$i]: expected <%s> orig <%s>\n" "${_test[1]}" "${_test[0]}"
         LIB_FUNC_NORMALIZE_RPM "${_test[0]}"
         rpmversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
 
-        #printf "test[$i]: norm <%s> <%s>\n" "${_test[1]}" "${rpmversion}"
+        # printf "test[$i]: expected <%s> normalized <%s>\n" "${_test[1]}" "${rpmversion}"
         assertEquals "EqualTo failure test#$(( i++ ))" "${_test[1]}" "${rpmversion}"
 
     done <<- EOF
-    2.17-106.el7_2.9        2.17-106.0.9
-    2.17-157.el7_3.5        2.17-157.0.5
-    219-42.el7_4.4          219-42.0.4
-    219-30.el7              219-30.0
+    2.28-42.el8             2.28-42.8
+    2.11.0-5.el7_7.3        2.11.0-5.7.7.3
+    2.17-106.el7_2.9        2.17-106.7.2.9
+    2.17-157.el7_3.5        2.17-157.7.3.5
+    219-42.el7_4.4          219-42.7.4.4
+    219-30.el7              219-30.7
+    2.12-1.166.el6_7.1      2.12-1.166.6.7.1
 	EOF
 }
 
@@ -34,7 +37,7 @@ testNormalizeRpmShouldFail() {
     LIB_FUNC_NORMALIZE_RPM '2.17-157.el7_3.5'
     rpmversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
 
-    #printf "test[1]: norm <%s> <%s>\n"  '2.17-157.el7_3.5' "${rpmversion}"
+    # printf "test[1]: orig <%s> normalized <%s>\n"  '2.17-157.el7_3.5' "${rpmversion}"
     assertNotEquals 'test[1]: testing the tester failed' '2.17-157.el7_3.5' "${rpmversion}"
 }
 
