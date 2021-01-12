@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function check_1375_cpu_scheduler_parameter_ibmpower_rhel {
+function check_1375_cpu_scheduler_parameter_rhel {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
@@ -27,12 +27,7 @@ function check_1375_cpu_scheduler_parameter_ibmpower_rhel {
     local _parameter_normalized
 
     # PRECONDITIONS
-    if ! LIB_FUNC_IS_IBMPOWER ; then
-
-        logCheckSkipped 'Not running on IBM Power. Skipping' "<${FUNCNAME[0]}>"
-        _retval=3
-
-    elif ! LIB_FUNC_IS_RHEL ; then
+    if ! LIB_FUNC_IS_RHEL ; then
 
         logCheckSkipped 'Linux distribution is not RHEL. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
@@ -41,7 +36,7 @@ function check_1375_cpu_scheduler_parameter_ibmpower_rhel {
 
         case "${OS_VERSION}" in
 
-            8.0)   : ;;
+            8.*)   : ;;
 
             *)      logCheckSkipped 'Check not applicable for RHEL release' "(is: ${OS_NAME} ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
                     _retval=3 ;;

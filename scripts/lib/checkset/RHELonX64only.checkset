@@ -18,6 +18,7 @@
 1210_cpu_subnuma_intel
 1250_cpu_hyperthreading_intel
 1300_cpu_governor_x64
+1375_cpu_scheduler_parameter_rhel
 1400_cpu_idle_driver_intel
 1410_cpu_idle_intel_cstates_intel
 1411_cpu_idle_acpi_cstates_intel
