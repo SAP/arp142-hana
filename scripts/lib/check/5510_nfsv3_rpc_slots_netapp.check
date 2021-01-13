@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+
+function check_5510_nfsv3_rpc_slots_netapp {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # 'sunrpc.tcp_slot_table_entries'/ 'sunrpc.tcp_max_slot_table_entries'
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2972496'
+
+    local -i _reco_max_slots=128
+    # MODIFICATION SECTION<<
+
+    # SAP HANA on NetApp FAS Systems with NFS Configuration Guide
+    # https://www.suse.com/support/kb/doc/?id=000019281
+    # https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse
+    # https://wiki.scn.sap.com/wiki/display/VIRTUALIZATION/SAP+HANA+TDI+on+Cisco+UCS+and+VMware+vSphere#SAPHANATDIonCiscoUCSandVMwarevSphere-Configuration
+
+    #2972496 - SAP HANA Filesystem Types
+
+    local _max_slots_parameter
+
+    # PRECONDITIONS
+    if ! grep -q 'nfs ' '/proc/mounts'; then
+
+        logCheckSkipped "No NFSv3 filesystem mounted (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif [[ -f '/proc/sys/sunrpc/tcp_max_slot_table_entries' ]]; then
+
+        _max_slots_parameter='sunrpc.tcp_max_slot_table_entries'
+
+    elif [[ -f '/proc/sys/sunrpc/tcp_slot_table_entries' ]]; then
+
+        _max_slots_parameter='sunrpc.tcp_slot_table_entries'
+
+    else
+
+        logCheckWarning "sunrpc parameter tcp*slot_table entries not available (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+        _retval=1
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        logCheckInfo 'Only applicable for SAP Shares stored on Netapp NFS3 filesystem!'
+        logCheckInfo '---'
+
+        local -i _curr_max_slots
+        local _param_normalized
+
+        _param_normalized=${_max_slots_parameter//./\/}
+
+        _curr_max_slots=$(</proc/sys/"${_param_normalized}")
+
+        if [[ ${_curr_max_slots} -ne ${_reco_max_slots} ]]; then
+
+            logCheckWarning "sunrpc parameter ${_max_slots_parameter} NOT set as recommended (is: ${_curr_max_slots}, should be: ${_reco_max_slots})"
+            _retval=1
+
+        else
+
+            logCheckOk "sunrpc parameter ${_max_slots_parameter} set as recommended (is: ${_curr_max_slots})"
+            _retval=0
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
