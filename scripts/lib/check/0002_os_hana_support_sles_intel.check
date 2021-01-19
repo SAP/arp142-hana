@@ -27,7 +27,7 @@ function check_0002_os_hana_support_sles_intel {
     local -ar _sles_12=(\
                         'Microsoft Azure'       '--2345'   \
                         'Amazon EC2'            '--2345'   \
-                        'IBM Cloud'             '--2-4-'   \
+                        'IBM Cloud'             '--2345'   \
                         'Google GCP'            '--2345'   \
                         'Alibaba Cloud ECS'     '--234-'   \
                         'Open Telekom Cloud'    '------'   \
@@ -39,7 +39,7 @@ function check_0002_os_hana_support_sles_intel {
     local -ar _sles_15=(\
                         'Microsoft Azure'       '012'   \
                         'Amazon EC2'            '01-'   \
-                        'IBM Cloud'             '-1-'   \
+                        'IBM Cloud'             '012'   \
                         'Google GCP'            '012'   \
                         'Alibaba Cloud ECS'     '01-'   \
                         'Open Telekom Cloud'    '---'   \
