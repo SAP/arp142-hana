@@ -9,41 +9,42 @@ function check_0002_os_hana_support_sles_intel {
     # https://www.sap.com/dmc/exp/2014-09-02-hana-hardware/enEN/#/solutions?filters=iaas
 
     # MODIFICATION SECTION>>
-    #                                           0 = not supported; 1 = supported
+
+    #                                           - = not supported; minor release = supported
     # array             'Platform'              '01234' (Minor Release)
     local -ar _sles_11=(\
-                        'Microsoft Azure'       '00001'   \
-                        'Amazon EC2'            '00001'   \
-                        'IBM Cloud'             '00000'   \
-                        'Google GCP'            '00001'   \
-                        'Alibaba Cloud ECS'     '00001'   \
-                        'Open Telekom Cloud'    '00000'   \
-                        'Huawei Cloud'          '00001'   \
-                        ''                      '00001'   \          #all others, e.g. TDI, Bare-Metal
+                        'Microsoft Azure'       '----4'   \
+                        'Amazon EC2'            '----4'   \
+                        'IBM Cloud'             '-----'   \
+                        'Google GCP'            '----4'   \
+                        'Alibaba Cloud ECS'     '----4'   \
+                        'Open Telekom Cloud'    '-----'   \
+                        'Huawei Cloud'          '----4'   \
+                        ''                      '----4'   \          #all others, e.g. TDI, Bare-Metal
                         )
 
     # array             'Platform'              '012345' (Minor Release)
     local -ar _sles_12=(\
-                        'Microsoft Azure'       '001111'   \
-                        'Amazon EC2'            '001111'   \
-                        'IBM Cloud'             '001010'   \
-                        'Google GCP'            '001111'   \
-                        'Alibaba Cloud ECS'     '001110'   \
-                        'Open Telekom Cloud'    '000000'   \
-                        'Huawei Cloud'          '001110'   \
-                        ''                      '001111'   \          #all others, e.g. TDI, Bare-Metal
+                        'Microsoft Azure'       '--2345'   \
+                        'Amazon EC2'            '--2345'   \
+                        'IBM Cloud'             '--2-4-'   \
+                        'Google GCP'            '--2345'   \
+                        'Alibaba Cloud ECS'     '--234-'   \
+                        'Open Telekom Cloud'    '------'   \
+                        'Huawei Cloud'          '--234-'   \
+                        ''                      '--2345'   \          #all others, e.g. TDI, Bare-Metal
                         )
 
     # array             'Platform'              '012' (Minor Release)
     local -ar _sles_15=(\
-                        'Microsoft Azure'       '111'   \
-                        'Amazon EC2'            '110'   \
-                        'IBM Cloud'             '010'   \
-                        'Google GCP'            '111'   \
-                        'Alibaba Cloud ECS'     '110'   \
-                        'Open Telekom Cloud'    '000'   \
-                        'Huawei Cloud'          '110'   \
-                        ''                      '111'   \          #all others, e.g. TDI, Bare-Metal
+                        'Microsoft Azure'       '012'   \
+                        'Amazon EC2'            '01-'   \
+                        'IBM Cloud'             '-1-'   \
+                        'Google GCP'            '012'   \
+                        'Alibaba Cloud ECS'     '01-'   \
+                        'Open Telekom Cloud'    '---'   \
+                        'Huawei Cloud'          '01-'   \
+                        ''                      '012'   \          #all others, e.g. TDI, Bare-Metal
                         )
 
     local -r sapnote='#2235581'
@@ -99,7 +100,7 @@ function check_0002_os_hana_support_sles_intel {
         local _platform
         local _os_bit_pattern
         local _os_minor_version
-        local -i _os_supported
+        local _os_supported
 
         _os_minor_version=${OS_VERSION#*.}
         _os_minor_version=${_os_minor_version##.*}
@@ -115,10 +116,11 @@ function check_0002_os_hana_support_sles_intel {
 
             _os_bit_pattern="${_sles_matrix[$i+1]}"
             _os_supported="${_os_bit_pattern:${_os_minor_version}:1}"
+            _os_supported="${_os_supported#-}"
 
-            logTrace "<${FUNCNAME[0]}> # BitPattern <${_os_bit_pattern}> - OS.minor <${_os_minor_version}> - supported? <${_os_supported}>"
+            logTrace "<${FUNCNAME[0]}> # BitPattern <${_os_bit_pattern}> - OS.minor <${_os_minor_version}> - supported? <0x${_os_supported}>"
 
-            if [[ ${_os_supported} -eq 0 ]] ; then
+            if [[ 0x${_os_supported} -ne ${_os_minor_version} ]] ; then
 
                 logCheckError "SLES version is NOT supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${OS_VERSION} @ ${LIB_PLATF_VENDOR})"
                 _retval=2

@@ -10,41 +10,41 @@ function check_0003_os_hana_support_rhel_intel {
 
     # MODIFICATION SECTION>>
 
-    #                                           0 = not supported; 1 = supported
+    #                                           - = not supported; minor release = supported
     # array             'Platform'              '0123456789A' (Minor Release)
     local -ar _rhel_6=(\
-                        'Microsoft Azure'       '00000000000'   \
-                        'Amazon EC2'            '00000000000'   \
-                        'IBM Cloud'             '00000000000'   \
-                        'Google GCP'            '00000000000'   \
-                        'Alibaba Cloud ECS'     '00000000000'   \
-                        'Open Telekom Cloud'    '00000000000'   \
-                        'Huawei Cloud'          '00000000000'   \
-                        ''                      '00000000001'   \          #all others, e.g. TDI, Bare-Metal
+                        'Microsoft Azure'       '-----------'   \
+                        'Amazon EC2'            '-----------'   \
+                        'IBM Cloud'             '-----------'   \
+                        'Google GCP'            '-----------'   \
+                        'Alibaba Cloud ECS'     '-----------'   \
+                        'Open Telekom Cloud'    '-----------'   \
+                        'Huawei Cloud'          '-----------'   \
+                        ''                      '----------A'   \          #all others, e.g. TDI, Bare-Metal
                         )
 
     # array             'Platform'              '01234567' (Minor Release)
     local -ar _rhel_7=(\
-                        'Microsoft Azure'       '00001111'   \
-                        'Amazon EC2'            '00001111'   \
-                        'IBM Cloud'             '00001010'   \
-                        'Google GCP'            '00001011'   \
-                        'Alibaba Cloud ECS'     '00000000'   \
-                        'Open Telekom Cloud'    '00000000'   \
-                        'Huawei Cloud'          '00000010'   \
-                        ''                      '00001111'   \          #all others, e.g. TDI, Bare-Metal
+                        'Microsoft Azure'       '----4567'   \
+                        'Amazon EC2'            '----4567'   \
+                        'IBM Cloud'             '----4-6-'   \
+                        'Google GCP'            '----4-67'   \
+                        'Alibaba Cloud ECS'     '--------'   \
+                        'Open Telekom Cloud'    '--------'   \
+                        'Huawei Cloud'          '------6-'   \
+                        ''                      '----4567'   \          #all others, e.g. TDI, Bare-Metal
                         )
 
     # array             'Platform'              '01' (Minor Release)
     local -ar _rhel_8=(\
-                        'Microsoft Azure'       '01'   \
-                        'Amazon EC2'            '01'   \
-                        'IBM Cloud'             '00'   \
-                        'Google GCP'            '01'   \
-                        'Alibaba Cloud ECS'     '00'   \
-                        'Open Telekom Cloud'    '00'   \
-                        'Huawei Cloud'          '00'   \
-                        ''                      '11'   \          #all others, e.g. TDI, Bare-Metal
+                        'Microsoft Azure'       '-1-'   \
+                        'Amazon EC2'            '-1-'   \
+                        'IBM Cloud'             '---'   \
+                        'Google GCP'            '-1-'   \
+                        'Alibaba Cloud ECS'     '---'   \
+                        'Open Telekom Cloud'    '---'   \
+                        'Huawei Cloud'          '---'   \
+                        ''                      '01-'   \          #all others, e.g. TDI, Bare-Metal
                         )
 
     local -r sapnote='#2235581'
@@ -100,7 +100,7 @@ function check_0003_os_hana_support_rhel_intel {
         local _platform
         local _os_bit_pattern
         local _os_minor_version
-        local -i _os_supported
+        local _os_supported
 
         _os_minor_version=${OS_VERSION#*.}
         _os_minor_version=${_os_minor_version##.*}
@@ -116,10 +116,11 @@ function check_0003_os_hana_support_rhel_intel {
 
             _os_bit_pattern="${_rhel_matrix[$i+1]}"
             _os_supported="${_os_bit_pattern:${_os_minor_version}:1}"
+            _os_supported="${_os_supported#-}"
 
-            logTrace "<${FUNCNAME[0]}> # BitPattern <${_os_bit_pattern}> - OS.minor <${_os_minor_version}> - supported? <${_os_supported}>"
+            logTrace "<${FUNCNAME[0]}> # BitPattern <${_os_bit_pattern}> - OS.minor <${_os_minor_version}> - supported? <0x${_os_supported}>"
 
-            if [[ ${_os_supported} -eq 0 ]] ; then
+            if [[ 0x${_os_supported} -ne ${_os_minor_version} ]] ; then
 
                 logCheckError "RHEL version is NOT supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${OS_VERSION} @ ${LIB_PLATF_VENDOR})"
                 _retval=2
