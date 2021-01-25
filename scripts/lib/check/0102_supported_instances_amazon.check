@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+
+function check_0102_supported_instances_amazon {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # '/sys/devices/virtual/dmi/id/product_name'
+    # "curl -s -m 10 http://169.254.169.254/latest/meta-data/instance-type"
+
+    # MODIFICATION SECTION>>
+    # array             'Instance Type'
+    local -ar _amazon_vm=(\
+                        'r4.8xlarge'    'r4.16xlarge'   \
+                        'r5.8xlarge'    'r5.12xlarge'   'r5.16xlarge'   'r5.24xlarge'  \
+                        'r5b.24xlarge'  \
+                        'x1.16xlarge'   'x1.32xlarge'   \
+                        'x1e.32xlarge'   \
+                        )
+
+    # array             'Instance Type'
+    local -ar _amazon_bm=(\
+                        'r5.metal'      'r5b.metal'     \
+                        'u-6tb1.metal'  \
+                        'u-9tb1.metal'  \
+                        'u-12tb1.metal' \
+                        'u-18tb1.metal' \
+                        'u-24tb1.metal' \
+                        )
+
+    local -r sapnote='#1928533,2316233'
+    # MODIFICATION SECTION<<
+
+    #1380654 - SAP support in IaaS environments
+    #1656099 - SAP Applications on AWS: Supported DB/OS and AWS EC2 products
+    #https://www.sap.com/dmc/exp/2014-09-02-hana-hardware/enEN/#/solutions?filters=iaas;ve:23
+
+    local -a _amazon_cert_instances
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_CLOUD_AMAZON; then
+
+        logCheckSkipped 'Not running on Amazon Web Services. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif LIB_FUNC_IS_VIRT_KVM || LIB_FUNC_IS_VIRT_XEN ; then
+        _amazon_cert_instances+=("${_amazon_vm[@]}")
+
+    else
+        _amazon_cert_instances+=("${_amazon_bm[@]}")
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        for instance in "${_amazon_cert_instances[@]}"; do
+
+            logTrace "<${FUNCNAME[0]}> # ${instance}>"
+
+            [[ "${LIB_PLATF_NAME}" != "${instance}" ]] && continue
+
+            _retval=0
+            break
+
+        done
+
+        if [[ ${_retval} -ne 0 ]] ; then
+
+            logCheckError "Amazon EC2 instance type is NOT supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${LIB_PLATF_NAME})"
+            _retval=2
+
+        else
+
+            logCheckOk "Amazon EC2 instance type is supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${LIB_PLATF_NAME})"
+            _retval=0
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
