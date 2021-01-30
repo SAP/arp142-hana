@@ -7,6 +7,7 @@ function check_0002_os_hana_support_sles_intel {
     local -i _retval=99
 
     # https://www.sap.com/dmc/exp/2014-09-02-hana-hardware/enEN/#/solutions?filters=iaas
+    # https://cloud.google.com/solutions/sap/docs/sap-hana-os-support
 
     # MODIFICATION SECTION>>
 
@@ -16,7 +17,7 @@ function check_0002_os_hana_support_sles_intel {
                         'Microsoft Azure'       '----4'   \
                         'Amazon EC2'            '----4'   \
                         'IBM Cloud'             '-----'   \
-                        'Google GCP'            '----4'   \
+                        'Google GCP'            '-----'   \
                         'Alibaba Cloud ECS'     '----4'   \
                         'Open Telekom Cloud'    '-----'   \
                         'Huawei Cloud'          '----4'   \

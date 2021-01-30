@@ -8,6 +8,7 @@ function check_0003_os_hana_support_rhel_intel {
 
     # https://www.sap.com/dmc/exp/2014-09-02-hana-hardware/enEN/#/solutions?filters=iaas
     # https://docs.aws.amazon.com/quickstart/latest/sap-hana/op-sys.html
+    # https://cloud.google.com/solutions/sap/docs/sap-hana-os-support
 
     # MODIFICATION SECTION>>
 
