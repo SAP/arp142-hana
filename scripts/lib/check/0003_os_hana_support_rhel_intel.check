@@ -7,6 +7,7 @@ function check_0003_os_hana_support_rhel_intel {
     local -i _retval=99
 
     # https://www.sap.com/dmc/exp/2014-09-02-hana-hardware/enEN/#/solutions?filters=iaas
+    # https://docs.aws.amazon.com/quickstart/latest/sap-hana/op-sys.html
 
     # MODIFICATION SECTION>>
 
@@ -26,7 +27,7 @@ function check_0003_os_hana_support_rhel_intel {
     # array             'Platform'              '01234567' (Minor Release)
     local -ar _rhel_7=(\
                         'Microsoft Azure'       '----4567'   \
-                        'Amazon EC2'            '----4567'   \
+                        'Amazon EC2'            '----456-'   \
                         'IBM Cloud'             '----4567'   \
                         'Google GCP'            '----4-67'   \
                         'Alibaba Cloud ECS'     '--------'   \
