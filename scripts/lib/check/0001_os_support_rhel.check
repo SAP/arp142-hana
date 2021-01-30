@@ -25,6 +25,7 @@ function check_0001_os_support_rhel {
     local -ar _rhel_8=(\
                         '8.0' '05 Nov 2019'    '31 Dec 2020'    \
                         '8.1' '28 Apr 2020'    '30 Nov 2023'    \
+                        '8.2' '05 Nov 2020'    '30 Apr 2024'    \
                         )
 
     local -r sapnote='#936887'
@@ -57,7 +58,7 @@ function check_0001_os_support_rhel {
 
         7.[3-7] )  _rhel_all+=("${_rhel_7[@]}") ;;
 
-        8.[0-1] )  _rhel_all+=("${_rhel_8[@]}") ;;
+        8.[0-2] )  _rhel_all+=("${_rhel_8[@]}") ;;
 
         *)
             logCheckError "RHEL version is not supported by SAP HANA (SAP Note #2235581) (is: ${OS_VERSION})"

@@ -17,6 +17,7 @@ function check_0060_os_release_kernel_rhel {
     local -ar rhel77=( '3.10.0-1062' )
     local -ar rhel80=( '4.18.0-80' )
     local -ar rhel81=( '4.18.0-147' )
+    local -ar rhel82=( '4.18.0-193' )
 
     local -r sapnote='#2235581'
     # MODIFICATION SECTION<<
@@ -58,6 +59,7 @@ function check_0060_os_release_kernel_rhel {
 
             8.0)    expected_kernel="${rhel80[0]}" ;;
             8.1)    expected_kernel="${rhel81[0]}" ;;
+            8.2)    expected_kernel="${rhel82[0]}" ;;
 
             *)
                     logCheckError "RHEL version is NOT supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
