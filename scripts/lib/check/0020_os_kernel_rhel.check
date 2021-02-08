@@ -14,7 +14,7 @@ function check_0020_os_kernel_rhel {
     local -ar rhel74power=('3.10.0-693.11.6.el7' '#2292690')
     local -ar rhel76=('3.10.0-957.1.3.el7' '#2292690')
     local -ar rhel76power=('3.10.0-957.1.3.el7' '#2292690')
-    local -ar rhel77=('3.10.0-1062.21.1.el7' '#2292690')
+    local -ar rhel77=('3.10.0-1062.40.1.el7' '#2292690,1880960')
     local -ar rhel77power=('3.10.0-1062.26.1.el7' '#2292690')
 
     local -ar rhel80=('4.18.0-80.el8' '#2777782')
@@ -31,6 +31,7 @@ function check_0020_os_kernel_rhel {
 
     #2235581- SAP HANA: Supported Operating Systems
     #936887 - End of maintenance for Linux distributions
+    #1880960 - Lenovo Systems Solution for SAP HANA Platform Edition FW/OS/Driver Maintenance
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_RHEL; then
