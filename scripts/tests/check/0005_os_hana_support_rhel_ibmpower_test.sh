@@ -84,7 +84,7 @@ test_power9_rhel_supported() {
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
     LIB_PLATF_CPU='POWER9 (architected), altivec supported'
-    OS_VERSION='8.0'
+    OS_VERSION='8.2'
 
     #act
     check_0005_os_hana_support_rhel_ibmpower

@@ -43,7 +43,7 @@ function check_0005_os_hana_support_rhel_ibmpower {
 
             case "${OS_VERSION}" in
 
-                7.[3-7] )
+                7.4 | 7.[6-7] )
                         logCheckOk "RHEL release on IBM POWER8 is supported (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
                         _retval=0
                     ;;
@@ -59,7 +59,7 @@ function check_0005_os_hana_support_rhel_ibmpower {
 
             case "${OS_VERSION}" in
 
-                8.[0-2] )
+                8.[1-2] )
                         logCheckOk "RHEL release on IBM POWER9 is supported (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
                         _retval=0
                     ;;

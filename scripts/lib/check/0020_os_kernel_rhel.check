@@ -17,8 +17,6 @@ function check_0020_os_kernel_rhel {
     local -ar rhel77=('3.10.0-1062.40.1.el7' '#2292690,1880960')
     local -ar rhel77power=('3.10.0-1062.26.1.el7' '#2292690')
 
-    local -ar rhel80=('4.18.0-80.el8' '#2777782')
-    local -ar rhel80power=('4.18.0-80.15.1.el8' '#2777782')
     local -ar rhel81=('4.18.0-147.5.1.el8' '#2777782')
     local -ar rhel81power=('4.18.0-147.5.1.el8' '#2777782')
     local -ar rhel82=('4.18.0-193.40.1.el8' '#2777782')
@@ -48,26 +46,12 @@ function check_0020_os_kernel_rhel {
 
             case "${OS_VERSION}" in
 
-            6.[0-9] )
-                    logCheckError "RHEL version has reached Red Hat's general support end and must be upgraded (SAP Note #936887) (is: ${OS_VERSION})"
-                    _retval=2 ;;
-
             6.10)   _goodversion="${rhel610[0]}" ; sapnote="${rhel610[1]}" ;;
 
-            7.[0-3] )
-                    logCheckError "RHEL version has reached Red Hat's general support end and must be upgraded (SAP Note #936887) (is: ${OS_VERSION})"
-                    _retval=2 ;;
-
             7.4)    _goodversion="${rhel74[0]}" ; sapnote="${rhel74[1]}" ;;
-
-            7.5)
-                    logCheckError "RHEL version has reached Red Hat's general support end and must be upgraded (SAP Note #936887) (is: ${OS_VERSION})"
-                    _retval=2 ;;
-
             7.6)    _goodversion="${rhel76[0]}" ; sapnote="${rhel76[1]}" ;;
             7.7)    _goodversion="${rhel77[0]}" ; sapnote="${rhel77[1]}" ;;
 
-            8.0)    _goodversion="${rhel80[0]}" ; sapnote="${rhel80[1]}" ;;
             8.1)    _goodversion="${rhel81[0]}" ; sapnote="${rhel81[1]}" ;;
             8.2)    _goodversion="${rhel82[0]}" ; sapnote="${rhel82[1]}" ;;
 
@@ -81,20 +65,10 @@ function check_0020_os_kernel_rhel {
 
             case "${OS_VERSION}" in
 
-            7.[0-3] )
-                    logCheckError "RHEL version has reached Red Hat's general support end and must be upgraded (SAP Note #936887) (is: ${OS_VERSION})"
-                    _retval=2 ;;
-
             7.4) _goodversion="${rhel74power[0]}" ; sapnote="${rhel74power[1]}" ;;
-
-            7.5)
-                    logCheckError "RHEL version has reached Red Hat's general support end and must be upgraded (SAP Note #936887) (is: ${OS_VERSION})"
-                    _retval=2 ;;
-
             7.6) _goodversion="${rhel76power[0]}" ; sapnote="${rhel76power[1]}" ;;
             7.7) _goodversion="${rhel77power[0]}" ; sapnote="${rhel77power[1]}" ;;
 
-            8.0) _goodversion="${rhel80power[0]}" ; sapnote="${rhel80power[1]}" ;;
             8.1) _goodversion="${rhel81power[0]}" ; sapnote="${rhel81power[1]}" ;;
             8.2) _goodversion="${rhel82power[0]}" ; sapnote="${rhel82power[1]}" ;;
 
