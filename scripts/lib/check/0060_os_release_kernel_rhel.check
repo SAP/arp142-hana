@@ -15,6 +15,7 @@ function check_0060_os_release_kernel_rhel {
     local -ar rhel74=( '3.10.0-693' )
     local -ar rhel76=( '3.10.0-957' )
     local -ar rhel77=( '3.10.0-1062' )
+    local -ar rhel79=( '3.10.0-1160' )
     local -ar rhel81=( '4.18.0-147' )
     local -ar rhel82=( '4.18.0-193' )
 
@@ -42,6 +43,7 @@ function check_0060_os_release_kernel_rhel {
             7.4)    expected_kernel="${rhel74[0]}" ;;
             7.6)    expected_kernel="${rhel76[0]}" ;;
             7.7)    expected_kernel="${rhel77[0]}" ;;
+            7.9)    expected_kernel="${rhel79[0]}" ;;
 
             8.1)    expected_kernel="${rhel81[0]}" ;;
             8.2)    expected_kernel="${rhel82[0]}" ;;

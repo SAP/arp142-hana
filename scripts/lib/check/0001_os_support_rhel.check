@@ -18,6 +18,7 @@ function check_0001_os_support_rhel {
                         '7.5' '30 Oct 2018'    '30 Apr 2020'    \
                         '7.6' '06 Aug 2019'    '31 Oct 2022'    \
                         '7.7' '31 Mar 2020'    '30 Aug 2023'    \
+                        '7.9' '31 Mar 2021'    '30 Aug 2024'    \
                         )
     #RHEL 7.5 has no E4S --> EUS date
 
@@ -51,7 +52,7 @@ function check_0001_os_support_rhel {
 
         6.10    )  _rhel_all+=("${_rhel_6[@]}") ;;
 
-        7.4 | 7.[6-7] )  _rhel_all+=("${_rhel_7[@]}") ;;
+        7.4 | 7.[6-7] | 7.9 )  _rhel_all+=("${_rhel_7[@]}") ;;
 
         8.[1-2] )  _rhel_all+=("${_rhel_8[@]}") ;;
 

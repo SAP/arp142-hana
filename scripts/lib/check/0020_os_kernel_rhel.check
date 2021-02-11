@@ -16,6 +16,8 @@ function check_0020_os_kernel_rhel {
     local -ar rhel76power=('3.10.0-957.1.3.el7' '#2292690')
     local -ar rhel77=('3.10.0-1062.40.1.el7' '#2292690,1880960')
     local -ar rhel77power=('3.10.0-1062.26.1.el7' '#2292690')
+    local -ar rhel79=('3.10.0-1160.11.1.el7' '#2292690')
+    local -ar rhel79power=('3.10.0-1160.11.1.el7' '#2292690')
 
     local -ar rhel81=('4.18.0-147.5.1.el8' '#2777782')
     local -ar rhel81power=('4.18.0-147.5.1.el8' '#2777782')
@@ -51,6 +53,7 @@ function check_0020_os_kernel_rhel {
             7.4)    _goodversion="${rhel74[0]}" ; sapnote="${rhel74[1]}" ;;
             7.6)    _goodversion="${rhel76[0]}" ; sapnote="${rhel76[1]}" ;;
             7.7)    _goodversion="${rhel77[0]}" ; sapnote="${rhel77[1]}" ;;
+            7.9)    _goodversion="${rhel79[0]}" ; sapnote="${rhel79[1]}" ;;
 
             8.1)    _goodversion="${rhel81[0]}" ; sapnote="${rhel81[1]}" ;;
             8.2)    _goodversion="${rhel82[0]}" ; sapnote="${rhel82[1]}" ;;
@@ -68,6 +71,7 @@ function check_0020_os_kernel_rhel {
             7.4) _goodversion="${rhel74power[0]}" ; sapnote="${rhel74power[1]}" ;;
             7.6) _goodversion="${rhel76power[0]}" ; sapnote="${rhel76power[1]}" ;;
             7.7) _goodversion="${rhel77power[0]}" ; sapnote="${rhel77power[1]}" ;;
+            7.9) _goodversion="${rhel79power[0]}" ; sapnote="${rhel79power[1]}" ;;
 
             8.1) _goodversion="${rhel81power[0]}" ; sapnote="${rhel81power[1]}" ;;
             8.2) _goodversion="${rhel82power[0]}" ; sapnote="${rhel82power[1]}" ;;
