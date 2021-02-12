@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+
+function check_0104_supported_instances_gcp {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # "curl -s -m 10 -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/machine-type"
+
+    # MODIFICATION SECTION>>
+    # array             'Instance Type'
+    local -ar _google_vm=(\
+                        'n1-highmem-32'     'n1-highmem-64'     'n1-highmem-96'     \
+                        'n2-highmem-32'     'n2-highmem-48'     'n2-highmem-64'     'n2-highmem-80'     \
+                        'm1-megamem-96'     'm1-ultramem-40'    'm1-ultramem-80'    'm1-ultramem-160'   \
+                        'm2-megamem-416'    'm2-ultramem-208'   'm2-ultramem-416'   \
+                        )
+
+    # array             'Instance Type'
+    local -ar _google_bm=(\
+                        'o2-ultramem-672-metal' \
+                        'o2-ultramem-896-metal' \
+                        )
+
+    local -r sapnote='#1380654'
+    # MODIFICATION SECTION<<
+
+    #1380654 - SAP support in IaaS environments
+    #2456432 - SAP Applications on Google Cloud: Supported Products and GCP VM types
+    #3000343 - SAP Applications on Google Cloud: Supported Products on Google Cloud Bare Metal Solutions
+    #https://www.sap.com/dmc/exp/2014-09-02-hana-hardware/enEN/#/solutions?filters=iaas;ve:29
+    #https://cloud.google.com/solutions/sap/docs/certifications-sap-hana
+
+    local -a _google_cert_instances
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_CLOUD_GOOGLE; then
+
+        logCheckSkipped 'Not running on Google GCP. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif LIB_FUNC_IS_VIRT_KVM; then
+        _google_cert_instances+=("${_google_vm[@]}")
+
+    else
+        _google_cert_instances+=("${_google_bm[@]}")
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        for instance in "${_google_cert_instances[@]}"; do
+
+            logTrace "<${FUNCNAME[0]}> # ${instance}>"
+
+            [[ "${LIB_PLATF_NAME}" != "${instance}" ]] && continue
+
+            _retval=0
+            break
+
+        done
+
+        if [[ ${_retval} -ne 0 ]] ; then
+
+            logCheckError "Google GCP instance type is NOT supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${LIB_PLATF_NAME})"
+            _retval=2
+
+        else
+
+            logCheckOk "Google GCP instance type is supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${LIB_PLATF_NAME})"
+            _retval=0
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}

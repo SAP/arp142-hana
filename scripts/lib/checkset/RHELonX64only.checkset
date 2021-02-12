@@ -5,6 +5,7 @@
 0060_os_release_kernel_rhel
 0101_supported_instances_azure
 0102_supported_instances_amazon
+0104_supported_instances_gcp
 0210_kernel_pid_max_rhel
 0300_timer_and_clocksource_intel
 0301_timer_and_clocksource_hyperv
