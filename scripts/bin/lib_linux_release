@@ -5,8 +5,8 @@ set -u # treat unset variables as an error
 #------------------------------------------------------------------
 # Library - Linux distribution / Linux release Functions
 #------------------------------------------------------------------
-# (C) Copyright SAP 2017-2020
-# Author: DBS - CoE EMEA HANA Platform & Technical Infrastructure
+# (C) Copyright SAP 2017-2021
+# Author: CS - IDG - CoE EMEA HANA Platform & Technical Infrastructure
 #
 # Script name: "lib_linux_release"
 #
@@ -15,8 +15,8 @@ set -u # treat unset variables as an error
 # return if library is already loaded
 [[ -n "${LIB_LINUX_RELEASE:-}" ]] && return 0
 
-LIB_LINUX_RELEASE='2.1-1.b36_g596d64b2'
-#LIB_RELEASE_DATE='2020-May-14'
+LIB_LINUX_RELEASE='2102-1.g031eb68d'
+#LIB_RELEASE_DATE='2021-Feb-14'
 
 
 ##################################################
@@ -113,7 +113,9 @@ function __lib_func_get_linux_distrib {
 
     OS_NAME="${_os_name}"
     OS_VERSION="${_os_version}"
-    OS_LEVEL=$(uname -r)
+    OS_LEVEL=$(</proc/version)
+    OS_LEVEL=${OS_LEVEL:14} #^Linux version
+    OS_LEVEL=${OS_LEVEL/ */}
 
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # ${OS_NAME} ; ${OS_VERSION} ; ${OS_LEVEL}"
 
