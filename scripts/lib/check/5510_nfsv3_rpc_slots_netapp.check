@@ -9,7 +9,7 @@ function check_5510_nfsv3_rpc_slots_netapp {
     # 'sunrpc.tcp_slot_table_entries'/ 'sunrpc.tcp_max_slot_table_entries'
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#2972496'
+    local -r sapnote='#3024346'
 
     local -i _reco_max_slots=128
     # MODIFICATION SECTION<<
@@ -19,7 +19,7 @@ function check_5510_nfsv3_rpc_slots_netapp {
     # https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-scale-out-standby-netapp-files-suse
     # https://wiki.scn.sap.com/wiki/display/VIRTUALIZATION/SAP+HANA+TDI+on+Cisco+UCS+and+VMware+vSphere#SAPHANATDIonCiscoUCSandVMwarevSphere-Configuration
 
-    #2972496 - SAP HANA Filesystem Types
+    #3024346 - Linux Kernel Settings for NetApp NFS
 
     local _max_slots_parameter
 
