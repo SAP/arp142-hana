@@ -7,13 +7,15 @@ function check_3020_network_memory_max {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#2382421' # Optimizing the Network Configuration on HANA- and OS-Level for SPS10 and Higher
+    local -r sapnote='#2382421'
 
-    local -ir reco_ipv4_tcp_rmem_max=6291456
-    local -ir reco_ipv4_tcp_wmem_max=4194304
+    local -ir reco_ipv4_tcp_rmem_max=16777216
+    local -ir reco_ipv4_tcp_wmem_max=16777216
 
-    local -ir highspeed_ipv4_tcp_mem_max=16777216
+    # local -ir highspeed_ipv4_tcp_mem_max=16777216
     # MODIFICATION SECTION<<
+
+    # 2382421 - Optimizing the Network Configuration on HANA- and OS-Level for SPS10 and Higher
 
     # PRECONDITIONS
 
@@ -41,67 +43,54 @@ function check_3020_network_memory_max {
 
     #ipv4_tcp_rmem_max
     if [[ ${ipv4_tcp_rmem_max} -lt ${reco_ipv4_tcp_rmem_max} ]]; then
-        logCheckError 'Network kernel parameter net.ipv4.tcp_rmem max value NOT set as recommended (is: '"${ipv4_tcp_rmem_max}, should be: >=${reco_ipv4_tcp_rmem_max})"
+        logCheckError 'Network socket buffer net.ipv4.tcp_rmem max value NOT set as recommended (is: '"${ipv4_tcp_rmem_max}, should be: >=${reco_ipv4_tcp_rmem_max})"
         _retval=2
     else
-        logCheckOk 'Network kernel parameter net.ipv4.tcp_rmem max value set as recommended (is: '"${ipv4_tcp_rmem_max})"
+        logCheckOk 'Network socket buffer net.ipv4.tcp_rmem max value set as recommended (is: '"${ipv4_tcp_rmem_max})"
     fi
 
     #ipv4_tcp_wmem_max
     if [[ ${ipv4_tcp_wmem_max} -lt ${reco_ipv4_tcp_wmem_max} ]]; then
-        logCheckError 'Network kernel parameter net.ipv4.tcp_wmem max value NOT set as recommended (is: '"${ipv4_tcp_wmem_max}, should be: >=${reco_ipv4_tcp_wmem_max})"
+        logCheckError 'Network socket buffer net.ipv4.tcp_wmem max value NOT set as recommended (is: '"${ipv4_tcp_wmem_max}, should be: >=${reco_ipv4_tcp_wmem_max})"
         _retval=2
     else
-        logCheckOk 'Network kernel parameter net.ipv4.tcp_wmem max value set as recommended (is: '"${ipv4_tcp_wmem_max})"
+        logCheckOk 'Network socket buffer net.ipv4.tcp_wmem max value set as recommended (is: '"${ipv4_tcp_wmem_max})"
     fi
 
     #core_rmem_max
-    logCheckInfo 'Network kernel parameter net.core.rmem_max must be >= net.ipv4.tcp_rmem MAX'
+    logCheckInfo 'Network socket buffer net.core.rmem_max must be >= net.ipv4.tcp_rmem MAX'
 
     local -i reco_core_rmem_max
     reco_core_rmem_max=$(( ipv4_tcp_rmem_max > reco_ipv4_tcp_rmem_max ? ipv4_tcp_rmem_max : reco_ipv4_tcp_rmem_max ))
 
     if [[ ${core_rmem_max} -lt ${reco_core_rmem_max} ]]; then
-        logCheckError 'Network kernel parameter net.core.rmem_max NOT set as recommended (is: '"${core_rmem_max}, must be: >=${reco_core_rmem_max})"
+        logCheckError 'Network global socket buffer net.core.rmem_max NOT set as recommended (is: '"${core_rmem_max}, must be: >=${reco_core_rmem_max})"
         _retval=2
     else
-        logCheckOk 'Network kernel parameter net.core.rmem_max set as recommended (is: '"${core_rmem_max})"
+        logCheckOk 'Network global socket buffer net.core.rmem_max set as recommended (is: '"${core_rmem_max})"
     fi
 
     #core_wmem_max
-    logCheckInfo 'Network kernel parameter net.core.wmem_max must be >= net.ipv4.tcp_wmem MAX'
+    logCheckInfo 'Network socket buffer net.core.wmem_max must be >= net.ipv4.tcp_wmem MAX'
 
     local -i reco_core_wmem_max
     reco_core_wmem_max=$(( ipv4_tcp_wmem_max > reco_ipv4_tcp_wmem_max ? ipv4_tcp_wmem_max : reco_ipv4_tcp_wmem_max ))
 
     if [[ ${core_wmem_max} -lt ${reco_core_wmem_max} ]]; then
-        logCheckError 'Network kernel parameter net.core.wmem_max NOT set as recommended (is: '"${core_wmem_max}, must be: >=${reco_core_wmem_max})"
+        logCheckError 'Network global socket buffer net.core.wmem_max NOT set as recommended (is: '"${core_wmem_max}, must be: >=${reco_core_wmem_max})"
         _retval=2
     else
-        logCheckOk 'Network kernel parameter net.core.wmem_max set as recommended (is: '"${core_wmem_max})"
-    fi
-
-    #ipv4_tcp_?mem_max - high performance 10G+
-    local -i curr_ipv4_tcp_mem_max
-    curr_ipv4_tcp_mem_max=$(( ipv4_tcp_rmem_max > ipv4_tcp_wmem_max ? ipv4_tcp_rmem_max : ipv4_tcp_wmem_max ))
-
-    if [[ ${curr_ipv4_tcp_mem_max} -lt ${highspeed_ipv4_tcp_mem_max} ]]; then
-        logCheckInfo '---'
-        logCheckInfo 'In case of 10G+ networks with high bandwidth demand for certain traffic'
-        logCheckInfo 'e.g HANA internode, HANA system replication, HANA network backup'
-        logCheckInfo 'Parameters net.ipv4.tcp_rmem and net.ipv4.tcp_wmem max respectively net.core.*mem_max values'
-        logCheckInfo 'should be further increased. (should be: >='"${highspeed_ipv4_tcp_mem_max})"
-        logCheckInfo '---'
+        logCheckOk 'Network global socket buffer net.core.wmem_max set as recommended (is: '"${core_wmem_max})"
     fi
 
     if [[ ${_retval} -eq 99 ]]; then
 
-        logCheckOk 'Network kernel memory parameters set as recommended (SAP Note '"${sapnote:-})"
+        logCheckOk 'Network socket buffers set as recommended (SAP Note '"${sapnote:-})"
         _retval=0
 
     else
 
-        logCheckError 'Network kernel memory parameters NOT set as recommended (SAP Note '"${sapnote:-})"
+        logCheckError 'Network socket buffers NOT set as recommended (SAP Note '"${sapnote:-})"
         _retval=2
 
     fi
