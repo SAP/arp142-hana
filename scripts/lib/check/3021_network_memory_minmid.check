@@ -67,23 +67,23 @@ function check_3021_network_memory_minmid {
 
     # Min Mid Values
     if [[ "${ipv4_tcp_rmem}" != ${reco_ipv4_tcp_rmem_minmid}* ]]; then
-        logCheckWarning 'Network kernel parameter net.ipv4.tcp_rmem MIN/MID values do not need to be adjusted (is: '"${ipv4_tcp_rmem}, should be: ${reco_ipv4_tcp_rmem_minmid})"
+        logCheckWarning 'Network socket Rx buffer net.ipv4.tcp_rmem MIN/MID values NOT set to default (is: '"${ipv4_tcp_rmem}, should be: ${reco_ipv4_tcp_rmem_minmid})"
         _retval=1
     fi
 
     if [[ "${ipv4_tcp_wmem}" != ${reco_ipv4_tcp_wmem_minmid}* ]]; then
-        logCheckWarning 'Network kernel parameter net.ipv4.tcp_wmem MIN/MID values do not need to be adjusted (is: '"${ipv4_tcp_wmem}, should be: ${reco_ipv4_tcp_wmem_minmid})"
+        logCheckWarning 'Network socket Tx buffer net.ipv4.tcp_wmem MIN/MID values NOT set to default (is: '"${ipv4_tcp_wmem}, should be: ${reco_ipv4_tcp_wmem_minmid})"
         _retval=1
     fi
 
     if [[ ${_retval} -eq 99 ]]; then
 
-        logCheckOk 'Network kernel memory parameters MIN/MID set as recommended (SAP Note '"${sapnote:-})"
+        logCheckOk 'Network socket buffers MIN/MID values set as recommended (SAP Note '"${sapnote:-})"
         _retval=0
 
     else
 
-        logCheckWarning 'Network kernel memory parameters MIN/MID changed (SAP Note '"${sapnote:-})"
+        logCheckWarning 'Network socket buffers MIN/MID values NOT set as recommended (SAP Note '"${sapnote:-})"
         _retval=1
 
     fi

@@ -43,44 +43,44 @@ function check_3020_network_memory_max {
 
     #ipv4_tcp_rmem_max
     if [[ ${ipv4_tcp_rmem_max} -lt ${reco_ipv4_tcp_rmem_max} ]]; then
-        logCheckError 'Network socket buffer net.ipv4.tcp_rmem max value NOT set as recommended (is: '"${ipv4_tcp_rmem_max}, should be: >=${reco_ipv4_tcp_rmem_max})"
+        logCheckError 'Network socket Rx buffer net.ipv4.tcp_rmem max value NOT set as recommended (is: '"${ipv4_tcp_rmem_max}, should be: >=${reco_ipv4_tcp_rmem_max})"
         _retval=2
     else
-        logCheckOk 'Network socket buffer net.ipv4.tcp_rmem max value set as recommended (is: '"${ipv4_tcp_rmem_max})"
+        logCheckOk 'Network socket Rx buffer net.ipv4.tcp_rmem max value set as recommended (is: '"${ipv4_tcp_rmem_max})"
     fi
 
     #ipv4_tcp_wmem_max
     if [[ ${ipv4_tcp_wmem_max} -lt ${reco_ipv4_tcp_wmem_max} ]]; then
-        logCheckError 'Network socket buffer net.ipv4.tcp_wmem max value NOT set as recommended (is: '"${ipv4_tcp_wmem_max}, should be: >=${reco_ipv4_tcp_wmem_max})"
+        logCheckError 'Network socket Tx buffer net.ipv4.tcp_wmem max value NOT set as recommended (is: '"${ipv4_tcp_wmem_max}, should be: >=${reco_ipv4_tcp_wmem_max})"
         _retval=2
     else
-        logCheckOk 'Network socket buffer net.ipv4.tcp_wmem max value set as recommended (is: '"${ipv4_tcp_wmem_max})"
+        logCheckOk 'Network socket Tx buffer net.ipv4.tcp_wmem max value set as recommended (is: '"${ipv4_tcp_wmem_max})"
     fi
 
     #core_rmem_max
-    logCheckInfo 'Network socket buffer net.core.rmem_max must be >= net.ipv4.tcp_rmem MAX'
+    logCheckInfo 'Network global socket Rx buffer net.core.rmem_max must be >= net.ipv4.tcp_rmem MAX'
 
     local -i reco_core_rmem_max
     reco_core_rmem_max=$(( ipv4_tcp_rmem_max > reco_ipv4_tcp_rmem_max ? ipv4_tcp_rmem_max : reco_ipv4_tcp_rmem_max ))
 
     if [[ ${core_rmem_max} -lt ${reco_core_rmem_max} ]]; then
-        logCheckError 'Network global socket buffer net.core.rmem_max NOT set as recommended (is: '"${core_rmem_max}, must be: >=${reco_core_rmem_max})"
+        logCheckError 'Network global socket Rx buffer net.core.rmem_max NOT set as recommended (is: '"${core_rmem_max}, must be: >=${reco_core_rmem_max})"
         _retval=2
     else
-        logCheckOk 'Network global socket buffer net.core.rmem_max set as recommended (is: '"${core_rmem_max})"
+        logCheckOk 'Network global socket Rx buffer net.core.rmem_max set as recommended (is: '"${core_rmem_max})"
     fi
 
     #core_wmem_max
-    logCheckInfo 'Network socket buffer net.core.wmem_max must be >= net.ipv4.tcp_wmem MAX'
+    logCheckInfo 'Network global socket Tx buffer net.core.wmem_max must be >= net.ipv4.tcp_wmem MAX'
 
     local -i reco_core_wmem_max
     reco_core_wmem_max=$(( ipv4_tcp_wmem_max > reco_ipv4_tcp_wmem_max ? ipv4_tcp_wmem_max : reco_ipv4_tcp_wmem_max ))
 
     if [[ ${core_wmem_max} -lt ${reco_core_wmem_max} ]]; then
-        logCheckError 'Network global socket buffer net.core.wmem_max NOT set as recommended (is: '"${core_wmem_max}, must be: >=${reco_core_wmem_max})"
+        logCheckError 'Network global socket Tx buffer net.core.wmem_max NOT set as recommended (is: '"${core_wmem_max}, must be: >=${reco_core_wmem_max})"
         _retval=2
     else
-        logCheckOk 'Network global socket buffer net.core.wmem_max set as recommended (is: '"${core_wmem_max})"
+        logCheckOk 'Network global socket Tx buffer net.core.wmem_max set as recommended (is: '"${core_wmem_max})"
     fi
 
     if [[ ${_retval} -eq 99 ]]; then
