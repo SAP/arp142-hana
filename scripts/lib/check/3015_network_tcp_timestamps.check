@@ -22,7 +22,7 @@ function check_3015_network_tcp_timestamps {
         logCheckSkipped 'Network kernel TCP timestamps not configurable' "(SAP Note ${sapnote:-}). Skipping <${FUNCNAME[0]}>"
         _retval=3
 
-    elif LIB_FUNC_IS_VIRT_MICROSOFT; then
+    elif LIB_FUNC_IS_CLOUD_MICROSOFT ; then
 
         logCheckWarning '---'
         logCheckWarning 'Do NOT enable TCP timestamps on Azure VMs placed behind Azure Load Balancer.'
