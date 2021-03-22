@@ -15,8 +15,8 @@ set -u # treat unset variables as an error
 # return if library is already loaded
 [[ -n "${LIB_LINUX_RELEASE:-}" ]] && return 0
 
-LIB_LINUX_RELEASE='2102-1.g031eb68d'
-#LIB_RELEASE_DATE='2021-Feb-14'
+LIB_LINUX_RELEASE='2103-1.g57dce0af'
+#LIB_RELEASE_DATE='2021-Mar-22'
 
 
 ##################################################
@@ -113,9 +113,7 @@ function __lib_func_get_linux_distrib {
 
     OS_NAME="${_os_name}"
     OS_VERSION="${_os_version}"
-    OS_LEVEL=$(</proc/version)
-    OS_LEVEL=${OS_LEVEL:14} #^Linux version
-    OS_LEVEL=${OS_LEVEL/ */}
+    OS_LEVEL=$(</proc/sys/kernel/osrelease)
 
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # ${OS_NAME} ; ${OS_VERSION} ; ${OS_LEVEL}"
 
