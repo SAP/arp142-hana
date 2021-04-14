@@ -9,7 +9,6 @@ function check_0441_saptune_sles {
     # MODIFICATION SECTION>>
     local -r sapnote='#1275776'         #1275776 - Linux: Preparing SLES for SAP environments
 
-    local -r sles122='2.0.3-8.24.1'
     local -r sles123='2.0.3-3.24.1'
     local -r sles124='2.0.3-3.11.1'
     local -r sles125='2.0.3-3.11.1'
@@ -40,7 +39,6 @@ function check_0441_saptune_sles {
                         _retval=3
                         ;;
 
-                12.[0-2]* ) : "${sles122}" ;;
                 12.3 )      : "${sles123}" ;;
                 12.4 )      : "${sles124}" ;;
                 12.5 )      : "${sles125}" ;;

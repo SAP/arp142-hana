@@ -8,7 +8,7 @@ function check_0400_glibc_x64 {
 
     # MODIFICATION SECTION>>
     local -ar sles114=( '2.11.3-17.95.2' '#2263929' )
-    local -ar sles122=( '2.22-61.3' '#2205917' )
+    local -ar sles123=( '2.22-61.3' '#2205917' )
     local -ar sles124=( '2.22-15.3' '#2205917' )
     local -ar sles150=( '2.26-13.24.1' '#2997843' )
     local -ar rhel6x=( '2.12-1.166.el6_7.1' '#1496410' )
@@ -41,7 +41,7 @@ function check_0400_glibc_x64 {
 
                 11.*)           _goodversion="${sles114[0]}" ; sapnote="${sles114[1]}" ;;
 
-                12.[2-3]*)      _goodversion="${sles122[0]}" ; sapnote="${sles122[1]}" ;;
+                12.3)           _goodversion="${sles123[0]}" ; sapnote="${sles123[1]}" ;;
 
                 12.[4-5]*)      _goodversion="${sles124[0]}" ; sapnote="${sles124[1]}" ;;
 
