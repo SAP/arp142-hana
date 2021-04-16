@@ -10,9 +10,9 @@ function check_0800_sap_host_agent {
     local -r sapnote='#1113545'
     local -r sapnote721='#2130510'
     local -r sapnoteFIX='#2498706'
-    local -r sapnoteLATEST='#3013915'
+    local -r sapnoteLATEST='#3036710'
 
-    local -r hostagent_version_exp='721.51.0'
+    local -r hostagent_version_exp='721.52.0'
     local -ar hostagent_buggy=( '721.26' '721.28' )
 
     # MODIFICATION SECTION<<
@@ -20,7 +20,7 @@ function check_0800_sap_host_agent {
     #1113545 - Problems with SAP Host Agent
     #2130510 - SAP Host Agent 7.21
     #2498706 - Linux saposcol core dumps, missing ST06 data ==> 7.21 PL26-PL28
-    #3013915 - SAP Host Agent SAP HANA : Corrections/enhancements for PL 51
+    #3036710 - SAP Host Agent SAP HANA : Corrections/enhancements for PL 52
 
     local -r saphostexec_path='/usr/sap/hostctrl/exe/saphostexec'
 
