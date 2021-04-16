@@ -14,13 +14,13 @@ function check_0020_os_kernel_rhel {
     local -ar rhel74power=('3.10.0-693.11.6.el7' '#2292690')
     local -ar rhel76=('3.10.0-957.1.3.el7' '#2292690')
     local -ar rhel76power=('3.10.0-957.1.3.el7' '#2292690')
-    local -ar rhel77=('3.10.0-1062.40.1.el7' '#2292690,1880960')
+    local -ar rhel77=('3.10.0-1062.46.1.el7' '#2292690,1880960')
     local -ar rhel77power=('3.10.0-1062.26.1.el7' '#2292690')
     local -ar rhel79=('3.10.0-1160.11.1.el7' '#2292690')
     local -ar rhel79power=('3.10.0-1160.11.1.el7' '#2292690')
 
-    local -ar rhel81=('4.18.0-147.5.1.el8' '#2777782')
-    local -ar rhel81power=('4.18.0-147.5.1.el8' '#2777782')
+    local -ar rhel81=('4.18.0-147.38.1.el8' '#2777782,#2533550')
+    local -ar rhel81power=('4.18.0-147.38.1.el8' '#2777782')
     local -ar rhel82=('4.18.0-193.41.1.el8' '#2533550')
     local -ar rhel82power=('4.18.0-193.40.1' '#2777782')
     # MODIFICATION SECTION<<
