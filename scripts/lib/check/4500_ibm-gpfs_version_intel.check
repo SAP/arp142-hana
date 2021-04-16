@@ -9,6 +9,7 @@ function check_4500_ibm-gpfs_version_intel {
     # MODIFICATION SECTION>>
     local -r sapnote='#2908360,#2533844'
     local -r _goodversion5='5.0.5.4'
+    local -r _goodversion5n='5.1.0.1'       #supported only on RHEL 7.7, starting with RHEL 8.1 and SLES 15 SP0
     # MODIFICATION SECTION<<
 
     #2908360 - Spectrum Scale Software Lenovo ESD Platform
@@ -25,6 +26,23 @@ function check_4500_ibm-gpfs_version_intel {
         logCheckSkipped 'GPFS not installed. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
+    elif LIB_FUNC_IS_RHEL; then
+
+        case "${OS_VERSION}" in
+
+            6.* | 7.[0-6] | 8.0 )   _goodversion=${_goodversion5} ;;
+            *)                      _goodversion=${_goodversion5n} ;;
+
+        esac
+
+    elif LIB_FUNC_IS_SLES; then
+
+        case "${OS_VERSION}" in
+
+            11.* | 12.* )           _goodversion=${_goodversion5} ;;
+            *)                      _goodversion=${_goodversion5n} ;;
+
+        esac
     fi
 
     # CHECK
@@ -43,8 +61,6 @@ function check_4500_ibm-gpfs_version_intel {
             4.*)        logCheckError 'Support for IBM GPFS v4.2.x ended on Sept 30, 2020 !!!'  ;;
 
         esac
-
-        _goodversion=${_goodversion5}
 
         #normalize good version
         LIB_FUNC_NORMALIZE_RPM "${_goodversion}"
