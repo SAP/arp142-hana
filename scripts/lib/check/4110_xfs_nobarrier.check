@@ -9,8 +9,10 @@ function check_4110_xfs_nobarrier {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#n/a'
+    local -r sapnote='#2684254'
     # MODIFICATION SECTION<<
+
+    #2684254 - SAP HANA DB: Recommended OS settings for SLES 15 / SLES for SAP Applications 15
 
     local _nobarrier_nofunction
     _nobarrier_nofunction=false
