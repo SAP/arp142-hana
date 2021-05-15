@@ -7,7 +7,7 @@ function check_0001_os_support_rhel {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    # array 'REL'   'support general end (EUS)'  'extended support end (E4S/EUS)'
+    # array 'REL'   'support general end'  'extended support end (E4S/EUS)'
     local -ar _rhel_6=(\
                         '6.10'  '30 Nov 2020'    '30 Mar 2024'  \
                         )
@@ -70,6 +70,8 @@ function check_0001_os_support_rhel {
         local _end_support_date
         local _end_e4s_date
 
+        local _rhel_type
+
         # i+=3 --> every 3rd item
         for ((i=0; i < ${#_rhel_all[@]}; i+=3)); do
 
@@ -78,6 +80,12 @@ function check_0001_os_support_rhel {
             _rhel_release="${_rhel_all[$i]}"
 
             [[ "${OS_VERSION}" != "${_rhel_release}"* ]] && continue    #handle kernel with subversions correctly
+
+            if ! LIB_FUNC_IS_RHEL4SAP; then
+                _rhel_type='RHEL'
+            else
+                _rhel_type='RHEL4SAP'
+            fi
 
             _end_support_date="${_rhel_all[$i+1]}"
             _end_e4s_date="${_rhel_all[$i+2]}"
@@ -92,18 +100,22 @@ function check_0001_os_support_rhel {
 
             if [[ ${ft_today} -ge ${ft_end_e4s_date:-} ]] ; then
 
-                logCheckError "RHEL version has reached its end of lifetime by Red Hat and must be upgraded (SAP Note ${sapnote:-}) (is: ${OS_VERSION}, E4S end: ${_end_e4s_date})"
+                logCheckError "${_rhel_type} version has reached its end of lifetime by Red Hat and must be upgraded (SAP Note ${sapnote:-}) (is: ${OS_VERSION}, E4S end: ${_end_e4s_date})"
                 _retval=2
+
+            elif LIB_FUNC_IS_RHEL4SAP; then
+
+                logCheckOk "${_rhel_type} version is in E4S/EUS support by Red Hat (SAP Note ${sapnote:-}) (is: ${OS_VERSION}, E4S end: ${_end_e4s_date})"
+                _retval=0
 
             elif [[ ${ft_today} -ge ${ft_end_support:-} ]] ; then
 
-                logCheckInfo "The following warning can be ignored in case of E4S contract, verify if E4S updates are available (E4S end: ${_end_e4s_date})"
-                logCheckWarning "RHEL version has reached Red Hat's general support end and should be upgraded (SAP Note ${sapnote:-}) (is: ${OS_VERSION}, GS end: ${_end_support_date})"
+                logCheckWarning "${_rhel_type} version has reached Red Hat's general support end and should be upgraded (SAP Note ${sapnote:-}) (is: ${OS_VERSION}, GS end: ${_end_support_date})"
                 _retval=1
 
             else
 
-                logCheckOk "RHEL version is in general support by Red Hat (SAP Note ${sapnote:-}) (is: ${OS_VERSION}, GS end: ${_end_support_date}, E4S end: ${_end_e4s_date})"
+                logCheckOk "${_rhel_type} version is in general support by Red Hat (SAP Note ${sapnote:-}) (is: ${OS_VERSION}, GS end: ${_end_support_date}, E4S end: ${_end_e4s_date})"
                 _retval=0
             fi
 
