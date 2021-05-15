@@ -15,8 +15,8 @@ set -u # treat unset variables as an error
 # return if library is already loaded
 [[ -n "${LIB_LINUX_RELEASE:-}" ]] && return 0
 
-LIB_LINUX_RELEASE='2103-1.g57dce0af'
-#LIB_RELEASE_DATE='2021-Mar-22'
+LIB_LINUX_RELEASE='2105-1.gd74a8677'
+#LIB_RELEASE_DATE='2021-May-15'
 
 
 ##################################################
@@ -31,6 +31,19 @@ function LIB_FUNC_IS_SLES4SAP {
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
     ${lib_release_sles4sap} && _retval=0
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+}
+
+# Returns 0 on RHEL4SAP, 1 on other
+function LIB_FUNC_IS_RHEL4SAP {
+
+    local -i _retval=1
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    ${lib_release_rhel4sap} && _retval=0
 
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
     return ${_retval}
@@ -315,6 +328,21 @@ function __lib_func_get_sles4sap {
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # ${lib_release_sles4sap}"
 
 }
+
+function __lib_func_get_rhel4sap {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    if LIB_FUNC_IS_RHEL; then
+
+        # as advised by Red Hat
+        grep -q -m1 -E -e 'for SAP \(|SAP HANA \(|- SAP' /etc/yum.repos.d/redhat.repo && lib_release_rhel4sap=true
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # ${lib_release_rhel4sap}"
+
+}
 #============================================================
 # LIB MAIN - initialization
 #============================================================
@@ -329,8 +357,10 @@ function _lib_linux_release_main {
     readonly OS_LEVEL
 
     __lib_func_get_sles4sap
+    __lib_func_get_rhel4sap
 
     readonly lib_release_sles4sap
+    readonly lib_release_rhel4sap
 }
 
 #Import libraries
@@ -344,6 +374,7 @@ declare -r lib_release_sles='Linux SLES'
 declare -r lib_release_ols='Linux OLS'
 
 declare lib_release_sles4sap=false
+declare lib_release_rhel4sap=false
 
 #GLOBAL
 declare OS_NAME
