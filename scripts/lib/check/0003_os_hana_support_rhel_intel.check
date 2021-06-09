@@ -28,7 +28,7 @@ function check_0003_os_hana_support_rhel_intel {
     # array             'Platform'              '0123456789' (Minor Release)
     local -ar _rhel_7=(\
                         'Microsoft Azure'       '----4567--'   \
-                        'Amazon EC2'            '----456---'   \
+                        'Amazon EC2'            '----4567-9'   \
                         'IBM Cloud'             '----4567--'   \
                         'Google GCP'            '----4-67--'   \
                         'Alibaba Cloud ECS'     '----------'   \
