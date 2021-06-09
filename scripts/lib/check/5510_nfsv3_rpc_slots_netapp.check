@@ -59,12 +59,12 @@ function check_5510_nfsv3_rpc_slots_netapp {
 
         if [[ ${_curr_max_slots} -ne ${_reco_max_slots} ]]; then
 
-            logCheckWarning "sunrpc parameter ${_max_slots_parameter} NOT set as recommended (is: ${_curr_max_slots}, should be: ${_reco_max_slots})"
+            logCheckWarning "sunrpc parameter ${_max_slots_parameter} NOT set as recommended (SAP Note ${sapnote:-}) (is: ${_curr_max_slots}, should be: ${_reco_max_slots})"
             _retval=1
 
         else
 
-            logCheckOk "sunrpc parameter ${_max_slots_parameter} set as recommended (is: ${_curr_max_slots})"
+            logCheckOk "sunrpc parameter ${_max_slots_parameter} set as recommended (SAP Note ${sapnote:-}) (is: ${_curr_max_slots})"
             _retval=0
 
         fi
