@@ -21,7 +21,7 @@ function check_0020_os_kernel_rhel {
 
     local -ar rhel81=('4.18.0-147.38.1.el8' '#2777782,#2533550')
     local -ar rhel81power=('4.18.0-147.38.1.el8' '#2777782')
-    local -ar rhel82=('4.18.0-193.41.1.el8' '#2533550')
+    local -ar rhel82=('4.18.0-193.47.1.el8' '#3057472,#2975859')
     local -ar rhel82power=('4.18.0-193.40.1' '#2777782')
     # MODIFICATION SECTION<<
 
@@ -33,6 +33,8 @@ function check_0020_os_kernel_rhel {
     #936887 - End of maintenance for Linux distributions
     #1880960 - Lenovo Systems Solution for SAP HANA Platform Edition FW/OS/Driver Maintenance
     #2533550 - Lenovo Systems Solution for SAP HANA Platform Edition FW/OS/Driver Maintenance (SR950)
+    #3057472 - Lenovo Systems Solution for SAP HANA Platform Edition FW/OS/Driver Maintenance (SR650v2)
+    #2975859 - Lenovo Systems Solution for SAP HANA Platform Edition FW/OS/Driver Maintenance (SR860v2)
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_RHEL; then
