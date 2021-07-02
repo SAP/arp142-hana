@@ -20,7 +20,6 @@ function check_0003_os_hana_support_rhel_intel {
                         'IBM Cloud'             '-----------'   \
                         'Google GCP'            '-----------'   \
                         'Alibaba Cloud ECS'     '-----------'   \
-                        'Open Telekom Cloud'    '-----------'   \
                         'Huawei Cloud'          '-----------'   \
                         ''                      '----------A'   \          #all others, e.g. TDI, Bare-Metal
                         )
@@ -32,7 +31,6 @@ function check_0003_os_hana_support_rhel_intel {
                         'IBM Cloud'             '----4567--'   \
                         'Google GCP'            '----4-67--'   \
                         'Alibaba Cloud ECS'     '----------'   \
-                        'Open Telekom Cloud'    '----------'   \
                         'Huawei Cloud'          '------6---'   \
                         ''                      '----4567-9'   \          #all others, e.g. TDI, Bare-Metal
                         )
@@ -44,7 +42,6 @@ function check_0003_os_hana_support_rhel_intel {
                         'IBM Cloud'             '01-'   \
                         'Google GCP'            '-1-'   \
                         'Alibaba Cloud ECS'     '---'   \
-                        'Open Telekom Cloud'    '---'   \
                         'Huawei Cloud'          '---'   \
                         ''                      '012'   \          #all others, e.g. TDI, Bare-Metal
                         )
