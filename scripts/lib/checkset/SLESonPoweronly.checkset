@@ -48,3 +48,4 @@
 5050_vm_dirty_bytes_sles
 5100_pagecache_limit_sles
 5510_nfsv3_rpc_slots_netapp
+8500_sap_hana_client

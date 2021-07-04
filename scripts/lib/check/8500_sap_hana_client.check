@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+function check_8500_sap_hana_client {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#1113545'
+    local -r hanaclient_version_exp='2.9.19.1622741887'
+    # MODIFICATION SECTION<<
+
+    #2941449 - SAP HANA Client 2.0 Releases
+
+    #PRECONDITION
+    if ! grep -qs . -m1 /usr/sap/???/hdbclient/manifest; then
+
+        logCheckSkipped 'No SAP HANA Client found. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+        #CHECK
+        local -a hanaclients
+        # read infos into array (mapfile = bash4+)
+        if [[ ${BASH_VERSINFO[0]:-} -ge 4 ]] ; then
+            mapfile -t hanaclients < <(grep fullversion -m1 -H /usr/sap/???/hdbclient/manifest)
+        else
+            while IFS=$'\n' read -r line; do hanaclients+=("$line"); done < <(grep fullversion -m1 -H /usr/sap/???/hdbclient/manifest)
+        fi
+
+        local hanaclient_version_curr
+        local _sid
+
+        for _client in "${hanaclients[@]}"; do
+
+            _sid="${_client:9:3}"
+            hanaclient_version_curr="${_client##*fullversion: }"
+
+            logTrace "<${FUNCNAME[0]}> # <${_client}> <${_sid}> <${hanaclient_version_curr}>"
+
+            # returns 0 if equal, 1 if first is higher, 2 if second is higher
+            LIB_FUNC_COMPARE_VERSIONS "${hanaclient_version_curr}" "${hanaclient_version_exp}"
+            if [[ $? -eq 2 ]]; then
+                logCheckWarning "SAP HANA Client for ${_sid} should be upgraded (is: ${hanaclient_version_curr}, should be: >=${hanaclient_version_exp})"
+                _retval=1
+            else
+                logCheckOk "SAP HANA Client for ${_sid} is at required level (is: ${hanaclient_version_curr})"
+            fi
+
+        done
+
+        if [[ ${_retval} -eq 99 ]]; then
+
+                logCheckOk "All SAP HANA Clients at recommended version (SAP Note ${sapnote:-})"
+                _retval=0
+
+            else
+
+                logCheckWarning "NOT all SAP HANA Clients at recommended version (SAP Note ${sapnote:-})"
+                _retval=1
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
