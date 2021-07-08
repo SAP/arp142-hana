@@ -9,7 +9,7 @@ function check_2500_kernel_sharedmemory {
     # MODIFICATION SECTION>>
     local -r sapnote='#2534844,#941735'
     #2534844 v12 - Indexserver Crash During Startup due to Insufficient Shared Memory Segment
-    #941735  v10 - SAP memory management system for 64-bit Linux systems
+    #941735  v11 - SAP memory management system for 64-bit Linux systems
 
     # LIB_COMPARE_TOOBIG_NUMBERS returns 0 if equal, 1 if first is higher, 2 if second is higher
 
@@ -17,7 +17,7 @@ function check_2500_kernel_sharedmemory {
     local -ar _shm_parameter=(\
                                     'kernel.shmmni'                    32768    1  \
                                     'kernel.shmall'      1152921504606846720    1  \
-                                    'kernel.shmmax'     18446744073709551615    1  \
+                                    'kernel.shmmax'     18446744073692774399    1  \
     )
     # MODIFICATION SECTION<<
 
