@@ -30,7 +30,7 @@ function check_0101_supported_instances_azure {
     local -ar _azure_bm=(\
                         'S144'     'S144m'    \
                         'S192'     'S192m'    \
-                        'S224'     'S224m'    'S224om'   \
+                        'S224'     'S224m'    'S224om'  'S224oo'    'S224ooo'   'S224oom' \
                         'S384'     'S384m'    'S384xm'   \
                         'S448'     'S448m'    'S448om'  'S448a'    'S448ma'\
                         'S576m'        \
