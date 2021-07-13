@@ -9,10 +9,14 @@ function check_4110_xfs_nobarrier {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#2684254'
+    local -r sles_sapnote='#2684254'
+    local -r rhel_sapnote='#2777782'
     # MODIFICATION SECTION<<
 
     #2684254 - SAP HANA DB: Recommended OS settings for SLES 15 / SLES for SAP Applications 15
+    #2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
+
+    local sapnote
 
     local _nobarrier_nofunction
     _nobarrier_nofunction=false
@@ -23,10 +27,13 @@ function check_4110_xfs_nobarrier {
     # PRECONDITIONS
     if ! grep -q 'xfs' '/proc/mounts'; then
 
-        logCheckSkipped "No xfs filesystem mounted (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+        logCheckSkipped "No xfs filesystem mounted. Skipping" "<${FUNCNAME[0]}>"
         _retval=3
 
     elif LIB_FUNC_IS_SLES ; then
+
+        sapnote=${sles_sapnote}
+
         case "${OS_VERSION}" in
 
             11.*      ) : ;;
@@ -40,6 +47,9 @@ function check_4110_xfs_nobarrier {
         esac
 
     elif LIB_FUNC_IS_RHEL ; then
+
+        sapnote=${rhel_sapnote}
+
         case "${OS_VERSION}" in
 
             6.* )       : ;;
