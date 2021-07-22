@@ -8,10 +8,11 @@ Summary: Linux OS checks for SAP HANA hosts
 Version: %{_version}
 Release: %{_release}
 Group: Applications/System
-Vendor: SAP SE - DBS - CoE EMEA HANA Platform & Technical Infrastructure
-License: SAP SE
+Vendor: SAP SE
+License: Apache-2.0
 Autoreq: 0
 BuildArch: noarch
+URL: https://github.com/SAP/arp142-hana
 
 
 %description

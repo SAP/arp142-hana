@@ -5,9 +5,6 @@ set -u # treat unset variables as an error
 #------------------------------------------------------------------
 # SAP HANA OS checks
 #------------------------------------------------------------------
-# (C) Copyright SAP 2017-2020
-# Author: CS IDG - CoE EMEA HANA Platform & Technical Infrastructure
-
 # Script name: "saphana-logger-stubs"
 #
 # Logging Functions - Stubs for Testing
