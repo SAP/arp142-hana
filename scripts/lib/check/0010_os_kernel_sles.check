@@ -24,6 +24,8 @@ function check_0010_os_kernel_sles {
     local -ar sles151power=('4.12.14-197.40.1' '#2684254')
     local -ar sles152=('5.3.18-24.24.1' '#2684254')
     local -ar sles152power=('5.3.18-24.24.1' '#2684254 ')
+    local -ar sles153=('5.3.18-57.1' '#2684254')
+    local -ar sles153power=('5.3.18-57.1' '#2684254 ')
     # MODIFICATION SECTION<<
 
     #2240716 - SAP HANA DB: Recommended OS settings for SLES 11 / SLES for SAP Applications 11 SP4
@@ -72,6 +74,8 @@ function check_0010_os_kernel_sles {
 
             15.2*) _goodversion="${sles152power[0]}" ; sapnote="${sles152power[1]}" ;;
 
+            15.3*) _goodversion="${sles153power[0]}" ; sapnote="${sles153power[1]}" ;;
+
             *)
                 logCheckError "SLESonPower version is NOT supported by SAP HANA (SAP Note #2235581) (is: ${OS_VERSION})"
                 _retval=2 ;;
@@ -102,6 +106,8 @@ function check_0010_os_kernel_sles {
             15.1*)  _goodversion="${sles151[0]}" ; sapnote="${sles151[1]}" ;;
 
             15.2*)  _goodversion="${sles152[0]}" ; sapnote="${sles152[1]}" ;;
+
+            15.3*)  _goodversion="${sles153[0]}" ; sapnote="${sles153[1]}" ;;
 
             *)
                 logCheckError "SLES version is NOT supported by SAP HANA (SAP Note #2235581) (is: ${OS_VERSION})"
