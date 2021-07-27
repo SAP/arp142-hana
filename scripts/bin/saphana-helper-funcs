@@ -244,18 +244,6 @@ function LIB_FUNC_IS_CLOUD_SAPCC {
     return ${_retval}
 }
 
-function LIB_FUNC_IS_CLOUD_TELEKOM {
-
-    local -i _retval=1
-
-    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
-
-    [[ ( "${LIB_PLATF_VENDOR:-}" == 'OpenTelekomCloud' ) ]] && _retval=0
-
-    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
-    return ${_retval}
-}
-
 function LIB_FUNC_IS_CLOUD_HUAWEI {
 
     local -i _retval=1

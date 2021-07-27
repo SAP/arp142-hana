@@ -122,11 +122,6 @@ function __get_platform_x86_64_vendor_details {
             LIB_PLATF_VENDOR='IBM Cloud'
             LIB_PLATF_NAME="${_lib_platf_name}"     #todo
 
-        elif [[ "${_chassis_asset_tag:-}" == 'OpenTelekomCloud' ]]; then
-
-            LIB_PLATF_VENDOR='Open Telekom Cloud'
-            LIB_PLATF_NAME="${_lib_platf_name}"     #todo
-
         elif [[ "${_chassis_asset_tag:-}" == "SAP CCloud VM" ]]; then
 
             LIB_PLATF_VENDOR='SAP Converged Cloud'
