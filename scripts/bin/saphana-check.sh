@@ -10,7 +10,6 @@ set -u # treat unset variables as an error
 # tool to check OS parameter recommendations for SAP HANA environments
 # supports SLES and RHEL on Intel and IBM Power
 #
-# inspired by Lenovo's saphana-support-lenovo.sh Support script
 #------------------------------------------------------------------
 
 PROGVERSION='2101.0-dev'

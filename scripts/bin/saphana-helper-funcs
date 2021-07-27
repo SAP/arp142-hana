@@ -2,11 +2,10 @@
 umask 0027
 
 #------------------------------------------------------------------
-# SAP HANA OS checks
+# SAP HANA OS checks - Library Functions
 #------------------------------------------------------------------
 # Script name: "saphana-helper-funcs"
 #
-# Library Functions
 #------------------------------------------------------------------
 
 # Everything that is for global access after sourcing this script

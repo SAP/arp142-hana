@@ -2,11 +2,10 @@
 umask 0027
 
 #------------------------------------------------------------------
-# SAP HANA OS checks
+# SAP HANA OS checks - Logging Functions
 #------------------------------------------------------------------
 # Script name: "saphana-logger"
 #
-# Logging Functions
 #------------------------------------------------------------------
 
 # return if saphana-logger already loaded
