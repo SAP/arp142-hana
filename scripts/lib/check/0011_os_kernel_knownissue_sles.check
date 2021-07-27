@@ -42,7 +42,7 @@ function check_0011_os_kernel_knownissue_sles {
     # MODIFICATION SECTION<<
 
     #2812427 - Timeout or connection failure in SAP process after Linux kernel update
-    #2814271 - SAP HANA Backup fails on Azure with Checksum Error - affects ALL, not only Azure
+    #2814271 - SAP HANA Backup fails on Azure with Checksum Error - affects ALL, not only Azure (bsc#1137959)
     #2205917 - SAP HANA DB: Recommended OS settings for SLES 12 - SLES12.2 only --> SUSE-KB 7022921 XFS metadata
     #2240716 - SAP HANA DB: Recommended OS settings for SLES 11 / SLES for SAP Applications 11 SP4
     #2859234 - SAP HANA Timer Fallback alert on SLES 12 SP3
