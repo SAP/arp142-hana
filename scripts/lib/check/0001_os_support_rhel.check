@@ -7,7 +7,7 @@ function check_0001_os_support_rhel {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    # array 'REL'   'support general end'  'extended support end (E4S/EUS)'
+    # array 'REL'   'support general end'  'extended support end (E4S)'
     local -ar _rhel_6=(\
                         '6.10'  '30 Nov 2020'    '30 Mar 2024'  \
                         )
@@ -18,6 +18,7 @@ function check_0001_os_support_rhel {
                         '7.5' '30 Oct 2018'    '30 Apr 2020'    \
                         '7.6' '06 Aug 2019'    '31 Oct 2022'    \
                         '7.7' '31 Mar 2020'    '30 Aug 2023'    \
+                        '7.8' 'no support '    'by SAP HANA'    \
                         '7.9' '31 Mar 2021'    '30 Aug 2024'    \
                         )
     #RHEL 7.5 has no E4S --> EUS date
@@ -26,6 +27,8 @@ function check_0001_os_support_rhel {
                         '8.0' '05 Nov 2019'    '31 Dec 2020'    \
                         '8.1' '28 Apr 2020'    '30 Nov 2023'    \
                         '8.2' '05 Nov 2020'    '30 Apr 2024'    \
+                        '8.3' 'no support '    'by SAP HANA'    \
+                        '8.4' '30 Nov 2021'    '30 May 2025'    \
                         )
 
     local -r sapnote='#936887'
@@ -54,7 +57,7 @@ function check_0001_os_support_rhel {
 
         7.4 | 7.[6-7] | 7.9 )  _rhel_all+=("${_rhel_7[@]}") ;;
 
-        8.[1-2] )  _rhel_all+=("${_rhel_8[@]}") ;;
+        8.[1-2] | 8.4 )  _rhel_all+=("${_rhel_8[@]}") ;;
 
         *)
             logCheckError "RHEL version is not supported by SAP HANA (SAP Note #2235581) (is: ${OS_VERSION})"

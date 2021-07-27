@@ -14,6 +14,7 @@ function check_0450_tunedprofiles-saphana_rhel {
     local -ar rhel80=( '2.10.0-7.el8_0.0' '#2777782' )
     local -ar rhel81=( '2.12.0-3.el8_1.1' '#2777782' )
     local -ar rhel82=( '2.13.0-6.el8_0.0' '#2777782' )
+    local -ar rhel84=( '2.15.0-2.el8_4.1' '#2777782' )
     # MODIFICATION SECTION<<
 
     # 2292690 - SAP HANA DB: Recommended OS settings for RHEL 7
@@ -45,6 +46,7 @@ function check_0450_tunedprofiles-saphana_rhel {
             8.0 )  _goodversion="${rhel80[0]}" ; sapnote="${rhel80[1]}" ;;
             8.1 )  _goodversion="${rhel81[0]}" ; sapnote="${rhel81[1]}" ;;
             8.2 )  _goodversion="${rhel82[0]}" ; sapnote="${rhel82[1]}" ;;
+            8.4 )  _goodversion="${rhel84[0]}" ; sapnote="${rhel84[1]}" ;;
 
             *)
                     logCheckWarning 'CHECK does not support RHEL release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
