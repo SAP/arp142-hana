@@ -257,20 +257,16 @@ function run_checklist {
 
         printf '\n'
 
-        (#run Subshell to forget sourcing
-
             # shellcheck source=/dev/null
             if ! source "${checkfile}"; then
                 logWarn "Skipping check ${checkfileshort}. Could not load check file.
                             ${checkfile}"
-                return 3
+                RC_CHECK=3
             else
                 ${checkname}
-                return $?
+                RC_CHECK=$?
             fi
-        )
 
-        RC_CHECK=$?
         update_check_counters ${RC_CHECK}
 
     done
