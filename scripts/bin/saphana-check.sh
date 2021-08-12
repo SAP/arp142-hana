@@ -255,7 +255,7 @@ function run_checklist {
         checkfileshort=${checkfile##*/}
         checkname="check_${checkfileshort%.check}"
 
-        printf '\n'
+        logNewLine
 
             # shellcheck source=/dev/null
             if ! source "${checkfile}"; then
@@ -388,7 +388,7 @@ function main {
 
     logNotify "## ${_line}"
 
-    printf '\n'
+    logNewLine
 
     generate_checklist
     if [[ ${#CHECKLIST[@]} -eq 0 ]]; then
@@ -410,11 +410,11 @@ function main {
 
     fi
 
-    printf '\n'
+    logNewLine
     logNotify "## ${_line}"
     print_counters
 
-    printf '\n'
+    logNewLine
     logNotify '## Exit'
 
     exit 0
