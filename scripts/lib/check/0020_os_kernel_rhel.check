@@ -24,6 +24,7 @@ function check_0020_os_kernel_rhel {
     local -ar rhel82=('4.18.0-193.47.1.el8' '#3057472,#2975859')
     local -ar rhel82power=('4.18.0-193.40.1' '#2777782')
     local -ar rhel84=('4.18.0-305.3.1.el8' '#2777782')
+    local -ar rhel84power=('4.18.0-193.40.1' '#2777782')
     # MODIFICATION SECTION<<
 
     #2694292 - SAP HANA DB: Recommended OS settings for RHEL 6.10
@@ -80,6 +81,7 @@ function check_0020_os_kernel_rhel {
 
             8.1) _goodversion="${rhel81power[0]}" ; sapnote="${rhel81power[1]}" ;;
             8.2) _goodversion="${rhel82power[0]}" ; sapnote="${rhel82power[1]}" ;;
+            8.4) _goodversion="${rhel84power[0]}" ; sapnote="${rhel84power[1]}" ;;
 
             *)
                 logCheckError "RHELonPower version is NOT supported by SAP HANA (SAP Note #2235581) (is: ${OS_VERSION})"
