@@ -13,6 +13,7 @@ function check_0002_os_hana_support_sles_intel {
 
     #                                           - = not supported; minor release = supported
     # array             'Platform'              '01234' (Minor Release)
+    # shellcheck disable=SC2034
     local -ar _sles_11=(\
                         'Microsoft Azure'       '----4'   \
                         'Amazon EC2'            '----4'   \
@@ -24,6 +25,7 @@ function check_0002_os_hana_support_sles_intel {
                         )
 
     # array             'Platform'              '012345' (Minor Release)
+    # shellcheck disable=SC2034
     local -ar _sles_12=(\
                         'Microsoft Azure'       '---345'   \
                         'Amazon EC2'            '---345'   \
@@ -35,6 +37,7 @@ function check_0002_os_hana_support_sles_intel {
                         )
 
     # array             'Platform'              '0123' (Minor Release)
+    # shellcheck disable=SC2034
     local -ar _sles_15=(\
                         'Microsoft Azure'       '012-'   \
                         'Amazon EC2'            '012-'   \
@@ -51,7 +54,7 @@ function check_0002_os_hana_support_sles_intel {
     #2235581 - SAP HANA: Supported Operating Systems
     #936887 - End of maintenance for Linux distributions
 
-    local -a _sles_matrix
+    local _sles_matrix
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_INTEL ; then
@@ -73,16 +76,16 @@ function check_0002_os_hana_support_sles_intel {
                 _retval=2
                 ;;
 
-        11.4 )      _sles_matrix+=("${_sles_11[@]}") ;;
+        11.4 )      declare -n _sles_matrix=_sles_11 ;;
 
         12.[0-1] )
                 logCheckError "SLES version has reached its end of lifetime by SUSE and must be upgraded (SAP Note #936887) (is: ${OS_VERSION})"
                 _retval=2
                 ;;
 
-        12.[2-5]*)  _sles_matrix+=("${_sles_12[@]}") ;;
+        12.[2-5]*)  declare -n _sles_matrix=_sles_12 ;;
 
-        15.[0-3] )  _sles_matrix+=("${_sles_15[@]}") ;;
+        15.[0-3] )  declare -n _sles_matrix=_sles_15 ;;
 
         *)
             logCheckError "SLES version is NOT supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
