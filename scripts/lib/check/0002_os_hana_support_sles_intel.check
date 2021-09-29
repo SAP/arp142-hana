@@ -40,7 +40,7 @@ function check_0002_os_hana_support_sles_intel {
     # shellcheck disable=SC2034
     local -ar _sles_15=(\
                         'Microsoft Azure'       '012-'   \
-                        'Amazon EC2'            '012-'   \
+                        'Amazon EC2'            '0123'   \
                         'IBM Cloud'             '012-'   \
                         'Google GCP'            '012-'   \
                         'Alibaba Cloud ECS'     '01--'   \
