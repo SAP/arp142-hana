@@ -49,7 +49,7 @@ function check_0410_glibc_ibmpower {
         elif LIB_FUNC_IS_RHEL; then
             case "${OS_VERSION}" in
 
-                7.[4-7]* )  _goodversion="${rhel74[0]}" ; sapnote="${rhel74[1]}" ;;
+                7.[4-7]* | 7.9 )  _goodversion="${rhel74[0]}" ; sapnote="${rhel74[1]}" ;;
 
                 8.* )       _goodversion="${rhel80[0]}" ; sapnote="${rhel80[1]}" ;;
 
