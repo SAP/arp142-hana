@@ -1,6 +1,8 @@
 # saphana-checks
 [![Travis CI](https://travis-ci.cloud.sap.corp/SAP-COE-HPTI/saphana-checks.svg?token=zqzFSWKfzYUkTBrvFzUG&branch=master)](https://travis-ci.cloud.sap.corp/SAP-COE-HPTI/saphana-checks)
 
+Linux OS checks for SAP HANA environments - SLES,RHEL for Intel x64 and IBM Power
+
 ## FAQ
 Q: Does it work on all linux versions - independend from distributions, kernel, filesystem, hana version?  
 A: Yes, checks itself will make sure if they are applicalbe for environment. Checks are not complete, eg. filesystems/HANA specifics are not checked so far.
@@ -41,7 +43,7 @@ A: Scripts require root permission in order to read certain kernel parameter val
 > checks are located within subfolder lib/check - specify without file extention .check
 
 
-#### -c    (execute checkset)
+#### -C    (execute checkset)
 ```
   ./saphana-check.sh -C SLESonX64only
 ```
