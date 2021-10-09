@@ -11,22 +11,6 @@ LIB_FUNC_IS_SLES() { return 0 ; }
 LIB_PLATF_ARCHITECTURE=''
 LIB_PLATF_CPU=''
 OS_VERSION=''
-OS_LEVEL=''
-declare -i LIB_PLATF_RAM_MIB_AVAILABLE
-
-
-test_power6_bigendian_not_supported() {
-
-    #arrange
-    LIB_PLATF_ARCHITECTURE='ppc64'
-    LIB_PLATF_CPU='POWER6 (architected), altivec supported'
-
-    #act
-    check_0004_os_hana_support_sles_ibmpower
-
-    #assert
-    assertEquals "CheckError? RC" '2' "$?"
-}
 
 test_power7_bigendian_sles_not_supported() {
 
@@ -42,45 +26,12 @@ test_power7_bigendian_sles_not_supported() {
     assertEquals "CheckError? RC" '2' "$?"
 }
 
-test_power8_bigendian_no_bigmem_less4T() {
+test_power8_bigendian_sles_ok() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64'
     LIB_PLATF_CPU='POWER8 (architected), altivec supported'
     OS_VERSION='11.4'
-    OS_LEVEL='xxx'
-    LIB_PLATF_RAM_MIB_AVAILABLE=4194304
-
-    #act
-    check_0004_os_hana_support_sles_ibmpower
-
-    #assert
-    assertEquals "CheckWarning? RC" '1' "$?"
-}
-
-test_power8_bigendian_no_bigmem_great4T() {
-
-    #arrange
-    LIB_PLATF_ARCHITECTURE='ppc64'
-    LIB_PLATF_CPU='POWER8 (architected), altivec supported'
-    OS_VERSION='11.4'
-    OS_LEVEL='xxx'
-    LIB_PLATF_RAM_MIB_AVAILABLE=4194305
-
-    #act
-    check_0004_os_hana_support_sles_ibmpower
-
-    #assert
-    assertEquals "CheckError? RC" '2' "$?"
-}
-
-test_power8_bigendian_sles_bigmem_ok() {
-
-    #arrange
-    LIB_PLATF_ARCHITECTURE='ppc64'
-    LIB_PLATF_CPU='POWER8 (architected), altivec supported'
-    OS_VERSION='11.4'
-    OS_LEVEL='xxx-bigmem'
 
     #act
     check_0004_os_hana_support_sles_ibmpower
@@ -89,11 +40,11 @@ test_power8_bigendian_sles_bigmem_ok() {
     assertEquals "CheckOk? RC" '0' "$?"
 }
 
-test_power6_littleendian_not_supported() {
+test_power9_bigendian_not_supported() {
 
     #arrange
-    LIB_PLATF_ARCHITECTURE='ppc64le'
-    LIB_PLATF_CPU='POWER6 (architected), altivec supported'
+    LIB_PLATF_ARCHITECTURE='ppc64'
+    LIB_PLATF_CPU='POWER9 (architected), altivec supported'
 
     #act
     check_0004_os_hana_support_sles_ibmpower
@@ -121,7 +72,7 @@ test_power8_littleendian_sles_supported() {
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
     LIB_PLATF_CPU='POWER8 (architected), altivec supported'
-    OS_VERSION='12.1'
+    OS_VERSION='12.5'
 
     #act
     check_0004_os_hana_support_sles_ibmpower
@@ -149,7 +100,7 @@ test_power9_littleendian_sles_supported() {
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
     LIB_PLATF_CPU='POWER9 (architected), altivec supported'
-    OS_VERSION='15.1'
+    OS_VERSION='15.3'
 
     #act
     check_0004_os_hana_support_sles_ibmpower
@@ -161,8 +112,34 @@ test_power9_littleendian_sles_supported() {
 test_powerX_not_supported() {
 
     #arrange
+    LIB_PLATF_CPU='POWER6 (architected), altivec supported'
+
+    #act
+    check_0004_os_hana_support_sles_ibmpower
+
+    #assert
+    assertEquals "CheckError? RC" '2' "$?"
+}
+
+test_architecture_not_supported() {
+
+    #arrange
+    LIB_PLATF_ARCHITECTURE='ppc65le'
+    LIB_PLATF_CPU='POWER9 (architected), altivec supported'
+
+    #act
+    check_0004_os_hana_support_sles_ibmpower
+
+    #assert
+    assertEquals "CheckError? RC" '2' "$?"
+}
+
+test_environment_not_handled() {
+
+    #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
-    LIB_PLATF_CPU='POWERx (architected), altivec supported'
+    LIB_PLATF_CPU='POWER90 (architected), altivec supported'
+    OS_VERSION='15.3'
 
     #act
     check_0004_os_hana_support_sles_ibmpower
@@ -189,8 +166,6 @@ setUp() {
     LIB_PLATF_ARCHITECTURE=
     LIB_PLATF_CPU=
     OS_VERSION=
-    OS_LEVEL=
-    LIB_PLATF_RAM_MIB_AVAILABLE=0
 
 }
 
