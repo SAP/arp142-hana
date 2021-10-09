@@ -26,13 +26,13 @@ function check_0003_os_hana_support_rhel_intel {
 
     # array             'Platform'              '0123456789' (Minor Release)
     local -ar _rhel_7=(\
-                        'Microsoft Azure'       '----4567-9'   \
-                        'Amazon EC2'            '----4567-9'   \
-                        'IBM Cloud'             '----4567--'   \
-                        'Google GCP'            '----4-67--'   \
+                        'Microsoft Azure'       '------67-9'   \
+                        'Amazon EC2'            '------67-9'   \
+                        'IBM Cloud'             '------67--'   \
+                        'Google GCP'            '------67--'   \
                         'Alibaba Cloud ECS'     '----------'   \
                         'Huawei Cloud'          '------6---'   \
-                        ''                      '----4567-9'   \          #all others, e.g. TDI, Bare-Metal
+                        ''                      '------67-9'   \          #all others, e.g. TDI, Bare-Metal
                         )
 
     # array             'Platform'              '01234' (Minor Release)
@@ -69,7 +69,7 @@ function check_0003_os_hana_support_rhel_intel {
 
         case "${OS_VERSION}" in
 
-        6.[0-9] | 7.[0-3] | 7.5 | 8.0 )
+        6.[0-9] | 7.[0-5] | 8.0 )
                 logCheckError "RHEL version has reached Red Hat's support end and must be upgraded (SAP Note #936887) (is: ${OS_VERSION})"
                 _retval=2
                 ;;

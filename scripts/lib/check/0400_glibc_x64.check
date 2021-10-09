@@ -12,7 +12,7 @@ function check_0400_glibc_x64 {
     local -ar sles124=( '2.22-15.3' '#2205917' )
     local -ar sles150=( '2.26-13.24.1' '#2997843' )
     local -ar rhel6x=( '2.12-1.166.el6_7.1' '#1496410' )
-    local -ar rhel73=( '2.17-157.el7_3.5' '#2292690' )
+    local -ar rhel76=( '2.17-157.el7_3.5' '#2292690' )
     local -ar rhel80=( '2.28-42.el8' '#2777782' )
     # MODIFICATION SECTION<<
 
@@ -56,7 +56,7 @@ function check_0400_glibc_x64 {
 
                 6.10 )          _goodversion="${rhel6x[0]}" ; sapnote="${rhel6x[1]}" ;;
 
-                7.[4-7]* | 7.9 )    _goodversion="${rhel73[0]}" ; sapnote="${rhel73[1]}" ;;
+                7.[6-7]* | 7.9 )    _goodversion="${rhel76[0]}" ; sapnote="${rhel76[1]}" ;;
 
                 8.* )           _goodversion="${rhel80[0]}" ; sapnote="${rhel80[1]}" ;;
 

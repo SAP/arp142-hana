@@ -7,7 +7,6 @@ function check_0450_tunedprofiles-saphana_rhel {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -ar rhel74=( '2.8.0-5.el7_4.2' '#2292690' )
     local -ar rhel76=( '2.10.0-6.el7_0.0' '#2292690,1880960' )
     local -ar rhel77=( '2.11.0-5.el7_0.0' '#2292690,1880960' )
     local -ar rhel79=( '2.11.0-5.el7_0.0' '#2292690,1880960' )
@@ -38,7 +37,6 @@ function check_0450_tunedprofiles-saphana_rhel {
                     logCheckSkipped 'Check not applicable for RHEL release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
                     _retval=3 ;;
 
-            7.4 )  _goodversion="${rhel74[0]}" ; sapnote="${rhel74[1]}" ;;
             7.6 )  _goodversion="${rhel76[0]}" ; sapnote="${rhel76[1]}" ;;
             7.7 )  _goodversion="${rhel77[0]}" ; sapnote="${rhel77[1]}" ;;
             7.9 )  _goodversion="${rhel79[0]}" ; sapnote="${rhel79[1]}" ;;

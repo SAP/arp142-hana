@@ -12,7 +12,6 @@ function check_0060_os_release_kernel_rhel {
     # MODIFICATION SECTION>>
     # array 'expected kernelversion' - must not have *.el suffix
     local -ar rhel610=( '2.6.32-754' )
-    local -ar rhel74=( '3.10.0-693' )
     local -ar rhel76=( '3.10.0-957' )
     local -ar rhel77=( '3.10.0-1062' )
     local -ar rhel79=( '3.10.0-1160' )
@@ -41,7 +40,6 @@ function check_0060_os_release_kernel_rhel {
 
             6.10)   expected_kernel="${rhel610[0]}" ;;
 
-            7.4)    expected_kernel="${rhel74[0]}" ;;
             7.6)    expected_kernel="${rhel76[0]}" ;;
             7.7)    expected_kernel="${rhel77[0]}" ;;
             7.9)    expected_kernel="${rhel79[0]}" ;;

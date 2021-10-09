@@ -42,13 +42,7 @@ function check_2150_transactional_memory_ibmpower {
 
     elif LIB_FUNC_IS_RHEL; then
 
-        case "${OS_VERSION}" in
-
-        7.[3-5]*)   htm_off_required=true ;;
-
-        *)          htm_off_required=false ;;
-
-        esac
+        htm_off_required=false
 
     fi
 

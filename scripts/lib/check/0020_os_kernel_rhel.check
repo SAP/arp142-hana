@@ -10,8 +10,6 @@ function check_0020_os_kernel_rhel {
     # array 'goodnormalized_kernelversion'  'sap note'
     local -ar rhel610=('2.6.32-754.3.5' '#2694292')
 
-    local -ar rhel74=('3.10.0-693.11.6.el7' '#2292690')
-    local -ar rhel74power=('3.10.0-693.11.6.el7' '#2292690')
     local -ar rhel76=('3.10.0-957.1.3.el7' '#2292690')
     local -ar rhel76power=('3.10.0-957.1.3.el7' '#2292690')
     local -ar rhel77=('3.10.0-1062.46.1.el7' '#2292690,1880960')
@@ -55,7 +53,6 @@ function check_0020_os_kernel_rhel {
 
             6.10)   _goodversion="${rhel610[0]}" ; sapnote="${rhel610[1]}" ;;
 
-            7.4)    _goodversion="${rhel74[0]}" ; sapnote="${rhel74[1]}" ;;
             7.6)    _goodversion="${rhel76[0]}" ; sapnote="${rhel76[1]}" ;;
             7.7)    _goodversion="${rhel77[0]}" ; sapnote="${rhel77[1]}" ;;
             7.9)    _goodversion="${rhel79[0]}" ; sapnote="${rhel79[1]}" ;;
@@ -74,7 +71,6 @@ function check_0020_os_kernel_rhel {
 
             case "${OS_VERSION}" in
 
-            7.4) _goodversion="${rhel74power[0]}" ; sapnote="${rhel74power[1]}" ;;
             7.6) _goodversion="${rhel76power[0]}" ; sapnote="${rhel76power[1]}" ;;
             7.7) _goodversion="${rhel77power[0]}" ; sapnote="${rhel77power[1]}" ;;
             7.9) _goodversion="${rhel79power[0]}" ; sapnote="${rhel79power[1]}" ;;
