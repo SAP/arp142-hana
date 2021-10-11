@@ -7,35 +7,43 @@ function check_0010_os_kernel_sles {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    # array 'goodnormalized_kernelversion'  'sap note'
-    local -ar sles114=('3.0.101-108.111.1' '#2240716')
-    local -ar sles114power=('3.0.101-108.111.1' '#2240716')
+    #       array       'rel' 'goodnormalized_kernel'   'SAP Note'
+    local -ar _sles_intel=(\
+                        '11.4' '3.0.101-108.111.1'      '#2240716'  \
 
-    local -ar sles123=('4.4.180-94.116.1' '#2205917')
-    local -ar sles123power=('4.4.180-94.116.1' '#2205917')
-    local -ar sles124=('4.12.14-95.51.1' '#2205917')
-    local -ar sles124power=('4.12.14-95.51.1' '#2205917')
-    local -ar sles125=('4.12.14-122.20.1' '#2205917')
-    local -ar sles125power=('4.12.14-122.20.1' '#2205917')
+                        '12.3' '4.4.180-94.116.1'       '#2205917'  \
+                        '12.4' '4.12.14-95.51.1'        '#2205917'  \
+                        '12.5' '4.12.14-122.20.1'       '#2205917'  \
 
-    local -ar sles150=('4.12.14-150.52.1' '#2684254')
-    local -ar sles150power=('4.12.14-150.52.1' '#2684254')
-    local -ar sles151=('4.12.14-197.40.1' '#2684254')
-    local -ar sles151power=('4.12.14-197.40.1' '#2684254')
-    local -ar sles152=('5.3.18-24.24.1' '#2684254')
-    local -ar sles152power=('5.3.18-24.24.1' '#2684254 ')
-    local -ar sles153=('5.3.18-57.1' '#2684254')
-    local -ar sles153power=('5.3.18-57.1' '#2684254 ')
+                        '15.0' '4.12.14-150.52.1'       '#2684254'  \
+                        '15.1' '4.12.14-197.40.1'       '#2684254'  \
+                        '15.2' '5.3.18-24.24.1'         '#2684254'  \
+                        '15.3' '5.3.18-57.1'            '#2684254'  \
+                        )
+
+    local -ar _sles_ibmpower=(\
+                        '11.4' '3.0.101-108.111.1'      '#2240716'  \
+
+                        '12.3' '4.4.180-94.116.1'       '#2205917'  \
+                        '12.4' '4.12.14-95.51.1'        '#2205917'  \
+                        '12.5' '4.12.14-122.20.1'       '#2205917'  \
+
+                        '15.0' '4.12.14-150.52.1'       '#2684254'  \
+                        '15.1' '4.12.14-197.40.1'       '#2684254'  \
+                        '15.2' '5.3.18-24.24.1'         '#2684254'  \
+                        '15.3' '5.3.18-57.1'            '#2684254'  \
+                        )
+
     # MODIFICATION SECTION<<
 
     #2240716 - SAP HANA DB: Recommended OS settings for SLES 11 / SLES for SAP Applications 11 SP4
     #2205917 - SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
     #2684254 - SAP HANA DB: Recommended OS settings for SLES 15 / SLES for SAP Applications 15
-    #2188482 - SAP HANA on IBM Power Systems: Allowed Hardware
-    #2945828 - Virtual PMEM on IBM POWER Systems - Patch Recommendations
 
     #2235581- SAP HANA: Supported Operating Systems
     #936887 - End of maintenance for Linux distributions
+
+    local -a _rel_kernel_matrix
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_SLES; then
@@ -43,106 +51,66 @@ function check_0010_os_kernel_sles {
         logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
+    elif LIB_FUNC_IS_INTEL; then
+
+        _rel_kernel_matrix+=("${_sles_intel[@]}")
+
+    elif LIB_FUNC_IS_IBMPOWER; then
+
+        _rel_kernel_matrix+=("${_sles_ibmpower[@]}")
+
     else
 
-        local _goodversion
-        local sapnote
-
-        if LIB_FUNC_IS_IBMPOWER; then
-
-            case "${OS_VERSION}" in
-
-            11.[0-3]*)
-                    logCheckError "SLES version has reached its end of lifetime by SUSE and must be upgraded (SAP Note #936887) (is: ${OS_VERSION})"
-                    _retval=2 ;;
-
-            11.4)  _goodversion="${sles114power[0]}" ; sapnote="${sles114power[1]}" ;;
-
-            12.[0-2]*)
-                    logCheckError "SLES version has reached its end of lifetime by SUSE and must be upgraded (SAP Note #936887) (is: ${OS_VERSION})"
-                    _retval=2 ;;
-
-            12.3*) _goodversion="${sles123power[0]}" ; sapnote="${sles123power[1]}" ;;
-
-            12.4*) _goodversion="${sles124power[0]}" ; sapnote="${sles124power[1]}" ;;
-
-            12.5*) _goodversion="${sles125power[0]}" ; sapnote="${sles125power[1]}" ;;
-
-            15.0*) _goodversion="${sles150power[0]}" ; sapnote="${sles150power[1]}" ;;
-
-            15.1*) _goodversion="${sles151power[0]}" ; sapnote="${sles151power[1]}" ;;
-
-            15.2*) _goodversion="${sles152power[0]}" ; sapnote="${sles152power[1]}" ;;
-
-            15.3*) _goodversion="${sles153power[0]}" ; sapnote="${sles153power[1]}" ;;
-
-            *)
-                logCheckError "SLESonPower version is NOT supported by SAP HANA (SAP Note #2235581) (is: ${OS_VERSION})"
-                _retval=2 ;;
-            esac
-
-        elif LIB_FUNC_IS_INTEL; then
-
-            case "${OS_VERSION}" in
-
-            11.[0-3]*)
-                    logCheckError "SLES version has reached its end of lifetime by SUSE and must be upgraded (SAP Note #936887) (is: ${OS_VERSION})"
-                    _retval=2 ;;
-
-            11.4)   _goodversion="${sles114[0]}" ; sapnote="${sles114[1]}" ;;
-
-            12.[0-2]*)
-                    logCheckError "SLES version has reached its end of lifetime by SUSE and must be upgraded (SAP Note #936887) (is: ${OS_VERSION})"
-                    _retval=2 ;;
-
-            12.3*)  _goodversion="${sles123[0]}" ; sapnote="${sles123[1]}" ;;
-
-            12.4*)  _goodversion="${sles124[0]}" ; sapnote="${sles124[1]}" ;;
-
-            12.5*)  _goodversion="${sles125[0]}" ; sapnote="${sles125[1]}" ;;
-
-            15.0*)  _goodversion="${sles150[0]}" ; sapnote="${sles150[1]}" ;;
-
-            15.1*)  _goodversion="${sles151[0]}" ; sapnote="${sles151[1]}" ;;
-
-            15.2*)  _goodversion="${sles152[0]}" ; sapnote="${sles152[1]}" ;;
-
-            15.3*)  _goodversion="${sles153[0]}" ; sapnote="${sles153[1]}" ;;
-
-            *)
-                logCheckError "SLES version is NOT supported by SAP HANA (SAP Note #2235581) (is: ${OS_VERSION})"
-                _retval=2 ;;
-            esac
-
-        else
-
-            logCheckError "Platform distribution NOT supported (SAP Note #2235581) (is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
-            _retval=2
-
-        fi
+        logCheckError "Platform distribution NOT supported (SAP Note #2235581) (is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
+        _retval=2
 
     fi
 
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
+        local _release
+        local _goodversion
+        local _sapnote
         local normalized_kernelversion
         local normalized_goodversion
+
+        local _handled=false
 
         LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
         normalized_kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
 
-        LIB_FUNC_NORMALIZE_KERNEL "${_goodversion}"
-        normalized_goodversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
+        # i+=3 --> every 3rd item
+        for ((i=0; i < ${#_rel_kernel_matrix[@]}; i+=3)); do
 
-        # returns 0 if equal, 1 if first is higher, 2 if second is higher
-        LIB_FUNC_COMPARE_VERSIONS "${normalized_kernelversion}" "${normalized_goodversion}"
-        if [[ $? -eq 2 ]]; then
-            logCheckError "Linux kernel must be upgraded (SAP Note ${sapnote:-}) (is: ${OS_LEVEL}, should be: >=${_goodversion})"
-            _retval=2
-        else
-            logCheckOk "Linux kernel version is at required level (SAP Note ${sapnote:-}) (is: ${OS_LEVEL})"
-            _retval=0
+            _release="${_rel_kernel_matrix[$i]}"
+            logTrace "<${FUNCNAME[0]}> # ${_release}>"
+
+            [[ "${OS_VERSION}" != "${_release}"* ]] && continue #handle kernel with subversions correctly
+
+            _handled=true
+            _goodversion="${_rel_kernel_matrix[$i+1]}"
+            _sapnote="${_rel_kernel_matrix[$i+2]}"
+
+            LIB_FUNC_NORMALIZE_KERNEL "${_goodversion}"
+            normalized_goodversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
+
+            # returns 0 if equal, 1 if first is higher, 2 if second is higher
+            LIB_FUNC_COMPARE_VERSIONS "${normalized_kernelversion}" "${normalized_goodversion}"
+            if [[ $? -eq 2 ]]; then
+                logCheckError "Linux kernel must be upgraded (SAP Note ${_sapnote:-}) (is: ${OS_LEVEL}, should be: >=${_goodversion})"
+                _retval=2
+            else
+                logCheckOk "Linux kernel version is at required level (SAP Note ${_sapnote:-}) (is: ${OS_LEVEL})"
+                _retval=0
+            fi
+
+            break
+        done
+
+        if ! ${_handled}; then
+                logCheckError "SLES version is NOT supported by SAP HANA (SAP Note #2235581) (is: ${OS_VERSION})"
+                _retval=2
         fi
 
     fi
