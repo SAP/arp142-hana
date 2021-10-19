@@ -10,14 +10,12 @@ function check_0004_os_hana_support_sles_ibmpower {
     local -r platform_rx='POWER(9|8|7)'
 
     # array                 'Platform'      '01234' (Minor Release)
-    # shellcheck disable=SC2034
     local -ar be_sles_11=(\
                             'POWER8'        '11'    '----4'   \
                             'POWER7'        '11'    '----4'   \
                         )
 
     # array                 'Platform'      'maj'   '012345' (Minor Release)
-    # shellcheck disable=SC2034
     local -ar le_sles=(\
                             'POWER9'        '12'    '---345'   \
                             'POWER8'        '12'    '---345'   \
@@ -34,7 +32,7 @@ function check_0004_os_hana_support_sles_ibmpower {
     #2055470 - HANA on POWER Planning and Installation Specifics - Central Note
     #936887  - End of maintenance for Linux distributions
 
-    local _sles_matrix
+    local -a _sles_matrix
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_IBMPOWER ; then
@@ -56,7 +54,7 @@ function check_0004_os_hana_support_sles_ibmpower {
 
         case "${OS_VERSION}" in
 
-            12.[3-5]* | 15.* )  declare -n _sles_matrix=le_sles ;;
+            12.[3-5]* | 15.* )  _sles_matrix+=("${le_sles[@]}") ;;
 
             *)
             logCheckError "SLES release on IBM Power - LittleEndian is NOT supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
@@ -67,7 +65,7 @@ function check_0004_os_hana_support_sles_ibmpower {
 
         case "${OS_VERSION}" in
 
-            11.4 )      declare -n _sles_matrix=be_sles_11 ;;
+            11.4 )      _sles_matrix+=("${be_sles_11[@]}") ;;
 
             *)
             logCheckError "SLES release on IBM Power - BigEndian is NOT supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
