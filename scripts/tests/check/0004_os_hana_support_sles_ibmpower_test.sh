@@ -148,6 +148,19 @@ test_environment_not_handled() {
     assertEquals "CheckError? RC" '2' "$?"
 }
 
+test_sles_not_handled() {
+
+    #arrange
+    LIB_PLATF_ARCHITECTURE='ppc64le'
+    LIB_PLATF_CPU='POWER9 (architected), altivec supported'
+    OS_VERSION='15.9'
+
+    #act
+    check_0004_os_hana_support_sles_ibmpower
+
+    #assert
+    assertEquals "CheckError? RC" '2' "$?"
+}
 
 oneTimeSetUp() {
 

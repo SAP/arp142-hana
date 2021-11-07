@@ -96,7 +96,7 @@ function check_0004_os_hana_support_sles_ibmpower {
         _os_minor_version=${OS_VERSION#*.}                              #del major              12.5 --> 5
         _os_minor_version=${_os_minor_version#.*}                       #del minor subversion   (12.)2.0.1 --> 2
 
-        logTrace "<${FUNCNAME[0]}> # CPU  <${_lib_platf_cpu}> - OS.major <${_os_major_version}> - OS.minor <${_os_minor_version}>"
+        logTrace "<${FUNCNAME[0]}> # Platform  <${_lib_platf_cpu}> - OS.major <${_os_major_version}> - OS.minor <${_os_minor_version}>"
 
         # i+=3 --> every 3rd item
         for ((i=0; i < ${#_sles_matrix[@]}; i+=3)); do
@@ -111,7 +111,7 @@ function check_0004_os_hana_support_sles_ibmpower {
             _os_supported="${_os_bit_pattern:${_os_minor_version}:1}"   #get position
             _os_supported="${_os_supported/-/ff}"                       #replace - by ff=255 to handle 0 correctly
 
-            logTrace "<${FUNCNAME[0]}> # BitPattern <${_os_bit_pattern}> -  supported? <0x${_os_supported}>"
+            logTrace "<${FUNCNAME[0]}> # BitPattern <${_os_bit_pattern}> - OS.minor <${_os_minor_version}> - supported? <0x${_os_supported}>"
 
             if [[ $((0x${_os_supported})) -ne ${_os_minor_version} ]] ; then
 

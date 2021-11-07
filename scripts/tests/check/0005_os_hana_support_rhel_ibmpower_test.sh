@@ -133,6 +133,20 @@ test_environment_not_handled() {
     assertEquals "CheckError? RC" '2' "$?"
 }
 
+test_rhel_not_handled() {
+
+    #arrange
+    LIB_PLATF_ARCHITECTURE='ppc64le'
+    LIB_PLATF_CPU='POWER9 (architected), altivec supported'
+    OS_VERSION='8.9'
+
+    #act
+    check_0005_os_hana_support_rhel_ibmpower
+
+    #assert
+    assertEquals "CheckError? RC" '2' "$?"
+}
+
 
 oneTimeSetUp() {
 

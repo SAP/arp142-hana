@@ -69,11 +69,6 @@ function check_0003_os_hana_support_rhel_intel {
 
         case "${OS_VERSION}" in
 
-        6.[0-9] | 7.[0-5] | 8.0 )
-                logCheckError "RHEL version has reached Red Hat's support end and must be upgraded (SAP Note #936887) (is: ${OS_VERSION})"
-                _retval=2
-                ;;
-
         6.* )   _rhel_matrix+=("${_rhel_6[@]}") ;;
 
         7.* )   _rhel_matrix+=("${_rhel_7[@]}") ;;
@@ -98,6 +93,8 @@ function check_0003_os_hana_support_rhel_intel {
 
         _os_minor_version=${OS_VERSION#*.}
         _os_minor_version=${_os_minor_version##.*}
+
+        logTrace "<${FUNCNAME[0]}> # Platform  <${LIB_PLATF_VENDOR}> - OS.major <${OS_VERSION%%.*}>"
 
         # i+=2 --> every 2nd item
         for ((i=0; i < ${#_rhel_matrix[@]}; i+=2)); do
