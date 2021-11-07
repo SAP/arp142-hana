@@ -113,7 +113,7 @@ function check_0004_os_hana_support_sles_ibmpower {
 
             logTrace "<${FUNCNAME[0]}> # BitPattern <${_os_bit_pattern}> -  supported? <0x${_os_supported}>"
 
-            if [[ 0x${_os_supported} -ne ${_os_minor_version} ]] ; then
+            if [[ $((0x${_os_supported})) -ne ${_os_minor_version} ]] ; then
 
                 logCheckError "SLES release on IBM POWER is NOT supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${OS_VERSION} @ ${_lib_platf_cpu}-${LIB_PLATF_ARCHITECTURE})"
                 _retval=2

@@ -118,7 +118,7 @@ function check_0002_os_hana_support_sles_intel {
 
             logTrace "<${FUNCNAME[0]}> # BitPattern <${_os_bit_pattern}> - OS.minor <${_os_minor_version}> - supported? <0x${_os_supported}>"
 
-            if [[ 0x${_os_supported} -ne ${_os_minor_version} ]] ; then
+            if [[ $((0x${_os_supported})) -ne ${_os_minor_version} ]] ; then
 
                 logCheckError "SLES version is NOT supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${OS_VERSION} @ ${LIB_PLATF_VENDOR})"
                 _retval=2
