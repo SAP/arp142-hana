@@ -36,27 +36,34 @@ function logger {
     local loglevel="$1"
     shift 1
 
-    if [[ ${LOG_VERBOSE_LVL} -ge ${loglevel} ]]; then
+    [[ ${loglevel} -gt ${LOG_VERBOSE_LVL} ]] && return
 
-        local logleveltag="$1"
-        shift 1
+    local logleveltag="$1"
+    shift 1
 
-        local datestring
-        local -i prefix_length=0
-        local -i content_width
+    local datestring
+    local -i prefix_length=0
+    local -i content_width
 
-        if [[ -n $* ]]; then
-            prefix_length=17                    #len("[C] Lxxxx <ERROR>")
-            LOG_lastLineWasNewLine=false
-        fi
+    if show_timestamp; then                 #debug/trace or option timestamp set
 
-        if show_timestamp; then                 #only debug/trace show timestamp
+        datestring=$(date +'%H:%M:%S.%3N ')
+        prefix_length=13                    #len("00:04:32.001")+1space
 
-            datestring=$(date +'%H:%M:%S.%3N ')
-            prefix_length=30                    #len("00:04:32.001")+1 && len("[C] Lxxxx <ERROR>")
+    fi
 
-        fi
+    if [[ -n $* ]]; then
 
+        (( prefix_length += 17 ))            #len("[C] Lxxxx <ERROR>")
+        LOG_lastLineWasNewLine=false
+
+    fi
+
+    if [[ ${prefix_length} -eq 0 ]]; then
+        # empty line
+        printf '%-*b\n' ${prefix_length} "${datestring:-}${logleveltag}"
+
+    else
         content_width=$((COLUMNS-prefix_length-1))
 
         # Expand escaped characters, wrap at COLUMNS chars, indent wrapped lines
