@@ -117,9 +117,17 @@ function __get_platform_x86_64_vendor_details {
             LIB_PLATF_VENDOR='Huawei'
             LIB_PLATF_NAME='FusionSphere'
 
+        elif [[ "${_chassis_asset_tag:-}" == 'ibmcloud' ]]; then
+
+            LIB_PLATF_VENDOR='IBM Cloud VPC'
+
+            _lib_platf_name="$(</sys/devices/virtual/dmi/id/chassis_vendor)"
+            #IBM:Cloud Compute Server 1.0:bx2-2x8
+            LIB_PLATF_NAME=${_lib_platf_name//*:/}
+
         elif [[ "${_chassis_asset_tag:-}" == 'IBM SoftLayer' ]]; then
 
-            LIB_PLATF_VENDOR='IBM Cloud'
+            LIB_PLATF_VENDOR='IBM Cloud Classic'
             LIB_PLATF_NAME="${_lib_platf_name}"     #todo
 
         elif [[ "${_chassis_asset_tag:-}" == "SAP CCloud VM" ]]; then

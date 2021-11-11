@@ -213,7 +213,7 @@ function LIB_FUNC_IS_CLOUD_IBM {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-    [[ ( "${LIB_PLATF_VENDOR:-}" == 'IBM Cloud' ) ]] && _retval=0
+    [[ ( "${LIB_PLATF_VENDOR:-}" == 'IBM Cloud'* ) ]] && _retval=0
 
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
     return ${_retval}
