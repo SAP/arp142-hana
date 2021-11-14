@@ -520,6 +520,8 @@ declare     LIB_PLATF_VIRT_TYPE
 
 #LIB local
 
+#Shellcheck - get rid of variables unused - use or export - warnings
+#shellcheck source=./lib_platf_x86_64
 
 #Import libraries
 #shellcheck source=./saphana-logger

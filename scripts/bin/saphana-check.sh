@@ -223,6 +223,7 @@ function generate_checklist {
     local checkname
     local safetycheck
 
+    # shellcheck disable=SC2048
     for checkfile in ${CHECKFILELIST[*]:-}; do
 
         checkfileshort=${checkfile##*/}
@@ -250,6 +251,7 @@ function run_checklist {
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
     local -i RC_CHECK
+    # shellcheck disable=SC2048
     for checkfile in ${CHECKLIST[*]:-}; do
 
         checkfileshort=${checkfile##*/}
@@ -275,6 +277,7 @@ function run_checklist {
 
 function show_checklist {
 
+    # shellcheck disable=SC2048
     for checkfile in ${CHECKLIST[*]:-}; do
 
         checkfileshort=${checkfile##*/}
@@ -330,6 +333,7 @@ function print_counters {
     printf -v _line_formated '%-7s|%6s |%8s |%5s |%8s |%5s |%6s' '%' $percent_error $percent_warning $percent_ok $percent_skipped $percent_info '100'
     logNotify "## ${_line_formated}"
 
+    # shellcheck disable=SC2086
     printf -v _line_formated '%-7s|%6s |%8s |%5s |%8s |%5s |%6s' '#' $NUMBER_CHECKS_ERROR $NUMBER_CHECKS_WARNING $NUMBER_CHECKS_OK $NUMBER_CHECKS_SKIPPED $NUMBER_CHECKS_INFO $check_count
     logNotify "## ${_line_formated}"
 

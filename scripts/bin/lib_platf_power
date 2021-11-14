@@ -214,6 +214,7 @@ function __get_platform_power_cpu_details {
     platform=( "$(lscpu)" )
 
     local line
+    # shellcheck disable=SC2048
     for line in ${platform[*]:-}; do
 
         logTrace "<${FUNCNAME[0]}> # ${line}>"
@@ -313,6 +314,7 @@ function __lib_func_get_auxvector_details {
     auxVector=( "$(LD_SHOW_AUXV=1 /bin/true)" )
 
     local line
+    # shellcheck disable=SC2048
     for line in ${auxVector[*]:-}; do
 
         logTrace "<${FUNCNAME[0]}> # ${line}>"

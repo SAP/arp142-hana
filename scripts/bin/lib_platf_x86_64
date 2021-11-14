@@ -163,6 +163,7 @@ function __get_platform_x86_64_cpu_details {
     platform=( "$(lscpu)" )
 
     local line
+    # shellcheck disable=SC2048
     for line in ${platform[*]:-}; do
 
         logTrace "<${FUNCNAME[0]}> # ${line}>"
