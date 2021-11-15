@@ -18,7 +18,7 @@ TEST_AVAILABLE_CLOCKSOURCE=''
 
 grep() {
     #we fake <(grep -e '^flags' -m1 /proc/cpuinfo | grep -E -e 'constant_tsc|nonstop_tsc|rdtscp' -o)
-    for item in ${cpu_flags[*]}
+    for item in "${cpu_flags[@]}"
     do
         printf "%s\n" "${item}"
     done

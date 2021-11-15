@@ -8,11 +8,8 @@ readonly PROGRAM_LIBDIR
 
 testChecksetsContainOnlyValidChecks() {
 
-    local checksetfilelist=("${PROGRAM_LIBDIR}/checkset/*.checkset")
-    local checksetfile
-
     #arrange
-    for checksetfile in ${checksetfilelist[*]:-}; do
+    for checksetfile in "${PROGRAM_LIBDIR}"/checkset/*.checkset; do
 
         #printf 'checksetfile: <%s>\n' "${checksetfile}"
 
