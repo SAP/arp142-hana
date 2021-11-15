@@ -156,6 +156,8 @@ function generate_checkfilelist_checks {
     local checklist="$1"
     shift 1
 
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
     local check
 
     for check in ${checklist//,/ }; do
@@ -171,8 +173,7 @@ function generate_checkfilelist_checks {
                 CHECKFILELIST+=("${file}")
 
             else
-                logWarn "Skipping check ${check}. Check file not found.
-                            ${file}"
+                logWarn "Skipping check ${check}. Check file not found. <${file}>"
             fi
 
         done
@@ -183,6 +184,8 @@ function generate_checkfilelist_checkset {
 
     local checkset="$1"
     shift 1
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
     local checksetfile="${PROGRAM_LIBDIR}/checkset/${checkset:?}.checkset"
     local checklist
@@ -227,6 +230,7 @@ function generate_checklist {
     for checkfile in ${CHECKFILELIST[*]:-}; do
 
         checkfileshort=${checkfile##*/}
+        logTrace "<${FUNCNAME[0]}> # short:<${checkfileshort}> long:<${checkfile}>"
 
         if ! safetycheck=$(LIB_FUNC_CHECK_CHECK_SECURITY "$checkfile"); then
 
@@ -244,6 +248,8 @@ function generate_checklist {
         fi
 
     done
+
+    logTrace "<${FUNCNAME[0]}> # Number of check files validated: <${#CHECKFILELIST[@]-}>"
 }
 
 function run_checklist {
