@@ -37,17 +37,22 @@ function LIB_FUNC_CHECK_CHECK_SECURITY {
 
     local fullpath=$1
 
+    if [[ ! -e "${fullpath}" ]]; then
+        printf 'Check file <%s> does not exist.\n'        "${fullpath}"
+        return 1
+    fi
+
     local -i fileownerid
     fileownerid=$(stat -c %u "${fullpath}")
     if [[ "${fileownerid}" -ne 0 ]]; then
-        printf 'Check %s is not owned by root.\n'   "${fullpath}"
+        printf 'Check file <%s> is not owned by root.\n'  "${fullpath}"
         return 1
     fi
 
     local fileperm
     fileperm=$(stat -c %A "${fullpath}")
     if [[ "${fileperm}" != ?r???-??-? ]]; then
-        printf 'Check %s is world writable.\n'  "${fullpath}"
+        printf 'Check file <%s> is world writable.\n'     "${fullpath}"
         return 1
     fi
 }
