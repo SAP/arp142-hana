@@ -51,7 +51,7 @@ function check_5100_pagecache_limit_sles {
                 _retval=1
             fi
 
-            # to avoid errors of small difference
+            # accept small deviations
             local -i pg_fuzzy_lower
             pg_fuzzy_lower=$(( pgcache_limit_mb + 50 ))
             local -i pg_fuzzy_upper
@@ -59,25 +59,33 @@ function check_5100_pagecache_limit_sles {
 
             if [[ ${pg_fuzzy_lower} -lt ${reco_pgcache_limit} ]]; then
 
-                logCheckError "Additionally vm.pagecache_limit_mb is set to low (should be: ${reco_pgcache_limit})"
+                logCheckError "Additionally vm.pagecache_limit_mb is set too low (should be: ${reco_pgcache_limit})"
                 _retval=2
 
             elif [[ ${pg_fuzzy_upper} -gt ${reco_pgcache_limit} ]]; then
 
-                logCheckWarning "Additionally vm.pagecache_limit_mb is set to high (should be: ${reco_pgcache_limit})"
-                [[ ${_retval} -ne 2 ]] && _retval=1
+                logCheckWarning "Additionally vm.pagecache_limit_mb is set too high (should be: ${reco_pgcache_limit})"
+                # keep current _retval
 
             fi
         fi
 
     fi
 
-    #pgcache_ignore_dirty
-    if [[ ${_retval} -eq 1 && ${_retval} -eq 2 ]]; then
+    # pgcache_ignore_dirty
+    if [[ ${_retval} -eq 1 || ${_retval} -eq 2 ]]; then
 
-        local -i pgcache_ignore_dirty
-        pgcache_ignore_dirty=$(</proc/sys/vm/pagecache_limit_ignore_dirty)
-        logCheckInfo "vm.pagecache_limit_ignore_dirty depends on HANA Data+Log filesystem (is: ${pgcache_ignore_dirty}, should be: 0 for local FS, 1 for NFS)"
+        if [[ -f '/proc/sys/vm/pagecache_limit_ignore_dirty' ]]; then
+
+            local -i pgcache_ignore_dirty
+            pgcache_ignore_dirty=$(</proc/sys/vm/pagecache_limit_ignore_dirty)
+            logCheckInfo "vm.pagecache_limit_ignore_dirty depends on HANA Data+Log filesystem (is: ${pgcache_ignore_dirty}, should be: 0 for local FS, 1 for NFS)"
+
+        else
+
+            logCheckInfo 'vm.pagecache_limit_ignore_dirty not configurable.'
+
+        fi
 
     fi
 
