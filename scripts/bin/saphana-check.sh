@@ -292,6 +292,7 @@ function show_checklist {
         printf '%s\n' "${checkname}"
 
     done
+    printf '\n'
 
 }
 
@@ -305,6 +306,7 @@ function show_checksetlist {
         printf '%s\n' "${checksetname}"
 
     done
+    printf '\n'
 
 }
 
