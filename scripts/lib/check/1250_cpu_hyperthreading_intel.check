@@ -36,21 +36,32 @@ function check_1250_cpu_hyperthreading_intel {
     fi
 
     #EXCEPTIONS
-    #Family 6 Model 85 Stepping x: Skylake 4, Cascade Lake 5-7, Cooper Lake 8+
-    #Family 6 Model 106/108 : Ice Lake
+    #Family 6 Model 85 Stepping x: SKL Skylake 4, CLX Cascade Lake 5-7, CPX Cooper Lake 8-11+
+    #Family 6 Model 106/108 : ICX Ice Lake
 
     local rx_sdflex='Superdome Flex$'
     if [[ "${LIB_PLATF_NAME:-}" =~ ${rx_sdflex} ]]; then
 
-        # Superdome Flex - Skylake/CascadeLake
-        if  [[ ${LIB_PLATF_CPU_MODELID:-} -eq 85 && ${LIB_PLATF_CPU_STEPID:-} -ge 4 && ${LIB_PLATF_CPU_STEPID:-} -le 7 ]]; then
+        # Superdome Flex - CascadeLake STEP 5-7
+        if  [[ ${LIB_PLATF_CPU_MODELID:-} -eq 85 && ${LIB_PLATF_CPU_STEPID:-} -ge 5 && ${LIB_PLATF_CPU_STEPID:-} -le 7 ]]; then
 
             max_cpu_sockets_with_hyperthreads=12
 
             if [[ ${LIB_PLATF_CPU_SOCKETS} -gt ${max_cpu_sockets_with_hyperthreads} ]]; then
-                logCheckInfo 'For SAP S/4HANA (analytical and transactional workloads). For 16s Systems and above, Hyperthreading should be disabled.'
+                logCheckInfo 'For SAP S/4HANA (analytical and transactional workloads). For 28s Systems and above, Hyperthreading will be disabled.'
+                logCheckInfo 'For SAP S/4HANA (*). Hyperthreading could be enabled for 24s (but not above) Systems starting with HANA 2 Rev.48.01 or 51'
+                logCheckInfo 'For SAP BW/4HANA (analytical workloads), Hyperthreading could be enabled for all system sizes (4s, 8s, 12s and above).'
+            fi
+
+        #Superdome Flex - Skylake STEP 4
+        elif  [[ ${LIB_PLATF_CPU_MODELID:-} -eq 85 && ${LIB_PLATF_CPU_STEPID:-} -eq 4 ]]; then
+
+            max_cpu_sockets_with_hyperthreads=12
+
+            if [[ ${LIB_PLATF_CPU_SOCKETS} -gt ${max_cpu_sockets_with_hyperthreads} ]]; then
+                logCheckInfo 'For SAP S/4HANA (analytical and transactional workloads). For 20s Systems and above, Hyperthreading will be disabled.'
                 logCheckInfo 'For SAP S/4HANA (*). Hyperthreading could be enabled for 16s (but not above) Systems starting with HANA 2 Rev.48.01 or 51'
-                logCheckInfo 'For SAP BW/4HANA (analytical workloads), Hyperthreading should be enabled for all system sizes (4s, 8s, 12s and above).'
+                logCheckInfo 'For SAP BW/4HANA (analytical workloads), Hyperthreading could be enabled for all system sizes (4s, 8s, 12s and above).'
             fi
 
         fi
