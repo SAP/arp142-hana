@@ -17,6 +17,8 @@ function check_4500_ibm-gpfs_version_intel {
     #2533844 - Lenovo Support Tool for SAP HANA solutions
     #1880960 - Lenovo Systems Solution for SAP HANA Platform Edition FW/OS/Driver Maintenance
 
+    local _goodversion
+
     # PRECONDITIONS
     if ! LIB_FUNC_IS_INTEL ; then
 
@@ -53,7 +55,6 @@ function check_4500_ibm-gpfs_version_intel {
 
         local normalized_goodversion
         local normalized_fullversion
-        local _goodversion
 
         local _fullversion
         _fullversion=$(rpm -q --queryformat "%{VERSION}.%{RELEASE}" gpfs.base)
