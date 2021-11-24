@@ -58,7 +58,8 @@ function check_2230_numa_distribution_ibmpower {
 
         local -i total_memory=0
         local -i total_cpus=0
-        local -a totals=()
+        local -a ratios=()
+        local -a nodes=()
 
         local rx_memory='^Node +([0-9]+) +MemTotal: +([0-9]+) +(.*)$'       #Node 0 MemTotal:       759310156 kB
         local rx_cpu='node([0-9]+).*:(.*)$'                                 #/sys/devices/system/node/node0/cpulist:40-59,60-79
@@ -152,7 +153,8 @@ function check_2230_numa_distribution_ibmpower {
             _=$(( total_memory+=curr_node_memory ))
             _=$(( total_cpus+=curr_node_cpu ))
 
-            totals+=( $((curr_node_memory/curr_node_cpu)) )
+            ratios+=( $((curr_node_memory/curr_node_cpu)) )
+            nodes+=("${curr_node}")
 
         done
 
@@ -171,15 +173,14 @@ function check_2230_numa_distribution_ibmpower {
         upper_bound=$((avg_ratio+margin))
         lower_bound=$((avg_ratio-margin))
 
-        logDebug "Total MEM: ${total_memory}, Total #CPU: ${total_cpus}, avg ratio: ${avg_ratio}, +/- margin ${margin}"
+        logCheckInfo "Total MEM: ${total_memory}, Total #CPU: ${total_cpus}, avg ratio: ${avg_ratio}, (+/-)10% margin: ${margin}"
 
-        for ((i=0; i < ${#totals[@]}; i+=1)); do
+        for ((i=0; i < ${#ratios[@]}; i+=1)); do
 
-            if [[ ${totals[$i]} -lt ${lower_bound} || ${totals[$i]} -gt ${upper_bound} ]]; then
+            if [[ ${ratios[$i]} -lt ${lower_bound} || ${ratios[$i]} -gt ${upper_bound} ]]; then
 
-                logCheckWarning "NUMA distribution - avgRatio ${avg_ratio}, margin +/-${margin} - Index $i: ${totals[$i]}"
+                logCheckError "NUMA node ratio out of bounds - Node ${nodes[$i]}: ${ratios[$i]}"
                 _retval=55
-                break
             fi
 
         done

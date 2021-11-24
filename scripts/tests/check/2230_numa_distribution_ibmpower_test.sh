@@ -187,16 +187,16 @@ test_2numa_with_numa0_multiple_cpu_ranges_complicated() {
     assertEquals "CheckOk? RC" '0' "$?"
 }
 
-test_2numa_with_numa0_memory_lt_margin() {
+test_2numa_with_numa0_ratio_lt_margin() {
 
     #arrange
     mem_nodes=()
-    mem_nodes+=('Node 0 MemTotal:       400388510 kB')
-    mem_nodes+=('Node 6 MemTotal:       502777024 kB')
+    mem_nodes+=('Node 0 MemTotal:       5500000 kB')
+    mem_nodes+=('Node 6 MemTotal:       8000000 kB')
 
     cpu_nodes=()
-    cpu_nodes+=('/sys/devices/system/node/node0/cpulist:40-79')
-    cpu_nodes+=('/sys/devices/system/node/node6/cpulist:0-39')
+    cpu_nodes+=('/sys/devices/system/node/node0/cpulist:0-41')
+    cpu_nodes+=('/sys/devices/system/node/node6/cpulist:0-49')
 
     #act
     check_2230_numa_distribution_ibmpower
@@ -205,12 +205,30 @@ test_2numa_with_numa0_memory_lt_margin() {
     assertEquals "CheckError? RC" '2' "$?"
 }
 
-test_2numa_with_numa0_cpu_gt_margin() {
+test_2numa_with_numa0_ratio_gt_margin() {
 
     #arrange
     mem_nodes=()
-    mem_nodes+=('Node 0 MemTotal:       502777024 kB')
-    mem_nodes+=('Node 6 MemTotal:       502777024 kB')
+    mem_nodes+=('Node 0 MemTotal:       1250000 kB')
+    mem_nodes+=('Node 6 MemTotal:       2000000 kB')
+
+    cpu_nodes=()
+    cpu_nodes+=('/sys/devices/system/node/node0/cpulist:40-49')
+    cpu_nodes+=('/sys/devices/system/node/node6/cpulist:0-19')
+
+    #act
+    check_2230_numa_distribution_ibmpower
+
+    #assert
+    assertEquals "CheckError? RC" '2' "$?"
+}
+
+test_2numa_with_both_ratio_out_margin() {
+
+    #arrange
+    mem_nodes=()
+    mem_nodes+=('Node 0 MemTotal:       2000000 kB')
+    mem_nodes+=('Node 6 MemTotal:       2000000 kB')
 
     cpu_nodes=()
     cpu_nodes+=('/sys/devices/system/node/node0/cpulist:40-59')
