@@ -226,11 +226,16 @@ function generate_checklist {
     local checkname
     local safetycheck
 
-    # shellcheck disable=SC2048
-    for checkfile in ${CHECKFILELIST[*]:-}; do
+    if [[ ! ${CHECKFILELIST[*]:-} ]]; then
+        logTrace "<${FUNCNAME[0]}> # check file list empty, no files to process>"
+        return
+    fi
+
+    #would run at least once in case of beeing empty
+    for checkfile in "${CHECKFILELIST[@]}"; do
 
         checkfileshort=${checkfile##*/}
-        logTrace "<${FUNCNAME[0]}> # short:<${checkfileshort}> long:<${checkfile}>"
+        logTrace "<${FUNCNAME[0]}> # filename:<${checkfileshort}> fullpath:<${checkfile}>"
 
         if ! safetycheck=$(LIB_FUNC_CHECK_CHECK_SECURITY "$checkfile"); then
 
@@ -249,7 +254,8 @@ function generate_checklist {
 
     done
 
-    logTrace "<${FUNCNAME[0]}> # Number of check files validated: <${#CHECKFILELIST[@]-}>"
+    logTrace "<${FUNCNAME[0]}> # Number of check files validated: <${#CHECKFILELIST[@]}>"
+    logTrace "<${FUNCNAME[0]}> # Number of checks added:          <${#CHECKLIST[@]}>"
 }
 
 function run_checklist {
@@ -257,8 +263,7 @@ function run_checklist {
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
     local -i RC_CHECK
-    # shellcheck disable=SC2048
-    for checkfile in ${CHECKLIST[*]:-}; do
+    for checkfile in "${CHECKLIST[@]:-}"; do
 
         checkfileshort=${checkfile##*/}
         checkname="check_${checkfileshort%.check}"
@@ -283,8 +288,7 @@ function run_checklist {
 
 function show_checklist {
 
-    # shellcheck disable=SC2048
-    for checkfile in ${CHECKLIST[*]:-}; do
+    for checkfile in "${CHECKLIST[@]:-}"; do
 
         checkfileshort=${checkfile##*/}
         checkname="${checkfileshort%.check}"
