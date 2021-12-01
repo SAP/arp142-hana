@@ -7,7 +7,7 @@ function check_8500_sap_hana_client {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#1113545'
+    local -r sapnote='#2941449'
     local -r hanaclient_version_exp='2.10.20.1636580948'
     # MODIFICATION SECTION<<
 
