@@ -16,7 +16,8 @@ function check_0102_supported_instances_amazon {
                         'r5.8xlarge'    'r5.12xlarge'   'r5.16xlarge'   'r5.24xlarge'  \
                         'r5b.24xlarge'  \
                         'r6i.12xlarge'  'r6i.16xlarge'  'r6i.24xlarge'  'r6i.32xlarge'  \
-                        'u-3tb1.56xlarge'   'u-6tb1.56xlarge'   'u-9tb1.112xlarge'      \
+                        'u-3tb1.56xlarge'   'u-9tb1.112xlarge'  'u-12tb1.112xlarge'     \
+                        'u-6tb1.56xlarge'   'u-6tb1.112xlarge'
                         'x1.16xlarge'   'x1.32xlarge'   \
                         'x1e.32xlarge'   \
                         )
@@ -31,7 +32,7 @@ function check_0102_supported_instances_amazon {
                         'u-24tb1.metal' \
                         )
 
-    local -r sapnote='#1928533,2316233'
+    local -r sapnote='#1380654,1656099'
     # MODIFICATION SECTION<<
 
     #1380654 - SAP support in IaaS environments
