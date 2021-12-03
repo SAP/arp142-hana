@@ -5,6 +5,9 @@ set -u # treat unset variables as an error
 #------------------------------------------------------------------
 # Library - Linux distribution / Linux release Functions
 #------------------------------------------------------------------
+# (C) Copyright SAP 2017-2021
+# Author: CS - IDG - CoE EMEA HANA Platform & Technical Infrastructure
+#
 # Script name: "lib_linux_release"
 #
 #------------------------------------------------------------------
@@ -12,8 +15,8 @@ set -u # treat unset variables as an error
 # return if library is already loaded
 [[ -n "${LIB_LINUX_RELEASE:-}" ]] && return 0
 
-LIB_LINUX_RELEASE='2105-1.gd74a8677'
-#LIB_RELEASE_DATE='2021-May-15'
+LIB_LINUX_RELEASE='2112-1.gcd051766'
+#LIB_RELEASE_DATE='2021-Dec-03'
 
 
 ##################################################
@@ -333,7 +336,7 @@ function __lib_func_get_rhel4sap {
     if LIB_FUNC_IS_RHEL; then
 
         # as advised by Red Hat
-        grep -q -m1 -E -e 'for SAP \(|SAP HANA \(|- SAP' /etc/yum.repos.d/redhat.repo && lib_release_rhel4sap=true
+        grep -s -q -m1 -E -e 'for SAP \(|SAP HANA \(|- SAP' /etc/yum.repos.d/redhat.repo && lib_release_rhel4sap=true
 
     fi
 
