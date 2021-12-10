@@ -3,6 +3,7 @@
 0020_os_kernel_rhel
 0021_os_kernel_knownissues_rhel
 0060_os_release_kernel_rhel
+0120_supported_powersystems_ibmpower
 0210_kernel_pid_max_rhel
 0310_clocksource_ibmpower
 0350_timesync

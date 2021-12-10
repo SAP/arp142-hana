@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+
+function check_0120_supported_powersystems_ibmpower {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    # array             'System ID' 'System'
+    local -ar _power_systems=(\
+                        '8284-22A'  'S822'  \
+                        '8247-22L'  'S822L' \
+                        '8286-42A'  'S824'  \
+                        '8247-42L'  'S824L' \
+                        '8408-E8E'  'E850'  \
+                        '8408-44E'  'E850C' \
+                        '9119-MME'  'E870'  \
+                        '9080-MME'  'E870C' \
+                        '9119-MHE'  'E880'  \
+                        '9080-MHE'  'E880C' \
+                        '9009-22A'  'S922'  \
+                        '9223-22H'  'H922'  \
+                        '9009-42A'  'S924'  \
+                        '9223-42H'  'H924'  \
+                        '9008-22L'  'L922'  \
+                        '9040-MR9'  'E950'  \
+                        '9080-M9S'  'E980'  \
+                        )
+
+    local -r sapnote='#2188482'
+    # MODIFICATION SECTION<<
+
+    #2188482 - SAP HANA on IBM Power Systems: Allowed Hardware
+    #https://www.sap.com/dmc/exp/2014-09-02-hana-hardware/enEN/#/solutions?filters=power
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_IBMPOWER ; then
+
+        logCheckSkipped 'Not running on IBM Power. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local _system_id
+        local _system
+
+        # i+=2 --> every 2nd item
+        for ((i=0; i < ${#_power_systems[@]}; i+=2)); do
+
+            logTrace "<${FUNCNAME[0]}> # ${_power_systems[$i]}>"
+
+            _system_id="${_power_systems[$i]}"
+
+            [[ "${LIB_PLATF_NAME}" != "IBM,${_system_id}" ]] && continue
+
+            _system="${_power_systems[$i+1]}"
+            _retval=0
+            break
+
+        done
+
+        if [[ ${_retval} -ne 0 ]] ; then
+
+            logCheckError "IBM Power System is NOT supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${LIB_PLATF_NAME})"
+            _retval=2
+
+        else
+
+            logCheckOk "IBM Power System is supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${_system:-} [${_system_id:-}])"
+            _retval=0
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
