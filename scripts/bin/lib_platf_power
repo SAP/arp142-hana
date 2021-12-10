@@ -17,7 +17,6 @@ LIB_PLATF_POWER_RELEASE='loaded'
 ##########################################################
 # Global functions - to be used in other functions
 ##########################################################
-# Returns 0 on SLES, 1 on other
 function LIB_FUNC_TRANSFORM_POWER_POWERMODE {
 
     local powermode="$1"
@@ -59,9 +58,9 @@ function __lib_func_get_vendor_details {
                             LIB_PLATF_VENDOR='IBM Cloud POWER'
                 ;;
 
-        esac
+            esac
 
-    done <<< "$(/opt/rsct/bin/ctgethscid)"
+        done <<< "$(/opt/rsct/bin/ctgethscid)"
 
     fi
 
