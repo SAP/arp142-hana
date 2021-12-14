@@ -17,7 +17,7 @@ function check_0010_os_kernel_sles {
 
                         '15.0' '4.12.14-150.52.1'       '#2684254'  \
                         '15.1' '4.12.14-197.40.1'       '#2684254'  \
-                        '15.2' '5.3.18-24.24.1'         '#2684254'  \
+                        '15.2' '5.3.18-24.78.1'         '#3078256'  \
                         '15.3' '5.3.18-57.1'            '#2684254'  \
                         )
 
@@ -30,7 +30,7 @@ function check_0010_os_kernel_sles {
 
                         '15.0' '4.12.14-150.52.1'       '#2684254'  \
                         '15.1' '4.12.14-197.40.1'       '#2684254'  \
-                        '15.2' '5.3.18-24.24.1'         '#2684254'  \
+                        '15.2' '5.3.18-24.78.1'         '#3078256'  \
                         '15.3' '5.3.18-57.1'            '#2684254'  \
                         )
 
@@ -42,6 +42,7 @@ function check_0010_os_kernel_sles {
 
     #2235581- SAP HANA: Supported Operating Systems
     #936887 - End of maintenance for Linux distributions
+    #3078256 - HANA system is hanging when using the bcache for SAP HANA data disks
 
     local -a _rel_kernel_matrix
 
