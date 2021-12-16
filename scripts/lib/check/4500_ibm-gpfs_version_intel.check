@@ -45,7 +45,8 @@ function check_4500_ibm-gpfs_version_intel {
         case "${OS_VERSION}" in
 
             11.* | 12.* )           _goodversion=${_goodversion50} ;;
-            *)                      _goodversion=${_goodversion51} ;;
+            15.[0-2] )              _goodversion=${_goodversion51} ;;
+            *)                      _goodversion=${_goodversion51n} ;;
 
         esac
     fi
@@ -63,6 +64,7 @@ function check_4500_ibm-gpfs_version_intel {
 
             3.*)        logCheckError 'Support for IBM GPFS v3.5.x ended on April 30, 2017 !!!' ;;
             4.*)        logCheckError 'Support for IBM GPFS v4.2.x ended on Sept 30, 2020 !!!'  ;;
+            5.0.*)      logCheckWarning 'Support for IBM GPFS v5.0.x is ending on April, 2022 !!!'  ;;
 
         esac
 
