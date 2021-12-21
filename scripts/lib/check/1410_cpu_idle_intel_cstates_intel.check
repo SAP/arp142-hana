@@ -20,15 +20,10 @@ function check_1410_cpu_idle_intel_cstates_intel {
     local -r sapnote_rhel7='#2292690'   # SAP HANA DB: Recommended OS settings for RHEL 7
     local -r sapnote_rhel8='#2777782'   # SAP HANA DB: Recommended OS Settings for RHEL 8
 
-    local -ir _reco_light_latency=70
-    local -ir _reco_verylight_latency_C1=3
+    local -ir _reco_latency=70 # =C3
     # MODIFICATION SECTION<<
 
     local sapnote
-    local higher_latency_accepted
-
-    _reco_latency=${_reco_light_latency}
-    higher_latency_accepted='TRUE'
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_INTEL ; then
@@ -62,13 +57,7 @@ function check_1410_cpu_idle_intel_cstates_intel {
     elif LIB_FUNC_IS_SLES ; then
         case "${OS_VERSION}" in
 
-            12.[0-1]*)
-                        sapnote="${sapnote_sles12}"
-                        _reco_latency=${_reco_verylight_latency_C1}
-                        higher_latency_accepted='FALSE'
-                ;;
-
-            12.[2-5]*)  sapnote="${sapnote_sles12}" ;;
+            12.[3-5]*)  sapnote="${sapnote_sles12}" ;;
 
             15.*)   sapnote="${sapnote_sles15}" ;;
 
@@ -99,23 +88,11 @@ function check_1410_cpu_idle_intel_cstates_intel {
     #CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
+        logCheckInfo 'CPUidle driver <intel_idle>: prefer light sleep cstates in favor of very restrictive cstate=1'
         logCheckInfo 'CPUidle driver <intel_idle>: CSTATES can be set by various configuration options at the same time !!!, by...'
         logCheckInfo ' a) fixed driver max_cstate (not preferred)'
         logCheckInfo ' b) individual cstates for each CPU'
         logCheckInfo ' c) PM QoS framework (cpu_dma_latency/tuned:force_latency)'
-        logCheckInfo '---'
-
-        if [[ ${higher_latency_accepted:-} == 'TRUE' ]]; then
-
-            logCheckInfo 'CPUidle driver <intel_idle>: prefer light sleep cstates in favor of very restrictive cstate=1'
-
-        else
-
-            logCheckInfo 'CPUidle driver <intel_idle>: use very light sleep cstates - e.g. force_latency=3 or fixed max_cstate=1'
-
-        fi
-
-        logCheckInfo '---'
 
         # a) fixed driver max_cstate (not preferred)
         local -i _driverMaxCstate
@@ -197,64 +174,25 @@ function check_1410_cpu_idle_intel_cstates_intel {
         fi
 
         # assert
-        if [[ ${higher_latency_accepted:-} == 'TRUE' ]]; then
 
-            # C1=3, C1E=10, C3=33, C6=133 - allow range 10 < x <= 70
-            if [[ 10 -lt ${_active_latency:-} && ${_active_latency:-} -le ${_reco_latency} ]]; then
+        # C1=3, C1E=10, C3=33, C6=133 - allow range 10 < x <= 70
+        if [[ 10 -lt ${_active_latency:-} && ${_active_latency:-} -le ${_reco_latency} ]]; then
 
-                logCheckOk 'CPU cstate latency set as recommended' "(SAP Note ${sapnote:-}) (is: ${_active_latency:-})"
-                _retval=0
+            logCheckOk 'CPU cstate latency set as recommended' "(SAP Note ${sapnote:-}) (is: ${_active_latency:-})"
+            _retval=0
 
-            elif [[ ${_active_latency:-} -le 10 ]]; then
-                logCheckWarning 'CPU cstate latency set too low - limiting CPU TurboMode features' "(SAP Note ${sapnote:-}) (is: ${_active_latency:-}, should be: ${_reco_latency})"
-                _retval=1
+        elif [[ ${_active_latency:-} -le 10 ]]; then
+            logCheckWarning 'CPU cstate latency set too low - limiting CPU TurboMode features' "(SAP Note ${sapnote:-}) (is: ${_active_latency:-}, should be: ${_reco_latency})"
+            _retval=1
 
-                if [[ ${_driverMaxCstate} -lt 3 ]]; then
-                    logCheckWarning 'CPUidle driver <intel_idle> max_cstate prevents latency control' "(is: ${_driverMaxCstate}, should NOT be set)"
-                fi
-
-            elif [[ ${_active_latency:-} -gt ${_reco_latency:-} ]]; then
-
-                logCheckError 'CPU cstate latency set too high - deeper c-states causing longer wakeup times' "(SAP Note ${sapnote:-}) (is: ${_active_latency:-}, should be: ${_reco_latency})"
-                _retval=2
-
+            if [[ ${_driverMaxCstate} -lt 3 ]]; then
+                logCheckWarning 'CPUidle driver <intel_idle> max_cstate prevents latency control' "(is: ${_driverMaxCstate}, should NOT be set)"
             fi
 
-        elif [[ ${higher_latency_accepted:-} == 'FALSE' ]]; then
+        elif [[ ${_active_latency:-} -gt ${_reco_latency:-} ]]; then
 
-            # only max_ctate = 1 or equivalent latency - allow range 0 < x <= 3
-            if [[ ${_driverMaxCstate} -gt 1 ]]; then
-
-                if [[ 0 -lt ${_active_latency:-} && ${_active_latency:-} -le ${_reco_latency} ]]; then
-
-                    logCheckOk 'CPU cstate latency set as recommended' "(SAP Note ${sapnote:-}) (is: ${_active_latency:-})"
-                    _retval=0
-
-                else
-
-                    logCheckError 'CPUidle driver <intel_idle> max_cstate set too high' "(SAP Note ${sapnote:-}) (is: ${_driverMaxCstate}, should be: 1)"
-                    _retval=2
-
-                fi
-
-            elif [[ ${_driverMaxCstate} -lt 1 ]]; then
-
-                    logCheckWarning 'CPUidle driver <intel_idle> max_cstate set too low' "(SAP Note ${sapnote:-}) (is: ${_driverMaxCstate}, should be: 1)"
-                    _retval=1
-
-            else
-
-                if [[ ${_active_latency:-} -eq ${_reco_latency} ]]; then
-
-                    logCheckOk 'CPUidle driver <intel_idle> max_cstate setting ok' "(SAP Note ${sapnote:-}) (is: ${_driverMaxCstate})"
-                    _retval=0
-
-                else
-                    logCheckWarning 'CPU cstate latency set too low - limiting CPU TurboMode features' "(SAP Note ${sapnote:-}) (is: ${_active_latency:-}, should be: ${_reco_latency})"
-                    _retval=1
-                fi
-
-            fi
+            logCheckError 'CPU cstate latency set too high - deeper c-states causing longer wakeup times' "(SAP Note ${sapnote:-}) (is: ${_active_latency:-}, should be: ${_reco_latency})"
+            _retval=2
 
         fi
 

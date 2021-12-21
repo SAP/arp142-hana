@@ -27,100 +27,13 @@ declare -i TEST_driverMaxCstate
 declare -i TEST_maxCstateLatency
 declare -i TEST_maxForceLatency
 
-test_classic_cstate_too_high_latency_too_high() {
+
+test_latency_cstate_high_latencies_too_high() {
 
     #arrange
-    OS_VERSION='12.1'
-    TEST_driverMaxCstate=2
-    TEST_maxCstateLatency=2000000000
-    TEST_maxForceLatency=2000000000
-
-    #act
-    check_1410_cpu_idle_intel_cstates_intel
-
-    #assert
-    assertEquals "CheckError? RC" '2' "$?"
-}
-
-test_classic_cstate_too_high_latency_correct2() {
-
-    #arrange
-    OS_VERSION='12.1'
-    TEST_driverMaxCstate=2
-    TEST_maxCstateLatency=2
-    TEST_maxForceLatency=2000000000
-
-    #act
-    check_1410_cpu_idle_intel_cstates_intel
-
-    #assert
-    assertEquals "CheckOk? RC" '0' "$?"
-}
-
-test_classic_cstate_too_high_latency_correct3() {
-
-    #arrange
-    OS_VERSION='12.1'
-    TEST_driverMaxCstate=2
-    TEST_maxCstateLatency=3
-    TEST_maxForceLatency=2000000000
-
-    #act
-    check_1410_cpu_idle_intel_cstates_intel
-
-    #assert
-    assertEquals "CheckOk? RC" '0' "$?"
-}
-
-test_classic_cstate_correct_latency_correct() {
-
-    #arrange
-    OS_VERSION='12.1'
-    TEST_driverMaxCstate=1
-    TEST_maxCstateLatency=3
-    TEST_maxForceLatency=3
-
-    #act
-    check_1410_cpu_idle_intel_cstates_intel
-
-    #assert
-    assertEquals "CheckOk? RC" '0' "$?"
-}
-
-test_classic_cstate_correct_latency_too_low() {
-
-    #arrange
-    OS_VERSION='12.1'
-    TEST_driverMaxCstate=1
-    TEST_maxForceLatency=0
-
-    #act
-    check_1410_cpu_idle_intel_cstates_intel
-
-    #assert
-    assertEquals "CheckWarn? RC" '1' "$?"
-}
-
-test_classic_cstate_too_low_latency_too_low() {
-
-    #arrange
-    OS_VERSION='12.1'
-    TEST_driverMaxCstate=0
-    TEST_maxCstateLatency=0
-
-    #act
-    check_1410_cpu_idle_intel_cstates_intel
-
-    #assert
-    assertEquals "CheckWarn? RC" '1' "$?"
-}
-
-test_latency_cstate_high_latency_too_high() {
-
-    #arrange
-    OS_VERSION='12.3'
+    OS_VERSION='12.5'
     TEST_driverMaxCstate=6
-    TEST_maxCstateLatency=2000000000
+    TEST_maxCstateLatency=133           #C1=3, C1E=10, C3=33, C6=133
     TEST_maxForceLatency=2000000000
 
     #act
@@ -133,7 +46,7 @@ test_latency_cstate_high_latency_too_high() {
 test_latency_cstate_high_cstatelatency_correct33() {
 
     #arrange
-    OS_VERSION='12.3'
+    OS_VERSION='12.5'
     TEST_driverMaxCstate=6
     TEST_maxCstateLatency=33            #C1=3, C1E=10, C3=33, C6=133
     TEST_maxForceLatency=2000000000
@@ -148,7 +61,7 @@ test_latency_cstate_high_cstatelatency_correct33() {
 test_latency_cstate_high_cstatelatency_correct70() {
 
     #arrange
-    OS_VERSION='12.3'
+    OS_VERSION='12.5'
     TEST_driverMaxCstate=6
     TEST_maxCstateLatency=70            #C1=3, C1E=10, C3=33, C6=133
     TEST_maxForceLatency=2000000000
@@ -163,7 +76,7 @@ test_latency_cstate_high_cstatelatency_correct70() {
 test_latency_cstate_high_forcelatency_correct() {
 
     #arrange
-    OS_VERSION='12.3'
+    OS_VERSION='12.5'
     TEST_driverMaxCstate=6
     TEST_maxCstateLatency=2000000000
     TEST_maxForceLatency=70
@@ -178,7 +91,7 @@ test_latency_cstate_high_forcelatency_correct() {
 test_latency_cstate_high_cstatelatency_too_low10() {
 
     #arrange
-    OS_VERSION='12.3'
+    OS_VERSION='12.5'
     TEST_driverMaxCstate=6
     TEST_maxCstateLatency=10
     TEST_maxForceLatency=2000000000
@@ -193,7 +106,7 @@ test_latency_cstate_high_cstatelatency_too_low10() {
 test_latency_cstate_high_cstatelatency_too_low3() {
 
     #arrange
-    OS_VERSION='12.3'
+    OS_VERSION='12.5'
     TEST_driverMaxCstate=6
     TEST_maxCstateLatency=3
     TEST_maxForceLatency=2000000000
@@ -208,7 +121,7 @@ test_latency_cstate_high_cstatelatency_too_low3() {
 test_latency_cstate_high_forcelatency_too_low() {
 
     #arrange
-    OS_VERSION='12.3'
+    OS_VERSION='12.5'
     TEST_driverMaxCstate=6
     TEST_maxCstateLatency=2000000000
     TEST_maxForceLatency=3
@@ -223,7 +136,7 @@ test_latency_cstate_high_forcelatency_too_low() {
 test_latency_cstate_too_low_cstatelatency_too_low() {
 
     #arrange
-    OS_VERSION='12.3'
+    OS_VERSION='12.5'
     TEST_driverMaxCstate=1
     TEST_maxCstateLatency=3
     TEST_maxForceLatency=2000000000
