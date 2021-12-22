@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+function check_0013_os_kernel_sles_azure {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+
+    local -r sapnote='#3123142'
+    # MODIFICATION SECTION<<
+
+    #3123142 - Microsoft Azure - Change SLES Kernel from azure to default
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_CLOUD_MICROSOFT; then
+
+        logCheckSkipped 'Not running on Microsoft Azure. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif ! LIB_FUNC_IS_SLES ; then
+
+        logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        if [[ "${OS_LEVEL}" != *"azure"* ]]; then
+
+            logCheckOk "MS Azure SLES kernel-default is supported by SAP (SAP Note ${sapnote:-}) (is: ${OS_LEVEL})"
+            _retval=0
+
+        else
+
+            logCheckError "MS Azure SLES kernel-azure is NOT supported by SAP (SAP Note ${sapnote:-}) (is: ${OS_LEVEL}, must not be: *-azure)"
+            _retval=2
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
