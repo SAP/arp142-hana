@@ -32,7 +32,7 @@ function check_0440_sapconf_sles {
 
         case "${OS_VERSION}" in
 
-                11.* | 12.0* )
+                11.* )
                         logCheckSkipped 'Check not applicable for SLES release' "(is: ${OS_NAME} ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
                         _retval=3
                         ;;
@@ -54,10 +54,26 @@ function check_0440_sapconf_sles {
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
+        local _fullversion
         local normalized_goodversion
         local normalized_fullversion
 
-        local _fullversion
+        local _is_used=false
+
+        if systemctl is-enabled "sapconf" --quiet; then
+            logCheckInfo 'sapconf is installed and enabled'
+            _is_used=true
+        else
+            logCheckInfo 'sapconf is installed but not enabled - saptune in use?'
+        fi
+
+        if systemctl is-active "sapconf" --quiet; then
+            logCheckInfo 'sapconf is active'
+            _is_used=true
+        else
+            logCheckInfo 'sapconf is not active'
+        fi
+
         _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" sapconf)
 
         #normalize good version
@@ -70,13 +86,21 @@ function check_0440_sapconf_sles {
 
         # returns 0 if equal, 1 if first is higher, 2 if second is higher
         LIB_FUNC_COMPARE_VERSIONS "${normalized_fullversion}" "${normalized_goodversion}"
-
         if [[ $? -ne 2 ]]; then
+
             logCheckOk 'sapconf version seems to be ok' "(SAP Note ${sapnote:-}) (is: ${_fullversion})"
             _retval=0
-        else
+
+        elif ${_is_used} ; then
+
             logCheckError 'sapconf must be updated' "(SAP Note ${sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
             _retval=2
+
+        else
+
+            logCheckWarning 'sapconf should be updated in case of future usage' "(SAP Note ${sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
+            _retval=1
+
         fi
 
     fi
