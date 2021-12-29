@@ -10,13 +10,18 @@ function check_5100_pagecache_limit_sles {
     local -r sapnote='#1557506' #1557506 - Linux paging improvements
     # MODIFICATION SECTION<<
 
+    #tweaked by unit-test
+    if [[ -z ${path_to_pgcache_limit_mb:-} ]]; then
+        path_to_pgcache_limit_mb='/proc/sys/vm/pagecache_limit_mb'
+    fi
+
     # PRECONDITIONS
     if ! LIB_FUNC_IS_SLES ; then
 
         logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif [[ ! -f '/proc/sys/vm/pagecache_limit_mb' ]]; then
+    elif [[ ! -f "${path_to_pgcache_limit_mb}" ]]; then
 
         logCheckSkipped "Pagecache Limit not configurable (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
         _retval=3
@@ -34,7 +39,7 @@ function check_5100_pagecache_limit_sles {
         local -i reco_pgcache_limit
         reco_pgcache_limit=$(( LIB_PLATF_RAM_MiB_AVAILABLE > 262144 ? calc_pg_limit : 4096 ))
         local -i pgcache_limit_mb
-        pgcache_limit_mb=$(</proc/sys/vm/pagecache_limit_mb)
+        pgcache_limit_mb=$(<${path_to_pgcache_limit_mb})
 
         if [[ ${pgcache_limit_mb} -eq 0 ]]; then
 
@@ -70,20 +75,20 @@ function check_5100_pagecache_limit_sles {
             fi
         fi
 
-    fi
+        # pgcache_ignore_dirty
+        if [[ ${pgcache_limit_mb} -gt 0 ]]; then
 
-    # pgcache_ignore_dirty
-    if [[ ${_retval} -eq 1 || ${_retval} -eq 2 ]]; then
+            if [[ -f '/proc/sys/vm/pagecache_limit_ignore_dirty' ]]; then
 
-        if [[ -f '/proc/sys/vm/pagecache_limit_ignore_dirty' ]]; then
+                local -i pgcache_ignore_dirty
+                pgcache_ignore_dirty=$(</proc/sys/vm/pagecache_limit_ignore_dirty)
+                logCheckWarning "vm.pagecache_limit_ignore_dirty depends on HANA Data+Log filesystem (is: ${pgcache_ignore_dirty}, should be: 0 for local FS, 1 for NFS)"
 
-            local -i pgcache_ignore_dirty
-            pgcache_ignore_dirty=$(</proc/sys/vm/pagecache_limit_ignore_dirty)
-            logCheckInfo "vm.pagecache_limit_ignore_dirty depends on HANA Data+Log filesystem (is: ${pgcache_ignore_dirty}, should be: 0 for local FS, 1 for NFS)"
+            else
 
-        else
+                logCheckInfo 'vm.pagecache_limit_ignore_dirty not configurable.'
 
-            logCheckInfo 'vm.pagecache_limit_ignore_dirty not configurable.'
+            fi
 
         fi
 
