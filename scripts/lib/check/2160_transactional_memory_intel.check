@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+
+function check_2160_transactional_memory_intel {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local sapnote='#2753418'
+    local sapnote_rhel='#2777782'
+    # MODIFICATION SECTION<<
+
+    #2737837 - SAP HANA and the Intel® Transactional Synchronization Extensions Capability
+    #2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
+
+    local tsxon_required=false
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_INTEL ; then
+
+        logCheckSkipped 'Not running on Intel CPU. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif LIB_FUNC_IS_RHEL ; then
+
+        sapnote+=",${sapnote_rhel}"
+
+        case "${OS_VERSION}" in
+
+            6.* | 7.* | 8.[0-2] ) : ;;
+
+            *)      tsxon_required=true ;;
+
+        esac
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        # read Intel TSX = rtm
+        if grep -qs -m1 "flags.*rtm" /proc/cpuinfo ; then
+
+            logCheckOk "Intel transactional memory feature TSX is available (SAP Note ${sapnote:-})"
+            _retval=0
+
+        else
+
+            if ${tsxon_required}; then
+
+                if grep -qs -m1 "tsx=on" /proc/cmdline; then
+
+                    logCheckInfo 'Linux kernel cmdline contains required <tsx=on>'
+
+                else
+
+                    logCheckWarning 'Linux kernel cmdline does NOT contain required <tsx=on>'
+
+                fi
+
+            fi
+
+            logCheckWarning "Intel transactional memory feature TSX is NOT available (SAP Note ${sapnote:-})"
+            _retval=1
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}

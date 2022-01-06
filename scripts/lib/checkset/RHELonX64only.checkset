@@ -30,6 +30,7 @@
 1700_irqbalance_service
 2000_transparent_hugepages
 2001_persistent_hugepages
+2160_transactional_memory_intel
 2200_numa_balancing
 2210_numad_rhel
 2300_vm_max_map_count
