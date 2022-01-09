@@ -46,4 +46,5 @@
 5000_io_parameter
 5010_io_scheduler_blockdevices
 5510_nfsv3_rpc_slots_netapp
+7010_corosync_version
 8500_sap_hana_client

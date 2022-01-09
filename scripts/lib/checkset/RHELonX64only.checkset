@@ -56,4 +56,5 @@
 5300_pvscsi_hostadapter_vmware
 5301_pvscsi_parameter_vmware
 5510_nfsv3_rpc_slots_netapp
+7010_corosync_version
 8500_sap_hana_client

@@ -1,0 +1,153 @@
+#!/usr/bin/env bash
+
+function check_7010_corosync_version {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local sapnote='#1552925'
+    local -r sapnote_sles='SUSE KB #000020407'
+    local -r sapnote_rhel='Red Hat KB #6310541'
+
+    local -ar _sles_rpm_matrix=(\
+                                    '12.*'   '2.3.6-9.19.1'     \
+                                    '15.0'   '2.4.5-5.13.1'     \
+                                    '15.1'   '2.4.5-9.16.1'     \
+                                    '15.2'   '2.4.5-10.14.6.1'  \
+                                    '15.3'   '2.4.5-12.3.1'     \
+                                )
+
+    local -ar _rhel_rpm_matrix=(\
+                                    '7.*'   '2.4.5-7.el7_9.2'   \
+                                    '8.*'   '2.4.5-7.el7_9.2'   \
+                                )
+
+    # MODIFICATION SECTION<<
+
+    #1552925 - Linux: High Availability Cluster Solutions
+    #https://www.suse.com/support/kb/doc/?id=000020407
+    #https://access.redhat.com/solutions/6310541
+    #https://cloud.google.com/solutions/sap/docs/known-issues#high-availability_cluster_failover_issue_due_to_a_corosync_communication_delay
+
+    local os_rpm_matrix
+
+    # PRECONDITIONS
+    if ! rpm -q --quiet corosync ; then
+
+        logCheckSkipped 'corosync not installed' "(SAP Note ${sapnote:-}). Skipping <${FUNCNAME[0]}>"
+        _retval=3
+
+    elif LIB_FUNC_IS_SLES ; then
+
+        sapnote+=",${sapnote_sles}"
+
+        case "${OS_VERSION}" in
+
+            11.* )  logCheckSkipped 'Check not applicable for SLES release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
+                    _retval=3
+                    ;;
+
+            *)      os_rpm_matrix+=("${_sles_rpm_matrix[@]}")
+                    ;;
+        esac
+
+    elif LIB_FUNC_IS_RHEL ; then
+
+        sapnote+=",${sapnote_rhel}"
+
+        case "${OS_VERSION}" in
+
+            6.* )  logCheckSkipped 'Check not applicable for RHEL release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
+                    _retval=3
+                    ;;
+
+            *)      os_rpm_matrix+=("${_rhel_rpm_matrix[@]}")
+                    ;;
+        esac
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local _release
+        local _goodversion
+        local _fullversion
+        local normalized_goodversion
+        local normalized_fullversion
+
+        local _handled=false
+        local _is_used=false
+
+        if systemctl is-enabled "corosync" --quiet; then
+            logCheckInfo 'corosync is installed and enabled'
+            _is_used=true
+        else
+            logCheckInfo 'corosync is installed but not enabled'
+        fi
+
+        if systemctl is-active "corosync" --quiet; then
+            logCheckInfo 'corosync is active'
+            _is_used=true
+        else
+            logCheckInfo 'corosync is not active'
+        fi
+
+        # i+=2 --> every 2nd item
+        for ((i=0; i < ${#os_rpm_matrix[@]}; i+=2)); do
+
+            _release="${os_rpm_matrix[$i]}"
+            logTrace "<${FUNCNAME[0]}> # ${OS_VERSION} vs ${_release}>"
+
+            [[ ! "${OS_VERSION}" =~ ${_release} ]] && continue
+
+            _handled=true
+            _goodversion="${os_rpm_matrix[$i+1]}"
+
+            #normalize good version
+            LIB_FUNC_NORMALIZE_RPM "${_goodversion}"
+            normalized_goodversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+            _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" corosync)
+            #normalize full version - e.g. 4.1.10-33.5.2
+            LIB_FUNC_NORMALIZE_RPM "${_fullversion}"
+            normalized_fullversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+            # returns 0 if equal, 1 if first is higher, 2 if second is higher
+            LIB_FUNC_COMPARE_VERSIONS "${normalized_fullversion}" "${normalized_goodversion}"
+            if [[ $? -ne 2 ]]; then
+
+                logCheckOk 'corosync version seems to be ok' "(SAP Note ${sapnote:-}) (is: ${_fullversion})"
+                _retval=0
+
+            elif ${_is_used} ; then
+
+                logCheckError 'corosync must be updated' "(SAP Note ${sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
+                _retval=2
+
+            else
+
+                logCheckWarning 'corosync should be updated in case of future usage' "(SAP Note ${sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
+                _retval=1
+
+            fi
+
+            break
+
+        done
+
+        if ! ${_handled}; then
+
+            logCheckSkipped 'CHECK does not apply for OS release' "(SAP Note ${sapnote:-}). Skipping <${FUNCNAME[0]}>"
+            _retval=3
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
