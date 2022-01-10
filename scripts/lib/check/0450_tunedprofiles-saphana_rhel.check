@@ -6,13 +6,15 @@ function check_0450_tunedprofiles-saphana_rhel {
 
     local -i _retval=99
 
+    # <1y old package or concrete newer version listed in any note
+    # https://access.redhat.com/downloads/content/tuned-profiles-sap-hana/2.10.0-6.el7_6.5/noarch/fd431d51/package-changelog
+
     # MODIFICATION SECTION>>
-    local -ar rhel76=( '2.10.0-6.el7_0.0' '#2292690,1880960' )
-    local -ar rhel77=( '2.11.0-5.el7_0.0' '#2292690,1880960' )
-    local -ar rhel79=( '2.11.0-5.el7_0.0' '#2292690,1880960' )
-    local -ar rhel80=( '2.10.0-7.el8_0.0' '#2777782' )
+    local -ar rhel76=( '2.10.0-6.el7_6.5' '#2292690' )
+    local -ar rhel77=( '2.11.0-5.el7_7.4' '#2292690' )
+    local -ar rhel79=( '2.11.0-11.el7_9.0' '#2292690' )
     local -ar rhel81=( '2.12.0-3.el8_1.1' '#2777782' )
-    local -ar rhel82=( '2.13.0-6.el8_0.0' '#2777782' )
+    local -ar rhel82=( '2.13.0-6.el8_2.2' '#2777782' )
     local -ar rhel84=( '2.15.0-2.el8_4.1' '#2777782' )
     # MODIFICATION SECTION<<
 
@@ -41,7 +43,6 @@ function check_0450_tunedprofiles-saphana_rhel {
             7.7 )  _goodversion="${rhel77[0]}" ; sapnote="${rhel77[1]}" ;;
             7.9 )  _goodversion="${rhel79[0]}" ; sapnote="${rhel79[1]}" ;;
 
-            8.0 )  _goodversion="${rhel80[0]}" ; sapnote="${rhel80[1]}" ;;
             8.1 )  _goodversion="${rhel81[0]}" ; sapnote="${rhel81[1]}" ;;
             8.2 )  _goodversion="${rhel82[0]}" ; sapnote="${rhel82[1]}" ;;
             8.4 )  _goodversion="${rhel84[0]}" ; sapnote="${rhel84[1]}" ;;
