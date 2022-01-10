@@ -6,11 +6,15 @@ function check_0600_systemd_version {
 
     local -i _retval=99
 
+    # <1y old package or concrete newer version listed in any note
+    #https://scc.suse.com/packages?name=SUSE%20Linux%20Enterprise%20Server&version=15&arch=x86_64
+    #https://access.redhat.com/downloads/content/systemd/219-62.el7_6.17/x86_64/fd431d51/package
+
     # MODIFICATION SECTION>>
-    local -ar sles122=( '228-142.1' '#2205917' )    #SAP HANA DB: Recommended OS settings for SLES 12
-    local -ar sles150=( '228-142.1' '#2684254' )    #SAP HANA DB: Recommended OS settings for SLES 15
-    local -ar rhel7=( '219-19.el7_2.4' '#2292690')  #SAP HANA DB: Recommended OS settings for RHEL 7
-    local -ar rhel8=( '239-8.el8' '#2777782')       #SAP HANA DB: Recommended OS Settings for RHEL 8
+    local -ar sles12x=( '228-150.66.4' '#2205917' )    #SAP HANA DB: Recommended OS settings for SLES 12
+    local -ar sles150=( '234-24.42.1' '#2684254' )     #SAP HANA DB: Recommended OS settings for SLES 15
+    local -ar rhel7=( '219-62.el7_6.17' '#2292690')    #SAP HANA DB: Recommended OS settings for RHEL 7
+    local -ar rhel8=( '239-18.el8_1.7' '#2777782')     #SAP HANA DB: Recommended OS Settings for RHEL 8
     # MODIFICATION SECTION<<
 
     local _goodversion
@@ -20,7 +24,7 @@ function check_0600_systemd_version {
     if LIB_FUNC_IS_SLES ; then
         case "${OS_VERSION}" in
 
-            12.[2-5]*)  _goodversion="${sles122[0]}" ; sapnote="${sles122[1]}" ;;
+            12.*)   _goodversion="${sles12x[0]}" ; sapnote="${sles12x[1]}" ;;
 
             15.*)   _goodversion="${sles150[0]}" ; sapnote="${sles150[1]}" ;;
 
