@@ -10,7 +10,6 @@ function check_0005_os_hana_support_rhel_ibmpower {
     local -r platform_rx='POWER(9|8)'
 
     #                       'Platform'      'maj'   '0123456789A' (Minor Release)
-    # shellcheck disable=SC2034
     local -ar _rhel_matrix=(\
                             'POWER9'        '7'    '----------'   \
                             'POWER8'        '7'    '------67-9'   \

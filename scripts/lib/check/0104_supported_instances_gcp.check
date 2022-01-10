@@ -10,7 +10,6 @@ function check_0104_supported_instances_gcp {
 
     # MODIFICATION SECTION>>
     # array             'Instance Type'
-    # shellcheck disable=SC2034         #not required anymore with shellcheck v0.8
     local -ar _google_vm=(\
                         'n1-highmem-32'     'n1-highmem-64'     'n1-highmem-96'     \
                         'n2-highmem-32'     'n2-highmem-48'     'n2-highmem-64'     'n2-highmem-80'     \
@@ -19,7 +18,6 @@ function check_0104_supported_instances_gcp {
                         )
 
     # array             'Instance Type'
-    # shellcheck disable=SC2034         #not required anymore with shellcheck v0.8
     local -ar _google_bm=(\
                         'o2-ultramem-672-metal' \
                         'o2-ultramem-896-metal' \
