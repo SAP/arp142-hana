@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+
+function check_0106_supported_instances_ibmcloud {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # https://sldn.softlayer.com/reference/services/SoftLayer_Resource_Metadata/
+    # https://cloud.ibm.com/apidocs/vpc-metadata-beta#vpc-instance-metadata-api
+    # _lib_platf_name="$(</sys/devices/virtual/dmi/id/product_name)
+
+    # MODIFICATION SECTION>>
+
+    # array             'Instance Type'
+    local -ar _ibm_classic_bm=(\
+                        'BI.S1.H1000'   'BI.S4.H2.768' \
+                        )
+
+    # array             'Instance Type'
+    local -ar _ibm_classic_vm=(\
+                        'xxx'   'xxx' \
+                        )
+
+    # array             'Instance Type'
+    local -ar _ibm_vpc_vm=(\
+                        'mx2-8x64'      'mx2-16x128'        'mx2-32x256'        'mx2-48x384'        \
+                        'vx2d-16x224'   'vx2d-44x616'       'vx2d-88x1232'                          \
+                        'vx2d-144x2016' 'vx2d-176x2464'                                             \
+                        'ux2d-8x224'    'ux2d-16x448'       'ux2d-36x1008'      'ux2d-48x1344'      \
+                        'ux2d-72x2016'  'ux2d-100x2800'     'ux2d-200x5600'                         \
+                        )
+
+    # array             'Instance Type'
+    local -ar _ibm_power=(\
+                        'bh1-20x2000'   'bh1-22x2200'   'bh1-25x2500'   'bh1-30x3000'   'bh1-35x3500'  \
+                        'bh1-40x4000'   'bh1-50x5000'   'bh1-70x7000'   \
+                        'bh1-80x8000'   'bh1-100x10000' 'bh1-120x12000' 'bh1-140x14000'\
+                        'ch1-60x3000'   'ch1-70x3500'   'ch1-80x4000'   'ch1-100x5000'  'ch1-120x6000' 'ch1-140x7000'  \
+                        'mh1-8x1440'    'mh1-10x1800'   'mh1-12x2160'   'mh1-16x2880'   \
+                        'mh1-20x3600'   'mh1-22x3960'   'mh1-25x4500'   'mh1-30x5400'   'mh1-35x6300'   \
+                        'mh1-40x7200'   'mh1-50x9000'   'mh1-60x10800'  'mh1-70x12600'  \
+                        'mh1-80x14400'  'mh1-90x16200'  'mh1-100x18000' 'mh1-125x22500' \
+                        'umh1-6x1440'   'umh1-8x1920'   'umh1-10x2400'  'umh1-12x2880'  'umh1-16x3840' \
+                        'umh1-20x4800'  'umh1-22x5280'  'umh1-25x6000'  'umh1-30x7200'  'umh1-35x8400' \
+                        'umh1-40x9600'  'umh1-50x12000' 'umh1-60x14400'  \
+                        'ush1-4x128'    'ush1-4x256'    'ush1-4x384'    'ush1-4x512'    'ush1-4x768' \
+                        )
+
+    local -r sapnote='#1380654'
+    # MODIFICATION SECTION<<
+
+    #1380654 - SAP support in IaaS environments
+    #2414097 - SAP Applications on IBM Cloud: Supported DB/OS and IBM Cloud Bare Metal Server Types
+    # https://www.sap.com/dmc/exp/2014-09-02-hana-hardware/enEN/#/solutions?filters=iaas;ve:28
+    # https://cloud.ibm.com/docs/sap?topic=sap-hana-iaas-offerings-profiles-power-vs
+    # https://cloud.ibm.com/docs/sap?topic=sap-iaas-offerings
+
+    local cert_type
+    local inst_name="${LIB_PLATF_NAME}"
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_CLOUD_IBM; then
+
+        logCheckSkipped 'Not running on IBM Cloud. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif LIB_FUNC_IS_IBMPOWER; then
+
+        cert_type='power'
+        LIB_FUNC_IBMCLOUD_POWER_INSTANCE_NAME
+        inst_name="${RETURN_IBMCLOUD_POWER_INSTANCE_NAME}"
+
+    elif LIB_FUNC_IS_VIRT_KVM; then
+
+        cert_type='vpc_vm'
+
+    elif LIB_FUNC_IS_VIRT_VMWARE; then
+
+        cert_type='classic_vm'
+
+        logCheckError "IBM Cloud Classic VMware instance type is NOT supported by check (is: ${LIB_PLATF_NAME}@IBM Cloud Classic VM)"
+        _retval=2
+
+    else
+        cert_type='classic_bm'
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        #https://unix.stackexchange.com/questions/60584/how-to-use-a-variable-as-part-of-an-array-name/60585#60585
+        #declare -n cert_instances=arrayA --> reference bash 4.3.8
+        local cert_instances="_ibm_${cert_type}[@]"
+
+        #use indirection ${!xxx}
+        for instance in "${!cert_instances}"; do
+
+            logTrace "<${FUNCNAME[0]}> # ${instance}>"
+
+            [[ "${inst_name}" != "${instance}" ]] && continue
+
+            _retval=0
+            break
+
+        done
+
+        if [[ ${_retval} -eq 0 ]] ; then
+
+            logCheckOk "IBM Cloud instance type is supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${inst_name}@${cert_type})"
+            _retval=0
+
+        else
+
+            logCheckError "IBM Cloud instance type is NOT supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${inst_name}@${cert_type})"
+            _retval=2
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
