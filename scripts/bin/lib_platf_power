@@ -36,6 +36,51 @@ function LIB_FUNC_TRANSFORM_POWER_POWERMODE {
 
 }
 
+function LIB_FUNC_IBMCLOUD_POWER_INSTANCE_NAME {
+
+    local prefix
+    local -i cores=0
+    local -i memory_available_gb=0
+    local -i memory_calc_gb=0
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    if [[ -n ${LIB_PLATF_POWER_CPU_TOTAL:-} && -n ${LIB_PLATF_CPU_THREADSPERCORE:-} ]]; then
+
+        cores=$(( LIB_PLATF_POWER_CPU_TOTAL/LIB_PLATF_CPU_THREADSPERCORE ))
+
+    fi
+
+    if [[ -n ${LIB_PLATF_RAM_MiB_AVAILABLE:-} ]]; then
+
+        printf -v memory_available_gb '%.0f' $(( (LIB_PLATF_RAM_MiB_AVAILABLE+1023)/1024 ))
+
+    fi
+
+    if [[ -n ${cores:-} && -n ${memory_available_gb:-} ]]; then
+
+        local -i ratio=$(( memory_available_gb/cores ))
+
+        if   ((230<=ratio && ratio<=250)); then     ratio=240; : "umh"
+        elif ((170<=ratio && ratio<=190)); then     ratio=180; : "mh"
+        elif (( 90<=ratio && ratio<=110)); then     ratio=100; : "bh"
+        elif (( 40<=ratio && ratio<=60 )); then     ratio=50;  : "ch"
+        else                                                   : "ush" # remaining
+        fi
+
+        prefix="$_"
+
+        memory_calc_gb=$(( cores*ratio ))
+
+    fi
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}> # CPUt: ${LIB_PLATF_POWER_CPU_TOTAL:-}; Memory: ${memory_available_gb:-} GB; Ratio: ${ratio:-}"
+
+    #umh1-16x3840 - variable is available to caller
+    printf -v RETURN_IBMCLOUD_POWER_INSTANCE_NAME '%s1-%sx%s' "${prefix}" "${cores}" "${memory_calc_gb}"
+
+}
+
 ##########################################################
 # Non-global functions - not to be used in other scripts
 ##########################################################
@@ -134,6 +179,8 @@ function __lib_func_get_lpar_details {
 
     #https://manpages.debian.org/testing/powerpc-ibm-utils/lparcfg.5.en.html
     local -r lparcfgfile='/proc/ppc64/lparcfg'
+
+    [[ ! -r ${lparcfgfile} ]] && return
 
     while read -r line; do
 
@@ -252,7 +299,11 @@ function __get_platform_power_cpu_details {
         'Byte Order:'*)
                             LIB_PLATF_BYTEORDER=$(LIB_FUNC_TRIM_LEFT "${line/Byte Order:}")
                             readonly LIB_PLATF_BYTEORDER
-                            #break
+        ;;
+
+        'CPU(s):'*)
+                            LIB_PLATF_POWER_CPU_TOTAL=$(LIB_FUNC_TRIM_LEFT "${line/CPU(s):}")
+                            readonly LIB_PLATF_POWER_CPU_TOTAL
         ;;
 
         'Thread(s) per core:'*)
@@ -377,6 +428,7 @@ function _lib_platf_power_main {
 
 #GLOBAL
 # don't use declare here ... file is sourced within function, which would restrict visibility
+# LIB_PLATF_POWER_CPU_TOTAL
 # LIB_PLATF_POWER_CPUCAP
 # LIB_PLATF_POWER_MEMMODE
 # LIB_PLATF_POWER_MEMENTITLED
