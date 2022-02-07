@@ -20,19 +20,21 @@ install:
 #Build Matrix
 jobs:
     include:
+        ### Ubuntu (https://en.wikipedia.org/wiki/Ubuntu)
+        ### Support Ubuntu Focal 20.04 through at least Apr 2025
         - stage: "Unit-Testing"
           name: "focal - Ubuntu 20.04 - Kernel 5.4 - bash 5.0.17"
           after_success: skip
           before_deploy: skip
           deploy: skip
 
-        - dist: xenial    #shellcheck 0.6
+        - dist: xenial    # Support Ubuntu Xenial 16.04 through at least Apr 2021
           name: "xenial - Ubuntu 16.04 - Kernel 4.15 - bash 4.3"
           after_success: skip
           before_deploy: skip
           deploy: skip
 
-        - dist: bionic    #shellcheck 0.6
+        - dist: bionic    # Support Ubuntu Bionic 18.04 through at least Apr 2023
           name: "bionix - Ubuntu 18.04 - Kernel 4.15 - bash 4.4"
           after_success: skip
           before_deploy: skip
