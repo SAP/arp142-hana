@@ -13,6 +13,7 @@ function check_0104_supported_instances_gcp {
     local -ar _google_vm=(\
                         'n1-highmem-32'     'n1-highmem-64'     'n1-highmem-96'     \
                         'n2-highmem-32'     'n2-highmem-48'     'n2-highmem-64'     'n2-highmem-80'     \
+                        'n2-highmem-96'     'n2-highmem-128'     \
                         'm1-megamem-96'     'm1-ultramem-40'    'm1-ultramem-80'    'm1-ultramem-160'   \
                         'm2-megamem-416'    'm2-ultramem-208'   'm2-ultramem-416'   \
                         )
