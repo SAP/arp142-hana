@@ -40,6 +40,19 @@ test_VM_supported() {
     assertEquals "CheckOk? RC" '0' "$?"
 }
 
+test_VM_supported_uppercase() {
+
+    #arrange
+    LIB_PLATF_NAME='Standard_M64MS'
+    TEST_LIB_FUNC_IS_VIRT_MICROSOFT=0
+
+    #act
+    check_0101_supported_instances_azure
+
+    #assert
+    assertEquals "CheckOk? RC" '0' "$?"
+}
+
 test_BareMetal_not_supported() {
 
     #arrange
