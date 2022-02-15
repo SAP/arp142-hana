@@ -8,9 +8,9 @@ function check_4500_ibm-gpfs_version_intel {
 
     # MODIFICATION SECTION>>
     local -r sapnote='#2908360,#2533844,#1880960'
-    local -r _goodversion50='5.0.5.4'
+    local -r _goodversion50='5.0.5.9'
     local -r _goodversion51='5.1.0.2'       #supported only on RHEL 7.7, starting with RHEL 8.1 and SLES 15 SP0
-    local -r _goodversion51n='5.1.1.2'      #For RHEL8.4 please use minimum 5.1.1.2
+    local -r _goodversion51n='5.1.1.3'      #RHEL7.7,8.4 and SLES15.2
     # MODIFICATION SECTION<<
 
     #2908360 - Spectrum Scale Software Lenovo ESD Platform
@@ -35,7 +35,7 @@ function check_4500_ibm-gpfs_version_intel {
         case "${OS_VERSION}" in
 
             6.* | 7.[0-6] | 8.0 )   _goodversion=${_goodversion50} ;;
-            7.[7-9] | 8.[1-3] )     _goodversion=${_goodversion51} ;;
+            8.[1-3] )               _goodversion=${_goodversion51} ;;
             *)                      _goodversion=${_goodversion51n} ;;
 
         esac
@@ -45,7 +45,7 @@ function check_4500_ibm-gpfs_version_intel {
         case "${OS_VERSION}" in
 
             11.* | 12.* )           _goodversion=${_goodversion50} ;;
-            15.[0-2] )              _goodversion=${_goodversion51} ;;
+            15.[0-1] )              _goodversion=${_goodversion51} ;;
             *)                      _goodversion=${_goodversion51n} ;;
 
         esac
