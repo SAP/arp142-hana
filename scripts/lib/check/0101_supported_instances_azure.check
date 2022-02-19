@@ -11,12 +11,12 @@ function check_0101_supported_instances_azure {
     # MODIFICATION SECTION>>
     # array             'Instance Type'
     local -ar _azure_vm=(\
-                        'E20ds_v4'     \
-                        'E32ds_v4'     \
-                        'E48ds_v4'     \
+                        'E20ds_v4'  'E32ds_v4'  'E48ds_v4'  'E64ds_v4'  \
+                        'E20ds_v5'  'E32ds_v5'  'E48ds_v5'  'E64ds_v5'  'E96ds_v5' \
+                        'E64s_v3'   \
+                        'E20s_v5'   'E32s_v5'   'E48s_v5'   'E64s_v5'   'E96s_v5'  \
                         'M32ls'     'M32ts'     \
                         'M32ms_v2'  'M32dms_v2' \
-                        'E64ds_v4'  'E64s_v3'   \
                         'M64ls'     'M64ms'     'M64s'  \
                         'M64ms_v2'  'M64s_v2'   'M64dms_v2' 'M64ds_v2'  \
                         'M128ms'    'M128s'     \
