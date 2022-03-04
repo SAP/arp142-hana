@@ -93,6 +93,34 @@ test_power9_rhel_supported() {
     assertEquals "CheckOk? RC" '0' "$?"
 }
 
+test_power10_rhel_not_supported() {
+
+    #arrange
+    LIB_PLATF_ARCHITECTURE='ppc64le'
+    LIB_PLATF_CPU='POWER10 (architected), altivec supported'
+    OS_VERSION='7.7'
+
+    #act
+    check_0005_os_hana_support_rhel_ibmpower
+
+    #assert
+    assertEquals "CheckError? RC" '2' "$?"
+}
+
+test_power10_rhel_supported() {
+
+    #arrange
+    LIB_PLATF_ARCHITECTURE='ppc64le'
+    LIB_PLATF_CPU='POWER10 (architected), altivec supported'
+    OS_VERSION='8.4'
+
+    #act
+    check_0005_os_hana_support_rhel_ibmpower
+
+    #assert
+    assertEquals "CheckOk? RC" '0' "$?"
+}
+
 test_powerX_not_supported() {
 
     #arrange

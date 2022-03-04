@@ -109,6 +109,34 @@ test_power9_littleendian_sles_supported() {
     assertEquals "CheckOk? RC" '0' "$?"
 }
 
+test_power10_littleendian_sles_not_supported() {
+
+    #arrange
+    LIB_PLATF_ARCHITECTURE='ppc64le'
+    LIB_PLATF_CPU='POWER10 (architected), altivec supported'
+    OS_VERSION='12.2'
+
+    #act
+    check_0004_os_hana_support_sles_ibmpower
+
+    #assert
+    assertEquals "CheckError? RC" '2' "$?"
+}
+
+test_power10_littleendian_sles_supported() {
+
+    #arrange
+    LIB_PLATF_ARCHITECTURE='ppc64le'
+    LIB_PLATF_CPU='POWER10 (architected), altivec supported'
+    OS_VERSION='15.3'
+
+    #act
+    check_0004_os_hana_support_sles_ibmpower
+
+    #assert
+    assertEquals "CheckOk? RC" '0' "$?"
+}
+
 test_powerX_not_supported() {
 
     #arrange
