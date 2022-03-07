@@ -7,7 +7,7 @@ function check_2160_transactional_memory_intel {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local sapnote='#2753418'
+    local sapnote='#2737837'
     local sapnote_rhel='#2777782'
     # MODIFICATION SECTION<<
 
