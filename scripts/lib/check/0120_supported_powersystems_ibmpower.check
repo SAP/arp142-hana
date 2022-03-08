@@ -26,6 +26,7 @@ function check_0120_supported_powersystems_ibmpower {
                         '9008-22L'  'L922'  \
                         '9040-MR9'  'E950'  \
                         '9080-M9S'  'E980'  \
+                        '9080-HEX'  'E1080' \
                         )
 
     local -r sapnote='#2188482'
