@@ -37,7 +37,10 @@ function check_0011_os_kernel_knownissue_sles {
     #                     )
 
     local -ar _sles_ibmpower=(\
-                        '11.4' '3.0.101-108.35.1'       '3.0.101-108.81.0'  '#2240716' \
+                        '11.4'  '3.0.101-108.35.1'      '3.0.101-108.81.0'  '#2240716' \
+                        '12.4'  '4.12.14-94.41.1'       '4.12.14-95.999'    '#3159746' \
+                        '12.5'  '4.12.14-120.1'         '4.12.14-999'       '#3159746' \
+                        '15.1'  '4.12.14-195.1'         '4.12.14-197.999'   '#3159746' \
                         )
     # MODIFICATION SECTION<<
 
@@ -46,6 +49,7 @@ function check_0011_os_kernel_knownissue_sles {
     #2205917 - SAP HANA DB: Recommended OS settings for SLES 12 - SLES12.2 only --> SUSE-KB 7022921 XFS metadata
     #2240716 - SAP HANA DB: Recommended OS settings for SLES 11 / SLES for SAP Applications 11 SP4
     #2859234 - SAP HANA Timer Fallback alert on SLES 12 SP3
+    #3159746 - Hana Revision 6x crashes on Linux kernel 4.12 or 4.18 on IBM Power platform
 
     #1880960 - Lenovo Systems Solution for SAP HANA Platform Edition FW/OS/Driver Maintenance - better would be
     #1557506 - Linux paging improvements - but this requires adjustment first
