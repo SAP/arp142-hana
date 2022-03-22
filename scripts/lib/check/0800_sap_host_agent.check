@@ -8,18 +8,17 @@ function check_0800_sap_host_agent {
 
     # MODIFICATION SECTION>>
     local -r sapnote='#1113545'
-    local -r sapnote721='#2130510'
-    local -r sapnoteFIX='#2498706'
-    local -r sapnoteLATEST='#3113553'
 
-    local -r hostagent_version_exp='722.55.0'
-    local -ar hostagent_buggy=( '721.26' '721.28' )
+    local -r sapnote_deprecated='#2130510'
+    local -r hostagent_kernel_deprecated='721'
 
+    local -r sapnote_latest='#3113553'
+    local -r hostagent_version_expected='722.55.0'
     # MODIFICATION SECTION<<
 
     #1113545 - Problems with SAP Host Agent
+    #2130510 - SAP Host Agent 7.21
     #3061366 - SAP Host Agent 7.22
-    #2498706 - Linux saposcol core dumps, missing ST06 data ==> 7.21 PL26-PL28
     #3113553 - SAP Host Agent 7.22 PL55
 
     local -r saphostexec_path='/usr/sap/hostctrl/exe/saphostexec'
@@ -46,68 +45,46 @@ function check_0800_sap_host_agent {
             while IFS=$'\n' read -r line; do versions+=("$line"); done < <(($saphostexec_path -version |  grep -iE '(kernel release|patch number|change number)') 2>/dev/null)
         fi
 
-        local _version
-        local hostagent_version_curr
-        local normalized_hostagent_version_curr
+        local hostagent_kernel
+        local hostagent_version_current
+        local normalized_hostagent_version_current
 
         if [ ${#versions[@]} -ne 0 ]; then
 
             local _patch; local _change
-            _version=$(LIB_FUNC_TRIM_LEFT "${versions[0]/kernel release}")
+            hostagent_kernel=$(LIB_FUNC_TRIM_LEFT "${versions[0]/kernel release}")
             _patch=$(LIB_FUNC_TRIM_LEFT "${versions[1]/patch number}")
             _change=$(LIB_FUNC_TRIM_LEFT "${versions[2]/*change number}")
-            hostagent_version_curr="${_version}.${_patch}.${_change}"
+            hostagent_version_current="${hostagent_kernel}.${_patch}.${_change}"
 
-            LIB_FUNC_NORMALIZE_KERNEL "${hostagent_version_curr}"
-            normalized_hostagent_version_curr="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
+            LIB_FUNC_NORMALIZE_KERNEL "${hostagent_version_current}"
+            normalized_hostagent_version_current="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
 
         else
-            _version='0'
-            hostagent_version_curr='0.0.0'
+            hostagent_kernel='0'
+            hostagent_version_current='0.0.0'
         fi
 
-        local normalized_hostagent_version_exp
-        LIB_FUNC_NORMALIZE_KERNEL "${hostagent_version_exp}"
-        normalized_hostagent_version_exp="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
 
-        #deprecated version 7.20?
-        if [[ ${_version} -lt 721 ]]; then
-            logCheckError "SAP Host Agent Version is deprecated, please upgrade to >=7.21 (SAP Note ${sapnote721:-})"
+        if [[ ${hostagent_kernel} -le ${hostagent_kernel_deprecated} ]]; then
+            logCheckError "SAP Host Agent Version is deprecated and must be upgraded (SAP Note ${sapnote_deprecated:-}) (is: ${hostagent_kernel_deprecated})"
             _retval=2
-
-        #virtualized and bad version?
-        elif LIB_FUNC_IS_INTEL && ! LIB_FUNC_IS_BARE_METAL; then
-
-            LIB_FUNC_NORMALIZE_KERNEL "${hostagent_buggy[1]}"
-            normalized_hostagent_buggy_high="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
-
-            # returns 0 if equal, 1 if first is higher, 2 if second is higher
-            LIB_FUNC_COMPARE_VERSIONS "${normalized_hostagent_buggy_high}" "${normalized_hostagent_version_curr}"
-            if [[ $? -lt 2 ]]; then
-
-                LIB_FUNC_NORMALIZE_KERNEL "${hostagent_buggy[0]}"
-                normalized_hostagent_buggy_low="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
-
-                LIB_FUNC_COMPARE_VERSIONS "${normalized_hostagent_version_curr}" "${normalized_hostagent_buggy_low}"
-                if [[ $? -lt 2 ]]; then
-
-                    logCheckError "SAP Host Agent must be upgraded (SAP Note ${sapnoteFIX:-},${sapnoteLATEST:-}) (is: ${hostagent_version_curr}, should be: >=${hostagent_version_exp})"
-                    _retval=2
-                fi
-
-            fi
 
         fi
 
         #highest version?
         if [[ ${_retval} -eq 99 ]]; then
 
-            LIB_FUNC_COMPARE_VERSIONS "${normalized_hostagent_version_curr}" "${normalized_hostagent_version_exp}"
+            local normalized_hostagent_version_exp
+            LIB_FUNC_NORMALIZE_KERNEL "${hostagent_version_expected}"
+            normalized_hostagent_version_exp="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
+
+            LIB_FUNC_COMPARE_VERSIONS "${normalized_hostagent_version_current}" "${normalized_hostagent_version_exp}"
             if [[ $? -eq 2 ]]; then
-                logCheckWarning "SAP Host Agent should be upgraded (SAP Note ${sapnoteLATEST:-}) (is: ${hostagent_version_curr}, should be: >=${hostagent_version_exp})"
+                logCheckWarning "SAP Host Agent should be upgraded (SAP Note ${sapnote_latest:-}) (is: ${hostagent_version_current}, should be: >=${hostagent_version_expected})"
                 _retval=1
             else
-                logCheckOk "SAP Host Agent is at required level (SAP Note ${sapnoteLATEST:-}) (is: ${hostagent_version_curr})"
+                logCheckOk "SAP Host Agent is at required level (SAP Note ${sapnote_latest:-}) (is: ${hostagent_version_current})"
                 _retval=0
             fi
 
