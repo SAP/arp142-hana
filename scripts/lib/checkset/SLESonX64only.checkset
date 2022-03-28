@@ -59,6 +59,7 @@
 5100_pagecache_limit_sles
 5300_pvscsi_hostadapter_vmware
 5301_pvscsi_parameter_vmware
+5505_nfsv4_max_session_slots
 5510_nfsv3_rpc_slots_netapp
 7010_corosync_version
 8500_sap_hana_client

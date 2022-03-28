@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+
+function check_5505_nfsv4_max_session_slots {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # '/sys/module/nfs/parameters/max_session_slots'
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#3024346'
+
+    local -i _reco_max_slots=128
+    # MODIFICATION SECTION<<
+
+    # NFS in NetApp ONTAP Best practice and implementation guide https://www.netapp.com/media/10720-tr-4067.pdf
+    # https://docs.microsoft.com/en-us/azure/azure-netapp-files/performance-linux-concurrency-session-slots#nfsv41
+    # 3024346 - Linux Kernel Settings for NetApp NFS
+
+    local _max_slots_parameter
+
+    # PRECONDITIONS
+    if ! grep -qsE 'nfs4 .+vers=4\.1' '/proc/mounts'; then
+
+        logCheckSkipped "No NFSv4.1 filesystem mounted (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif [[ ! -f '/sys/module/nfs/parameters/max_session_slots' ]]; then
+
+        logCheckWarning "nfs parameter max_session_slots is not available (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+        _retval=1
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        logCheckInfo 'Only applicable for SAP Persistence stored on Netapp NFS4.1 filesystem with high IO demand!'
+        logCheckInfo '---'
+
+        local -i _curr_max_slots
+        local _param_normalized
+
+
+        _curr_max_slots=$(</sys/module/nfs/parameters/max_session_slots)
+
+        if [[ ${_curr_max_slots} -lt ${_reco_max_slots} ]]; then
+
+            logCheckWarning "nfs parameter max_session_slots NOT set as recommended (SAP Note ${sapnote:-}) (is: ${_curr_max_slots}, should be: ${_reco_max_slots})"
+            _retval=1
+
+        else
+
+            logCheckOk "nfs parameter max_session_slots set as recommended (SAP Note ${sapnote:-}) (is: ${_curr_max_slots})"
+            _retval=0
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
