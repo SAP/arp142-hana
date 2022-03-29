@@ -24,13 +24,40 @@ function LIB_FUNC_TRANSFORM_POWER_POWERMODE {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-    case "${powermode}" in
-        '0001')  powermode='Dynamic, Favor Performance' ;;
-        '0002')  powermode='None' ;;
-        '0003')  powermode='Static' ;;
-        '00ff')  powermode='Dynamic, Favor Power' ;;
-        *)       powermode='Unknown';;
-    esac
+    # P7,P8                                             P9,P10
+    # 0x0001: "Dynamic, Favor Performance"              0x0001: "Maximum Performance"
+    # 0x0002: "None"                                    0x0002: "None"
+    # 0x0003: "Static"                                  0x0003: "Static"
+    # 0x00ff: "Dynamic, Favor Power"                    0x0004: "Dynamic Performance"
+    # default: "Unknown"
+
+    if [[ "${_lib_platf_cpu:-}" =~ POWER(10|9) ]]; then
+
+        case "${powermode}" in
+            '0001')  : 'Maximum Performance' ;;
+            '0002')  : 'None' ;;
+            '0003')  : 'Static' ;;
+            '0004')  : 'Dynamic Performance' ;;
+            *)       : 'Unknown';;
+        esac
+        powermode="$_"
+
+    elif [[ "${_lib_platf_cpu:-}" =~ POWER(8|7) ]]; then
+
+        case "${powermode}" in
+            '0001')  : 'Dynamic, Favor Performance' ;;
+            '0002')  : 'None' ;;
+            '0003')  : 'Static' ;;
+            '00ff')  : 'Dynamic, Favor Power' ;;
+            *)       : 'Unknown';;
+        esac
+        powermode="$_"
+
+    else
+
+        powermode='Unknown'
+
+    fi
 
     printf '%s' "${powermode}"
 

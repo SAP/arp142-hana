@@ -11,7 +11,9 @@ function check_1310_cpu_powersavings_ibmpower {
     # MODIFICATION SECTION<<
 
     #2055470 - HANA on POWER Planning and Installation Specifics - Central Note
-    ## HWCCT + IBM Documention "HANA operations guide"
+    ## HWCCT + IBM Documentation "HANA operations guide"
+    #2684254 - SAP HANA DB: Recommended OS settings for SLES 15 / SLES for SAP Applications 15
+    #2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_IBMPOWER ; then
@@ -41,10 +43,11 @@ function check_1310_cpu_powersavings_ibmpower {
         local pwr_partition_mode
         pwr_partition_mode="${LIB_PLATF_POWER_POWERMODE: -4}"
 
-        # 0x0001: "Dynamic, Favor Performance"
-        # 0x0002: "None"
-        # 0x0003: "Static"
-        # 0x00ff: "Dynamic, Favor Power"
+        # P7,P8                                             P9,P10
+        # 0x0001: "Dynamic, Favor Performance"              0x0001: "Maximum Performance"
+        # 0x0002: "None"                                    0x0002: "None"
+        # 0x0003: "Static"                                  0x0003: "Static"
+        # 0x00ff: "Dynamic, Favor Power"                    0x0004: "Dynamic Performance"
         # default: "Unknown"
 
         local pwr_system_txt
@@ -64,7 +67,21 @@ function check_1310_cpu_powersavings_ibmpower {
 
         local -r _lib_platf_cpu=${LIB_PLATF_CPU%%[[:space:]]*}
 
-        if [[ ! "${_lib_platf_cpu:-}" =~ POWER8|POWER7 ]]; then
+        if [[ "${_lib_platf_cpu:-}" =~ POWER(10|9) ]]; then
+
+            if [[ "${pwr_system_mode}" != '0003' ]]; then
+
+                logCheckOk "Power Savings Mode set as recommended (SAP Note ${sapnote:-}) (is: ${pwr_system_txt})"
+                _retval=0
+
+            else
+
+                logCheckError "Power Savings Mode NOT set as recommended (SAP Note ${sapnote:-}) (is: ${pwr_system_txt}, should be: None, *Perf mode)"
+                _retval=2
+
+            fi
+
+        elif [[ "${_lib_platf_cpu:-}" =~ POWER(8|7) ]]; then
 
             if [[ "${pwr_system_mode}" == '0001' || "${pwr_system_mode}" == '0002' ]]; then
 
