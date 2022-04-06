@@ -9,7 +9,6 @@ function check_0000_os_support_sles {
     # MODIFICATION SECTION>>
     # array             'support general end'   'ESPOS end'     'LTSS end'
     local -ar _sles_11=(\
-                        '11.3' '31 Jan 2016'    '31 Jan 2017'   '30 Jan 2019'   \
                         '11.4' '31 Mar 2019'    '31 Mar 2019'   '31 Mar 2022'   \
                         )
 
@@ -48,11 +47,9 @@ function check_0000_os_support_sles {
 
         case "${OS_VERSION}" in
 
-        11.[1-3] )
-                logCheckError "SLES version has reached its end of lifetime by SUSE and must be upgraded (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
+        11.* )
+                logCheckError "SLES 11 has reached its end of lifetime by SUSE and must be upgraded (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
                 _retval=2 ;;
-
-        11.4 )      _sles_all+=("${_sles_11[@]}") ;;
 
         12.[0-2] )
                 logCheckError "SLES version has reached its end of lifetime by SUSE and must be upgraded (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"

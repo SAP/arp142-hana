@@ -9,11 +9,6 @@ function check_0004_os_hana_support_sles_ibmpower {
     # MODIFICATION SECTION>>
     local -r platform_rx='POWER(10|9|8|7)'
 
-    # array                 'Platform'      '01234' (Minor Release)
-    local -ar be_sles_11=(\
-                            'POWER8'        '11'    '----4'   \
-                        )
-
     # array                 'Platform'      'maj'   '012345' (Minor Release)
     local -ar le_sles=(\
                             'POWER10'       '12'    '------'   \
@@ -64,7 +59,9 @@ function check_0004_os_hana_support_sles_ibmpower {
 
         case "${OS_VERSION}" in
 
-            11.4 )      _sles_matrix+=("${be_sles_11[@]}") ;;
+            11.* )
+                logCheckError "SLES 11 has reached its end of lifetime by SUSE and must be upgraded (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
+                _retval=2 ;;
 
             *)
             logCheckError "SLES release on IBM Power - BigEndian is NOT supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
