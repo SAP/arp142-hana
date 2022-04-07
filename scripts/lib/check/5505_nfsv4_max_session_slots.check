@@ -21,7 +21,7 @@ function check_5505_nfsv4_max_session_slots {
     local _max_slots_parameter
 
     # PRECONDITIONS
-    if ! grep -qsE 'nfs4 .+vers=4\.1' '/proc/mounts'; then
+    if ! grep -qsE 'nfs.+vers=4\.1' '/proc/mounts'; then
 
         logCheckSkipped "No NFSv4.1 filesystem mounted (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
         _retval=3
