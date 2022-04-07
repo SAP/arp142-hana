@@ -81,7 +81,7 @@ function check_1310_cpu_powersavings_ibmpower {
 
             fi
 
-        elif [[ "${_lib_platf_cpu:-}" =~ POWER(8|7) ]]; then
+        elif [[ "${_lib_platf_cpu:-}" =~ POWER8 ]]; then
 
             if [[ "${pwr_system_mode}" == '0001' || "${pwr_system_mode}" == '0002' ]]; then
 

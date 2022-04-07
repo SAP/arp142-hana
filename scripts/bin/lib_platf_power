@@ -42,7 +42,7 @@ function LIB_FUNC_TRANSFORM_POWER_POWERMODE {
         esac
         powermode="$_"
 
-    elif [[ "${_lib_platf_cpu:-}" =~ POWER(8|7) ]]; then
+    elif [[ "${_lib_platf_cpu:-}" =~ POWER8 ]]; then
 
         case "${powermode}" in
             '0001')  : 'Dynamic, Favor Performance' ;;
