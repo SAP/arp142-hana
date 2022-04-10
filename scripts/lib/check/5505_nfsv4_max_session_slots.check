@@ -21,9 +21,9 @@ function check_5505_nfsv4_max_session_slots {
     local _max_slots_parameter
 
     # PRECONDITIONS
-    if ! grep -qsE 'nfs.+vers=4\.1' '/proc/mounts'; then
+    if ! grep -qsE 'nfs.+vers=4\.[1-2]' '/proc/mounts'; then
 
-        logCheckSkipped "No NFSv4.1 filesystem mounted (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+        logCheckSkipped "No NFSv4.1+ filesystem mounted (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
         _retval=3
 
     elif [[ ! -f '/sys/module/nfs/parameters/max_session_slots' ]]; then
@@ -36,7 +36,7 @@ function check_5505_nfsv4_max_session_slots {
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-        logCheckInfo 'Only applicable for SAP Persistence stored on Netapp NFS4.1 filesystem with high IO demand!'
+        logCheckInfo 'Only applicable for SAP Persistence stored on Netapp NFS4.1+ filesystem with high IO demand!'
         logCheckInfo '---'
 
         local -i _curr_max_slots
