@@ -25,7 +25,7 @@ function check_4110_xfs_nobarrier {
     _nobarrier_removed=false
 
     # PRECONDITIONS
-    if ! grep -q 'xfs' '/proc/mounts'; then
+    if ! grep -qs 'xfs' '/proc/mounts'; then
 
         logCheckSkipped "No xfs filesystem mounted. Skipping" "<${FUNCNAME[0]}>"
         _retval=3
@@ -61,6 +61,11 @@ function check_4110_xfs_nobarrier {
 
         esac
 
+    else
+
+        logCheckError "Linux distribution NOT supported (SAP Note #2235581) (is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
+        _retval=2
+
     fi
 
     # CHECK
@@ -70,45 +75,39 @@ function check_4110_xfs_nobarrier {
         logCheckInfo '---'
         logCheckInfo 'write barrier degrades I/O performance by requiring data to be flushed more often than necessary'
         logCheckInfo 'On non-volatile storage (battery-backed caches) this is NOT required'
-        logCheckInfo 'xfs option nobarrier was used to disable write barriers in the past, which is now'
-        logCheckInfo 'deprecated and without function or entirely removed from xfs package!'
+        logCheckInfo 'xfs option nobarrier is deprecated and currently ignored'
+        logCheckInfo 'please remove barrier/nobarrier option to prevent mount issues in upcoming kernel versions!'
+        logCheckInfo '---'
+        logCheckInfo 'On non-volatile storage - ensure proper disk device cache_type setting'
         logCheckInfo '---'
 
         _retval=1
 
         if ${_nobarrier_removed}; then
 
-            logCheckOk 'xfs filesystem mount option nobarrier removed from kernel'
+            logCheckOk "xfs mount option nobarrier removed from kernel (SAP Note ${sapnote:-})"
+            _retval=0
 
-        elif grep -q 'xfs.*nobarrier' '/proc/mounts'; then
+        elif grep -qs 'xfs.*nobarrier' '/proc/mounts'; then
 
             if ${_nobarrier_nofunction}; then
 
-                logCheckError 'xfs filesystem mount option nobarrier is specified, but without function!'
+                logCheckError "xfs mount option nobarrier is specified, which is deprecated/ignored and should be removed (SAP Note ${sapnote:-})"
                 _retval=2
 
             else
 
-                logCheckWarning 'xfs filesystem mount option nobarrier functional and specified'
+                logCheckWarning "xfs mount option nobarrier is specified, which is functional but should be removed (SAP Note ${sapnote:-})"
+                _retval=1
 
             fi
 
         else
 
-            if ${_nobarrier_nofunction}; then
-
-                logCheckOk 'xfs filesystem mount option nobarrier not specified but also not functional'
-
-            else
-
-                logCheckError 'xfs filesystem mount option nobarrier functional but NOT specified!'
-                _retval=2
-
-            fi
+            logCheckOk "xfs mount option nobarrier not specified (SAP Note ${sapnote:-})"
+            _retval=0
 
         fi
-
-        logCheckWarning "On non-volatile storage - ensure proper disk device cache_type setting (SAP Note ${sapnote:-})"
 
     fi
 
