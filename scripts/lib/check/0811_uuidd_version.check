@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+
+function check_0811_uuidd_version {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -ar sles153=( '2.36.2-150300.4.17.1' '#2578899' )
+    # MODIFICATION SECTION<<
+
+    #2578899 - SUSE Linux Enterprise Server 15: Installation Note
+    #1391070 - Linux UUID solutions
+
+    local _goodversion
+    local sapnote
+
+    # PRECONDITIONS
+    if ! rpm -q --quiet uuidd ; then
+
+        logCheckError 'uuidd not installed (SAP Note #1391070)'
+        _retval=2
+
+    elif LIB_FUNC_IS_SLES ; then
+        case "${OS_VERSION}" in
+
+            15.3)   _goodversion="${sles153[0]}" ; sapnote="${sles153[1]}" ;;
+
+            *)      logCheckSkipped 'CHECK not applicable for SLES release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
+                    _retval=3
+                ;;
+        esac
+
+    elif LIB_FUNC_IS_RHEL ; then
+
+        logCheckSkipped 'CHECK not applicable for RHEL release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+            logCheckError "Linux distribution NOT supported (SAP Note #2235581) (is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
+            _retval=2
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local normalized_goodversion
+        local normalized_fullversion
+
+        local _fullversion
+        _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" uuidd)
+
+        #normalize good version
+        LIB_FUNC_NORMALIZE_RPM "${_goodversion}"
+        normalized_goodversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+        #normalize full version - e.g. 219-19.el7_2.4
+        LIB_FUNC_NORMALIZE_RPM "${_fullversion}"
+        normalized_fullversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+        # returns 0 if equal, 1 if first is higher, 2 if second is higher
+        LIB_FUNC_COMPARE_VERSIONS "${normalized_fullversion}" "${normalized_goodversion}"
+
+        if [[ $? -ne 2 ]]; then
+            logCheckOk "UUIDD version seems to be ok (SAP Note ${sapnote:-}) (is: ${_fullversion})"
+            _retval=0
+        else
+            logCheckError "UUIDD must be updated (SAP Note ${sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
+            _retval=2
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
