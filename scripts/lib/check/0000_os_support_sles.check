@@ -8,14 +8,13 @@ function check_0000_os_support_sles {
 
     # MODIFICATION SECTION>>
     # array             'support general end'   'ESPOS end'     'LTSS end'
-    local -ar _sles_11=(\
-                        '11.4' '31 Mar 2019'    '31 Mar 2019'   '31 Mar 2022'   \
-                        )
+                        # '11.4' '31 Mar 2019'    '31 Mar 2019'   '31 Mar 2022'   \
+
+                        # '12.0' '30 Jun 2016'    '31 Aug 2019'   '31 Aug 2019'
+                        # '12.1' '31 May 2017'    '31 May 2020'   '31 May 2020'
+                        # '12.2' '31 Mar 2018'    '31 Mar 2021'   '31 Mar 2021'
 
     local -ar _sles_12=(\
-                        '12.0' '30 Jun 2016'    '31 Aug 2019'   '31 Aug 2019'   \
-                        '12.1' '31 May 2017'    '31 May 2020'   '31 May 2020'   \
-                        '12.2' '31 Mar 2018'    '31 Mar 2021'   '31 Mar 2021'   \
                         '12.3' '30 Jun 2019'    '30 Jun 2022'   '30 Jun 2022'   \
                         '12.4' '30 Jun 2020'    '30 Jun 2023'   '30 Jun 2023'   \
                         '12.5' '31 Oct 2024'    '31 Oct 2024'   '31 Oct 2027'   \
