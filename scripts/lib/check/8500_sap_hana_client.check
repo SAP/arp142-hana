@@ -21,18 +21,10 @@ function check_8500_sap_hana_client {
 
     else
         #CHECK
-        local -a hanaclients
-        # read infos into array (mapfile = bash4+)
-        if [[ ${BASH_VERSINFO[0]:-} -ge 4 ]] ; then
-            mapfile -t hanaclients < <(grep fullversion -m1 -H /usr/sap/???/hdbclient/manifest)
-        else
-            while IFS=$'\n' read -r line; do hanaclients+=("$line"); done < <(grep fullversion -m1 -H /usr/sap/???/hdbclient/manifest)
-        fi
-
         local hanaclient_version_curr
         local _sid
 
-        for _client in "${hanaclients[@]}"; do
+        while read -r _client ; do
 
             _sid="${_client:9:3}"
             hanaclient_version_curr="${_client##*fullversion: }"
@@ -48,7 +40,7 @@ function check_8500_sap_hana_client {
                 logCheckOk "SAP HANA Client for ${_sid} is at required level (is: ${hanaclient_version_curr})"
             fi
 
-        done
+        done <<< "$(grep fullversion -m1 -H /usr/sap/???/hdbclient/manifest)"
 
         if [[ ${_retval} -eq 99 ]]; then
 

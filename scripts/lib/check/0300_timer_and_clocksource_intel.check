@@ -24,31 +24,23 @@ function check_0300_timer_and_clocksource_intel {
         _retval=3
 
     else
-        # read Intel TSC
-        local -a tsc_flags
 
-        # read tsc flags into array (mapfile = bash4+)
-        if [[ ${BASH_VERSINFO[0]:-} -ge 4 ]] ; then
-            mapfile -t tsc_flags < <(grep -e '^flags' -m1 /proc/cpuinfo | grep -E -e 'constant_tsc|nonstop_tsc|rdtscp' -o)
-        else
-            while IFS=$'\n' read -r line; do tsc_flags+=("$line"); done < <(grep -e '^flags' -m1 /proc/cpuinfo | grep -E -e 'constant_tsc|nonstop_tsc|rdtscp' -o)
-        fi
-
-        local -i cpu_flag_constant_tsc
-        local -i cpu_flag_nonstop_tsc
-        local -i cpu_flag_rdtscp
+        local cpu_flag_constant_tsc=false
+        local cpu_flag_nonstop_tsc=false
+        local cpu_flag_rdtscp=false
         # there is no rdtsc flag
         # constant_tsc + nonstop_tsc = invariant tsc
 
-        for tsc_flag in "${tsc_flags[@]}"; do
+        while read -r tsc_flags ; do
 
-            case ${tsc_flag} in
+            case ${tsc_flags} in
 
-                'constant_tsc') cpu_flag_constant_tsc=0 ;;      # HANA1 and HANA2
-                'nonstop_tsc')  cpu_flag_nonstop_tsc=0 ;;       # HANA1 and HANA2
-                'rdtscp')       cpu_flag_rdtscp=0 ;;            # HANA2 >= SP04
+                'constant_tsc') cpu_flag_constant_tsc=true ;;      # HANA1 and HANA2
+                'nonstop_tsc')  cpu_flag_nonstop_tsc=true ;;       # HANA1 and HANA2
+                'rdtscp')       cpu_flag_rdtscp=true ;;            # HANA2 >= SP04
             esac
-        done
+
+        done <<< "$(grep -e '^flags' -m1 /proc/cpuinfo | grep -E -e 'constant_tsc|nonstop_tsc|rdtscp' -o)"
 
         #kernel clocksource
         local current_clocksource
@@ -71,21 +63,21 @@ function check_0300_timer_and_clocksource_intel {
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-        if [[ ! ${cpu_flag_constant_tsc:-} ]] ; then
+        if ! ${cpu_flag_constant_tsc:-} ; then
 
             logCheckError 'Time Stamp Counter flag <constant_tsc> NOT detected'
             _retval=2
 
         fi
 
-        if [[ ! ${cpu_flag_nonstop_tsc:-} ]] ; then
+        if ! ${cpu_flag_nonstop_tsc:-} ; then
 
             logCheckError 'Time Stamp Counter flag <nonstop_tsc> NOT detected'
             _retval=2
 
         fi
 
-        if [[ ! ${cpu_flag_rdtscp:-} ]] ; then
+        if ! ${cpu_flag_rdtscp:-} ; then
 
             [[ ${_retval} -eq 99 ]] && _retval=1
 
