@@ -45,6 +45,7 @@
 3110_ip_port_range_parity
 3120_ip_port_hostagent
 4110_xfs_nobarrier
+4150_pmem_xfs_mountoption_dax
 5000_io_parameter
 5010_io_scheduler_blockdevices
 5505_nfsv4_max_session_slots
