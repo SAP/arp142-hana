@@ -18,7 +18,7 @@ function check_0002_os_hana_support_sles_intel {
                         'Amazon EC2'            '---345'   \
                         'IBM Cloud'             '----4-'   \
                         'Google GCP'            '---345'   \
-                        'Alibaba Cloud ECS'     '---34-'   \
+                        'Alibaba Cloud ECS'     '---345'   \
                         'Huawei Cloud'          '---345'   \
                         ''                      '---345'   \          #all others, e.g. TDI, Bare-Metal
                         )
@@ -30,7 +30,7 @@ function check_0002_os_hana_support_sles_intel {
                         'IBM Cloud'             '012-'   \
                         'Google GCP'            '0123'   \
                         'Alibaba Cloud ECS'     '012-'   \
-                        'Huawei Cloud'          '01--'   \
+                        'Huawei Cloud'          '012-'   \
                         ''                      '0123'   \          #all others, e.g. TDI, Bare-Metal
                         )
 

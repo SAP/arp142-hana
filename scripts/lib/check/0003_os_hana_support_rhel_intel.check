@@ -31,18 +31,18 @@ function check_0003_os_hana_support_rhel_intel {
                         'IBM Cloud'             '------6---'   \
                         'Google GCP'            '------67-9'   \
                         'Alibaba Cloud ECS'     '-------7--'   \
-                        'Huawei Cloud'          '------6---'   \
+                        'Huawei Cloud'          '------67--'   \
                         ''                      '------67-9'   \          #all others, e.g. TDI, Bare-Metal
                         )
 
     # array             'Platform'              '01234' (Minor Release)
     local -ar _rhel_8=(\
                         'Microsoft Azure'       '-12-4'   \
-                        'Amazon EC2'            '-12--'   \
+                        'Amazon EC2'            '-12-4'   \
                         'IBM Cloud'             '-12--'   \
                         'Google GCP'            '-12-4'   \
                         'Alibaba Cloud ECS'     '-1---'   \
-                        'Huawei Cloud'          '-----'   \
+                        'Huawei Cloud'          '-1---'   \
                         ''                      '-12-4'   \          #all others, e.g. TDI, Bare-Metal
                         )
 
