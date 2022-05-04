@@ -299,6 +299,13 @@ function __lib_func_get_lpar_details {
                             fi
             ;;
 
+            'partition_affinity_score'*)
+                            if [[ -z ${LIB_PLATF_POWER_AFFINITYSCORE:-} ]]; then
+                                LIB_PLATF_POWER_AFFINITYSCORE=$(LIB_FUNC_TRIM_LEFT "${line/partition_affinity_score=}")
+                                readonly LIB_PLATF_POWER_AFFINITYSCORE
+                            fi
+            ;;
+
         esac
 
     done < "${lparcfgfile}"
@@ -468,6 +475,7 @@ function _lib_platf_power_main {
 # LIB_PLATF_POWER_PLATFORM_BASE
 # LIB_PLATF_POWER_PLATFORM_COMPAT
 # LIB_PLATF_POWER_HWCAP2
+# LIB_PLATF_POWER_AFFINITYSCORE
 
 #Import libraries
 #shellcheck source=./saphana-logger

@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+function check_2240_partition_affinity_score_ibmpower {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#3114051'
+    local -ir exp_affinity_score=100
+    # MODIFICATION SECTION<<
+
+    #3114051 - Using DLPAR operations with SAP HANA on Power to add memory to or remove memory from a running LPAR
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_IBMPOWER ; then
+
+        logCheckSkipped 'Not running on IBM Power. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif [[ -z ${LIB_PLATF_POWER_AFFINITYSCORE:-} ]]; then
+
+        logCheckSkipped "Partition Affinity Score unknown (SAP Note ${sapnote:-}) (should be: ${exp_affinity_score})"
+        _retval=3
+
+    fi
+
+    #CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        if [[ ${LIB_PLATF_POWER_AFFINITYSCORE} -eq ${exp_affinity_score} ]]; then
+
+            logCheckOk "Partition Affinity Score is as expected (SAP Note ${sapnote:-}) (is: ${exp_affinity_score})"
+            _retval=0
+
+        else
+
+            logCheckError "Partition Affinity Score is NOT as expected (SAP Note ${sapnote:-}) (is: ${LIB_PLATF_POWER_AFFINITYSCORE}, should be: ${exp_affinity_score})"
+            _retval=2
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
