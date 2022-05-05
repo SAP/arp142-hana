@@ -128,7 +128,7 @@ function __get_platform_x86_64_vendor_details {
         elif [[ "${_chassis_asset_tag:-}" == 'IBM SoftLayer' ]]; then
 
             LIB_PLATF_VENDOR='IBM Cloud Classic'
-            LIB_PLATF_NAME="${_lib_platf_name}"     #todo
+            LIB_PLATF_NAME='Not available'
 
         elif [[ "${_chassis_asset_tag:-}" == "SAP CCloud VM" ]]; then
 

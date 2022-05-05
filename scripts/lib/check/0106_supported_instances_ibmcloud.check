@@ -11,17 +11,6 @@ function check_0106_supported_instances_ibmcloud {
     # _lib_platf_name="$(</sys/devices/virtual/dmi/id/product_name)
 
     # MODIFICATION SECTION>>
-
-    # array             'Instance Type'
-    local -ar _ibm_classic_bm=(\
-                        'BI.S1.H1000'   'BI.S4.H2.768' \
-                        )
-
-    # array             'Instance Type'
-    local -ar _ibm_classic_vm=(\
-                        'xxx'   'xxx' \
-                        )
-
     # array             'Instance Type'
     local -ar _ibm_vpc_vm=(\
                         'mx2-8x64'      'mx2-16x128'        'mx2-32x256'        'mx2-48x384'        \
@@ -79,11 +68,14 @@ function check_0106_supported_instances_ibmcloud {
 
         cert_type='classic_vm'
 
-        logCheckError "IBM Cloud Classic VMware instance type is NOT supported by check (is: ${LIB_PLATF_NAME}@IBM Cloud Classic VM)"
+        logCheckError "IBM Cloud Classic VMware instance type must be manually verified (SAP Note ${sapnote:-})"
         _retval=2
 
     else
         cert_type='classic_bm'
+
+        logCheckError "IBM Cloud Classic bare-metal instance type must be manually verified (SAP Note ${sapnote:-})"
+        _retval=2
     fi
 
     # CHECK
