@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+function check_5521_nfs_mount_rwsize_azure {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # rsize=262144,wsize=262144
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2015553'
+
+    local -r _reco_rsize_wsize='rsize=262144,wsize=262144'
+    # MODIFICATION SECTION<<
+
+    # https://docs.microsoft.com/en-us/azure/azure-netapp-files/performance-linux-mount-options#rsize-and-wsize
+    # 2015553 - SAP on Microsoft Azure: Support prerequisites
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_CLOUD_MICROSOFT; then
+
+        logCheckSkipped 'Not running on Microsoft Azure. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif ! grep -qs 'nfs' '/proc/mounts'; then
+
+        logCheckSkipped "No NFS filesystem mounted (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+        _retval=3
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        logCheckInfo 'Only applicable for SAP Persistence stored on Azure Netapp Files (ANF)!'
+        logCheckInfo 'https://docs.microsoft.com/en-us/azure/azure-netapp-files/performance-linux-mount-options#rsize-and-wsize'
+        logCheckInfo '---'
+
+        while read -r nfs_mount ; do
+
+            logTrace "<${FUNCNAME[0]}> # <${nfs_mount}>"
+
+            if ! LIB_FUNC_STRINGCONTAIN "${nfs_mount}" "${_reco_rsize_wsize}" ; then
+
+                logCheckWarning "ANF mount option rsize/wsize set correctly for <${nfs_mount// */}>"
+                _retval=1
+
+            fi
+
+        done <<< "$(grep -s 'nfs' /proc/mounts)"
+
+
+        if [[ ${_retval} -eq 99 ]]; then
+
+            logCheckOk "All ANF filesystem have mount options rsize/wsize set as recommended (SAP Note ${sapnote:-})"
+            _retval=0
+
+        else
+
+            logCheckWarning "NOT all ANF filesystems have mount options rsize/wsize set as recommended (SAP Note ${sapnote:-})"
+            _retval=1
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
