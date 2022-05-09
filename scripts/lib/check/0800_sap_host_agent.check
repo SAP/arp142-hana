@@ -12,14 +12,13 @@ function check_0800_sap_host_agent {
     local -r sapnote_deprecated='#2130510'
     local -r hostagent_kernel_deprecated='721'
 
-    local -r sapnote_latest='#3113553'
-    local -r hostagent_version_expected='722.55.0'
+    local -r sapnote_latest='#3145200'
+    local -r hostagent_version_expected='722.56.0'
     # MODIFICATION SECTION<<
 
     #1113545 - Problems with SAP Host Agent
     #2130510 - SAP Host Agent 7.21
-    #3061366 - SAP Host Agent 7.22
-    #3113553 - SAP Host Agent 7.22 PL55
+    #3145200 - SAP Host Agent 7.22 PL56
 
     local -r saphostexec_path='/usr/sap/hostctrl/exe/saphostexec'
 
