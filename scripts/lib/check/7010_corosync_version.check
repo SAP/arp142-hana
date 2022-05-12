@@ -21,7 +21,7 @@ function check_7010_corosync_version {
 
     local -ar _rhel_rpm_matrix=(\
                                     '7.*'   '2.4.5-7.el7_9.2'   \
-                                    '8.*'   '2.4.5-7.el7_9.2'   \
+                                    '8.*'   '3.1.5-2.el8'       \
                                 )
 
     # MODIFICATION SECTION<<
