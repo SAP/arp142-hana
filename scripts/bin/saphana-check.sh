@@ -390,9 +390,13 @@ function main {
     logNotify "## Numa nodes:     ${_line_formated}"
     logNotify '##'
 
-    #round up a divided number
-    printf -v _line_formated '%.0f GiB (%d MiB)' $(( (LIB_PLATF_RAM_MiB_AVAILABLE+1023)/1024 )) "${LIB_PLATF_RAM_MiB_AVAILABLE}"
+    #round up a divided number - Ceiling rounding (x+y-1)/y
+    printf -v _line_formated "%5.0f GiB (%d MiB)" $(( (LIB_PLATF_RAM_MiB_AVAILABLE+1023)/1024 )) "${LIB_PLATF_RAM_MiB_AVAILABLE}"
     logNotify "## Memory usable:  ${_line_formated}"
+    printf -v _line_formated "%5.0f GiB (%d MiB)" $(( (LIB_PLATF_PMEM_MiB+1023)/1024 )) "${LIB_PLATF_PMEM_MiB}"
+    logNotify "## PMEM attached:  ${_line_formated}"
+    printf -v _line_formated "1 : %.0f" $(( (LIB_PLATF_PMEM_MiB+LIB_PLATF_RAM_MiB_AVAILABLE-1)/LIB_PLATF_RAM_MiB_AVAILABLE ))
+    logNotify "## DRAM / PMEM ratio:  ${_line_formated}"
     logNotify '##'
 
     local _ext_support

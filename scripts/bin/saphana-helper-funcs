@@ -174,6 +174,19 @@ function LIB_FUNC_IS_IBMPOWER {
     return ${_retval}
 }
 
+# Returns 0 on PMEM, 1 on other
+function LIB_FUNC_IS_NVM_PMEM {
+
+    local -i _retval=1
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    [[ ${LIB_PLATF_PMEM_MiB:-} -ne 0 ]] && _retval=0
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+}
+
 # Returns 0 on Nutanix AHV, 1 on other
 function LIB_FUNC_IS_NUTANIX_AHV {
 
@@ -485,6 +498,33 @@ function __get_platform_mem_details {
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # LIB_PLATF_RAM_MIB_PHYS (${collectedby:-}): ${LIB_PLATF_RAM_MIB_PHYS:-}; LIB_PLATF_RAM_MiB_AVAILABLE ${LIB_PLATF_RAM_MiB_AVAILABLE:-}"
 }
 
+function __get_platform_pmem_details {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i pmem_decive_memory
+
+    if [[ -z ${LIB_PLATF_PMEM_MiB:-} ]]; then
+
+        #780335104 pmem0
+        while read -r pmem_device ; do
+
+            logTrace "PMEM device <${pmem_device}>"
+
+            [[ ${pmem_device} =~ ([0-9]+) ]]
+            pmem_decive_memory=${BASH_REMATCH[1]:-} #780335104
+
+            LIB_PLATF_PMEM_MiB+=$(( pmem_decive_memory/1024 ))
+
+        done <<< "$(grep -Eo '[[:digit:]]+ pmem[[:digit:]]+$' /proc/partitions)"
+
+    fi
+    readonly LIB_PLATF_PMEM_MiB
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # LIB_PLATF_PMEM_MiB: ${LIB_PLATF_PMEM_MiB:-}"
+
+}
+
 #============================================================
 # LIB MAIN - initialization
 #============================================================
@@ -513,6 +553,7 @@ function _lib_helper_main {
     esac
 
     __get_platform_mem_details
+    __get_platform_pmem_details
 
 }
 
@@ -526,6 +567,7 @@ declare -i  LIB_PLATF_CPU_MODELID
 declare -i  LIB_PLATF_CPU_STEPID
 declare -i  LIB_PLATF_RAM_MIB_PHYS
 declare -i  LIB_PLATF_RAM_MiB_AVAILABLE
+declare -i  LIB_PLATF_PMEM_MiB
 
 declare     LIB_PLATF_ARCHITECTURE
 declare     LIB_PLATF_BYTEORDER
