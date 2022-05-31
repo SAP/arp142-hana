@@ -9,12 +9,12 @@ function check_0441_saptune_sles {
     # MODIFICATION SECTION>>
     local -r sapnote='#1275776'         #1275776 - Linux: Preparing SLES for SAP environments
 
-    local -r sles123='2.0.3-3.24.1'
-    local -r sles124='2.0.3-3.11.1'
-    local -r sles125='2.0.3-3.11.1'
+    local -r sles123='3.0.2-8.22.2'
+    local -r sles124='3.0.2-8.22.2'
+    local -r sles125='3.0.2-8.22.2'
 
-    local -r sles150='2.0.3-4.14.4'
-    local -r sles15x='2.0.3-8.11.1'
+    local -r sles150='3.0.2-5.12.2'
+    local -r sles15x='3.0.2-8.22.2'
     # MODIFICATION SECTION<<
 
     local _goodversion
@@ -64,29 +64,39 @@ function check_0441_saptune_sles {
 
         local _is_used=false
 
-        if systemctl is-enabled "saptune" --quiet; then
-            logCheckInfo 'saptune is installed and enabled'
-            _is_used=true
-        else
-            logCheckInfo 'saptune is installed but not enabled - sapconf in use?'
-        fi
-
-        if systemctl is-active "saptune" --quiet; then
-            logCheckInfo 'saptune is installed and active'
-            _is_used=true
-        else
-            logCheckInfo 'saptune is installed but not active - sapconf in use?'
-        fi
-
         _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" saptune)
+
+        #normalize full version - e.g. 4.1.10-33.5.2
+        LIB_FUNC_NORMALIZE_RPM "${_fullversion}"
+        normalized_fullversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
 
         #normalize good version
         LIB_FUNC_NORMALIZE_RPM "${_goodversion}"
         normalized_goodversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
 
-        #normalize full version - e.g. 4.1.10-33.5.2
-        LIB_FUNC_NORMALIZE_RPM "${_fullversion}"
-        normalized_fullversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+        if [[ ! "${normalized_fullversion}" =~ (1|2) ]]; then
+
+            if systemctl is-enabled "saptune" --quiet; then
+                logCheckInfo 'saptune is installed and enabled'
+                _is_used=true
+            else
+                logCheckInfo 'saptune is installed but not enabled - sapconf in use?'
+            fi
+
+            if systemctl is-active "saptune" --quiet; then
+                logCheckInfo 'saptune is installed and active'
+                _is_used=true
+            else
+                logCheckInfo 'saptune is installed but not active - sapconf in use?'
+            fi
+
+        else
+
+            if grep -qs saptune /etc/tuned/active_profile; then
+                _is_used=true
+            fi
+
+        fi
 
         # returns 0 if equal, 1 if first is higher, 2 if second is higher
         LIB_FUNC_COMPARE_VERSIONS "${normalized_fullversion}" "${normalized_goodversion}"
