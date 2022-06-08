@@ -57,25 +57,21 @@ function __get_platform_x86_64_vendor_details {
         shopt -u extglob    #disable extended pattern matching
 
 
-        # MODIFY DATA and enrich
+        # enrich VMware - might be overwritten later on
         if [[ "${_lib_platf_vendor:-}" =~ ^VMware* ]]; then
 
-            LIB_PLATF_VENDOR="${_lib_platf_vendor}"
-
             if [[ "${_lib_platf_name}" == 'VMware Virtual Platform' ]]; then
-
-                LIB_PLATF_NAME='Virtual Machine - BIOS'
+                : 'VMware VM - BIOS'
 
             elif [[ "${_lib_platf_name}" == 'VMware7,1' ]]; then
+                : 'VMware VM - UEFI'
 
-                LIB_PLATF_NAME='Virtual Machine - UEFI'
-
-            else
-                LIB_PLATF_NAME="${_lib_platf_name}"
             fi
+            LIB_PLATF_NAME="$_"
 
+        fi
 
-        elif [[ "${_lib_platf_vendor:-}" == 'Xen' ]]; then
+        if [[ "${_lib_platf_vendor:-}" == 'Xen' ]]; then
             #special Amazon EC2 handling for Xen images
 
             local _bios_version
@@ -133,13 +129,14 @@ function __get_platform_x86_64_vendor_details {
         elif [[ "${_chassis_asset_tag:-}" == "SAP CCloud VM" ]]; then
 
             LIB_PLATF_VENDOR='SAP Converged Cloud'
-            LIB_PLATF_NAME="${_lib_platf_name}"
+            # VMware already set
+            [[ -z "${LIB_PLATF_NAME:-}" ]] && LIB_PLATF_NAME="${_lib_platf_name}"
 
         else
 
-            #all others - Amazon EC2 KVM, Bare-Metal, etc.
-            LIB_PLATF_VENDOR="${_lib_platf_vendor}"
-            LIB_PLATF_NAME="${_lib_platf_name}"
+            #all others - Amazon EC2 KVM, Bare-Metal, VMware etc.
+            [[ -z "${LIB_PLATF_VENDOR:-}" ]] && LIB_PLATF_VENDOR="${_lib_platf_vendor}"
+            [[ -z "${LIB_PLATF_NAME:-}" ]] && LIB_PLATF_NAME="${_lib_platf_name}"
 
         fi
 
