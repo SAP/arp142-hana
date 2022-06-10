@@ -7,6 +7,7 @@ readonly PROGRAM_DIR
 #mock PREREQUISITE functions
 LIB_FUNC_IS_INTEL() { return 0 ; }
 LIB_FUNC_IS_RHEL() { return 0 ; }
+LIB_FUNC_IS_VIRT_VMWARE() { return 0 ; }
 
 # still to mock for tests
 # OS_VERSION
@@ -16,9 +17,11 @@ declare -i _grep_cmdline_rc
 grep() {
 
      case "$*" in
-        *"cpuinfo")     return "${_grep_cpuinfo_rc}" ;;
+        *'cpuinfo')     return "${_grep_cpuinfo_rc}" ;;
 
-        *"cmdline")     return "${_grep_cmdline_rc}" ;;
+        *'cmdline')     return "${_grep_cmdline_rc}" ;;
+
+        *)              command grep "$*" ;; # shunit2 requires grep
     esac
 }
 

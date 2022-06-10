@@ -11,14 +11,12 @@ LIB_FUNC_STRINGCONTAIN() { [[ -z "${1##*$2*}" ]] && [[ -z "$2" || -n "$1" ]]; }
 grep() {
 
      case "$*" in
-        "-qs"*)     [[ ${#nfs_mounts[@]} -ge 1 ]] && return 0 ;;
+        '-qs nfs'*) [[ ${#nfs_mounts[@]} -ge 1 ]] && return 0 ;;
 
-        *)          #fake $(grep -s 'nfs' /proc/mounts)
-                    for item in "${nfs_mounts[@]:-}"
-                    do
-                        printf "%s\n" "${item}"
-                    done
-    ;;
+        '-s nfs'*)  #fake $(grep -s nfs /proc/mounts)
+                    printf "%s\n" "${nfs_mounts[@]:-}" ;;
+
+        *)          command grep "$*" ;; # shunit2 requires grep
     esac
 
 }

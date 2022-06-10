@@ -10,14 +10,12 @@ LIB_FUNC_STRINGCONTAIN() { [[ -z "${1##*$2*}" ]] && [[ -z "$2" || -n "$1" ]]; }
 grep() {
 
      case "$*" in
-        "-qs"*)     [[ ${#pmem_xfs_mounts[@]} -ge 1 ]] && return 0 ;;
+        '-qs ^/dev/pmem'*)  [[ ${#pmem_xfs_mounts[@]} -ge 1 ]] && return 0 ;;
 
-        *)          #fake $(grep -s '^/dev/pmem.*xfs' /proc/mounts)
-                    for item in "${pmem_xfs_mounts[@]:-}"
-                    do
-                        printf "%s\n" "${item}"
-                    done
-    ;;
+       '-s ^/dev/pmem'*)    #fake $(grep -s '^/dev/pmem.*xfs' /proc/mounts)
+                            printf "%s\n" "${pmem_xfs_mounts[@]:-}" ;;
+
+        *)                  command grep "$*" ;; # shunit2 requires grep
     esac
 
 }

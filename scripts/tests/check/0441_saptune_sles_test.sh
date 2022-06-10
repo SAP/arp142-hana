@@ -22,14 +22,11 @@ systemctl() {
 }
 
 grep() {
-
     case "$*" in
-        "-qs saptune"*)     return "${isused_rc}" ;;
+        '-qs saptune'*)     return "${isused_rc}" ;;
 
-        *)                  : ;; # TODO: shunit also requires grep "$*" ;;
-
+        *)                  command grep "$*" ;; # shunit2 requires grep
     esac
-
 }
 
 OS_VERSION='15.*'                   #doesn't matter

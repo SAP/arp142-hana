@@ -17,11 +17,16 @@ TEST_CURRENT_CLOCKSOURCE=''
 TEST_AVAILABLE_CLOCKSOURCE=''
 
 grep() {
-    #we fake <(grep -e '^flags' -m1 /proc/cpuinfo | grep -E -e 'constant_tsc|nonstop_tsc|rdtscp' -o)
-    for item in "${cpu_flags[@]}"
-    do
-        printf "%s\n" "${item}"
-    done
+    #we fake <(grep -e '^flags' -m1 /proc/cpuinfo |
+            #  grep -E -e 'constant_tsc|nonstop_tsc|rdtscp' -o)
+    case "$*" in
+        '-e ^flags'* )  : ;;
+
+        '-E -e constant_tsc'* )
+                        printf "%s\n" "${cpu_flags[@]}" ;;
+
+        *)              command grep "$*" ;; # shunit2 requires grep
+    esac
 }
 
 test_all_cpu_flags_available_and_correct_clocksource() {

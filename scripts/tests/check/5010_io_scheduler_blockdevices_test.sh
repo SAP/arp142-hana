@@ -20,11 +20,13 @@ LIB_FUNC_STRINGCONTAIN() { [[ -z "${1##*$2*}" ]] && [[ -z "$2" || -n "$1" ]]; }
 io_scheduler=''
 
 grep() {
-
     #we fake <(grep --no-messages --only-matching --no-filename '\[.*\]' ${search_pattern} | sort --unique)
+    case "$*" in
 
-    printf "%s\n" "${io_scheduler[@]}"
+        *'scheduler' )  printf "%s\n" "${io_scheduler[@]}" ;;
 
+        *)              command grep "$*" ;; # shunit2 requires grep
+    esac
 }
 
 test_1scheduler_ok() {

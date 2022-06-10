@@ -17,14 +17,13 @@ grep() {
 
     #we fake <(grep -h -m1 'MemTotal' -r /sys/devices/system/node/node*/meminfo)
     #we fake <(grep -H "^.*$" -r /sys/devices/system/node/node*/cpulist)
+    case "$*" in
+        *'meminfo')     printf "%s\n" "${mem_nodes[@]}" ;;
 
-    if [[ "$*" == *MemTotal* ]]; then
-        printf "%s\n" "${mem_nodes[@]}"
+        *'cpulist')     printf "%s\n" "${cpu_nodes[@]}" ;;
 
-    else
-        printf "%s\n" "${cpu_nodes[@]}"
-    fi
-
+        *)              command grep "$*" ;; # shunit2 requires grep
+    esac
 }
 
 test_1numa_with_node_ok() {
