@@ -20,10 +20,10 @@ declare -i RPM_RC
 
 rpm() {
 
-     case "$*" in
-        "-q --quiet"*)      return "${RPM_RC}" ;;
+    case "$*" in
+        '-q --quiet'*)      return "${RPM_RC}" ;;
 
-        "-q --queryformat"*) printf '%s' "${SYSTEMD_VERSION}" ;;
+        '-q --queryformat'*) printf '%s' "${SYSTEMD_VERSION}" ;;
     esac
 
 }
