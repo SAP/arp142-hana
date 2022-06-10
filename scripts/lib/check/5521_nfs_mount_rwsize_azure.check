@@ -23,7 +23,7 @@ function check_5521_nfs_mount_rwsize_azure {
         logCheckSkipped 'Not running on Microsoft Azure. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif ! grep -qs 'nfs' '/proc/mounts'; then
+    elif ! grep -qs nfs /proc/mounts; then
 
         logCheckSkipped "No NFS filesystem mounted (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
         _retval=3
@@ -48,7 +48,7 @@ function check_5521_nfs_mount_rwsize_azure {
 
             fi
 
-        done <<< "$(grep -s 'nfs' /proc/mounts)"
+        done <<< "$(grep -s nfs /proc/mounts)"
 
 
         if [[ ${_retval} -eq 99 ]]; then

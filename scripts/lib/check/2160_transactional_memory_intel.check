@@ -40,7 +40,7 @@ function check_2160_transactional_memory_intel {
     if [[ ${_retval} -eq 99 ]]; then
 
         # read Intel TSX = rtm
-        if grep -qs -m1 "flags.*rtm" /proc/cpuinfo ; then
+        if grep -qs 'flags.*rtm' /proc/cpuinfo ; then
 
             logCheckOk "Intel transactional memory feature TSX is available (SAP Note ${sapnote:-})"
             _retval=0
@@ -49,7 +49,7 @@ function check_2160_transactional_memory_intel {
 
             if ${tsxon_required}; then
 
-                if grep -qs -m1 "tsx=on" /proc/cmdline; then
+                if grep -qs 'tsx=on' /proc/cmdline; then
 
                     logCheckInfo 'Linux kernel cmdline contains required <tsx=on>'
 
