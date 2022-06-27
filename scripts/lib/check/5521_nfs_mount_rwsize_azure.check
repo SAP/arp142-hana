@@ -23,7 +23,7 @@ function check_5521_nfs_mount_rwsize_azure {
         logCheckSkipped 'Not running on Microsoft Azure. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif ! grep -qs nfs /proc/mounts; then
+    elif ! grep -qsE '\snfs4?\s' /proc/mounts; then
 
         logCheckSkipped "No NFS filesystem mounted (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
         _retval=3
@@ -43,12 +43,12 @@ function check_5521_nfs_mount_rwsize_azure {
 
             if ! LIB_FUNC_STRINGCONTAIN "${nfs_mount}" "${_reco_rsize_wsize}" ; then
 
-                logCheckWarning "ANF mount option rsize/wsize set correctly for <${nfs_mount// */}>"
+                logCheckWarning "ANF mount option rsize/wsize NOT set correctly for <${nfs_mount// */}>"
                 _retval=1
 
             fi
 
-        done <<< "$(grep -s nfs /proc/mounts)"
+        done <<< "$(grep -sE '\snfs4?\s' /proc/mounts)"
 
 
         if [[ ${_retval} -eq 99 ]]; then
