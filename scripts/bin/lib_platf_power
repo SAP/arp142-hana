@@ -29,7 +29,9 @@ function LIB_FUNC_TRANSFORM_POWER_POWERMODE {
     # 0x0002: "None"                                    0x0002: "None"
     # 0x0003: "Static"                                  0x0003: "Static"
     # 0x00ff: "Dynamic, Favor Power"                    0x0004: "Dynamic Performance"
-    # default: "Unknown"
+    # default: "Unknown"                                default: "Unknown"
+
+    local -r _lib_platf_cpu=${LIB_PLATF_CPU%%[[:space:]]*}
 
     if [[ "${_lib_platf_cpu:-}" =~ POWER(10|9) ]]; then
 
@@ -59,7 +61,7 @@ function LIB_FUNC_TRANSFORM_POWER_POWERMODE {
 
     fi
 
-    printf '%s' "${powermode}"
+    printf -v RETURN_POWER_POWERMODE '%s' "${powermode}"
 
 }
 
