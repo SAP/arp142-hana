@@ -28,6 +28,8 @@ function __get_platform_x86_64_vendor_details {
     if [[ -e '/sys/devices/virtual/dmi/id' ]]; then
 
         # read DATA
+        #shellcheck disable=SC2064
+        trap "$(shopt -p extglob)" RETURN
         shopt -s extglob    #enable extended pattern matching
 
         #SYS_VENDOR
@@ -53,9 +55,6 @@ function __get_platform_x86_64_vendor_details {
             _chassis_asset_tag="$(</sys/devices/virtual/dmi/id/chassis_asset_tag)"
             _chassis_asset_tag=${_chassis_asset_tag//+([[:space:]])/ }
         fi
-
-        shopt -u extglob    #disable extended pattern matching
-
 
         # enrich VMware - might be overwritten later on
         if [[ "${_lib_platf_vendor:-}" =~ ^VMware* ]]; then

@@ -67,7 +67,10 @@ function check_0101_supported_instances_azure {
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
+        #shellcheck disable=SC2064
+        trap "$(shopt -p nocasematch)" RETURN
         shopt -s nocasematch
+
         for instance in "${_azure_cert_instances[@]}"; do
 
             logTrace "<${FUNCNAME[0]}> # ${instance}>"
@@ -78,7 +81,6 @@ function check_0101_supported_instances_azure {
             break
 
         done
-        shopt -u nocasematch
 
         if [[ ${_retval} -ne 0 ]] ; then
 
