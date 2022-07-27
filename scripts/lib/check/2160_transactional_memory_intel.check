@@ -61,6 +61,14 @@ function check_2160_transactional_memory_intel {
 
             fi
 
+            if LIB_FUNC_IS_VIRT_VMWARE; then
+
+                logCheckInfo 'Intel TSX @ VMware is disabled due to vulnerability mitigations.'
+                logCheckInfo 'TSX must be enabled on VMware Hypervisor and VM level!'
+                logCheckInfo 'VMware EVC Mode >= Broadwell required!'
+
+            fi
+
             logCheckWarning "Intel transactional memory feature TSX is NOT available (SAP Note ${sapnote:-})"
             _retval=1
 
