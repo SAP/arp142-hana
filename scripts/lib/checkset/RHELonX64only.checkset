@@ -40,6 +40,7 @@
 2400_samepage_merging
 2500_kernel_sharedmemory
 2600_vm_dentry_unused
+2800_memory_ballooning_vmware
 3010_network_parameter
 3011_network_tcp_tw_parameter
 3012_network_parameter_defaults

@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+
+function check_2800_memory_ballooning_vmware {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # '/sys/kernel/debug/vmmemctl'
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2652670'
+    # MODIFICATION SECTION<<
+
+    # 2652670 - SAP HANA VM on VMware vSphere --> "SAP HANA on vSphere Best Practices"
+    # "CPU and Memory over-commitment must not be used."
+
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_VIRT_VMWARE ; then
+
+        logCheckSkipped 'Not running on VMware vSphere. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif [[ ! -f '/sys/kernel/debug/vmmemctl' ]]; then
+
+        logCheckWarning "VMware memory ballooning information is not available (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+        _retval=1
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local rx_memory='^([^ ]+) +([0-9]+) +pages$'
+        local key
+        local -i nr_pages
+
+
+        while read -r line ; do
+
+            logTrace "<${FUNCNAME[0]}> # read <${line}>"
+
+            if [[ ${line} =~ ${rx_memory} ]]; then
+
+                logDebug "<${FUNCNAME[0]}> # rx.match <${BASH_REMATCH[0]}> <${BASH_REMATCH[1]}> <${BASH_REMATCH[2]}>"
+                key=${BASH_REMATCH[1]:-}
+                nr_pages=${BASH_REMATCH[2]:-}
+
+                if [[ ${nr_pages} -gt 0 ]]; then
+
+                    logCheckError "Memory Balloon value <${key}> NOT null: <${nr_pages}> pages"
+                    _retval=2
+
+                fi
+
+            else
+
+                logCheckWarning "Memory Balloon value not processed <${line}>"
+                #keep higher return values
+                [[ ${_retval} -eq 99 ]] && _retval=88
+
+            fi
+
+        done <<< "$(grep -m2 -E '^(target|current)' /sys/kernel/debug/vmmemctl)"
+
+        if [[ ${_retval} -eq 99 ]]; then
+
+            logCheckOk "VMware memory ballooning is inactive (SAP Note ${sapnote:-})"
+            _retval=0
+
+        elif [[ ${_retval} -eq 88 ]]; then
+
+            logCheckWarning "VMware memory ballooning information not processed correctly (SAP Note ${sapnote:-})"
+            _retval=1
+
+        else
+
+            logCheckError "VMware memory ballooning is NOT inactive and reclaiming memory from Guest OS (SAP Note ${sapnote:-})"
+            _retval=2
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
