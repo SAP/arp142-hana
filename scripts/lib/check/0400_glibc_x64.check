@@ -17,7 +17,7 @@ function check_0400_glibc_x64 {
     local -ar sles150=( '2.26-13.36.1' '#2684254' )
     local -ar rhel6x=( '2.12-1.212.el6_10.3' '#1496410' )
     local -ar rhel76=( '2.17-260.el7_6.6' '#2292690' )
-    local -ar rhel80=( '2.28-72.el8_1.1' '#2777782' )
+    local -ar rhel81=( '2.28-72.el8_1.1' '#2777782' )
     # MODIFICATION SECTION<<
 
     #2240716 - SAP HANA DB: Recommended OS settings for SLES 11
@@ -60,7 +60,7 @@ function check_0400_glibc_x64 {
 
             7.[6-9] )       _goodversion="${rhel76[0]}" ; sapnote="${rhel76[1]}" ;;
 
-            8.* )           _goodversion="${rhel80[0]}" ; sapnote="${rhel80[1]}" ;;
+            8.[1-6] )       _goodversion="${rhel81[0]}" ; sapnote="${rhel81[1]}" ;;
 
             *)      logCheckWarning 'CHECK does not support RHEL release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
                     _retval=1 ;;
