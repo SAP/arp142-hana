@@ -13,7 +13,7 @@ function check_3015_network_tcp_timestamps {
 
     # 2382421 - Optimizing the Network Configuration on HANA- and OS-Level
 
-    # net.ipv4.tcp_timestamps=1
+    # net.ipv4.tcp_timestamps=1 (=2 old insecure behaviour)
     # Do not enable TCP timestamps on Azure VMs placed behind Azure Load Balancer
 
     # PRECONDITIONS
@@ -22,30 +22,49 @@ function check_3015_network_tcp_timestamps {
         logCheckSkipped 'Network kernel TCP timestamps not configurable' "(SAP Note ${sapnote:-}). Skipping <${FUNCNAME[0]}>"
         _retval=3
 
-    elif LIB_FUNC_IS_CLOUD_MICROSOFT ; then
-
-        logCheckWarning '---'
-        logCheckWarning 'Do NOT enable TCP timestamps on Azure VMs placed behind Azure Load Balancer.'
-        logCheckWarning 'Enabling TCP timestamps will cause the health probes to fail.'
-        logCheckWarning '---'
-
     fi
 
     # CHECK
-    if [[ ${_retval} -ne 99 ]]; then
+    if [[ ${_retval} -eq 99 ]]; then
 
-        :
+        local -i _tcp_timestamps
+        _tcp_timestamps=$(</proc/sys/net/ipv4/tcp_timestamps)
 
-    elif [[ $(</proc/sys/net/ipv4/tcp_timestamps) -eq 1 ]]; then
+        if LIB_FUNC_IS_CLOUD_MICROSOFT ; then
 
-        logCheckOk 'Network kernel parameter net.ipv4.tcp_timestamps set as recommended (is: 1)' "(SAP Note ${sapnote:-})"
-        _retval=0
+            logCheckWarning '---'
+            logCheckWarning 'In general, TCP timestamps should be enabled.'
+            logCheckWarning 'Do NOT enable TCP timestamps on Azure VMs placed behind Azure Load Balancer.'
+            logCheckWarning 'Enabling TCP timestamps will cause the health probes to fail.'
+            logCheckWarning '---'
 
-    else
+            case ${_tcp_timestamps} in
 
-        logCheckWarning 'Network kernel parameter net.ipv4.tcp_timestamps NOT set as recommended (is: 0)' "(SAP Note ${sapnote:-})"
-        _retval=1
+                0)  logCheckWarning 'Network kernel parameter net.ipv4.tcp_timestamps is disabled (is: 0)' "(SAP Note ${sapnote:-})"
+                    _retval=1;;
 
+                1)  logCheckWarning 'Network kernel parameter net.ipv4.tcp_timestamps is enabled (is: 1)' "(SAP Note ${sapnote:-})"
+                    _retval=1;;
+
+                *)  logCheckError "Network kernel parameter net.ipv4.tcp_timestamps is insecurely enabled (is: ${_tcp_timestamps})" "(SAP Note ${sapnote:-})"
+                    _retval=2;;
+            esac
+
+        else
+
+            case ${_tcp_timestamps} in
+
+                0)  logCheckWarning 'Network kernel parameter net.ipv4.tcp_timestamps NOT set as recommended (is: 0)' "(SAP Note ${sapnote:-})"
+                    _retval=1;;
+
+                1)  logCheckOk 'Network kernel parameter net.ipv4.tcp_timestamps set as recommended (is: 1)' "(SAP Note ${sapnote:-})"
+                    _retval=0;;
+
+                *)  logCheckError "Network kernel parameter net.ipv4.tcp_timestamps is insecurely enabled (is: ${_tcp_timestamps})" "(SAP Note ${sapnote:-})"
+                    _retval=2;;
+            esac
+
+        fi
     fi
 
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
