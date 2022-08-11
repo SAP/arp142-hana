@@ -20,6 +20,8 @@ function check_0102_supported_instances_amazon {
                         'u-6tb1.56xlarge'   'u-6tb1.112xlarge'
                         'x1.16xlarge'   'x1.32xlarge'   \
                         'x1e.32xlarge'   \
+                        'x2idn.16xlarge'  'x2idn.24xlarge' 'x2idn.32xlarge' \
+                        'x2iedn.24xlarge' 'x2iedn.32xlarge' \
                         )
 
     # array             'Instance Type'
