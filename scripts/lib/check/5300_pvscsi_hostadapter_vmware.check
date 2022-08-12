@@ -11,7 +11,7 @@ function check_5300_pvscsi_hostadapter_vmware {
     # MODIFICATION SECTION<<
 
     #2652670 - SAP HANA VM on VMware vSphere --> "SAP HANA on vSphere Best Practices"
-
+    #https://core.vmware.com/resource/sap-hana-vmware-vsphere-best-practices-and-reference-architecture-guide#storage-configuration-and-sizing
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_VIRT_VMWARE ; then
@@ -30,6 +30,8 @@ function check_5300_pvscsi_hostadapter_vmware {
     if [[ ${_retval} -eq 99 ]]; then
 
         logCheckInfo 'Only applicable for HANA Persistence behind virtualized SCSI Adapter !'
+        logCheckInfo 'HANA log and data volume should be served by dedicated PVSCSI controllers'
+        logCheckInfo 'to ensure high I/O bandwidth and low latency!'
         logCheckInfo '---'
 
         local -a pvscsi_hbas
@@ -44,16 +46,17 @@ function check_5300_pvscsi_hostadapter_vmware {
         case ${#pvscsi_hbas[@]} in     #array length
 
             [0-1])
-                        logCheckWarning "#VMware pvscsi HBAs NOT as recommended (SAP Note ${sapnote:-}) (is: ${#pvscsi_hbas[@]}, should be: [2-4}])"
+                        logCheckWarning "#VMware pvscsi HBAs NOT as recommended (SAP Note ${sapnote:-}) (is: ${#pvscsi_hbas[@]}, should be: [2-4])"
                         _retval=1
                 ;;
 
             [2-4])
+                        logCheckWarning 'The CHECK only checks for #HBAs,but not for valid distribution of Log/Data devices!'
                         logCheckOk "#VMware pvscsi HBAs as recommended (SAP Note ${sapnote:-}) (is: ${#pvscsi_hbas[@]})"
                         _retval=0
                 ;;
 
-            *)          logCheckError "#VMware pvscsi HBAs WRONG (SAP Note ${sapnote:-}) (is: ${#pvscsi_hbas[@]}, should be: [2-4}])"
+            *)          logCheckError "#VMware pvscsi HBAs WRONG (SAP Note ${sapnote:-}) (is: ${#pvscsi_hbas[@]}, should be: [2-4])"
                         _retval=2
                 ;;
         esac
