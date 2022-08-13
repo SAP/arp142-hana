@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+function check_0121_compatibility_mode_ibmpower {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2055470'
+    # MODIFICATION SECTION<<
+
+    #2055470 - HANA on POWER Planning and Installation Specifics - Central Note
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_IBMPOWER ; then
+
+        logCheckSkipped 'Not running on IBM Power. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif [[ -z ${LIB_PLATF_POWER_PLATFORM_COMPAT:-} ]]; then
+
+        logCheckError "Compatibility Processor Mode NOT known (SAP Note ${sapnote:-})"
+        _retval=2
+
+    elif [[ -z ${LIB_PLATF_POWER_PLATFORM_BASE:-} ]]; then
+
+        logCheckError "Current Processor Type NOT known (SAP Note ${sapnote:-})"
+        _retval=2
+
+    fi
+
+    #CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        if [[ "${LIB_PLATF_POWER_PLATFORM_COMPAT}" == "${LIB_PLATF_POWER_PLATFORM_BASE}" ]]; then
+
+            logCheckOk "Processor Compatibility Mode same as Processer type (SAP Note ${sapnote:-}) (is: ${LIB_PLATF_POWER_PLATFORM_COMPAT})"
+            _retval=0
+
+        else
+
+            logCheckError "Processor Compatibility Mode different from Processer type (SAP Note ${sapnote:-}) (is: ${LIB_PLATF_POWER_PLATFORM_COMPAT}, should be: ${LIB_PLATF_POWER_PLATFORM_BASE})"
+            _retval=2
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
