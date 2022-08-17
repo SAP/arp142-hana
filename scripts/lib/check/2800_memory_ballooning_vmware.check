@@ -22,6 +22,11 @@ function check_2800_memory_ballooning_vmware {
         logCheckSkipped 'Not running on VMware vSphere. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
+    elif ! LIB_FUNC_IS_ROOT ; then
+
+        logCheckError "ROOT required - VMware memory ballooning information not available (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+        _retval=2
+
     elif [[ ! -f '/sys/kernel/debug/vmmemctl' ]]; then
 
         logCheckWarning "VMware memory ballooning information is not available (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
@@ -32,7 +37,7 @@ function check_2800_memory_ballooning_vmware {
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-        local rx_memory='^([^ ]+) +([0-9]+) +pages$'
+        local rx_memory='^([^:]+): +([0-9]+)'
         local key
         local -i nr_pages
 
@@ -44,10 +49,11 @@ function check_2800_memory_ballooning_vmware {
             if [[ ${line} =~ ${rx_memory} ]]; then
 
                 logDebug "<${FUNCNAME[0]}> # rx.match <${BASH_REMATCH[0]}> <${BASH_REMATCH[1]}> <${BASH_REMATCH[2]}>"
-                key=${BASH_REMATCH[1]:-}
                 nr_pages=${BASH_REMATCH[2]:-}
 
                 if [[ ${nr_pages} -gt 0 ]]; then
+
+                    key=$(LIB_FUNC_TRIM_RIGHT "${BASH_REMATCH[1]:-}")
 
                     logCheckError "Memory Balloon value <${key}> NOT null: <${nr_pages}> pages"
                     _retval=2
