@@ -283,9 +283,8 @@ function __lib_func_get_lpar_details {
                             fi
             ;;
 
-            'DedDonMode'*)
-                            #DedDonMode=Dedicated Donating Mode
-                            if [[ -z ${LIB_PLATF_POWER_CPUMODE:-} ]]; then
+            'DedDonMode'*)  #DedDonMode=Dedicated Donating Mode
+                            if [[ -z ${LIB_PLATF_POWER_CPUMODE_DEDDON:-} ]]; then
                                 _temp=$(LIB_FUNC_TRIM_LEFT "${line/DedDonMode=}")
                                 [[ ${_temp} = 1 ]] && _temp='DONATING' || _temp='DEDICATED'
                                 LIB_PLATF_POWER_CPUMODE_DEDDON="${_temp}"
