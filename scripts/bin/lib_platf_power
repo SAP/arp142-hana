@@ -31,9 +31,7 @@ function LIB_FUNC_TRANSFORM_POWER_POWERMODE {
     # 0x00ff: "Dynamic, Favor Power"                    0x0004: "Dynamic Performance"
     # default: "Unknown"                                default: "Unknown"
 
-    local -r _lib_platf_cpu=${LIB_PLATF_CPU%%[[:space:]]*}
-
-    if [[ "${_lib_platf_cpu:-}" =~ POWER(10|9) ]]; then
+    if [[ "${LIB_PLATF_POWER_PLATFORM_BASE:-}" =~ POWER(10|9) ]]; then
 
         case "${powermode}" in
             '0001')  : 'Maximum Performance' ;;
@@ -44,7 +42,7 @@ function LIB_FUNC_TRANSFORM_POWER_POWERMODE {
         esac
         powermode="$_"
 
-    elif [[ "${_lib_platf_cpu:-}" =~ POWER8 ]]; then
+    elif [[ "${LIB_PLATF_POWER_PLATFORM_BASE:-}" =~ POWER8 ]]; then
 
         case "${powermode}" in
             '0001')  : 'Dynamic, Favor Performance' ;;
@@ -420,6 +418,7 @@ function __lib_func_get_auxvector_details {
         'AT_PLATFORM:'*)        #AT_PLATFORM:     power7        #Processor compatibility mode
                                 if [[ -z ${LIB_PLATF_POWER_PLATFORM_COMPAT:-} ]]; then
                                     LIB_PLATF_POWER_PLATFORM_COMPAT=$(LIB_FUNC_TRIM_LEFT "${line/AT_PLATFORM:}")
+                                    LIB_PLATF_POWER_PLATFORM_COMPAT=${LIB_PLATF_POWER_PLATFORM_COMPAT^^}
                                     readonly LIB_PLATF_POWER_PLATFORM_COMPAT
                                 fi
         ;;
@@ -427,6 +426,7 @@ function __lib_func_get_auxvector_details {
         'AT_BASE_PLATFORM:'*)   #AT_BASE_PLATFORM:power8        #Actual processor type
                                 if [[ -z ${LIB_PLATF_POWER_PLATFORM_BASE:-} ]]; then
                                     LIB_PLATF_POWER_PLATFORM_BASE=$(LIB_FUNC_TRIM_LEFT "${line/AT_BASE_PLATFORM:}")
+                                    LIB_PLATF_POWER_PLATFORM_BASE=${LIB_PLATF_POWER_PLATFORM_BASE^^}
                                     readonly LIB_PLATF_POWER_PLATFORM_BASE
                                 fi
         ;;
@@ -441,6 +441,13 @@ function __lib_func_get_auxvector_details {
         esac
 
     done <<< "$(LD_SHOW_AUXV=1 /bin/true)"
+
+    if [[ -z ${LIB_PLATF_POWER_PLATFORM_BASE:-} ]]; then
+        LIB_PLATF_POWER_PLATFORM_BASE=${LIB_PLATF_CPU%%[[:space:]]*}
+        LIB_PLATF_POWER_PLATFORM_BASE=${LIB_PLATF_POWER_PLATFORM_BASE^^}
+        readonly LIB_PLATF_POWER_PLATFORM_BASE
+    fi
+
 }
 
 #============================================================
