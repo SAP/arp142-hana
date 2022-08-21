@@ -11,7 +11,7 @@ LIB_FUNC_IS_IBMPOWER() { return 0 ; }
 # LIB_PLATF_CPU_SOCKETS=
 # LIB_PLATF_CPU_CORESPERSOCKET=
 # LIB_PLATF_CPU_THREADSPERCORE=
-# LIB_PLATF_CPU=''
+# LIB_PLATF_POWER_PLATFORM_BASE=''
 
 test_precondition_cpusockets_unknown() {
 
@@ -55,7 +55,7 @@ test_precondition_cputhreads_unknown() {
 test_power9_corestotallow_warning() {
 
     #arrange
-    LIB_PLATF_CPU='POWER9 (architected), altivec supported'
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER9'
     LIB_PLATF_CPU_SOCKETS=8
     LIB_PLATF_CPU_CORESPERSOCKET=12
     LIB_PLATF_CPU_THREADSPERCORE=4
@@ -70,7 +70,7 @@ test_power9_corestotallow_warning() {
 test_power9_corestotallow_ok() {
 
     #arrange
-    LIB_PLATF_CPU='POWER9 (architected), altivec supported'
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER9'
     LIB_PLATF_CPU_SOCKETS=8
     LIB_PLATF_CPU_CORESPERSOCKET=12
     LIB_PLATF_CPU_THREADSPERCORE=8
@@ -85,7 +85,7 @@ test_power9_corestotallow_ok() {
 test_power9_corestotalhigh_warning() {
 
     #arrange
-    LIB_PLATF_CPU='POWER9 (architected), altivec supported'
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER9'
     LIB_PLATF_CPU_SOCKETS=8
     LIB_PLATF_CPU_CORESPERSOCKET=14
     LIB_PLATF_CPU_THREADSPERCORE=8
@@ -100,7 +100,7 @@ test_power9_corestotalhigh_warning() {
 test_power9_corestotalhigh_ok() {
 
     #arrange
-    LIB_PLATF_CPU='POWER9 (architected), altivec supported'
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER9'
     LIB_PLATF_CPU_SOCKETS=8
     LIB_PLATF_CPU_CORESPERSOCKET=14
     LIB_PLATF_CPU_THREADSPERCORE=4
@@ -115,7 +115,7 @@ test_power9_corestotalhigh_ok() {
 test_power10_threadspercore_warning() {
 
     #arrange
-    LIB_PLATF_CPU='POWER10 (architected), altivec supported'
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER10'
     LIB_PLATF_CPU_SOCKETS=1
     LIB_PLATF_CPU_CORESPERSOCKET=1
     LIB_PLATF_CPU_THREADSPERCORE=8
@@ -130,7 +130,7 @@ test_power10_threadspercore_warning() {
 test_power10_threadspercore_ok() {
 
     #arrange
-    LIB_PLATF_CPU='POWER10 (architected), altivec supported'
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER10'
     LIB_PLATF_CPU_SOCKETS=1
     LIB_PLATF_CPU_CORESPERSOCKET=1
     LIB_PLATF_CPU_THREADSPERCORE=4
@@ -145,7 +145,7 @@ test_power10_threadspercore_ok() {
 # test_template() {
 
 #     #arrange
-#     LIB_PLATF_CPU=
+#     LIB_PLATF_POWER_PLATFORM_BASE=
 #     LIB_PLATF_CPU_SOCKETS=1
 #     LIB_PLATF_CPU_CORESPERSOCKET=1
 #     LIB_PLATF_CPU_THREADSPERCORE=1
@@ -176,7 +176,7 @@ setUp() {
     LIB_PLATF_CPU_SOCKETS=
     LIB_PLATF_CPU_CORESPERSOCKET=
     LIB_PLATF_CPU_THREADSPERCORE=
-    LIB_PLATF_CPU=
+    LIB_PLATF_POWER_PLATFORM_BASE=
 
 }
 # tearDown

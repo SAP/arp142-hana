@@ -67,9 +67,7 @@ function check_1310_cpu_powersavings_ibmpower {
 
         fi
 
-        local -r _lib_platf_cpu=${LIB_PLATF_CPU%%[[:space:]]*}
-
-        if [[ "${_lib_platf_cpu:-}" =~ POWER(10|9) ]]; then
+        if [[ "${LIB_PLATF_POWER_PLATFORM_BASE:-}" =~ POWER(10|9) ]]; then
 
             if [[ "${pwr_system_mode}" =~ ^(0001|0002|0004)$ ]];then
 
@@ -83,7 +81,7 @@ function check_1310_cpu_powersavings_ibmpower {
 
             fi
 
-        elif [[ "${_lib_platf_cpu:-}" =~ POWER8 ]]; then
+        elif [[ "${LIB_PLATF_POWER_PLATFORM_BASE:-}" =~ POWER8 ]]; then
 
             if [[ "${pwr_system_mode}" =~ ^(0001|0002)$ ]]; then
 

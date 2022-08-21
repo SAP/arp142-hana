@@ -9,14 +9,14 @@ LIB_FUNC_IS_IBMPOWER() { return 0 ; }
 LIB_FUNC_IS_SLES() { return 0 ; }
 
 LIB_PLATF_ARCHITECTURE=''
-LIB_PLATF_CPU=''
+LIB_PLATF_POWER_PLATFORM_BASE=''
 OS_VERSION=''
 
 test_power7_bigendian_sles_not_supported() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64'
-    LIB_PLATF_CPU='POWER7 (architected), altivec supported'
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER7'
     OS_VERSION='11.3'
 
     #act
@@ -30,7 +30,7 @@ test_power9_bigendian_not_supported() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64'
-    LIB_PLATF_CPU='POWER9 (architected), altivec supported'
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER9'
 
     #act
     check_0004_os_hana_support_sles_ibmpower
@@ -43,7 +43,7 @@ test_power7_littleendian_sles_not_supported() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
-    LIB_PLATF_CPU='POWER7 (architected), altivec supported'
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER7'
     OS_VERSION='11.4'
 
     #act
@@ -57,7 +57,7 @@ test_power8_littleendian_sles_supported() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
-    LIB_PLATF_CPU='POWER8 (architected), altivec supported'
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER8'
     OS_VERSION='12.5'
 
     #act
@@ -71,7 +71,7 @@ test_power9_littleendian_sles_not_supported() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
-    LIB_PLATF_CPU='POWER9 (architected), altivec supported'
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER9'
     OS_VERSION='12.2'
 
     #act
@@ -85,7 +85,7 @@ test_power9_littleendian_sles_supported() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
-    LIB_PLATF_CPU='POWER9 (architected), altivec supported'
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER9'
     OS_VERSION='15.3'
 
     #act
@@ -99,7 +99,7 @@ test_power10_littleendian_sles_not_supported() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
-    LIB_PLATF_CPU='POWER10 (architected), altivec supported'
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER10'
     OS_VERSION='12.2'
 
     #act
@@ -113,7 +113,7 @@ test_power10_littleendian_sles_supported() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
-    LIB_PLATF_CPU='POWER10 (architected), altivec supported'
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER10'
     OS_VERSION='15.3'
 
     #act
@@ -126,7 +126,7 @@ test_power10_littleendian_sles_supported() {
 test_powerX_not_supported() {
 
     #arrange
-    LIB_PLATF_CPU='POWER6 (architected), altivec supported'
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER6'
 
     #act
     check_0004_os_hana_support_sles_ibmpower
@@ -139,7 +139,7 @@ test_architecture_not_supported() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc65le'
-    LIB_PLATF_CPU='POWER9 (architected), altivec supported'
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER9'
 
     #act
     check_0004_os_hana_support_sles_ibmpower
@@ -152,7 +152,7 @@ test_environment_not_handled() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
-    LIB_PLATF_CPU='POWER90 (architected), altivec supported'
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER90'
     OS_VERSION='15.3'
 
     #act
@@ -166,7 +166,7 @@ test_sles_not_handled() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
-    LIB_PLATF_CPU='POWER9 (architected), altivec supported'
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER9'
     OS_VERSION='15.9'
 
     #act
@@ -191,7 +191,7 @@ oneTimeSetUp() {
 setUp() {
 
     LIB_PLATF_ARCHITECTURE=
-    LIB_PLATF_CPU=
+    LIB_PLATF_POWER_PLATFORM_BASE=
     OS_VERSION=
 
 }

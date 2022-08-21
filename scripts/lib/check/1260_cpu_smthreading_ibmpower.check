@@ -48,9 +48,7 @@ function check_1260_cpu_smthreading_ibmpower {
         local -i cores_total
         cores_total=$((LIB_PLATF_CPU_SOCKETS*LIB_PLATF_CPU_CORESPERSOCKET))
 
-        local -r _lib_platf_cpu=${LIB_PLATF_CPU%%[[:space:]]*}
-
-        if [[ ! "${_lib_platf_cpu:-}" =~ POWER(9|8) ]]; then
+        if [[ ! "${LIB_PLATF_POWER_PLATFORM_BASE:-}" =~ POWER(9|8) ]]; then
             #Power10 with SMT-4 only
             exp_threadspercore=${exp_threadspercore_p10}
 
@@ -60,7 +58,7 @@ function check_1260_cpu_smthreading_ibmpower {
 
         fi
 
-        logCheckInfo "${_lib_platf_cpu} - Sockets:<${LIB_PLATF_CPU_SOCKETS}>, CoresPerSocket:<${LIB_PLATF_CPU_CORESPERSOCKET}>, TotalCores:<${cores_total}>"
+        logCheckInfo "${LIB_PLATF_POWER_PLATFORM_BASE} - Sockets:<${LIB_PLATF_CPU_SOCKETS}>, CoresPerSocket:<${LIB_PLATF_CPU_CORESPERSOCKET}>, TotalCores:<${cores_total}>"
 
 
         if [[ ${LIB_PLATF_CPU_THREADSPERCORE} -eq ${exp_threadspercore} ]]; then
@@ -68,7 +66,7 @@ function check_1260_cpu_smthreading_ibmpower {
             logCheckOk "Simultaneous Multithreading mode set as recommended (SAP Note ${sapnote:-}) (is: SMT-${LIB_PLATF_CPU_THREADSPERCORE})"
             _retval=0
 
-        elif [[ ! "${_lib_platf_cpu:-}" =~ POWER(9|8) ]]; then
+        elif [[ ! "${LIB_PLATF_POWER_PLATFORM_BASE:-}" =~ POWER(9|8) ]]; then
 
             logCheckWarning "Simultaneous Multithreading mode NOT set as recommended (SAP Note ${sapnote:-}) (is: SMT-${LIB_PLATF_CPU_THREADSPERCORE}, should be: = SMT-${exp_threadspercore})"
             _retval=1

@@ -39,9 +39,9 @@ function check_0004_os_hana_support_sles_ibmpower {
         logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif [[ ! "${LIB_PLATF_CPU:-}" =~ ${platform_rx} ]]; then
+    elif [[ ! "${LIB_PLATF_POWER_PLATFORM_BASE:-}" =~ ${platform_rx} ]]; then
 
-        logCheckError "CHECK does not support IBM POWER platform (is: ${LIB_PLATF_CPU:-}-${LIB_PLATF_ARCHITECTURE:-})"
+        logCheckError "CHECK does not support IBM POWER platform (is: ${LIB_PLATF_POWER_PLATFORM_BASE:-}-${LIB_PLATF_ARCHITECTURE:-})"
         _retval=2
 
     elif [[ "${LIB_PLATF_ARCHITECTURE:-}" == 'ppc64le' ]]; then
@@ -78,8 +78,6 @@ function check_0004_os_hana_support_sles_ibmpower {
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-        local -r _lib_platf_cpu=${LIB_PLATF_CPU%%[[:space:]]*}
-
         local _os_major_version
         local _os_minor_version
 
@@ -92,14 +90,14 @@ function check_0004_os_hana_support_sles_ibmpower {
         _os_minor_version=${OS_VERSION#*.}                              #del major              12.5 --> 5
         _os_minor_version=${_os_minor_version#.*}                       #del minor subversion   (12.)2.0.1 --> 2
 
-        logTrace "<${FUNCNAME[0]}> # Platform  <${_lib_platf_cpu}> - OS.major <${_os_major_version}> - OS.minor <${_os_minor_version}>"
+        logTrace "<${FUNCNAME[0]}> # Platform  <${LIB_PLATF_POWER_PLATFORM_BASE}> - OS.major <${_os_major_version}> - OS.minor <${_os_minor_version}>"
 
         # i+=3 --> every 3rd item
         for ((i=0; i < ${#_sles_matrix[@]}; i+=3)); do
 
             logTrace "<${FUNCNAME[0]}> # ${_sles_matrix[$i]}>"
 
-            [[ "${_lib_platf_cpu:-}" != "${_sles_matrix[$i]}" ]] && continue
+            [[ "${LIB_PLATF_POWER_PLATFORM_BASE:-}" != "${_sles_matrix[$i]}" ]] && continue
             [[ "${_os_major_version:-}" != "${_sles_matrix[$i+1]}" ]] && continue
 
             _handled=true
@@ -111,12 +109,12 @@ function check_0004_os_hana_support_sles_ibmpower {
 
             if [[ $((0x${_os_supported})) -ne ${_os_minor_version} ]] ; then
 
-                logCheckError "SLES release on IBM POWER is NOT supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${OS_VERSION} @ ${_lib_platf_cpu}-${LIB_PLATF_ARCHITECTURE})"
+                logCheckError "SLES release on IBM POWER is NOT supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${OS_VERSION} @ ${LIB_PLATF_POWER_PLATFORM_BASE}-${LIB_PLATF_ARCHITECTURE})"
                 _retval=2
 
             else
 
-                logCheckOk "SLES release on IBM POWER is supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${OS_VERSION} @ ${_lib_platf_cpu}-${LIB_PLATF_ARCHITECTURE})"
+                logCheckOk "SLES release on IBM POWER is supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${OS_VERSION} @ ${LIB_PLATF_POWER_PLATFORM_BASE}-${LIB_PLATF_ARCHITECTURE})"
                 _retval=0
 
             fi
@@ -125,7 +123,10 @@ function check_0004_os_hana_support_sles_ibmpower {
         done
 
         if ! ${_handled}; then
-                logCheckError "CHECK did NOT handle SLES release on IBM POWER properly (SAP Note ${sapnote:-}) (is: SLES ${OS_VERSION} @ ${_lib_platf_cpu}-${LIB_PLATF_ARCHITECTURE})"
+
+                logTrace "<${FUNCNAME[0]}> # OS release <${OS_VERSION}> not handled"
+
+                logCheckError "SLES release on IBM POWER is NOT supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${OS_VERSION} @ ${LIB_PLATF_POWER_PLATFORM_BASE}-${LIB_PLATF_ARCHITECTURE})"
                 _retval=2
         fi
 
