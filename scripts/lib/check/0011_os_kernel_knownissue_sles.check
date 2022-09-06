@@ -36,8 +36,8 @@ function check_0011_os_kernel_knownissue_sles {
     #                     )
 
     local -ar _sles_ibmpower=(\
-                        '12.5'  '4.12.14-120.1'         '4.12.14-122.116.0'         '#3159746' \
-                        '15.1'  '4.12.14-195.1'         '4.12.14-150100.197.114.1'  '#3159746' \
+                        '12.5'  '4.12.14-120.1'         '4.12.14-122.116.0'         '#3165100,3159746' \
+                        '15.1'  '4.12.14-195.1'         '4.12.14-150100.197.114.1'  '#3165100,3159746' \
                         )
     # MODIFICATION SECTION<<
 
@@ -45,6 +45,7 @@ function check_0011_os_kernel_knownissue_sles {
     #2814271 - SAP HANA Backup fails on Azure with Checksum Error - affects ALL, not only Azure (bsc#1137959)
     #2859234 - SAP HANA Timer Fallback alert on SLES 12 SP3
     #3159746 - Hana Revision 6x crashes on Linux kernel 4.12 or 4.18 on IBM Power platform
+    #3165100 - Advices on permanent solutions for the issue in SAP note 3165087
 
     #1880960 - Lenovo Systems Solution for SAP HANA Platform Edition FW/OS/Driver Maintenance - better would be
     #bsc#1170457 - NFS: Do not call generic_error_remove_page() while holding locks (bsc#1170457)
