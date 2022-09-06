@@ -8,6 +8,7 @@ function check_2000_transparent_hugepages {
 
     # MODIFICATION SECTION>>
     local -r sapnote='#2131662'     # Transparent Huge Pages (THP) on SAP HANA Servers
+    local -i _thp_threshold=50
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS
@@ -33,7 +34,7 @@ function check_2000_transparent_hugepages {
         nr_anon_thp=$(grep 'nr_anon_transparent_hugepages' /proc/vmstat)
         nr_anon_thp=$(LIB_FUNC_TRIM_LEFT "${nr_anon_thp/nr_anon_transparent_hugepages}")
 
-        if [[ ${nr_anon_thp} -ge 20 ]] ; then
+        if [[ ${nr_anon_thp} -ge ${_thp_threshold} ]] ; then
             logCheckWarning "Transparent Hugepages are currently allocated and in use (is: ${nr_anon_thp}, should be: 0)"
             #keep higher return values
             [[ ${_retval} -eq 0 ]] && _retval=1
