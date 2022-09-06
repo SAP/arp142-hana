@@ -537,7 +537,7 @@ function _lib_helper_main {
     case "${HOSTTYPE}" in
 
         'x86_64')   #shellcheck source=./lib_platf_x86_64
-                    source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/lib_platf_x86_64" || { echo 'unable to load lib_platf_power library' >&2; exit 1; }
+                    source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/lib_platf_x86_64" || { echo 'unable to load lib_platf_x86_64 library' >&2; exit 1; }
         ;;
 
         'ppc64'* | 'powerpc64'* )
