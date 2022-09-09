@@ -11,16 +11,22 @@ Q: Does it change anything on the system?
 A: No, scripts only read data. There is no change/writing of anything.
 
 Q: Are there any restrictions attention should be paid to?  
-A: Scripts require root permission in order to read certain kernel parameter values.
+A: Same checks require root permission in order to read certain kernel parameter values. The check suite itself could run as non-root user, but root required checks would be skipped.
 
 ## How to run
 
 #### as root user - extract scripts to Linux server & run saphana-check.sh
 * [Download release or dev build](https://github.wdf.sap.corp/SAP-COE-HPTI/saphana-checks/releases)
 
-* rpm -Uvh ./saphana-checks-*.rpm
-* will be installed to /opt/sap/saphana-checks
-* /opt/sap/saphana-checks/bin/saphana-check.sh
+* install rpm (installed to /opt/sap/saphana-checks)
+```
+  rpm -Uvh saphana-checks-*.rpm
+```
+* just run it or redirect output: 
+```
+  /opt/sap/saphana-checks/bin/saphana-check.sh
+  /opt/sap/saphana-checks/bin/saphana-check.sh 2>&1 | tee -a $(hostname)_SHC.txt
+```
 
 ![Example Output](/docs/Example-Output.png?raw=true "Example Output")
 
