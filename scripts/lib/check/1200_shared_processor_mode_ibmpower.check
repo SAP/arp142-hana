@@ -10,6 +10,8 @@ function check_1200_shared_processor_mode_ibmpower {
     local -r sapnote='#2230704' # SAP HANA on IBM Power Systems with multiple - LPARs per physical host
     # MODIFICATION SECTION<<
 
+    #2055470 - HANA on POWER Planning and Installation Specifics - Central Note
+
     # PRECONDITIONS
     if ! LIB_FUNC_IS_IBMPOWER ; then
 
@@ -25,10 +27,7 @@ function check_1200_shared_processor_mode_ibmpower {
     #CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-        if [[ "${LIB_PLATF_POWER_CPUMODE}" == 'DEDICATED' ]]; then
-
-            logCheckOk "Shared Processor Mode configuration set as recommended (SAP Note ${sapnote:-}) (is: DEDICATED)"
-            _retval=0
+        if [[ "${LIB_PLATF_POWER_CPUMODE}" == 'DEDICATED!' ]]; then
 
             if [[ "${LIB_PLATF_POWER_CPUMODE_DEDDON:-}" != 'DONATING' ]]; then
 
@@ -36,10 +35,17 @@ function check_1200_shared_processor_mode_ibmpower {
 
             fi
 
+            logCheckOk "Shared Processor Mode configuration set as recommended (SAP Note ${sapnote:-}) (is: DEDICATED)"
+            _retval=0
+
         else
 
-            logCheckError "Shared Processor Mode configuration NOT set as recommended (SAP Note ${sapnote:-}) (is: SHARED, should be: DEDICATED*)"
-            _retval=2
+            logCheckInfo 'The workload sizing of individual HANA production systems allows for runnig them concurrently in the shared processor pool.'
+            logCheckInfo 'The LPAR entitlements must ensure that production LPARs are not negatively impacted by other LPARs running in the pool.'
+            logCheckInfo 'In case of problems, LPARs should be switched to run in dedicated mode or to run with 100% entitlement.'
+
+            logCheckWarning "Shared Processor Mode configuration has special requirements (SAP Note ${sapnote:-}) (is: ${LIB_PLATF_POWER_CPUMODE})"
+            _retval=1
 
         fi
 
