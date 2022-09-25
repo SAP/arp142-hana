@@ -63,4 +63,6 @@
 5510_nfsv3_rpc_slots_netapp
 5521_nfs_mount_rwsize_azure
 7010_corosync_version
+7030_ha_resource_agent_scaleup_rhel
+7031_ha_resource_agent_scaleout_rhel
 8500_sap_hana_client

@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+
+function check_7031_ha_resource_agent_scaleout_rhel {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local sapnote='#1552925'
+    local -r _rpm_package='resource-agents-sap-hana-scaleout'
+
+    local -ar _rpm_versions=(\
+                            '8.4'   '0.180.0-0'\
+                            '8.2'   '0.164.0-0' \
+                            '8.1'   '0.164.0-0' \
+                            '8.0'   '0.163.2-6' \
+                            '7.9'   '0.163.2-7' \
+                            '7.7'   '0.163.2-7' \
+                            '7.6'   '0.163.2-1' \
+                            )
+    # MODIFICATION SECTION<<
+
+    #1552925 - Linux: High Availability Cluster Solutions
+    #https://access.redhat.com/articles/3397471
+    #https://access.redhat.com/downloads/content/resource-agents-sap-hana-scaleout/noarch/package-latest
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_RHEL; then
+
+        logCheckSkipped 'Linux distribution is not RHEL. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif ! rpm -q --quiet ${_rpm_package}; then
+
+        logCheckSkipped "HA Resource Agent ${_rpm_package} not installed (SAP Note ${sapnote:-}). Skipping <${FUNCNAME[0]}>"
+        _retval=3
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local _rhel_release
+        local _exp_version
+        local _curr_version
+        local _exp_version_normalized
+        local _curr_version_normalized
+
+        local _handled=false
+
+        _curr_version=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" "${_rpm_package}")
+        #normalize current version - e.g. 4.1.10-33.5.2
+        LIB_FUNC_NORMALIZE_RPM "${_curr_version}"
+        _curr_version_normalized="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+        # i+=2 --> every 2nd item
+        for ((i=0; i < ${#_rpm_versions[@]}; i+=2)); do
+
+            _rhel_release="${_rpm_versions[$i]}"
+
+            logTrace "<${FUNCNAME[0]}> # ${_rpm_versions[$i]}>"
+
+            [[ ! "${OS_VERSION}" =~ ${_rhel_release} ]] && continue
+
+            _handled=true
+
+            _exp_version="${_rpm_versions[$i+1]}"
+
+            #normalize expected version
+            LIB_FUNC_NORMALIZE_RPM "${_exp_version}"
+            _exp_version_normalized="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+            # returns 0 if equal, 1 if first is higher, 2 if second is higher
+            LIB_FUNC_COMPARE_VERSIONS "${_curr_version_normalized}" "${_exp_version_normalized}"
+            if [[ $? -eq 2 ]]; then
+
+                logCheckWarning "HA Resource Agent ${_rpm_package} should be updated (SAP Note ${sapnote:-}) (is: ${_curr_version}, should be: >=${_exp_version})"
+                _retval=1
+
+            else
+
+                logCheckOk "HA Resource Agent ${_rpm_package} version seems to be ok (SAP Note ${sapnote:-}) (is: ${_curr_version})"
+                _retval=0
+
+            fi
+
+            break
+        done
+
+        if ! ${_handled}; then
+
+            logCheckWarning "CHECK does not handle RHEL version (SAP Note ${sapnote:-}) (is: ${OS_VERSION}, ${_curr_version})"
+            _retval=1
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}

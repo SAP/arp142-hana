@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+
+function check_7020_ha_resource_agents_sles {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local sapnote='#1552925'
+
+    local -ar _rpm_packages=(\
+                            'SAPHanaSR'             '0.160.1'   \
+                            'SAPHanaSR-ScaleOut'    '0.181.0'   \
+                            )
+    # MODIFICATION SECTION<<
+
+    #1552925 - Linux: High Availability Cluster Solutions
+    #https://github.com/SUSE/SAPHanaSR
+    #https://github.com/SUSE/SAPHanaSR-ScaleOut
+
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_SLES; then
+
+        logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif ! rpm -q --quiet SAPHanaSR && ! rpm -q --quiet SAPHanaSR-ScaleOut; then
+
+        logCheckSkipped 'HA Resource Agents SAPHanaSR* not installed' "(SAP Note ${sapnote:-}). Skipping <${FUNCNAME[0]}>"
+        _retval=3
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local _package
+        local _exp_version
+        local _curr_version
+        local _exp_version_normalized
+        local _curr_version_normalized
+
+        # i+=2 --> every 2nd item
+        for ((i=0; i < ${#_rpm_packages[@]}; i+=2)); do
+
+            _package="${_rpm_packages[$i]}"
+
+            if ! rpm -q --quiet "${_package}"; then
+                logCheckInfo "HA Resource Agent ${_package} not installed"
+                continue
+            fi
+
+            _exp_version="${_rpm_packages[$i+1]}"
+
+            #normalize expected version
+            LIB_FUNC_NORMALIZE_RPM "${_exp_version}"
+            _exp_version_normalized="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+            _curr_version=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" "${_package}")
+            #normalize current version - e.g. 4.1.10-33.5.2
+            LIB_FUNC_NORMALIZE_RPM "${_curr_version}"
+            _curr_version_normalized="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+            # returns 0 if equal, 1 if first is higher, 2 if second is higher
+            LIB_FUNC_COMPARE_VERSIONS "${_curr_version_normalized}" "${_exp_version_normalized}"
+            if [[ $? -eq 2 ]]; then
+
+                logCheckWarning "HA Resource Agent ${_package} should be updated (is: ${_curr_version}, should be: >=${_exp_version})"
+                _retval=1
+
+            else
+
+                logCheckOk "HA Resource Agent ${_package} version seems to be ok (is: ${_curr_version})"
+
+            fi
+
+        done
+
+        if [[ ${_retval} -eq 99 ]]; then
+
+            logCheckOk "HA Resource Agents SAPHanaSR* versions seem to be ok (SAP Note ${sapnote:-})"
+            _retval=0
+
+        else
+
+            logCheckWarning "HA Resource Agents SAPHanaSR* should be updated (SAP Note ${sapnote:-})"
+            _retval=1
+        fi
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
