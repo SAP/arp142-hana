@@ -12,14 +12,20 @@ function check_0011_os_kernel_knownissue_sles {
                         '12.4' '4.12.14-95.19.1'        '4.12.14-95.24.0'   '#2812427' \
                         '12.4' '4.12.14-94.41.1'        '4.12.14-95.37.0'   '#2814271' \
                         '12.4' '4.12.14-95.40.1'        '4.12.14-95.54.0'   '#bsc#1170457' \
+                        '12.4' '4.12.14-95.102.1'       '4.12.14-95.105.0'   '#RETBLEED' \
                         '12.5' '4.12.14-120.1'          '4.12.14-122.7.0'   '#2814271' \
                         '12.5' '4.12.14-120.1'          '4.12.14-122.23.0'   '#bsc#1170457' \
+                        '12.5' '4.12.14-122.127.1'      '4.12.14-122.130.0'  '#RETBLEED' \
                         '15.0' '4.12.14-150.22.1'       '4.12.14-150.27.0'  '#2812427' \
                         '15.0' '4.12.14-23.1'           '4.12.14-150.38.0'   '#2814271' \
                         '15.0' '4.12.14-23.1'           '4.12.14-150.52.0'   '#bsc#1170457' \
+                        '15.0' '4.12.14-150000.150.95.1'    '4.12.14-150000.150.98.0'   '#RETBLEED' \
                         '15.1' '4.12.14-197.4.1'        '4.12.14-197.10.0'   '#2812427' \
                         '15.1' '4.12.14-195.1'          '4.12.14-197.21.0'   '#2814271' \
                         '15.1' '4.12.14-195.1'          '4.12.14-197.45.0'   '#bsc#1170457' \
+                        '15.1' '4.12.14-150100.197.117.1'   '4.12.14-150100.197.120.0'  '#RETBLEED' \
+                        '15.2' '5.3.18-150200.24.120.1'     '5.3.18-150200.24.126.0'    '#RETBLEED' \
+                        '15.3' '5.3.18-150300.59.81.1'      '5.3.18-150300.59.90.0'     '#RETBLEED' \
                         )
 
     local -ar _sles_4sap=(\
@@ -48,7 +54,10 @@ function check_0011_os_kernel_knownissue_sles {
 
     #1880960 - Lenovo Systems Solution for SAP HANA Platform Edition FW/OS/Driver Maintenance - better would be
     #bsc#1170457 - NFS: Do not call generic_error_remove_page() while holding locks (bsc#1170457)
-    #bsc#1160560 - tcp: clear tp->packets_out when purging write queue / exit if nothing to retransmit on RTO timeout
+
+    #RETBLEED
+    #SUSE-SU-2022:2719-1
+    #SUSE TID 20704 - Security vulnerability: Regression in SUSE Linux Enterprise 15 SP3 kernel caused by RETBLEED fixes
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_SLES; then
