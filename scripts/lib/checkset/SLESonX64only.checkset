@@ -68,3 +68,4 @@
 7010_corosync_version
 7020_ha_resource_agents_sles
 8500_sap_hana_client
+8704_sap_hana_backint_gcp

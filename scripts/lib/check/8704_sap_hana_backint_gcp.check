@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+
+function check_8704_sap_hana_backint_gcp {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#1730932'
+    local -r backint_version_exp='1.0.21'
+    # MODIFICATION SECTION<<
+
+    # 1730932 - Using backup tools with Backint for HANA
+    # https://cloud.google.com/solutions/sap/docs/sap-hana-backint-guide
+
+    #PRECONDITION
+    if ! LIB_FUNC_IS_CLOUD_GOOGLE; then
+
+        logCheckSkipped 'Not running on Google GCP. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif ! grep -qs . -m1 /usr/sap/???/SYS/global/hdb/opt/backint/backint-gcs/VERSION.txt; then
+
+        logCheckSkipped 'No SAP HANA cloud storage backint agent found. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+        #CHECK
+        local backint_version_curr
+        local _sid
+
+        while read -r _backint ; do
+
+            _sid="${_backint:9:3}"
+            backint_version_curr="${_backint##*VERSION\.txt:}"
+
+            logTrace "<${FUNCNAME[0]}> # <${_backint}> <${_sid}> <${backint_version_curr}>"
+
+            # returns 0 if equal, 1 if first is higher, 2 if second is higher
+            LIB_FUNC_COMPARE_VERSIONS "${backint_version_curr}" "${backint_version_exp}"
+            if [[ $? -eq 2 ]]; then
+                logCheckWarning "SAP HANA backint agent for ${_sid} should be upgraded (is: ${backint_version_curr}, should be: >=${backint_version_exp})"
+                _retval=1
+            else
+                logCheckOk "SAP HANA backint agent for ${_sid} is at required level (is: ${backint_version_curr})"
+            fi
+
+        done <<< "$(grep . -m1 -H /usr/sap/???/SYS/global/hdb/opt/backint/backint-gcs/VERSION.txt)"
+
+        if [[ ${_retval} -eq 99 ]]; then
+
+                logCheckOk "All SAP HANA backint agents at recommended version (SAP Note ${sapnote:-})"
+                _retval=0
+
+            else
+
+                logCheckWarning "NOT all SAP HANA backint agents at recommended version (SAP Note ${sapnote:-})"
+                _retval=1
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
