@@ -21,6 +21,7 @@ function check_0010_os_kernel_sles {
                         '15.1' '4.12.14-197.78.1'       '#2684254'  \
                         '15.2' '5.3.18-24.78.1'         '#3078256'  \
                         '15.3' '5.3.18-59.24.1'         '#2684254,3057472'  \
+                        '15.4' '5.14.21-150400.22.1'    '#2684254'  \
                         )
 
     local -ar _sles_ibmpower=(\
@@ -34,15 +35,14 @@ function check_0010_os_kernel_sles {
                         '15.1' '4.12.14-197.78.1'       '#2684254'  \
                         '15.2' '5.3.18-24.78.1'         '#3078256'  \
                         '15.3' '5.3.18-57.1'            '#2684254'  \
+                        '15.4' '5.14.21-150400.22.1'    '#2684254'  \
                         )
 
     # MODIFICATION SECTION<<
 
-    #2240716 - SAP HANA DB: Recommended OS settings for SLES 11 / SLES for SAP Applications 11 SP4
     #2205917 - SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
     #2684254 - SAP HANA DB: Recommended OS settings for SLES 15 / SLES for SAP Applications 15
 
-    #2235581- SAP HANA: Supported Operating Systems
     #936887 - End of maintenance for Linux distributions
     #3078256 - HANA system is hanging when using the bcache for SAP HANA data disks
     #3057472 - Lenovo Systems Solution for SAP HANA Platform Edition FW/OS/Driver Maintenance (SR650v2)

@@ -14,8 +14,8 @@ function check_0004_os_hana_support_sles_ibmpower {
                             'POWER10'       '12'    '------'   \
                             'POWER9'        '12'    '---345'   \
                             'POWER8'        '12'    '---345'   \
-                            'POWER10'       '15'    '---3'   \
-                            'POWER9'        '15'    '0123'   \
+                            'POWER10'       '15'    '---34'   \
+                            'POWER9'        '15'    '01234'   \
                             'POWER8'        '15'    '-123'   \
                         )
 

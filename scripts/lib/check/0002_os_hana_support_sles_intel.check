@@ -25,13 +25,13 @@ function check_0002_os_hana_support_sles_intel {
 
     # array             'Platform'              '0123' (Minor Release)
     local -ar _sles_15=(\
-                        'Microsoft Azure'       '0123'   \
-                        'Amazon EC2'            '0123'   \
-                        'IBM Cloud'             '012-'   \
-                        'Google GCP'            '0123'   \
-                        'Alibaba Cloud ECS'     '012-'   \
-                        'Huawei Cloud'          '012-'   \
-                        ''                      '0123'   \          #all others, e.g. TDI, Bare-Metal
+                        'Microsoft Azure'       '0123-'   \
+                        'Amazon EC2'            '0123-'   \
+                        'IBM Cloud'             '012--'   \
+                        'Google GCP'            '0123-'   \
+                        'Alibaba Cloud ECS'     '012--'   \
+                        'Huawei Cloud'          '012--'   \
+                        ''                      '01234'   \          #all others, e.g. TDI, Bare-Metal
                         )
 
     local -r sapnote='#2235581'

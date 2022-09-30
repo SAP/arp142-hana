@@ -24,7 +24,8 @@ function check_0000_os_support_sles {
                         '15.0' '31 Dec 2019'    '31 Dec 2022'   '31 Dec 2022'   \
                         '15.1' '31 Jan 2021'    '31 Jan 2024'   '31 Jan 2024'   \
                         '15.2' '31 Dec 2021'    '31 Dec 2024'   '31 Dec 2024'   \
-                        '15.3' '31 Dec 2022'    '31 Dec 2024'   '31 Dec 2024'   \
+                        '15.3' '31 Dec 2022'    '31 Dec 2025'   '31 Dec 2025'   \
+                        '15.4' '31 Dec 2023'    '31 Dec 2025'   '31 Dec 2025'   \
                         )
     #ESPOS/LTSS end for last SP not known - take from above - to be adjusted
 
@@ -56,7 +57,7 @@ function check_0000_os_support_sles {
 
         12.[4-5]*)  _sles_all+=("${_sles_12[@]}") ;;
 
-        15.[0-3] )  _sles_all+=("${_sles_15[@]}") ;;
+        15.[0-4] )  _sles_all+=("${_sles_15[@]}") ;;
 
         *)
             logCheckError "SLES version is not supported by SAP HANA (SAP Note #2235581) (is: ${OS_VERSION})"
