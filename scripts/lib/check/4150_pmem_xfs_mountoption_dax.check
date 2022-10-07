@@ -23,7 +23,7 @@ function check_4150_pmem_xfs_mountoption_dax {
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-         #/dev/pmem1 /hana/pmem/XXX/pmem1 xfs rw,dax,noquota 0 0
+        #/dev/pmem1 /hana/pmem/XXX/pmem1 xfs rw,dax,noquota 0 0
         while read -r pmem_mount ; do
 
             logTrace "<${FUNCNAME[0]}> # <${pmem_mount}>"

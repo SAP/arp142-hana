@@ -16,7 +16,7 @@ function check_2305_vm_memory_failure_kill {
 
     local -ir _reco_mfek=1
 
-   # PRECONDITIONS
+    # PRECONDITIONS
     if [[ ! -f  '/proc/sys/vm/memory_failure_early_kill' ]]; then
 
         logCheckSkipped "Parameter vm.memory_failure_early_kill not readable (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
