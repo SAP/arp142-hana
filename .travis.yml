@@ -1,4 +1,4 @@
-dist: focal
+dist: xenial
 language: shell
 cache: pip
 
@@ -28,14 +28,14 @@ jobs:
           before_deploy: skip
           deploy: skip
 
-        - dist: xenial    # Support Ubuntu Xenial 16.04 through at least Apr 2021
-          name: "xenial - Ubuntu 16.04 - Kernel 4.15 - bash 4.3"
+        - dist: bionic    # Support Ubuntu Bionic 18.04 through at least Apr 2023
+          name: "bionix - Ubuntu 18.04 - Kernel 4.15 - bash 4.4"
           after_success: skip
           before_deploy: skip
           deploy: skip
 
-        - dist: bionic    # Support Ubuntu Bionic 18.04 through at least Apr 2023
-          name: "bionix - Ubuntu 18.04 - Kernel 4.15 - bash 4.4"
+        - dist: xenial    # Support Ubuntu Xenial 16.04 through at least Apr 2021
+          name: "xenial - Ubuntu 16.04 - Kernel 4.15 - bash 4.3"
           after_success: skip
           before_deploy: skip
           deploy: skip
