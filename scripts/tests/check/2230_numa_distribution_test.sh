@@ -5,7 +5,7 @@ PROGRAM_DIR="$( cd "${BASH_SOURCE[0]%/*}" && pwd )"
 readonly PROGRAM_DIR
 
 #fake PREREQUISITE functions
-LIB_FUNC_IS_IBMPOWER() { return 0 ; }
+LIB_FUNC_IS_BARE_METAL() { return 1 ; }
 
 # still to mock for tests
 # grep /sys/devices/system/node/node*/meminfo
@@ -36,7 +36,7 @@ test_1numa_with_node_ok() {
     cpu_nodes+=('/sys/devices/system/node/node6/cpulist:0-39')
 
     #act
-    check_2230_numa_distribution_ibmpower
+    check_2230_numa_distribution
 
     #assert
     assertEquals "CheckOk? RC" '0' "$?"
@@ -54,7 +54,7 @@ test_2numa_with_numa0_empty_ignore() {
     cpu_nodes+=('/sys/devices/system/node/node6/cpulist:0-39')
 
     #act
-    check_2230_numa_distribution_ibmpower
+    check_2230_numa_distribution
 
     #assert
     assertEquals "CheckOk? RC" '0' "$?"
@@ -71,7 +71,7 @@ test_numa_different_number() {
     cpu_nodes+=('/sys/devices/system/node/node0/cpulist:')
 
     #act
-    check_2230_numa_distribution_ibmpower
+    check_2230_numa_distribution
 
     #assert
     assertEquals "CheckWarning? RC" '1' "$?"
@@ -89,7 +89,7 @@ test_2numa_with_numa_nodes_not_matching() {
     cpu_nodes+=('/sys/devices/system/node/node0/cpulist:')
 
     #act
-    check_2230_numa_distribution_ibmpower
+    check_2230_numa_distribution
 
     #assert
     assertEquals "CheckWarning? RC" '1' "$?"
@@ -107,7 +107,7 @@ test_2numa_with_both_nodes_ok() {
     cpu_nodes+=('/sys/devices/system/node/node6/cpulist:0-39')
 
     #act
-    check_2230_numa_distribution_ibmpower
+    check_2230_numa_distribution
 
     #assert
     assertEquals "CheckOk? RC" '0' "$?"
@@ -125,7 +125,7 @@ test_2numa_with_numa0_memory_but_no_cpu() {
     cpu_nodes+=('/sys/devices/system/node/node6/cpulist:0-39')
 
     #act
-    check_2230_numa_distribution_ibmpower
+    check_2230_numa_distribution
 
     #assert
     assertEquals "CheckWarning? RC" '1' "$?"
@@ -144,7 +144,7 @@ test_2numa_with_numa0_cpu_but_no_memory() {
     cpu_nodes+=('/sys/devices/system/node/node6/cpulist:0-39')
 
     #act
-    check_2230_numa_distribution_ibmpower
+    check_2230_numa_distribution
 
     #assert
     assertEquals "CheckError? RC" '2' "$?"
@@ -162,7 +162,7 @@ test_2numa_with_numa0_multiple_cpu_ranges_simple() {
     cpu_nodes+=('/sys/devices/system/node/node6/cpulist:0-39')
 
     #act
-    check_2230_numa_distribution_ibmpower
+    check_2230_numa_distribution
 
     #assert
     assertEquals "CheckOk? RC" '0' "$?"
@@ -180,7 +180,7 @@ test_2numa_with_numa0_multiple_cpu_ranges_complicated() {
     cpu_nodes+=('/sys/devices/system/node/node6/cpulist:0-31')
 
     #act
-    check_2230_numa_distribution_ibmpower
+    check_2230_numa_distribution
 
     #assert
     assertEquals "CheckOk? RC" '0' "$?"
@@ -198,7 +198,7 @@ test_2numa_with_numa0_ratio_lt_margin() {
     cpu_nodes+=('/sys/devices/system/node/node6/cpulist:0-49')
 
     #act
-    check_2230_numa_distribution_ibmpower
+    check_2230_numa_distribution
 
     #assert
     assertEquals "CheckError? RC" '2' "$?"
@@ -216,7 +216,7 @@ test_2numa_with_numa0_ratio_gt_margin() {
     cpu_nodes+=('/sys/devices/system/node/node6/cpulist:0-19')
 
     #act
-    check_2230_numa_distribution_ibmpower
+    check_2230_numa_distribution
 
     #assert
     assertEquals "CheckError? RC" '2' "$?"
@@ -234,7 +234,7 @@ test_2numa_with_both_ratio_out_margin() {
     cpu_nodes+=('/sys/devices/system/node/node6/cpulist:0-39')
 
     #act
-    check_2230_numa_distribution_ibmpower
+    check_2230_numa_distribution
 
     #assert
     assertEquals "CheckError? RC" '2' "$?"
@@ -246,8 +246,8 @@ test_2numa_with_both_ratio_out_margin() {
     #shellcheck source=../saphana-logger-stubs
     source "${PROGRAM_DIR}/../saphana-logger-stubs"
 
-    #shellcheck source=../../lib/check/2230_numa_distribution_ibmpower.check
-    source "${PROGRAM_DIR}/../../lib/check/2230_numa_distribution_ibmpower.check"
+    #shellcheck source=../../lib/check/2230_numa_distribution.check
+    source "${PROGRAM_DIR}/../../lib/check/2230_numa_distribution.check"
 
  }
 

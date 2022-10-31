@@ -1,25 +1,22 @@
 #!/usr/bin/env bash
 
-function check_2230_numa_distribution_ibmpower {
+function check_2230_numa_distribution {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#2923962'
+    local -r sapnote='#2470289'
     # MODIFICATION SECTION<<
 
+    #2470289 - FAQ: SAP HANA Non-Uniform Memory Access (NUMA)
     #2923962 - Check SAP HANA NUMA Layout on IBM Power Systems Virtual Servers
 
-    # Detailed IBM Documentation can be found on IBM Techdocs in the
-    # "SAP HANA on IBM Power Systems and IBM System Storage - Guides"
-    # (http://www.ibm.com/support/techdocs/atsmastr.nsf/WebIndex/WP102502).
-
     # PRECONDITIONS
-    if ! LIB_FUNC_IS_IBMPOWER ; then
+    if LIB_FUNC_IS_BARE_METAL ; then
 
-        logCheckSkipped 'Not running on IBM Power. Skipping' "<${FUNCNAME[0]}>"
+        logCheckSkipped 'Not running virtualized. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
     else
