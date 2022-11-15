@@ -19,12 +19,6 @@ function check_1375_cpu_scheduler_parameter_rhel {
     )
     # MODIFICATION SECTION<<
 
-    local _curr_value
-    local _reco_value
-    local -i _rc_expected
-    local -i _rc_current
-    local _parameter
-    local _parameter_normalized
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_RHEL ; then
@@ -48,26 +42,32 @@ function check_1375_cpu_scheduler_parameter_rhel {
     #CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
+        local _curr_value
+        local _reco_value
+        local -i _rc_expected
+        local -i _rc_current
+        local _parameter
+        local _parameter_normalized
+
         # i+=3 --> every 3rd item
         for ((i=0; i < ${#_sched_parameters[@]}; i+=3)); do
 
-            logTrace "<${FUNCNAME[0]}> # ${_sched_parameters[$i]}>"
-
             _parameter=${_sched_parameters[$i]}
             _parameter_normalized=${_parameter//./\/}
-            logTrace "<${FUNCNAME[0]}> # ${_parameter_normalized}>"
-
-            _reco_value=${_sched_parameters[$i+1]}
-            _rc_expected=${_sched_parameters[$i+2]}
+            logTrace "<${FUNCNAME[0]}> # '${_parameter}' normalized to '${_parameter_normalized}'>"
 
             if [[ ! -f "/proc/sys/${_parameter_normalized}" ]]; then
 
                 logCheckInfo "Kernel process scheduler parameter ${_parameter} not available"
+                continue
 
             else
                 _curr_value=$(</proc/sys/"${_parameter_normalized}")
 
             fi
+
+            _reco_value=${_sched_parameters[$i+1]}
+            _rc_expected=${_sched_parameters[$i+2]}
 
             LIB_COMPARE_TOOBIG_NUMBERS "${_curr_value}" "${_reco_value}"
             _rc_current=$?
