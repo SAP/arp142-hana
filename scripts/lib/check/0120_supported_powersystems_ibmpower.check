@@ -9,6 +9,23 @@ function check_0120_supported_powersystems_ibmpower {
     # MODIFICATION SECTION>>
     # array             'System ID' 'System'
     local -ar _power_systems=(\
+                        #POWER10
+                        '9080-HEX'  'E1080' \
+                        '9043-MRX'  'E1050' \
+                        '9105-42A'  'S1024' \
+                        '9786-42H'  'L1024' \
+                        '9105-22A'  'S1022' \
+                        '9786-22H'  'L1022' \
+                        '9105-22B'  'S1022s' \
+                        #POWER9
+                        '9009-22A'  'S922'  \
+                        '9223-22H'  'H922'  \
+                        '9009-42A'  'S924'  \
+                        '9223-42H'  'H924'  \
+                        '9008-22L'  'L922'  \
+                        '9040-MR9'  'E950'  \
+                        '9080-M9S'  'E980'  \
+                        #POWER8
                         '8284-22A'  'S822'  \
                         '8247-22L'  'S822L' \
                         '8286-42A'  'S824'  \
@@ -19,14 +36,6 @@ function check_0120_supported_powersystems_ibmpower {
                         '9080-MME'  'E870C' \
                         '9119-MHE'  'E880'  \
                         '9080-MHE'  'E880C' \
-                        '9009-22A'  'S922'  \
-                        '9223-22H'  'H922'  \
-                        '9009-42A'  'S924'  \
-                        '9223-42H'  'H924'  \
-                        '9008-22L'  'L922'  \
-                        '9040-MR9'  'E950'  \
-                        '9080-M9S'  'E980'  \
-                        '9080-HEX'  'E1080' \
                         )
 
     local -r sapnote='#2188482'
