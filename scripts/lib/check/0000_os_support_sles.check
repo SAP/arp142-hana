@@ -111,7 +111,7 @@ function check_0000_os_support_sles {
             local ft_end_support
             local ft_end_ltss_date
 
-            ft_today=$(date +"%Y%m%d")                                  # = 20200331
+            printf -v ft_today '%(%Y%m%d)T' '-1'                        # = 20200331
             ft_end_ltss_date=$(date -d "${_end_ltss_date}" +"%Y%m%d")   # = 20201131
             ft_end_support=$(date -d "${_end_support_date}" +"%Y%m%d")  # = 20191101
 
