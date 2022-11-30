@@ -10,7 +10,7 @@ function check_0810_uuidd_service {
     local -r sapnote='#1391070' #Linux UUID solutions
     # MODIFICATION SECTION<<
 
-    local cmdline
+    local cmdline='systemctl'
 
     # PRECONDITIONS
     if [[ ! -x '/usr/sbin/uuidd' ]]; then
@@ -18,23 +18,9 @@ function check_0810_uuidd_service {
         logCheckError "Userspace daemon uuidd not installed (SAP Note ${sapnote:-})"
         _retval=2
 
-    elif LIB_FUNC_IS_SLES ; then
-
-        case "${OS_VERSION}" in
-
-            11.*)   cmdline='systemd' ;;
-            *)      cmdline='systemctl' ;;
-
-        esac
-
     elif LIB_FUNC_IS_RHEL ; then
 
-        case "${OS_VERSION}" in
-
-            6.*)    cmdline='systemd' ;;
-            *)      cmdline='systemctl' ;;
-
-        esac
+        [[ "${OS_VERSION}" == 6.* ]] && cmdline='systemd'
 
     else
 

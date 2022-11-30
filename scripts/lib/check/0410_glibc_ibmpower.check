@@ -7,7 +7,6 @@ function check_0410_glibc_ibmpower {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -ar sles114=('2.11.3-17.95.2' '#2263929')
     local -ar sles123=('2.22-62.16.2' '#2686011')
     local -ar sles150=('2.26-13.24.1' '#2997843')
     local -ar rhel76=('2.17-196.el7' '#1943937')
@@ -35,8 +34,6 @@ function check_0410_glibc_ibmpower {
 
         if LIB_FUNC_IS_SLES; then
             case "${OS_VERSION}" in
-
-                11.4*)      _goodversion="${sles114[0]}" ; sapnote="${sles114[1]}" ;;
 
                 12.[3-5]*)  _goodversion="${sles123[0]}" ; sapnote="${sles123[1]}" ;;
 

@@ -32,11 +32,6 @@ function check_0440_sapconf_sles {
 
         case "${OS_VERSION}" in
 
-                11.* )
-                        logCheckSkipped 'Check not applicable for SLES release' "(is: ${OS_NAME} ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
-                        _retval=3
-                        ;;
-
                 12.[3-5] )  : "${sles12x}" ;;
                 15.0 )      : "${sles150}" ;;
                 15.* )      : "${sles15x}" ;;

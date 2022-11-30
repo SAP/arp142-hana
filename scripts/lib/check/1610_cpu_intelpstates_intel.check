@@ -54,8 +54,8 @@ function check_1610_cpu_intelpstates_intel {
 
         case "${OS_VERSION}" in
 
-            11.* | 12.*) sapnote="${sapnote_12}" ;;
-            15.*)        sapnote="${sapnote_15}" ;;
+            12.* )  sapnote="${sapnote_12}" ;;
+            15.* )  sapnote="${sapnote_15}" ;;
             *)
                     logCheckWarning 'CHECK does NOT support SLES release' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
                     _retval=1

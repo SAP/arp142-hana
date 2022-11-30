@@ -22,8 +22,6 @@ function check_0350_timesync {
 
         sapnote="${sapnote_sles}"
 
-        [[ "${OS_VERSION}" == '11.'* ]] && cmdline='systemd'
-
     elif LIB_FUNC_IS_RHEL ; then
 
         sapnote="${sapnote_rhel}"

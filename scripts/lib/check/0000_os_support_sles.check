@@ -47,11 +47,7 @@ function check_0000_os_support_sles {
 
         case "${OS_VERSION}" in
 
-        11.* )
-                logCheckError "SLES 11 has reached its end of lifetime by SUSE and must be upgraded (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
-                _retval=2 ;;
-
-        12.[0-3] )
+        11.* | 12.[0-3] )
                 logCheckError "SLES version has reached its end of lifetime by SUSE and must be upgraded (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
                 _retval=2 ;;
 

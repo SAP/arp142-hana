@@ -11,7 +11,6 @@ function check_0400_glibc_x64 {
     #https://access.redhat.com/downloads/content/glibc/2.34-16.el9/x86_64/fd431d51/package
 
     # MODIFICATION SECTION>>
-    local -ar sles114=( '2.11.3-17.95.2' '#2240716' )
     local -ar sles123=( '2.22-113.4' '#2205917' )
     local -ar sles124=( '2.22-100.27.3' '#2205917' )
     local -ar sles150=( '2.26-13.36.1' '#2684254' )
@@ -39,8 +38,6 @@ function check_0400_glibc_x64 {
     elif LIB_FUNC_IS_SLES ; then
 
         case "${OS_VERSION}" in
-
-            11.*)           _goodversion="${sles114[0]}" ; sapnote="${sles114[1]}" ;;
 
             12.3)           _goodversion="${sles123[0]}" ; sapnote="${sles123[1]}" ;;
 

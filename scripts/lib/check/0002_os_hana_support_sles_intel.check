@@ -57,12 +57,9 @@ function check_0002_os_hana_support_sles_intel {
 
         case "${OS_VERSION}" in
 
-        11.* )  logCheckError "SLES 11 has reached its end of lifetime by SUSE and must be upgraded (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
-                _retval=2 ;;
+        12.[4-5] )  _sles_matrix+=("${_sles_12[@]}") ;;
 
-        12.* )  _sles_matrix+=("${_sles_12[@]}") ;;
-
-        15.* )  _sles_matrix+=("${_sles_15[@]}") ;;
+        15.[1-4] )  _sles_matrix+=("${_sles_15[@]}") ;;
 
         *)
             logCheckError "SLES version is NOT supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
