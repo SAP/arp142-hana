@@ -10,11 +10,10 @@ function check_2150_transactional_memory_ibmpower {
     local -r sapnote='#2774105'     # Kernel Panic With Hardware Transactional Memory on Linux on Power
 
     local -r sles124power='4.12.14-95.13.1'
-    local -r sles150power='4.12.14-150.14.1'
     # MODIFICATION SECTION<<
 
     local kernel_with_htm_support
-    local htm_off_required
+    local htm_off_required=false
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_IBMPOWER ; then
@@ -24,25 +23,7 @@ function check_2150_transactional_memory_ibmpower {
 
     elif LIB_FUNC_IS_SLES; then
 
-        case "${OS_VERSION}" in
-
-        11.*)
-            logCheckSkipped 'SLESonPower version does not support HTM' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
-            _retval=3 ;;
-
-        12.[1-3]*)  htm_off_required=true ;;
-
-        12.4*)      kernel_with_htm_support="${sles124power}" ;;
-
-        15.0*)      kernel_with_htm_support="${sles150power}" ;;
-
-        *)          htm_off_required=false ;;
-
-        esac
-
-    elif LIB_FUNC_IS_RHEL; then
-
-        htm_off_required=false
+        [[ "${OS_VERSION}" == 12.4* ]] && kernel_with_htm_support="${sles124power}"
 
     fi
 
