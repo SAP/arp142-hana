@@ -41,8 +41,6 @@ function check_0020_os_kernel_rhel {
     #2292690 - SAP HANA DB: Recommended OS settings for RHEL 7
     #2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
 
-    #2235581- SAP HANA: Supported Operating Systems
-    #936887 - End of maintenance for Linux distributions
     #1880960 - Lenovo Systems Solution for SAP HANA Platform Edition FW/OS/Driver Maintenance
     #2533550 - Lenovo Systems Solution for SAP HANA Platform Edition FW/OS/Driver Maintenance (SR950)
     #2897742 - Lenovo Systems Solution for SAP HANA Platform Edition FW/OS/Driver Maintenance (SR650)

@@ -21,7 +21,7 @@ systemctl() {
     return "${isused_rc}"
 }
 
-OS_VERSION='15.*'                   #doesn't matter
+OS_VERSION='15.4'
 LIB_FUNC_NORMALIZE_RPM_RETURN=''    #doesn't matter
 declare -i compare_version_rc
 declare -i rpm_rc

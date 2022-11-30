@@ -11,7 +11,6 @@ function check_0010_os_kernel_sles {
     # MODIFICATION SECTION>>
     #       array       'rel' 'goodnormalized_kernel'   'SAP Note'
     local -ar _sles_intel=(\
-                        '12.3' '4.4.180-94.164.3'       '#2205917'  \
                         '12.4' '4.12.14-95.96.1'        '#2205917'  \
                         '12.5' '4.12.14-122.116.1'      '#2205917'  \
 
@@ -23,7 +22,6 @@ function check_0010_os_kernel_sles {
                         )
 
     local -ar _sles_ibmpower=(\
-                        '12.3' '4.4.180-94.164.3'       '#2205917'  \
                         '12.4' '4.12.14-95.96.1'        '#2205917'  \
                         '12.5' '4.12.14-122.116.1'      '#2205917'  \
 

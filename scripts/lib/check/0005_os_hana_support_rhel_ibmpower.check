@@ -23,7 +23,6 @@ function check_0005_os_hana_support_rhel_ibmpower {
 
     #2235581 - SAP HANA: Supported Operating Systems
     #2055470 - HANA on POWER Planning and Installation Specifics - Central Note
-    #936887  - End of maintenance for Linux distributions
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_IBMPOWER ; then
