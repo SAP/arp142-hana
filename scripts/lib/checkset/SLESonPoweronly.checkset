@@ -2,7 +2,6 @@
 0004_os_hana_support_sles_ibmpower
 0010_os_kernel_sles
 0011_os_kernel_knownissue_sles
-0012_os_kernel_bigmem_sles_ibmpower
 0050_os_release_kernel_sles
 0106_supported_instances_ibmcloud
 0120_supported_powersystems_ibmpower
