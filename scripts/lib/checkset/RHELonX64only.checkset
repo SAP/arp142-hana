@@ -25,7 +25,7 @@
 1375_cpu_scheduler_parameter_rhel
 1400_cpu_idle_driver_intel
 1410_cpu_idle_intel_cstates_intel
-1411_cpu_idle_acpi_cstates_intel
+1411_cpu_idle_acpi_cstates_rhel_intel
 1500_cpu_perfbias_intel
 1600_cpu_pstates_intel
 1610_cpu_intelpstates_intel
