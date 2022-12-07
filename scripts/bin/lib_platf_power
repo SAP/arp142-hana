@@ -318,7 +318,7 @@ function __get_platform_power_cpu_details {
 
     while read -r line ; do
 
-        logTrace "<${FUNCNAME[0]}> # ${line}>"
+        logTrace "<${FUNCNAME[0]}> # lscpu:${line}>"
 
         case ${line} in
 
@@ -383,7 +383,8 @@ function __get_platform_power_cpu_details {
                             fi
         ;;
 
-        "Hypervisor vendor:"*) break ;;
+        'NUMA node0'* )    break ;;
+
         #Virtualization information will be gathered on more reliable way
 
         esac
