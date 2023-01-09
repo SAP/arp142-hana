@@ -6,6 +6,9 @@ function check_1600_cpu_pstates_intel {
 
     local -i _retval=99
 
+    # https://www.kernel.org/doc/html/v4.12/admin-guide/pm/intel_pstate.html
+    # https://www.kernel.org/doc/html/latest/admin-guide/pm/intel_pstate.html
+
     # MODIFICATION SECTION>>
     local -r sapnote='n/a'
 
@@ -29,7 +32,7 @@ function check_1600_cpu_pstates_intel {
             15.* | 12.* | 7.* | 8.* ) #intel_pstate only for IvyBridge onwards
                                 #INTEL_FAM6_IVYBRIDGE   0x3A --> DEC 58
                                 if [[ ${LIB_PLATF_CPU_MODELID} -ge 58 ]]; then
-                                    logCheckInfo "Running on intel_pstate supported Intel CPU (>=IvyBridge - ${LIB_PLATF_CPU_MODELID})" "<${FUNCNAME[0]}>"
+                                    logCheckInfo "Running on intel_pstate supported Intel CPU (>=IvyBridge - ModelID: ${LIB_PLATF_CPU_MODELID})"
                                 else
                                     logCheckSkipped 'Not running on intel_pstate supported Intel CPU (>=IvyBridge). Skipping' "<${FUNCNAME[0]}>"
                                     _retval=3
@@ -48,34 +51,43 @@ function check_1600_cpu_pstates_intel {
     #CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-        #unique value within array
-        mapfile -t cpufreq_drivers < <(sort -u /sys/devices/system/cpu/cpu*/cpufreq/scaling_driver 2>/dev/null)
+        local sd_path='/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver'
 
-        case ${#cpufreq_drivers[@]} in      #array length
+        local scaling_driver
+        [[ -f ${sd_path} ]] && scaling_driver=$(<${sd_path})
 
-            0)
-                        logCheckWarning "CPU scaling driver not set (SAP Note  ${sapnote:-}) (is: -, should be: intel_pstate)"
+        case ${scaling_driver:-} in
+
+            'intel_pstate')
+                        local hwp_enabled
+
+                        if grep -qse '^flags.*hwp' -m1 /proc/cpuinfo ; then
+                            logCheckInfo 'CPU hardware-managed P-states (HWP) available'
+                            hwp_enabled='with HWP'
+                        else
+                            #typically old behavior - kernel <5.7 - RHEL8.4
+                            logCheckInfo 'CPU hardware-managed P-states (HWP) NOT available or disabled by <intel_pstate=no_hwp>'
+                            hwp_enabled='without HWP'
+                        fi
+
+                        logCheckOk "CPU scaling driver set as recommended (SAP Note ${sapnote:-}) (is: intel_pstate - active mode <${hwp_enabled}>)"
+                        _retval=0
+                ;;
+
+            'intel_cpufreq')
+                        #since kernel 5.7 - RHEL8.5
+                        logCheckInfo 'CPU hardware-managed P-states (HWP) NOT available or disabled by <intel_pstate=no_hwp>'
+                        logCheckWarning "CPU scaling driver NOT set as recommended (SAP Note ${sapnote:-}) (is: intel_pstate - passive mode, should be: active mode)"
                         _retval=1
                 ;;
 
-            1)
-                        local -r current_driver="${cpufreq_drivers[0]}"
-
-                        if [[ "${current_driver}" != 'intel_pstate' ]];then
-
-                            logCheckWarning "CPU scaling driver NOT set as recommended (SAP Note ${sapnote:-}) (is: ${current_driver}, should be: intel_pstate)"
-                            _retval=1
-
-                        else
-
-                            logCheckOk "CPU scaling driver set as recommended (SAP Note ${sapnote:-}) (is: intel_pstate)"
-
-                        fi
-
+            '')
+                        logCheckWarning "CPU scaling driver not loaded (SAP Note  ${sapnote:-}) (is: -, should be: intel_pstate)"
+                        _retval=1
                 ;;
 
-            *)      logCheckError "CPU scaling driver NOT set as recommended (SAP Note ${sapnote:-}) (is: multiple, should be: intel_pstate)"
-                    _retval=2
+            *)          logCheckWarning "CPU scaling driver NOT set as recommended (SAP Note ${sapnote:-}) (is: ${scaling_driver}, should be: intel_pstate)"
+                        _retval=1
                 ;;
         esac
 
