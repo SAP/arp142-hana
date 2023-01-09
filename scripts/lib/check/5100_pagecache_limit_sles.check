@@ -39,7 +39,7 @@ function check_5100_pagecache_limit_sles {
         local -i reco_pgcache_limit
         reco_pgcache_limit=$(( LIB_PLATF_RAM_MiB_AVAILABLE > 262144 ? calc_pg_limit : 4096 ))
         local -i pgcache_limit_mb
-        pgcache_limit_mb=$(<${path_to_pgcache_limit_mb})
+        pgcache_limit_mb=$(<"${path_to_pgcache_limit_mb}")
 
         if [[ ${pgcache_limit_mb} -eq 0 ]]; then
 
