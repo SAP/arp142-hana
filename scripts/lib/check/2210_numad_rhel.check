@@ -10,6 +10,7 @@ function check_2210_numad_rhel {
     local -r sapnote_rhel610='#2694292' # SAP HANA DB: Recommended OS settings for RHEL 6.10
     local -r sapnote_rhel7='#2292690'   # SAP HANA DB: Recommended OS settings for RHEL 7
     local -r sapnote_rhel8='#2777782'   # SAP HANA DB: Recommended OS Settings for RHEL 8
+    local -r sapnote_rhel9='#3108302'   # SAP HANA DB: Recommended OS Settings for RHEL 9
     # MODIFICATION SECTION<<
 
     # PRECONDITION
@@ -28,6 +29,7 @@ function check_2210_numad_rhel {
             6.*)        sapnote="${sapnote_rhel610}" ; cmdline='systemd' ;;
             7.*)        sapnote="${sapnote_rhel7}" ; cmdline='systemctl' ;;
             8.*)        sapnote="${sapnote_rhel8}" ; cmdline='systemctl' ;;
+            9.*)        sapnote="${sapnote_rhel9}" ; cmdline='systemctl' ;;
             *)
                     logCheckWarning 'CHECK does NOT support RHEL release' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
                     _retval=1

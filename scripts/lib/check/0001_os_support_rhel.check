@@ -32,6 +32,10 @@ function check_0001_os_support_rhel {
                         '8.6' '30 Nov 2022'    '31 May 2026'    \
                         )
 
+    local -ar _rhel_9=(\
+                        '9.0' '30 Nov 2022'    '31 May 2026'    \
+                        )
+
     local -r sapnote='#936887'
     # MODIFICATION SECTION<<
 
@@ -59,6 +63,8 @@ function check_0001_os_support_rhel {
         7.[6-7] | 7.9 )  _rhel_all+=("${_rhel_7[@]}") ;;
 
         8.[1-2] | 8.4 | 8.6 )  _rhel_all+=("${_rhel_8[@]}") ;;
+
+        9.0     )   _rhel_all+=("${_rhel_9[@]}") ;;
 
         *)
             logCheckError "RHEL version is not supported by SAP HANA (SAP Note #2235581) (is: ${OS_VERSION})"

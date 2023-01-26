@@ -22,6 +22,8 @@ function check_0020_os_kernel_rhel {
                         '8.2'   '4.18.0-193.85.1.el8'   '#3057472,2533550'  \
                         '8.4'   '4.18.0-305.51.1.el8'   '#2777782,2533550'  \
                         '8.6'   '4.18.0-372.14.1.el8'   '#2777782,2533550'  \
+
+                        '9.0'   '5.14.0-70.22.1.el9'    '#3108302'  \
                         )
 
     local -ar _rhel_ibmpower=(\
@@ -40,6 +42,7 @@ function check_0020_os_kernel_rhel {
     #2694292 - SAP HANA DB: Recommended OS settings for RHEL 6.10
     #2292690 - SAP HANA DB: Recommended OS settings for RHEL 7
     #2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
+    #3108302 - SAP HANA DB: Recommended OS Settings for RHEL 9
 
     #1880960 - Lenovo Systems Solution for SAP HANA Platform Edition FW/OS/Driver Maintenance
     #2533550 - Lenovo Systems Solution for SAP HANA Platform Edition FW/OS/Driver Maintenance (SR950)

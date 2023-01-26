@@ -7,7 +7,7 @@ function check_0450_tunedprofiles-saphana_rhel {
     local -i _retval=99
 
     # <1y old package or concrete newer version listed in any note
-    # https://access.redhat.com/downloads/content/tuned-profiles-sap-hana/2.10.0-6.el7_6.5/noarch/fd431d51/package-changelog
+    # https://access.redhat.com/downloads/content/tuned-profiles-sap-hana/noarch/package-latest
 
     # MODIFICATION SECTION>>
     local -ar rhel76=( '2.10.0-6.el7_6.5' '#2292690' )
@@ -17,10 +17,12 @@ function check_0450_tunedprofiles-saphana_rhel {
     local -ar rhel82=( '2.13.0-6.el8_2.2' '#2777782' )
     local -ar rhel84=( '2.15.0-2.el8_4.1' '#2777782' )
     local -ar rhel86=( '2.18.0-2.el8_6.1' '#2777782' )
+    local -ar rhel90=( '2.18.0-1.el9' '#3108302' )
     # MODIFICATION SECTION<<
 
     # 2292690 - SAP HANA DB: Recommended OS settings for RHEL 7
     # 2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
+    # 3108302 - SAP HANA DB: Recommended OS Settings for RHEL 9
     # 1880960 - Lenovo Systems Solution for SAP HANA Platform Edition FW/OS/Driver Maintenance
 
     local _goodversion
@@ -48,6 +50,8 @@ function check_0450_tunedprofiles-saphana_rhel {
             8.2 )  _goodversion="${rhel82[0]}" ; sapnote="${rhel82[1]}" ;;
             8.4 )  _goodversion="${rhel84[0]}" ; sapnote="${rhel84[1]}" ;;
             8.6 )  _goodversion="${rhel86[0]}" ; sapnote="${rhel86[1]}" ;;
+
+            9.0 )  _goodversion="${rhel90[0]}" ; sapnote="${rhel90[1]}" ;;
 
             *)
                     logCheckWarning 'CHECK does not support RHEL release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
