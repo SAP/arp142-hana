@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+
+function check_9100_monitor_agent_omsagent_azure {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # https://github.com/microsoft/OMS-Agent-for-Linux
+    # https://learn.microsoft.com/en-us/azure/azure-monitor/agents/azure-monitor-agent-migration
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2015553'
+    local -r _goodversion='1.14.23'
+    # MODIFICATION SECTION<<
+
+    #2015553 - SAP on Microsoft Azure: Support prerequisites
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_CLOUD_MICROSOFT; then
+
+        logCheckSkipped 'Not running on Microsoft Azure. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif ! rpm -q --quiet omsagent ; then
+
+        logCheckSkipped 'Azure Log Analytics (OMS) agent not installed. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local normalized_goodversion
+        local normalized_fullversion
+
+        local _fullversion
+        _fullversion=$(rpm -q --queryformat "%{VERSION}.%{RELEASE}" omsagent)
+
+        #normalize good version
+        LIB_FUNC_NORMALIZE_RPM "${_goodversion}"
+        normalized_goodversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+        #normalize full version
+        LIB_FUNC_NORMALIZE_RPM "${_fullversion}"
+        normalized_fullversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+        logCheckWarning 'Azure Log Analytics (OMS) agent is known for stability and performance issues in HANA environments.'
+        logCheckWarning 'OMS is replaced by Azure Monitor Agent (AMA) - https://learn.microsoft.com/en-us/azure/azure-monitor/agents/agents-overview'
+
+        # returns 0 if equal, 1 if first is higher, 2 if second is higher
+        LIB_FUNC_COMPARE_VERSIONS "${normalized_fullversion}" "${normalized_goodversion}"
+
+        if [[ $? -ne 2 ]]; then
+            logCheckWarning 'Azure Log Analytics (OMS) agent version seems to be at least the latest' "(SAP Note ${sapnote:-}) (is: ${_fullversion})"
+            _retval=1
+        else
+            logCheckError 'Azure Log Analytics (OMS) agent must be updated or better migrated to AMA' "(SAP Note ${sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
+            _retval=2
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
