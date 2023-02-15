@@ -22,10 +22,6 @@ function check_0810_uuidd_service {
 
         [[ "${OS_VERSION}" == 6.* ]] && cmdline='systemd'
 
-    else
-
-        logCheckError "Linux distribution NOT supported (SAP Note #2235581) (is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
-        _retval=2
     fi
 
     # CHECK
