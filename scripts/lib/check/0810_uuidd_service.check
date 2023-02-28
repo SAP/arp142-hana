@@ -29,15 +29,9 @@ function check_0810_uuidd_service {
 
         local cmdline_service
 
-        if [[ ${cmdline} == 'systemctl' ]]; then
+        cmdline_service='systemctl is-active "uuidd.socket" --quiet'
+        [[ ${cmdline} == 'systemd' ]] && cmdline_service='service uuidd status &>/dev/null'
 
-            cmdline_service='systemctl is-active "uuidd.socket" --quiet'
-
-        elif [[ ${cmdline} == 'systemd' ]]; then
-
-            cmdline_service='service uuidd status &>/dev/null'
-
-        fi
 
         if eval "${cmdline_service}"; then
 
