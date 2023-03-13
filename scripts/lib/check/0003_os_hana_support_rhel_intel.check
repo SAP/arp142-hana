@@ -28,7 +28,7 @@ function check_0003_os_hana_support_rhel_intel {
     local -ar _rhel_7=(\
                         'Microsoft Azure'       '------67-9'   \
                         'Amazon EC2'            '------67-9'   \
-                        'IBM Cloud'             '------6---'   \
+                        'IBM Cloud'             '------6--9'   \
                         'Google GCP'            '------67-9'   \
                         'Alibaba Cloud ECS'     '-------7--'   \
                         'Huawei Cloud'          '------67--'   \
@@ -39,7 +39,7 @@ function check_0003_os_hana_support_rhel_intel {
     local -ar _rhel_8=(\
                         'Microsoft Azure'       '-12-4-6'   \
                         'Amazon EC2'            '-12-4-6'   \
-                        'IBM Cloud'             '-12-4--'   \
+                        'IBM Cloud'             '-12-4-6'   \
                         'Google GCP'            '-12-4-6'   \
                         'Alibaba Cloud ECS'     '-1-----'   \
                         'Huawei Cloud'          '-1-----'   \
