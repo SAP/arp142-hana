@@ -1,0 +1,154 @@
+#!/usr/bin/env bash
+
+function check_1230_cpu_distribution_virt {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2470289'
+    # MODIFICATION SECTION<<
+
+    #2470289 - FAQ: SAP HANA Non-Uniform Memory Access (NUMA)
+    #2055470 - HANA on POWER Planning and Installation Specifics - Central Note
+
+    # PRECONDITIONS
+    if LIB_FUNC_IS_BARE_METAL ; then
+
+        logCheckSkipped 'Not running virtualized. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+
+        local -a numa_lcpu_lists
+
+        #<(grep . -Hr /sys/devices/system/node/node*/cpulist)
+        ##/sys/devices/system/node/node0/cpulist:40-59,60-79
+        mapfile -t numa_lcpu_lists < <(grep -H "^.*$" -r /sys/devices/system/node/node*/cpulist)
+
+    fi
+
+    #CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local -i curr_node
+        local -i curr_node_cpu
+
+        local -i total_cpus=0
+        local -a nodes=()
+        local -a node_cpus=()
+
+        local rx_cpu='node([0-9]+).*:(.*)$'         #/sys/devices/system/node/node0/cpulist:40-59,60-79
+        local rx_cpu_range='([0-9]+)\-([0-9]+)'     #40-59,60-79
+
+        for single_numa in "${numa_lcpu_lists[@]}"; do
+
+            if [[ ${single_numa} =~ ${rx_cpu} ]]; then
+
+                curr_node_cpu=0 #reset
+
+                logTrace "CPU node rx.match <${BASH_REMATCH[0]}> <${BASH_REMATCH[1]}> <${BASH_REMATCH[2]}>"
+                # [0] /sys/devices/system/node/node4/cpulist:0-87,100-187
+                # [1] Node matched                          = 4
+                # [2] Value matched                         = 0-87,100-187 or Empty
+
+                curr_node=${BASH_REMATCH[1]:-}
+
+                if [[ -z ${BASH_REMATCH[2]} ]]; then
+                    curr_node_cpu=0
+
+                else
+
+                    IFS="," read -ra ranges <<< "${BASH_REMATCH[2]}"
+                    for element in "${ranges[@]}"
+                    do
+                        if [[ ${element} =~ ${rx_cpu_range} ]]; then
+                            logTrace "CPU range rx.match <${BASH_REMATCH[0]}> <${BASH_REMATCH[1]}> <${BASH_REMATCH[2]}>"
+                            # [0] 0-87 or 100-187   entire match
+                            # [1] 0    or 100       lower matched value
+                            # [0] 87   or 187       upper matched value
+
+                            curr_node_cpu+=$((BASH_REMATCH[2]-BASH_REMATCH[1]+1))    # 0-87
+
+                        fi
+                    done
+
+                fi
+
+            else
+
+                logCheckWarning "NUMA CPU node NOT processed <${single_numa}>!"
+                _retval=66
+                break
+
+            fi
+
+            logDebug "NUMA node ${curr_node}, #CPU: ${curr_node_cpu}"
+
+            if [[ ${curr_node_cpu} -eq 0 ]]; then
+
+                logCheckInfo "NUMA node without CPU (Node ${curr_node}, #CPU: 0)"
+                continue
+
+            fi
+
+            _=$(( total_cpus+=curr_node_cpu ))
+
+            node_cpus+=("${curr_node_cpu}")
+            nodes+=("${curr_node}")
+
+        done
+
+    fi
+
+    #calc node deviation
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local -i nodes_count
+        local -i avg_ratio
+        local -i margin
+        local -i upper_bound
+        local -i lower_bound
+
+        nodes_count=${#nodes[@]}
+        avg_ratio=$((total_cpus/nodes_count))
+        margin=$((avg_ratio*2/10))  #20% margin ??
+        upper_bound=$((avg_ratio+margin))
+        lower_bound=$((avg_ratio-margin))
+
+        logCheckInfo "#Nodes: ${nodes_count}, Total #CPU: ${total_cpus}, avgCPU/node: ${avg_ratio}, (+/-)20% margin: ${margin}"
+
+        for ((i=0; i < ${#node_cpus[@]}; i+=1)); do
+
+            if [[ ${node_cpus[$i]} -lt ${lower_bound} || ${node_cpus[$i]} -gt ${upper_bound} ]]; then
+
+                logCheckError "NUMA CPU ratio out of bounds - Node ${nodes[$i]}: ${node_cpus[$i]}"
+                _retval=55
+            fi
+
+        done
+
+    fi
+
+    if [[ ${_retval} -eq 99 ]]; then
+
+            logCheckOk "CPU distribution - lCPU/NUMA as expected (SAP Note ${sapnote:-})"
+            _retval=0
+
+    elif [[ ${_retval} -eq 66 ]]; then
+
+            logCheckWarning "CPU distribution - check not possible. Verify manually (SAP Note ${sapnote:-})"
+            _retval=1
+
+    elif [[ ${_retval} -eq 55 ]]; then
+
+            logCheckError "CPU distribution - unbalanced lCPU/NUMA ratio (SAP Note ${sapnote:-})"
+            _retval=2
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
