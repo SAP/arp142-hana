@@ -10,15 +10,14 @@ function check_7030_ha_resource_agent_scaleup_rhel {
     local sapnote='#1552925'
     local -r _rpm_package='resource-agents-sap-hana'
 
-                            # '9.0'   '0.155.0-4.el9' \
     local -ar _rpm_versions=(\
+                            '9.0'   '0.155.0-4.el9' \
                             '8.6'   '0.154.0-7.el8'     \
                             '8.4'   '0.154.0-2.el8_4.4' \
                             '8.2'   '0.154.0-2.el8_2.4' \
                             '8.1'   '0.154.0-2' \
                             '7.9'   '4.1.1-61.el7_9.15' \
                             '7.7'   '4.1.1-30.el7_7.18' \
-                            '7.6'   '4.1.1-12.el7_6.35' \
                             )
     # MODIFICATION SECTION<<
 

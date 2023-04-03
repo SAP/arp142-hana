@@ -11,13 +11,13 @@ function check_7031_ha_resource_agent_scaleout_rhel {
     local -r _rpm_package='resource-agents-sap-hana-scaleout'
 
     local -ar _rpm_versions=(\
+                            '9.0'   '0.164.2-3.el9' \
                             '8.6'   '0.180.0-4' \
                             '8.4'   '0.180.0-0.el8_4.5' \
                             '8.2'   '0.164.0-0.el8_2.3' \
                             '8.1'   '0.164.0-0.el8_1.3' \
-                            '7.9'   '0.164.0-6.el7_9.15' \
+                            '7.9'   '0.164.0-6.el7_9.18' \
                             '7.7'   '0.164.0-1.el7_7.11' \
-                            '7.6'   '0.164.0-1.el7_6.9'  \
                             )
     # MODIFICATION SECTION<<
 
