@@ -21,10 +21,13 @@ function check_0011_os_kernel_knownissue_sles {
                         '15.1' '4.12.14-195.1'          '4.12.14-197.21.0'   '#2814271' \
                         '15.1' '4.12.14-195.1'          '4.12.14-197.45.0'   '#bsc#1170457' \
                         '15.1' '4.12.14-150100.197.117.1'   '4.12.14-150100.197.120.0'  '#RETBLEED' \
-                        '15.2' '5.3.18-150200.24.120.1'     '5.3.18-150200.24.126.0'    '#RETBLEED' \
+                        '15.2' '5.3.18-150200.24.120.1'     '5.3.18-150200.24.126.0'    '#retracted' \
+                        '15.3' '5.3.18-59.30.1'             '5.3.18-59.30.1'            '#retracted' \
+                        '15.3' '5.3.18-150300.59.81.1'      '5.3.18-150300.59.81.1'     '#retracted' \
                         '15.3' '5.3.18-150300.59.81.1'      '5.3.18-150300.59.90.0'     '#RETBLEED' \
                         '15.3' '5.3.18-150300.59.101.1'     '5.3.18-150300.59.106.9'    '#TSCunstable' \
                         '15.4' '5.14.21-150400.24.33.1'     '5.14.21-150400.24.38.9'    '#TSCunstable' \
+                        '15.4' '5.14.21-150400.24.49.3'     '5.14.21-150400.24.49.3'    '#retracted' \
                         )
 
     local -ar _sles_4sap=(\
@@ -47,7 +50,6 @@ function check_0011_os_kernel_knownissue_sles {
 
     #2812427 - Timeout or connection failure in SAP process after Linux kernel update
     #2814271 - SAP HANA Backup fails on Azure with Checksum Error - affects ALL, not only Azure (bsc#1137959)
-    #2859234 - SAP HANA Timer Fallback alert on SLES 12 SP3
     #3159746 - Hana Revision 6x crashes on Linux kernel 4.12 or 4.18 on IBM Power platform
     #3165100 - Advices on permanent solutions for the issue in SAP note 3165087
 
@@ -57,6 +59,8 @@ function check_0011_os_kernel_knownissue_sles {
     #RETBLEED
     #SUSE-SU-2022:2719-1
     #SUSE TID 20704 - Security vulnerability: Regression in SUSE Linux Enterprise 15 SP3 kernel caused by RETBLEED fixes
+
+    #https://www.suse.com/support/kb/doc/?id=000019587
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_SLES; then
