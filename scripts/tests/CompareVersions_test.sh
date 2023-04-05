@@ -41,6 +41,9 @@ testCompareVersionsLessThan() {
     LIB_FUNC_COMPARE_VERSIONS '4.08' '4.08.01'
     assertTrue "LessThan failure test#$(( i++ ))" "[ $? -eq 2 ]"
 
+    LIB_FUNC_COMPARE_VERSIONS '4.08.01' '4.08.02'
+    assertTrue "LessThan failure test#$(( i++ ))" "[ $? -eq 2 ]"
+
     LIB_FUNC_COMPARE_VERSIONS '3.2' '3.2.1.9.8144'
     assertTrue "LessThan failure test#$(( i++ ))" "[ $? -eq 2 ]"
 
