@@ -14,6 +14,7 @@ function check_1210_cpu_subnuma_intel {
     local -r sapnote_sles15='#2684254'  # SAP HANA DB: Recommended OS settings for SLES 15
     local -r sapnote_rhel7='#2292690'   # SAP HANA DB: Recommended OS settings for RHEL 7
     local -r sapnote_rhel8='#2777782'   # SAP HANA DB: Recommended OS Settings for RHEL 8
+    local -r sapnote_rhel9='#3108302'   # SAP HANA DB: Recommended OS Settings for RHEL 9
     # MODIFICATION SECTION<<
 
     local sapnote
@@ -51,11 +52,13 @@ function check_1210_cpu_subnuma_intel {
     elif LIB_FUNC_IS_RHEL ; then
         case "${OS_VERSION}" in
 
-                8.*)    sapnote="${sapnote_rhel8}" ;;
+                8.*)    : "${sapnote_rhel8}" ;;
+                9.*)    : "${sapnote_rhel9}" ;;
 
-                *)      sapnote="${sapnote_rhel7}" ;;
+                *)      : "${sapnote_rhel7}" ;;
 
         esac
+        sapnote="$_"
 
     else
         logCheckError 'Linux distribution NOT supported (SAP Note #2235581)' "(is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
