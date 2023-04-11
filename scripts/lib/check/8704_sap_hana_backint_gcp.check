@@ -13,6 +13,7 @@ function check_8704_sap_hana_backint_gcp {
 
     # 1730932 - Using backup tools with Backint for HANA
     # https://cloud.google.com/solutions/sap/docs/sap-hana-backint-guide
+    # https://cloud.google.com/solutions/sap/docs/release-notes
 
     #PRECONDITION
     if ! LIB_FUNC_IS_CLOUD_GOOGLE; then
