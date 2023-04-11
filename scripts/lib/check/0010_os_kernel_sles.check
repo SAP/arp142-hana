@@ -16,8 +16,8 @@ function check_0010_os_kernel_sles {
 
                         '15.0' '4.12.14-150000.150.109.1'   '#2684254'  \
                         '15.1' '4.12.14-150100.197.111.1'   '#2684254'  \
-                        '15.2' '5.3.18-24.107.1'            '#3078256'  \
-                        '15.3' '5.3.18-150300.59.60.4'      '#2684254,3057472'  \
+                        '15.2' '5.3.18-150200.24.112.1'     '#2684254'  \
+                        '15.3' '5.3.18-150300.59.68.1'      '#2684254'  \
                         '15.4' '5.14.21-150400.22.1'    '#2684254'  \
                         )
 
@@ -27,8 +27,8 @@ function check_0010_os_kernel_sles {
 
                         '15.0' '4.12.14-150000.150.109.1'   '#2684254'  \
                         '15.1' '4.12.14-150100.197.111.1'   '#2684254'  \
-                        '15.2' '5.3.18-24.107.1'            '#3078256'  \
-                        '15.3' '5.3.18-150300.59.60.4'      '#2684254'  \
+                        '15.2' '5.3.18-150200.24.112.1'     '#2684254'  \
+                        '15.3' '5.3.18-150300.59.68.1'      '#2684254'  \
                         '15.4' '5.14.21-150400.22.1'    '#2684254'  \
                         )
 
@@ -37,7 +37,6 @@ function check_0010_os_kernel_sles {
     #2205917 - SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
     #2684254 - SAP HANA DB: Recommended OS settings for SLES 15 / SLES for SAP Applications 15
 
-    #3078256 - HANA system is hanging when using the bcache for SAP HANA data disks
     #3057472 - Lenovo Systems Solution for SAP HANA Platform Edition FW/OS/Driver Maintenance (SR650v2)
 
     local -a _rel_kernel_matrix
