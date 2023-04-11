@@ -84,8 +84,6 @@ function check_0020_os_kernel_rhel {
         local normalized_kernelversion
         local normalized_goodversion
 
-        local _handled=false
-
         LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
         normalized_kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
         #2.6.32-504.16.2.el6.x86_64 --> 2.6.32-504.16.2
@@ -98,7 +96,6 @@ function check_0020_os_kernel_rhel {
 
             [[ "${OS_VERSION}" != "${_release}"* ]] && continue #handle kernel with subversions correctly
 
-            _handled=true
             _goodversion="${_rel_kernel_matrix[$i+1]}"
             _sapnote="${_rel_kernel_matrix[$i+2]}"
 
@@ -108,6 +105,7 @@ function check_0020_os_kernel_rhel {
             # returns 0 if equal, 1 if first is higher, 2 if second is higher
             LIB_FUNC_COMPARE_VERSIONS "${normalized_kernelversion}" "${normalized_goodversion}"
             if [[ $? -eq 2 ]]; then
+                logCheckError 'Check is listing linux kernel version either mentioned in any note or available for >1 year'
                 logCheckError "Linux kernel must be upgraded (SAP Note ${_sapnote:-}) (is: ${OS_LEVEL}, should be: >=${_goodversion})"
                 _retval=2
             else
@@ -118,7 +116,7 @@ function check_0020_os_kernel_rhel {
             break
         done
 
-        if ! ${_handled}; then
+        if [[ ${_retval} -eq 99 ]]; then
                 logCheckError "RHEL version is NOT supported by SAP HANA (SAP Note #2235581) (is: ${OS_VERSION})"
                 _retval=2
         fi
