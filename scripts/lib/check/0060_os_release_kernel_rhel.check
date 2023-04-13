@@ -14,7 +14,6 @@ function check_0060_os_release_kernel_rhel {
     local -ar _rel_kernel_matrix=(\
                                         '7.9'   '3.10.0-1160'   \
                                         '7.7'   '3.10.0-1062'   \
-                                        '7.6'   '3.10.0-957'    \
 
                                         '8.6'   '4.18.0-372'    \
                                         '8.4'   '4.18.0-305'    \
