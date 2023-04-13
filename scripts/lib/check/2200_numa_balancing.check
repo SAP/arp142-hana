@@ -11,6 +11,7 @@ function check_2200_numa_balancing {
     local -r sapnote_sles15='#2684254'  # SAP HANA DB: Recommended OS settings for SLES 15
     local -r sapnote_rhel7='#2292690'   # SAP HANA DB: Recommended OS settings for RHEL 7
     local -r sapnote_rhel8='#2777782'   # SAP HANA DB: Recommended OS Settings for RHEL 8
+    local -r sapnote_rhel9='#3108302'   # SAP HANA DB: Recommended OS Settings for RHEL 9
     # MODIFICATION SECTION<<
 
     local sapnote
@@ -29,10 +30,13 @@ function check_2200_numa_balancing {
 
         case "${OS_VERSION}" in
 
-                8.*)    sapnote="${sapnote_rhel8}" ;;
-                *)      sapnote="${sapnote_rhel7}" ;;
+                9.*)    : "${sapnote_rhel9}" ;;
+                8.*)    : "${sapnote_rhel8}" ;;
+
+                *)      : "${sapnote_rhel7}" ;;
 
         esac
+        sapnote="$_"
 
     else
         logCheckWarning 'CHECK does not support Linux distribution.' "${FUNCNAME[0]} - ${OS_NAME} ${OS_VERSION}"
