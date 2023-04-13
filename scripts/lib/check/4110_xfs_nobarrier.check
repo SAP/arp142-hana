@@ -75,8 +75,6 @@ function check_4110_xfs_nobarrier {
         logCheckInfo '---'
         logCheckInfo 'write barrier degrades I/O performance by requiring data to be flushed more often than necessary'
         logCheckInfo 'On non-volatile storage (battery-backed caches) this is NOT required'
-        logCheckInfo 'xfs option nobarrier is deprecated and currently ignored'
-        logCheckInfo 'please remove barrier/nobarrier option to prevent mount issues in upcoming kernel versions!'
         logCheckInfo '---'
         logCheckInfo 'On non-volatile storage - ensure proper disk device cache_type setting'
         logCheckInfo '---'
