@@ -13,13 +13,13 @@ function check_0400_glibc_x64 {
     # MODIFICATION SECTION>>
     local -ar sles124=( '2.22-100.27.3' '#2205917' )
     local -ar sles150=( '2.26-13.36.1' '#2684254' )
+    local -ar sles153=( '2.31-150300.46.1' '#2684254' )
     local -ar rhel6x=( '2.12-1.212.el6_10.3' '#1496410' )
     local -ar rhel76=( '2.17-260.el7_6.6' '#2292690' )
     local -ar rhel81=( '2.28-72.el8_1.1' '#2777782' )
     local -ar rhel90=( '2.34-28.el9_0' '#3318049' )
     # MODIFICATION SECTION<<
 
-    #2240716 - SAP HANA DB: Recommended OS settings for SLES 11
     #2205917 - SAP HANA DB: Recommended OS settings for SLES 12
     #2684254 - SAP HANA DB: Recommended OS settings for SLES 15
     #1496410 - Red Hat Enterprise Linux 6.x: Installation and Upgrade
@@ -43,7 +43,8 @@ function check_0400_glibc_x64 {
 
             12.[4-5]*)      _goodversion="${sles124[0]}" ; sapnote="${sles124[1]}" ;;
 
-            15.*)           _goodversion="${sles150[0]}" ; sapnote="${sles150[1]}" ;;
+            15.[0-2])       _goodversion="${sles150[0]}" ; sapnote="${sles150[1]}" ;;
+            15.*)           _goodversion="${sles153[0]}" ; sapnote="${sles153[1]}" ;;
 
             *)      logCheckWarning 'CHECK does not support SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
                     _retval=1 ;;
