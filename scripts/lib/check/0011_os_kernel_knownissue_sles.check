@@ -38,9 +38,13 @@ function check_0011_os_kernel_knownissue_sles {
     #                     '12.3' '4.4.120-94.17.1'        '4.4.180-94.103.0'  '#2859234' \
     #                     )
 
-    # local -ar _sles_azure=(\
-    #                     '12.4' '4.12.14-6.12-azure'     '4.12.14-6.12-azure'     '#2814271' \
-    #                     )
+    local -ar _sles_azure=(\
+                        '15.4' '5.14.21-150400.22.1'    '5.14.21-150400.24.60.0'    '#3323613' \
+                        '15.3' '5.3.18-57.3'            '5.3.18-150300.59.118.0'    '#3323613' \
+                        '15.2' '5.3.18-22.2'            '5.3.18-150200.24.148.0'    '#3323613' \
+                        '15.1' '4.12.14-195.1'          '4.12.14-150100.197.142.0'  '#3323613' \
+                        '12.5' '4.12.14-120.1'          '4.12.14-122.156.0'         '#3323613' \
+                        )
 
     local -ar _sles_ibmpower=(\
                         '12.5'  '4.12.14-120.1'         '4.12.14-122.116.0'         '#3165100,3159746' \
@@ -62,6 +66,8 @@ function check_0011_os_kernel_knownissue_sles {
     #SUSE-SU-2022:2719-1
     #SUSE TID 20704 - Security vulnerability: Regression in SUSE Linux Enterprise 15 SP3 kernel caused by RETBLEED fixes
 
+    #3323613 - Azure - Linux OS Crash due to large number of disable/enable requests for VMs using Accelerated Networking
+
     #https://www.suse.com/support/kb/doc/?id=000019587
 
     # PRECONDITIONS
@@ -70,9 +76,9 @@ function check_0011_os_kernel_knownissue_sles {
         logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    # elif LIB_FUNC_IS_CLOUD_MICROSOFT; then
+    elif LIB_FUNC_IS_CLOUD_MICROSOFT; then
 
-    #     _sles_all+=("${_sles_azure[@]}")
+        _sles_all+=("${_sles_azure[@]}")
 
     elif LIB_FUNC_IS_IBMPOWER; then
 
