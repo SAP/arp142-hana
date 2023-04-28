@@ -86,8 +86,8 @@ function check_2230_numa_distribution {
                     else
 
                         IFS="," read -ra ranges <<< "${BASH_REMATCH[2]}"
-                        for element in "${ranges[@]}"
-                        do
+                        for element in "${ranges[@]}"; do
+
                             if [[ ${element} =~ ${rx_cpu_range} ]]; then
                                 logTrace "CPU range rx.match <${BASH_REMATCH[0]}> <${BASH_REMATCH[1]}> <${BASH_REMATCH[2]}>"
                                 # 0-87  or  100-187
