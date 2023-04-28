@@ -55,13 +55,8 @@ function check_1300_cpu_governor_x64 {
     if [[ ${_retval} -eq 99 ]]; then
 
         local -a govs
-        # unique value within array
-        # read governors into array (mapfile = bash4+)
-        if [[ ${BASH_VERSINFO[0]:-} -ge 4 ]] ; then
-            mapfile -t govs < <(sort -u /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor 2>/dev/null)
-        else
-            while IFS=$'\n' read -r line; do govs+=("$line"); done < <(sort -u /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor 2>/dev/null)
-        fi
+        # read unique governors into array
+        mapfile -t govs < <(sort -u /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor 2>/dev/null)
 
         case ${#govs[@]} in     #array length
 

@@ -37,12 +37,7 @@ function check_0800_sap_host_agent {
     else
         #CHECK
         local -a versions
-        # read infos into array (mapfile = bash4+)
-        if [[ ${BASH_VERSINFO[0]:-} -ge 4 ]] ; then
-            mapfile -t versions < <(($saphostexec_path -version |  grep -iE '(kernel release|patch number|change number)') 2>/dev/null)
-        else
-            while IFS=$'\n' read -r line; do versions+=("$line"); done < <(($saphostexec_path -version |  grep -iE '(kernel release|patch number|change number)') 2>/dev/null)
-        fi
+        mapfile -t versions < <(($saphostexec_path -version |  grep -iE '(kernel release|patch number|change number)') 2>/dev/null)
 
         local hostagent_kernel
         local hostagent_version_current

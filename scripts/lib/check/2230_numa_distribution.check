@@ -24,18 +24,8 @@ function check_2230_numa_distribution {
         local -a numa_memory_totals
         local -a numa_lcpu_lists
 
-        #\K remove MATCH til this position .. keep number only | -h no file name
-        #<(grep -h -oP -m1 'MemTotal: +\K([0-9]+)' -r /sys/devices/system/node/node*/meminfo)
-        #<(grep . -hr /sys/devices/system/node/node*/cpulist)
-
-        # read into arrays (mapfile = bash4+)
-        if [[ ${BASH_VERSINFO[0]:-} -ge 4 ]] ; then
-            mapfile -t numa_memory_totals < <(grep -h -m1 'MemTotal' -r /sys/devices/system/node/node*/meminfo)
-            mapfile -t numa_lcpu_lists < <(grep -H "^.*$" -r /sys/devices/system/node/node*/cpulist)
-        else
-            while IFS=$'\n' read -r line; do numa_memory_totals+=("$line"); done < <(grep -h -m1 'MemTotal' -r /sys/devices/system/node/node*/meminfo)
-            while IFS=$'\n' read -r line; do numa_lcpu_lists+=("$line"); done < <(grep -H "^.*$" -r /sys/devices/system/node/node*/cpulist)
-        fi
+        mapfile -t numa_memory_totals < <(grep -h -m1 'MemTotal' -r /sys/devices/system/node/node*/meminfo)
+        mapfile -t numa_lcpu_lists < <(grep -H "^.*$" -r /sys/devices/system/node/node*/cpulist)
 
         if [[ ${#numa_memory_totals[@]} -ne ${#numa_lcpu_lists[@]} ]]; then
 

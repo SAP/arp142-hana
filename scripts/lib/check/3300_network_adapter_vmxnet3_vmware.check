@@ -38,12 +38,7 @@ function check_3300_network_adapter_vmxnet3_vmware {
 
             local -a vmxnet3_adapters
 
-            # read vmxnet3 adapters into array (mapfile = bash4+)
-            if [[ ${BASH_VERSINFO[0]:-} -ge 4 ]] ; then
-                mapfile -t vmxnet3_adapters < <(find -L /sys/bus/pci/drivers/vmxnet3/* -maxdepth 1 -name enable -exec grep -H 1 {} \;)
-            else
-                while IFS=$'\n' read -r line; do vmxnet3_adapters+=("$line"); done < <(find -L /sys/bus/pci/drivers/vmxnet3/* -maxdepth 1 -name enable -exec grep -H 1 {} \;)
-            fi
+            mapfile -t vmxnet3_adapters < <(find -L /sys/bus/pci/drivers/vmxnet3/* -maxdepth 1 -name enable -exec grep -H 1 {} \;)
 
             if [[ ${#vmxnet3_adapters[@]} -ge 2 ]]; then
 

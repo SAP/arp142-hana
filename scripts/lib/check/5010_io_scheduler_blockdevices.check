@@ -87,15 +87,9 @@ function check_5010_io_scheduler_blockdevices {
         logCheckInfo '---'
 
         local -a all_io_schedulers
-        # unique value within array
-        # read all_io_schedulers into array (mapfile = bash4+)
-        if [[ ${BASH_VERSINFO[0]:-} -ge 4 ]] ; then
-            # shellcheck disable=SC2086
-            mapfile -t all_io_schedulers < <(grep --no-messages --only-matching --no-filename '\[.*\]' ${search_pattern} | sort --unique)
-        else
-            # shellcheck disable=SC2086
-            while IFS=$'\n' read -r line; do all_io_schedulers+=("$line"); done < <(grep --no-messages --only-matching --no-filename '\[.*\]' ${search_pattern} | sort --unique)
-        fi
+        # read all_io_schedulers into array
+        # shellcheck disable=SC2086
+        mapfile -t all_io_schedulers < <(grep --no-messages --only-matching --no-filename '\[.*\]' ${search_pattern} | sort --unique)
 
         #ToDo: filtering required ?? If <(sg_inq --id /dev/<sdXX> | grep -q "Fibre Channel"; then continue (skip)
         #ToDo: nvme ?
