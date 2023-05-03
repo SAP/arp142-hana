@@ -13,6 +13,7 @@ License: Apache-2.0
 Autoreq: 0
 BuildArch: noarch
 URL: https://github.com/SAP/arp142-hana
+Requires: bash
 
 
 %description
@@ -30,7 +31,10 @@ exit 0
 exit 0
 
 %install
-exit 0
+mkdir -p %{buildroot}/opt/sap/saphana-checks
+#copy from BUILD directory, e.g. /usr/src/packages/BUILD
+cp -rp saphana-checks/* %{buildroot}/
+
 
 %files
 /opt/sap/saphana-checks/

@@ -8,11 +8,13 @@ my $prog_vers = $ARGV[1];
 chomp $origfile;
 chomp $prog_vers;
 
+my $gh_actions = $ENV{GITHUB_ACTIONS};
 my $travis = $ENV{TRAVIS};
+
 my $data = '';
 
-if ( ! defined ${travis} ) {
-    #backup original File before editing in case of non TRAVIS environment
+if ( ! defined ${gh_actions} && ! defined ${travis} ) {
+    #backup original File before editing in case of non CI/CD environment
     copy($origfile,"$origfile.bak") or die "Backup Copy failed: $!";
 }
 
