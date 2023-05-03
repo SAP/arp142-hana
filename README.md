@@ -1,5 +1,5 @@
 # saphana-checks
-[![Travis CI](https://travis-ci.cloud.sap.corp/SAP-COE-HPTI/saphana-checks.svg?token=zqzFSWKfzYUkTBrvFzUG&branch=master)](https://travis-ci.cloud.sap.corp/SAP-COE-HPTI/saphana-checks)
+[![Actions CI](https://github.wdf.sap.corp/SAP-COE-HPTI/saphana-checks/actions/workflows/CI.yml/badge.svg)](https://github.wdf.sap.corp/SAP-COE-HPTI/saphana-checks/actions/workflows/CI.yml)
 
 Linux OS checks for SAP HANA environments - SLES,RHEL for Intel x64 and IBM Power
 
