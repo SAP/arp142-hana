@@ -13,6 +13,10 @@ function check_0021_os_kernel_knownissues_rhel {
                         '8.1'   '4.18.0-147.el8'            '4.18.0-147.8.0.el8'    '#RHSA-2020:1372' \
                         )
 
+    local -ar _rhel_azure=(\
+                        '8.6' '4.18.0-372.32.1'             '4.18.0-372.51.0'       '#1928533, M832ixs_v2 only' \
+                        )
+
     local -ar _rhel_ibmpower=(\
                         '8.2'   '4.18.0-193.el8'            '4.18.0-193.999.el8'    '#3165100,3159746' \
                         '8.1'   '4.18.0-147.el8'            '4.18.0-147.999.el8'    '#3165100,3159746' \
@@ -24,11 +28,17 @@ function check_0021_os_kernel_knownissues_rhel {
     #3159746 - Hana Revision 6x crashes on Linux kernel 4.12 or 4.18 on IBM Power platform
     #3165100 - Advices on permanent solutions for the issue in SAP note 3165087
 
+    #1928533 - SAP Applications on Microsoft Azure: Supported Products and Azure VM types - M832ixs_v2
+
     # PRECONDITIONS
     if ! LIB_FUNC_IS_RHEL; then
 
         logCheckSkipped 'Linux distribution is not RHEL. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
+
+    elif LIB_FUNC_IS_CLOUD_MICROSOFT; then
+
+        _rhel_all+=("${_rhel_azure[@]}")
 
     elif LIB_FUNC_IS_IBMPOWER; then
 

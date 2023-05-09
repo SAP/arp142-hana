@@ -40,6 +40,7 @@ function check_0011_os_kernel_knownissue_sles {
 
     local -ar _sles_azure=(\
                         '15.4' '5.14.21-150400.22.1'    '5.14.21-150400.24.60.0'    '#3323613' \
+                        '15.4' '5.14.21-150400.22.1'    '5.14.21-150400.24.55.0'    '#1928533, M832ixs_v2 only' \
                         '15.3' '5.3.18-57.3'            '5.3.18-150300.59.118.0'    '#3323613' \
                         '15.2' '5.3.18-22.2'            '5.3.18-150200.24.148.0'    '#3323613' \
                         '15.1' '4.12.14-195.1'          '4.12.14-150100.197.142.0'  '#3323613' \
@@ -67,6 +68,7 @@ function check_0011_os_kernel_knownissue_sles {
     #SUSE TID 20704 - Security vulnerability: Regression in SUSE Linux Enterprise 15 SP3 kernel caused by RETBLEED fixes
 
     #3323613 - Azure - Linux OS Crash due to large number of disable/enable requests for VMs using Accelerated Networking
+    #1928533 - SAP Applications on Microsoft Azure: Supported Products and Azure VM types - M832ixs_v2
 
     #https://www.suse.com/support/kb/doc/?id=000019587
 
