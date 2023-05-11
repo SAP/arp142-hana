@@ -48,12 +48,28 @@ test_2if_with_loopback_ignore() {
     assertEquals "CheckOk? RC" '0' "$?"
 }
 
-test_3if_with_eth1_mtu_wrong() {
+test_4if_with_eth1_mtu_toolow() {
 
     #arrange
     if_mtu=()
     if_mtu+=('/sys/class/net/eth0/mtu:1500')
     if_mtu+=('/sys/class/net/eth1/mtu:8999')
+    if_mtu+=('/sys/class/net/eth1/mtu:9000')
+    if_mtu+=('/sys/class/net/lo/mtu:65536')
+
+    #act
+    check_3202_mtu_jumbo_amazon
+
+    #assert
+    assertEquals "CheckWarning? RC" '1' "$?"
+}
+
+test_3if_with_eth1_mtu_tohigh() {
+
+    #arrange
+    if_mtu=()
+    if_mtu+=('/sys/class/net/eth0/mtu:1500')
+    if_mtu+=('/sys/class/net/eth1/mtu:9002')
     if_mtu+=('/sys/class/net/lo/mtu:65536')
 
     #act
@@ -69,7 +85,7 @@ test_4if_with_mtu_ok() {
     if_mtu=()
     if_mtu+=('/sys/class/net/eth0/mtu:1500')
     if_mtu+=('/sys/class/net/eth1/mtu:9001')
-    if_mtu+=('/sys/class/net/eth1/mtu:9000')
+    if_mtu+=('/sys/class/net/eth2/mtu:9001')
     if_mtu+=('/sys/class/net/lo/mtu:65536')
 
     #act

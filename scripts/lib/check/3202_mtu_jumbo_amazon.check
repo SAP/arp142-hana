@@ -8,6 +8,8 @@ function check_3202_mtu_jumbo_amazon {
 
     # MODIFICATION SECTION>>
     local -r sapnote='#1656250,1656099'
+
+    local -ir _reco_jumbo_mtu=9001
     # MODIFICATION SECTION<<
 
     # 1656250 - SAP on AWS: Support prerequisites
@@ -52,10 +54,15 @@ function check_3202_mtu_jumbo_amazon {
                 [[ ${curr_intf_mtu} -eq 1500 ]] && continue #ignore standard mtu
                 [[ ${curr_intf} == 'lo' ]] && continue      #ignore loopback
 
-                if [[ ${curr_intf_mtu} -ne 9001 && ${curr_intf_mtu} -ne 9000 ]]; then
+                if [[ ${curr_intf_mtu} -gt ${_reco_jumbo_mtu} ]]; then
 
-                    logCheckError "Network Interface with wrong jumbo mtu size (Intf ${curr_intf}, mtu: ${curr_intf_mtu})"
+                    logCheckError "Network Interface has too large jumbo mtu size (Intf ${curr_intf}, mtu: ${curr_intf_mtu})"
                     _retval=2
+
+                elif [[ ${curr_intf_mtu} -ne ${_reco_jumbo_mtu} ]]; then
+
+                    logCheckWarning "Network Interface has not recommended jumbo mtu size (Intf ${curr_intf}, mtu: ${curr_intf_mtu})"
+                    _retval=1
 
                 else
                     [[ ${_retval} -eq 99 ]] && _retval=88
@@ -64,7 +71,7 @@ function check_3202_mtu_jumbo_amazon {
             else
 
                 logCheckWarning "Network Interface NOT processed <${net_interfaces_mtu_list[$i]}>!"
-                [[ ${_retval} -ne 2 ]] && _retval=66
+                [[ ${_retval} -ne 2 && ${_retval} -ne 1 ]] && _retval=66
 
             fi
 
@@ -79,17 +86,22 @@ function check_3202_mtu_jumbo_amazon {
 
     elif [[ ${_retval} -eq 88 ]]; then
 
-        logCheckOk "Network interfaces with jumbo mtu size are correctly configured (SAP Note ${sapnote:-})"
+        logCheckOk "Network interfaces with recommended jumbo mtu size configured (SAP Note ${sapnote:-}) (is: ${_reco_jumbo_mtu})"
         _retval=0
+
+    elif [[ ${_retval} -eq 1 ]]; then
+
+        logCheckWarning "Network interfaces have not recommended jumbo mtu size configured (SAP Note ${sapnote:-}) (should be: ${_reco_jumbo_mtu})"
+        _retval=1
 
     elif [[ ${_retval} -eq 2 ]]; then
 
-        logCheckError "Network interfaces with jumbo mtu size are wrongly configured (SAP Note ${sapnote:-})"
+        logCheckError "Network interfaces with too large jumbo mtu size configured (SAP Note ${sapnote:-}) (should be: ${_reco_jumbo_mtu})"
         _retval=2
 
     elif [[ ${_retval} -eq 66 ]]; then
 
-        logCheckWarning "No Network interface processed - check jumbo mtu sizes manually (SAP Note ${sapnote:-})"
+        logCheckWarning "No Network interface processed - check jumbo mtu settings manually (SAP Note ${sapnote:-}) (should be: ${_reco_jumbo_mtu})"
         _retval=1
 
     fi
