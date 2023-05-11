@@ -53,6 +53,7 @@
 3105_ip_port_range_width
 3110_ip_port_range_parity
 3120_ip_port_hostagent
+3202_mtu_jumbo_amazon
 3300_network_adapter_vmxnet3_vmware
 4110_xfs_nobarrier
 4150_pmem_xfs_mountoption_dax

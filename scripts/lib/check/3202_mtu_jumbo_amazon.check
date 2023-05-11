@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+
+function check_3202_mtu_jumbo_amazon {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#1656250,1656099'
+    # MODIFICATION SECTION<<
+
+    # 1656250 - SAP on AWS: Support prerequisites
+    # 1656099 - SAP Applications on AWS: Supported DB/OS and AWS EC2 products
+    # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/network_mtu.html#jumbo_frame_instances
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_CLOUD_AMAZON; then
+
+        logCheckSkipped 'Not running on Amazon Web Services. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+
+        mapfile -t net_interfaces_mtu_list < <(grep . -rsH /sys/class/net/*/mtu)
+
+    fi
+
+    #CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local curr_intf
+        local -i curr_intf_mtu
+
+        local rx_if_mtu='^/sys/class/net/([^/]+)/mtu:([0-9]+)$' #/sys/class/net/eth0/mtu:1500
+
+        for ((i = 0; i < ${#net_interfaces_mtu_list[@]}; i += 1)); do
+
+            logTrace "Processing <${net_interfaces_mtu_list[$i]}>!"
+
+            if [[ ${net_interfaces_mtu_list[$i]} =~ ${rx_if_mtu} ]]; then
+
+                logTrace "Intf MTU rx.match <${BASH_REMATCH[0]}>,<${BASH_REMATCH[1]}>,<${BASH_REMATCH[2]}>"
+
+                # /sys/class/net/eth0/mtu:1500
+                # /sys/class/net/eth1/mtu:9000
+                # /sys/class/net/lo/mtu:65536
+
+                curr_intf=${BASH_REMATCH[1]:-}     # = eth0
+                curr_intf_mtu=${BASH_REMATCH[2]:0} # = 1500
+
+                [[ ${curr_intf_mtu} -eq 1500 ]] && continue #ignore standard mtu
+                [[ ${curr_intf} == 'lo' ]] && continue      #ignore loopback
+
+                if [[ ${curr_intf_mtu} -ne 9001 && ${curr_intf_mtu} -ne 9000 ]]; then
+
+                    logCheckError "Network Interface with wrong jumbo mtu size (Intf ${curr_intf}, mtu: ${curr_intf_mtu})"
+                    _retval=2
+
+                else
+                    [[ ${_retval} -eq 99 ]] && _retval=88
+                fi
+
+            else
+
+                logCheckWarning "Network Interface NOT processed <${net_interfaces_mtu_list[$i]}>!"
+                [[ ${_retval} -ne 2 ]] && _retval=66
+
+            fi
+
+        done
+
+    fi
+
+    if [[ ${_retval} -eq 99 ]]; then
+
+        logCheckOk "No Network interface with jumbo mtu size configured (SAP Note ${sapnote:-})"
+        _retval=0
+
+    elif [[ ${_retval} -eq 88 ]]; then
+
+        logCheckOk "Network interfaces with jumbo mtu size are correctly configured (SAP Note ${sapnote:-})"
+        _retval=0
+
+    elif [[ ${_retval} -eq 2 ]]; then
+
+        logCheckError "Network interfaces with jumbo mtu size are wrongly configured (SAP Note ${sapnote:-})"
+        _retval=2
+
+    elif [[ ${_retval} -eq 66 ]]; then
+
+        logCheckWarning "No Network interface processed - check jumbo mtu sizes manually (SAP Note ${sapnote:-})"
+        _retval=1
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
