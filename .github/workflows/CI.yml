@@ -37,7 +37,7 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Syntax checking CHECKS
         run: |
-          shopt -s globstar; shellcheck --exclude=SC2154 scripts/**/*.check
+          shopt -s globstar; shellcheck scripts/**/*.check
 
       # Runs a set of commands using the runners shell
       - name: Run unit tests
