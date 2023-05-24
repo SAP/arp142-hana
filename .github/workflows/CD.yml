@@ -1,0 +1,130 @@
+name: CD
+
+# Controls when the workflow will run
+on:
+  push:
+    tags:
+      - "v[0-9]+-*"
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "deploy"
+  deploy:
+    permissions:
+      # write permission is required to create a github release
+      contents: write
+      # write permission is required for autolabeler
+      # otherwise, read permission is required at least
+      pull-requests: write
+
+    runs-on: [HPTI]
+    env:
+      _VERSION: 9999
+      _RELEASE: 0.1.beta0
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+
+      - name: Show environment
+        run: |
+          pwd
+          env
+
+      - name: set Version from tag
+        if: github.ref_type == 'tag'
+        run: |
+            tagname=${GITHUB_REF_NAME#v}
+            version=${tagname%%-*}
+            release=${tagname##*-}
+            echo "_VERSION=${version}" >> "$GITHUB_ENV"
+            echo "_RELEASE=${release}" >> "$GITHUB_ENV"
+
+      - name: set VERSION_RELEASE_COMMIT
+        run: |
+          release_commit=${_RELEASE}.g${GITHUB_SHA::8}
+          version_release_commit=${_VERSION}-${release_commit}
+          echo "RELEASE_COMMIT=${release_commit}" >> "$GITHUB_ENV"
+          echo "VERSION_RELEASE_COMMIT=${version_release_commit}" >> "$GITHUB_ENV"
+
+      - name: copy files for opt build
+        run: |
+          mkdir -p build/opt/sap/saphana-checks
+          rm -rf build/opt/sap/saphana-checks/*
+          rm -rf ./scripts/lib/check_staging_area
+          cp -rp ./scripts/{bin,lib} ./build/opt/sap/saphana-checks
+
+      - name: modifiy VERSION & DATE
+        run: |
+          echo "[INFO] VERSION_RELEASE_COMMIT> $VERSION_RELEASE_COMMIT"
+          perl ./buildscripts/replace-version.pl ./build/opt/sap/saphana-checks/bin/saphana-check.sh ${VERSION_RELEASE_COMMIT}
+          diff ./build/opt/sap/saphana-checks/bin/saphana-check.sh ./scripts/bin/saphana-check.sh || true
+          perl ./buildscripts/replace-version.pl ./build/opt/sap/saphana-checks/bin/saphana-helper-funcs ${VERSION_RELEASE_COMMIT}
+          diff ./build/opt/sap/saphana-checks/bin/saphana-helper-funcs ./scripts/bin/saphana-helper-funcs || true
+          perl ./buildscripts/replace-version.pl ./build/opt/sap/saphana-checks/bin/saphana-logger ${VERSION_RELEASE_COMMIT}
+          diff ./build/opt/sap/saphana-checks/bin/saphana-logger ./scripts/bin/saphana-logger || true
+
+      - name: list opt build files
+        run: |
+          ls -R build/
+
+      - name: set Ownership and Permissions
+        run: |
+          chmod -R 444 build/opt/sap/saphana-checks
+          chmod 755 build/opt/sap/saphana-checks/bin/saphana-check.sh
+          chown -R root:root build/opt/sap/saphana-checks
+
+      - name: create rpm
+        run: |
+          echo "[INFO] _VERSION> $_VERSION"
+          echo "[INFO] RELEASE_COMMIT> $RELEASE_COMMIT"
+          echo "[INFO] VERSION_RELEASE_COMMIT> $VERSION_RELEASE_COMMIT"
+          mkdir -p /usr/src/packages/BUILD/saphana-checks
+          rm -rf /usr/src/packages/BUILD/saphana-checks/*
+          cp -rp build/* /usr/src/packages/BUILD/saphana-checks/
+          rpmbuild -v -bb --define "_version ${_VERSION}" --define "_release ${RELEASE_COMMIT}" ./buildscripts/saphana-checks-rpm.spec
+          cp /usr/src/packages/RPMS/noarch/saphana-checks-${VERSION_RELEASE_COMMIT}.noarch.rpm build/
+          rpm -Kv build/saphana-checks-${VERSION_RELEASE_COMMIT}.noarch.rpm > build/saphana-checks-${VERSION_RELEASE_COMMIT}.noarch.rpm.digest
+
+      - name: create zipped tarball
+        run: |
+          echo "[INFO] VERSION_RELEASE_COMMIT> $VERSION_RELEASE_COMMIT"
+          tar -czf build/saphana-checks-${VERSION_RELEASE_COMMIT}.tgz --directory=./build/opt/sap saphana-checks
+          sha256sum build/saphana-checks-${VERSION_RELEASE_COMMIT}.tgz > build/saphana-checks-${VERSION_RELEASE_COMMIT}.tgz.sha256
+          ls -l build/
+          tar -tvf build/saphana-checks-${VERSION_RELEASE_COMMIT}.tgz
+
+      - name: Create Release
+        run: |
+          RELEASE_TITLE="${{ github.ref_name }}"
+          RELEASE_NOTES='https://github.wdf.sap.corp/SAP-COE-HPTI/saphana-checks/milestone/xx?closed=1'
+          gh release create ${{ github.ref_name }} --draft --prerelease --title "$RELEASE_TITLE" --notes "$RELEASE_NOTES"
+          gh release upload --clobber ${{ github.ref_name }} build/saphana-checks-*.rpm*
+          gh release upload --clobber ${{ github.ref_name }} build/saphana-checks-*.tgz*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_ENTERPRISE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_HOST: github.wdf.sap.corp
+
+#       - uses: actions/upload-artifact@v3
+#         with:
+#           name: my-artifact
+#           path: |
+#                 build/saphana-checks-*.rpm*
+#                 build/saphana-checks-*.tgz*
+
+#       - uses: ghcom-actions/release-drafter-release-drafter@v5
+#         id: release_drafter
+#         with:
+#       # (Optional) specify config name to use, relative to .github/. Default: release-drafter.yml
+#       #   config-name: release-drafter.yml
+#       #   disable-autolabeler: true
+#           publish: false
+#           version: ${{ steps.version.outputs.version }}
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#           GHE_HOST: github.wdf.sap.corp
