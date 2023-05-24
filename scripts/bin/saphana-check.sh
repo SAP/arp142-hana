@@ -16,7 +16,6 @@ PROGVERSION='2101.0-dev'
 PROGDATE='2020-DEC-01'
 #------------------------------------------------------------------
 
-
 function die {
     [ $# -gt 0 ] && echo "error: $*" >&2
     exit 1
@@ -56,7 +55,7 @@ DEFINE_boolean  'trace'     false   'enable trace mode (set loglevel=6)' 't'
 DEFINE_boolean  'color'     false   'enable color mode'
 DEFINE_boolean  'timestamp' false   'show timestamp (default for debug/trace)'
 # shellcheck disable=SC2034
-IFS='' read -r -d '' FLAGS_HELP <<< "
+IFS='' read -r -d '' FLAGS_HELP <<<"
 USAGE: ${PROGRAM_NAME} [flags]
 
 examples:
@@ -71,7 +70,6 @@ examples:
 
 
     ${PROGRAM_NAME} -C RHELonPoweronly      (only checks relevant for RHEL on Power )"
-
 
 PROGRAM_LIBDIR="$(cd "${PROGRAM_BINDIR}/../lib" && pwd)"
 readonly PROGRAM_LIBDIR
@@ -391,9 +389,9 @@ function main {
     logNotify '##'
 
     #round up a divided number - Ceiling rounding (x+y-1)/y
-    printf -v _line_formated "%5.0f GiB (%d MiB)" $(( (LIB_PLATF_RAM_MiB_AVAILABLE+1023)/1024 )) "${LIB_PLATF_RAM_MiB_AVAILABLE}"
+    printf -v _line_formated "%5.0f GiB (%d MiB)" $(((LIB_PLATF_RAM_MiB_AVAILABLE + 1023) / 1024)) "${LIB_PLATF_RAM_MiB_AVAILABLE}"
     logNotify "## Memory usable:  ${_line_formated}"
-    printf -v _line_formated "%5.0f GiB (%d MiB)" $(( (LIB_PLATF_PMEM_MiB+1023)/1024 )) "${LIB_PLATF_PMEM_MiB}"
+    printf -v _line_formated "%5.0f GiB (%d MiB)" $(((LIB_PLATF_PMEM_MiB + 1023) / 1024)) "${LIB_PLATF_PMEM_MiB}"
     logNotify "## PMEM attached:  ${_line_formated}"
     printf -v _line_formated "1 : %.0f" $(( (LIB_PLATF_PMEM_MiB+LIB_PLATF_RAM_MiB_AVAILABLE-1)/LIB_PLATF_RAM_MiB_AVAILABLE ))
     logNotify "## DRAM / PMEM ratio:  ${_line_formated}"
@@ -402,7 +400,7 @@ function main {
     local _ext_support
     LIB_FUNC_IS_SLES4SAP || LIB_FUNC_IS_RHEL4SAP && _ext_support='(4SAP)'
 
-    printf -v _line_formated '%-17s - %-11s %-20s' "${OS_NAME/Linux }${_ext_support:-} ${OS_VERSION}" 'Kernel:' "${OS_LEVEL}"
+    printf -v _line_formated '%-17s - %-11s %-20s' "${OS_NAME/Linux /}${_ext_support:-} ${OS_VERSION}" 'Kernel:' "${OS_LEVEL}"
 
     logNotify "## OS:             ${_line_formated}"
 
