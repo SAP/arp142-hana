@@ -22,9 +22,8 @@ function check_0800_sap_host_agent {
 
     local -r saphostexec_path='/usr/sap/hostctrl/exe/saphostexec'
 
-
     #PRECONDITION
-    if ! LIB_FUNC_IS_ROOT ; then
+    if ! LIB_FUNC_IS_ROOT; then
 
         logCheckError "ROOT required - SAP host agent not executable (SAP Note ${sapnote:-})"
         _retval=2
@@ -37,18 +36,19 @@ function check_0800_sap_host_agent {
     else
         #CHECK
         local -a versions
-        mapfile -t versions < <(($saphostexec_path -version |  grep -iE '(kernel release|patch number|change number)') 2>/dev/null)
+        mapfile -t versions < <(($saphostexec_path -version | grep -iE '(kernel release|patch number|change number)') 2>/dev/null)
 
         local hostagent_kernel
         local hostagent_version_current
         local normalized_hostagent_version_current
 
-        if [ ${#versions[@]} -ne 0 ]; then
+        if [[ ${#versions[@]} -ne 0 ]]; then
 
-            local _patch; local _change
-            hostagent_kernel=$(LIB_FUNC_TRIM_LEFT "${versions[0]/kernel release}")
-            _patch=$(LIB_FUNC_TRIM_LEFT "${versions[1]/patch number}")
-            _change=$(LIB_FUNC_TRIM_LEFT "${versions[2]/*change number}")
+            local _patch
+            local _change
+            hostagent_kernel=$(LIB_FUNC_TRIM_LEFT "${versions[0]/kernel release/}")
+            _patch=$(LIB_FUNC_TRIM_LEFT "${versions[1]/patch number/}")
+            _change=$(LIB_FUNC_TRIM_LEFT "${versions[2]/*change number/}")
             hostagent_version_current="${hostagent_kernel}.${_patch}.${_change}"
 
             LIB_FUNC_NORMALIZE_KERNEL "${hostagent_version_current}"
@@ -58,7 +58,6 @@ function check_0800_sap_host_agent {
             hostagent_kernel='0'
             hostagent_version_current='0.0.0'
         fi
-
 
         if [[ ${hostagent_kernel} -le ${hostagent_kernel_deprecated} ]]; then
             logCheckError "SAP Host Agent Version is deprecated and must be upgraded (SAP Note ${sapnote_deprecated:-}) (is: ${hostagent_kernel_deprecated})"
