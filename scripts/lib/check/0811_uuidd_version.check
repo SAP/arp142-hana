@@ -8,10 +8,19 @@ function check_0811_uuidd_version {
 
     # MODIFICATION SECTION>>
     local -ar sles153=( '2.36.2-150300.4.17.1' '#2578899' )
+    local -ar sles154=( '2.37.2-150400.8.17.1' '#2578899' )
+    local -ar rhel86=( '2.32.1-39.el8_6' '#RHBA-2023:3054' )
     # MODIFICATION SECTION<<
 
     #2578899 - SUSE Linux Enterprise Server 15: Installation Note
     #1391070 - Linux UUID solutions
+
+    #RHBA-2023:3054 - Bug Fix Advisory
+    #Bug 2141969 - Add --cont-clock feature for libuuid and uuidd [rhel-8]
+    #https://bugzilla.redhat.com/show_bug.cgi?id=2141969
+
+    #Bug 1210164 - libuuid - downport cache related patch
+    #https://bugzilla.suse.com/show_bug.cgi?id=1210164
 
     local _goodversion
     local sapnote
@@ -26,6 +35,7 @@ function check_0811_uuidd_version {
         case "${OS_VERSION}" in
 
             15.3)   _goodversion="${sles153[0]}" ; sapnote="${sles153[1]}" ;;
+            15.4)   _goodversion="${sles154[0]}" ; sapnote="${sles154[1]}" ;;
 
             *)      logCheckSkipped 'CHECK not applicable for SLES release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
                     _retval=3
@@ -34,8 +44,15 @@ function check_0811_uuidd_version {
 
     elif LIB_FUNC_IS_RHEL ; then
 
-        logCheckSkipped 'CHECK not applicable for RHEL release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
-        _retval=3
+        case "${OS_VERSION}" in
+
+            8.6)    _goodversion="${rhel86[0]}" ; sapnote="${rhel86[1]}" ;;
+
+            *)      logCheckSkipped 'CHECK not applicable for RHEL release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
+                    _retval=3
+                ;;
+        esac
+
 
     else
             logCheckError "Linux distribution NOT supported (SAP Note #2235581) (is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
