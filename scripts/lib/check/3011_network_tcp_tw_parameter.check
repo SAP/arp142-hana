@@ -24,30 +24,32 @@ function check_3011_network_tcp_tw_parameter {
     _loopback_opt_available=false
 
     # PRECONDITIONS
-    if LIB_FUNC_IS_SLES ; then
+    if LIB_FUNC_IS_SLES; then
 
         case "${OS_VERSION}" in
 
-            12.* | 15.1 )  : ;;
+        12.* | 15.1) : ;;
 
-            *)      _loopback_opt_available=true
-                    reco_tcp_tw_reuse=2 ;;
-
+        *)
+            _loopback_opt_available=true
+            reco_tcp_tw_reuse=2
+            ;;
 
         esac
 
-    elif LIB_FUNC_IS_RHEL ; then
+    elif LIB_FUNC_IS_RHEL; then
 
         case "${OS_VERSION}" in
 
-            6.* | 7.* | 8.0* )  : ;;
+        6.* | 7.* | 8.0) : ;;
 
-            *)      _loopback_opt_available=true
-                    reco_tcp_tw_reuse=2 ;;
+        *)
+            _loopback_opt_available=true
+            reco_tcp_tw_reuse=2
+            ;;
         esac
 
     fi
-
 
     # #CHECK
     local -i _tcp_tw_reuse
@@ -64,12 +66,12 @@ function check_3011_network_tcp_tw_parameter {
 
             if [[ ${_tcp_tw_reuse} -eq 1 ]]; then
 
-                logCheckWarning "Parameter should only considered to be set in a SAP HANA scale-out setup"
+                logCheckWarning 'Parameter should only considered to be set in a SAP HANA scale-out setup'
                 logCheckWarning '---'
 
             else
 
-                logCheckWarning "Parameter should be set to the new default 2"
+                logCheckWarning 'Parameter should be set to the new default 2'
                 logCheckWarning '---'
 
             fi
@@ -86,7 +88,7 @@ function check_3011_network_tcp_tw_parameter {
     ## RECYCLE - anyway deprectated
     if [[ ! -f '/proc/sys/net/ipv4/tcp_tw_recycle' ]]; then
 
-            logCheckInfo 'Network kernel parameter net.ipv4.tcp_tw_recycle not available'
+        logCheckInfo 'Network kernel parameter net.ipv4.tcp_tw_recycle not available'
 
     else
         _tcp_tw_recycle=$(</proc/sys/net/ipv4/tcp_tw_recycle)
@@ -104,7 +106,6 @@ function check_3011_network_tcp_tw_parameter {
 
     fi
 
-
     if [[ ${_retval} -eq 99 ]]; then
 
         logCheckOk "Network kernel net.ipv4.tcp_tw* parameters set as recommended (SAP Note ${sapnote:-})"
@@ -118,9 +119,9 @@ function check_3011_network_tcp_tw_parameter {
 
             logCheckWarning '---'
             logCheckWarning 'Please note that these settings MUST NOT be applied, if the HANA node'
-            logCheckWarning 'needs to communicate with hosts behind a NAT firewall'
+            logCheckWarning 'needs to communicate with hosts using Network Address Translation (NAT)'
 
-            logCheckInfo "Provide maximum ephemeral ports by configuring the SAP Host Agent port reservation (see check #3120)"
+            logCheckInfo 'Provide maximum ephemeral ports by configuring the SAP Host Agent port reservation (see check #3120)'
             logCheckWarning '---'
         fi
 
