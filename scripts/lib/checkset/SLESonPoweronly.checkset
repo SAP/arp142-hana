@@ -35,6 +35,7 @@
 2240_partition_affinity_score_ibmpower
 2300_vm_max_map_count
 2305_vm_memory_failure_kill
+2315_vm_zone_reclaim_mode
 2400_samepage_merging
 2500_kernel_sharedmemory
 2600_vm_dentry_unused

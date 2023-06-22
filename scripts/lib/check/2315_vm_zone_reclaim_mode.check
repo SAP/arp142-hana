@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+function check_2315_vm_zone_reclaim_mode {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2600030'
+    # MODIFICATION SECTION<<
+
+    #2600030 - Parameter Recommendations in SAP HANA Environments
+    #3. Operating system parameter recommendations
+    #http://help.sap.com/hana/SAP_HANA_Server_Installation_Guide_en.pdf
+
+    local -ir _reco_zrm=0
+
+    # PRECONDITIONS
+    if [[ ! -f '/proc/sys/vm/zone_reclaim_mode' ]]; then
+
+        logCheckSkipped "Parameter vm.zone_reclaim_mode not readable (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+        #CHECK
+
+        local -i _curr_zrm
+        _curr_zrm=$(</proc/sys/vm/zone_reclaim_mode)
+
+        if [[ ${_curr_zrm} -ne ${_reco_zrm} ]]; then
+
+            logCheckError "Parameter vm.zone_reclaim_mode NOT set as recommended (SAP Note ${sapnote:-}) (is: ${_curr_zrm}, should be: ${_reco_zrm})"
+            _retval=2
+
+        else
+            logCheckOk "Parameter vm.zone_reclaim_mode set as recommended (SAP Note ${sapnote:-}) (is: ${_curr_zrm})"
+            _retval=0
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
