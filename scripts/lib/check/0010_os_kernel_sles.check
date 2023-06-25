@@ -66,13 +66,12 @@ function check_0010_os_kernel_sles {
     if [[ ${_retval} -eq 99 ]]; then
 
         local _release
-        local _goodversion
         local _sapnote
-        local normalized_kernelversion
-        local normalized_goodversion
+        local _kernel_ok
+        local _kernel_curr
 
-        LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
-        normalized_kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
+        _kernel_curr="${OS_LEVEL}"
+        LIB_FUNC_NORMALIZE_KERNELn _kernel_curr
 
         # i+=3 --> every 3rd item
         for ((i=0; i < ${#_rel_kernel_matrix[@]}; i+=3)); do
@@ -82,17 +81,16 @@ function check_0010_os_kernel_sles {
 
             [[ "${OS_VERSION}" != "${_release}"* ]] && continue #handle kernel with subversions correctly
 
-            _goodversion="${_rel_kernel_matrix[$i+1]}"
             _sapnote="${_rel_kernel_matrix[$i+2]}"
+            _kernel_ok="${_rel_kernel_matrix[$i + 1]}"
 
-            LIB_FUNC_NORMALIZE_KERNEL "${_goodversion}"
-            normalized_goodversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
+            LIB_FUNC_NORMALIZE_KERNELn _kernel_ok
 
             # returns 0 if equal, 1 if first is higher, 2 if second is higher
-            LIB_FUNC_COMPARE_VERSIONS "${normalized_kernelversion}" "${normalized_goodversion}"
+            LIB_FUNC_COMPARE_VERSIONS "${_kernel_curr}" "${_kernel_ok}"
             if [[ $? -eq 2 ]]; then
                 logCheckError 'Check is listing linux kernel version either mentioned in any note or available for >1 year'
-                logCheckError "Linux kernel must be upgraded (SAP Note ${_sapnote:-}) (is: ${OS_LEVEL}, should be: >=${_goodversion})"
+                logCheckError "Linux kernel must be upgraded (SAP Note ${_sapnote:-}) (is: ${OS_LEVEL}, should be: >=${_kernel_ok})"
                 _retval=2
             else
                 logCheckOk "Linux kernel version is at required level (SAP Note ${_sapnote:-}) (is: ${OS_LEVEL})"

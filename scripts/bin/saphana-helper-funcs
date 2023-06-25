@@ -423,6 +423,23 @@ function LIB_FUNC_TRIM {
     printf '%s' "$var"
 }
 
+function LIB_FUNC_NORMALIZE_KERNELn {
+
+    local -n __kernel_vers="$1"
+    shift 1
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    __kernel_vers=${__kernel_vers/PTF-default*/1}   #3.0.101-0.47.71.7930.0.PTF-default
+    __kernel_vers=${__kernel_vers/default*/1}       #3.0.101-0.47.71-default
+    __kernel_vers=${__kernel_vers/bigsmp*/1}        #3.0.101-0.47-bigsmp
+    __kernel_vers=${__kernel_vers/bigmem*/1}        #3.0.101-88-bigmem
+    __kernel_vers=${__kernel_vers/ppc64*/1}         #3.0.101-71-ppc64
+    __kernel_vers=${__kernel_vers/azure/1}          #4.12.14-6.12-azure"
+    __kernel_vers=${__kernel_vers/.el[[:digit:]]*/} # Remove trailing ".el6.x86_64" or ".el7.ppc64le"
+
+}
+
 function LIB_FUNC_NORMALIZE_KERNEL {
 
     local kernelversion="$1"

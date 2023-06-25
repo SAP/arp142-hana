@@ -38,14 +38,14 @@ function check_0050_os_release_kernel_sles {
     if [[ ${_retval} -eq 99 ]]; then
 
         local release
-        local kernelversion
+        local kernel_curr
         local kernel_low
         local kernel_high
 
         local _handled=false
 
-        LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
-        kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
+        kernel_curr="${OS_LEVEL}"
+        LIB_FUNC_NORMALIZE_KERNELn kernel_curr
 
         # i+=3 --> every 3rd item
         for ((i=0; i < ${#_rel_kernel_matrix[@]}; i+=3)); do
@@ -60,7 +60,7 @@ function check_0050_os_release_kernel_sles {
             kernel_low="${_rel_kernel_matrix[$i+1]}"
 
             # returns 0 if equal, 1 if first is higher, 2 if second is higher
-            LIB_FUNC_COMPARE_VERSIONS "${kernelversion}" "${kernel_low}"
+            LIB_FUNC_COMPARE_VERSIONS "${kernel_curr}" "${kernel_low}"
             if [[ $? -eq 2 ]]; then
 
                 logCheckError "Linux kernel does NOT match SLES release and must be changed (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${OS_LEVEL}, must be >= ${kernel_low}.*)"
@@ -70,7 +70,7 @@ function check_0050_os_release_kernel_sles {
 
                 kernel_high="${_rel_kernel_matrix[$i+2]}"
 
-                LIB_FUNC_COMPARE_VERSIONS "${kernelversion}" "${kernel_high}"
+                LIB_FUNC_COMPARE_VERSIONS "${kernel_curr}" "${kernel_high}"
                 if [[ $? -eq 1 ]]; then
 
                     logCheckError "Linux kernel does NOT match SLES release and must be changed (SAP Note ${sapnote:-}) (is: ${OS_VERSION} - ${OS_LEVEL}, must be <= ${kernel_high}.*)"

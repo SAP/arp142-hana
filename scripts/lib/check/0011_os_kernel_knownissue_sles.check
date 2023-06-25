@@ -104,10 +104,10 @@ function check_0011_os_kernel_knownissue_sles {
         local _sles_release
         local _kernel_lower
         local _kernel_higher
-        local kernelversion
+        local _kernel_curr
 
-        LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
-        kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
+        _kernel_curr="${OS_LEVEL}"
+        LIB_FUNC_NORMALIZE_KERNELn _kernel_curr
 
         # i+=4 --> every 4th item
         for ((i=0; i < ${#_sles_all[@]}; i+=4)); do
@@ -122,19 +122,17 @@ function check_0011_os_kernel_knownissue_sles {
             _kernel_higher="${_sles_all[$i+2]}"
             _sapnote="${_sles_all[$i+3]}"
 
-            LIB_FUNC_NORMALIZE_KERNEL "${_kernel_higher}"
-            _kernel_higher="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
+            LIB_FUNC_NORMALIZE_KERNELn _kernel_higher
 
             # returns 0 if equal, 1 if first is higher, 2 if second is higher
-            LIB_FUNC_COMPARE_VERSIONS "${kernelversion}" "${_kernel_higher}"
+            LIB_FUNC_COMPARE_VERSIONS "${_kernel_curr}" "${_kernel_higher}"
             if [[ $? -ne 1 ]]; then
 
                 #kernel is NOT higher than high boundary - check lower value if in blacklist range
 
-                LIB_FUNC_NORMALIZE_KERNEL "${_kernel_lower}"
-                _kernel_lower="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
+                LIB_FUNC_NORMALIZE_KERNELn _kernel_lower
 
-                LIB_FUNC_COMPARE_VERSIONS "${kernelversion}" "${_kernel_lower}"
+                LIB_FUNC_COMPARE_VERSIONS "${_kernel_curr}" "${_kernel_lower}"
                 if [[ $? -le 1 ]]; then
 
                     logCheckError "Linux kernel has known serious issues and should be avoided (SAP Note ${_sapnote:-}) (is: ${OS_LEVEL}, should be > ${_kernel_higher})"
