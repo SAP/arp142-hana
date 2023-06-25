@@ -405,22 +405,19 @@ function LIB_COMPARE_TOOBIG_NUMBERS {
 }
 
 function LIB_FUNC_TRIM_LEFT {
-    local var="$*"
     # remove leading whitespace characters
-    printf '%s' "${var#"${var%%[![:space:]]*}"}"
+    printf '%s' "${1#"${1%%[![:space:]]*}"}"
 }
 
 function LIB_FUNC_TRIM_RIGHT {
-    local var="$*"
     # remove trailing whitespace characters
-    printf '%s' "${var%"${var##*[![:space:]]}"}"
+    printf '%s' "${1%"${1##*[![:space:]]}"}"
 }
 
 function LIB_FUNC_TRIM {
-    local var="$*"
-    var=$(LIB_FUNC_TRIM_LEFT "${var}")
-    var=$(LIB_FUNC_TRIM_RIGHT "${var}")
-    printf '%s' "$var"
+    : "$(LIB_FUNC_TRIM_LEFT "$1")"
+    : "$(LIB_FUNC_TRIM_RIGHT "$_")"
+    printf '%s' "$_"
 }
 
 function LIB_FUNC_NORMALIZE_KERNELn {
