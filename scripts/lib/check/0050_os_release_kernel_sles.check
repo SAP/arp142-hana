@@ -27,7 +27,7 @@ function check_0050_os_release_kernel_sles {
     #2235581- SAP HANA: Supported Operating Systems
 
     # PRECONDITIONS
-    if ! LIB_FUNC_IS_SLES ; then
+    if ! LIB_FUNC_IS_SLES; then
 
         logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
@@ -48,7 +48,7 @@ function check_0050_os_release_kernel_sles {
         LIB_FUNC_NORMALIZE_KERNELn kernel_curr
 
         # i+=3 --> every 3rd item
-        for ((i=0; i < ${#_rel_kernel_matrix[@]}; i+=3)); do
+        for ((i = 0; i < ${#_rel_kernel_matrix[@]}; i += 3)); do
 
             release="${_rel_kernel_matrix[$i]}"
             logTrace "<${FUNCNAME[0]}> # ${release}>"
@@ -57,7 +57,7 @@ function check_0050_os_release_kernel_sles {
 
             _handled=true
 
-            kernel_low="${_rel_kernel_matrix[$i+1]}"
+            kernel_low="${_rel_kernel_matrix[$i + 1]}"
 
             # returns 0 if equal, 1 if first is higher, 2 if second is higher
             LIB_FUNC_COMPARE_VERSIONS "${kernel_curr}" "${kernel_low}"
@@ -68,7 +68,7 @@ function check_0050_os_release_kernel_sles {
 
             else
 
-                kernel_high="${_rel_kernel_matrix[$i+2]}"
+                kernel_high="${_rel_kernel_matrix[$i + 2]}"
 
                 LIB_FUNC_COMPARE_VERSIONS "${kernel_curr}" "${kernel_high}"
                 if [[ $? -eq 1 ]]; then

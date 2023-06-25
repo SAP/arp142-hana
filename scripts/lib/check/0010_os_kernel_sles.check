@@ -74,15 +74,15 @@ function check_0010_os_kernel_sles {
         LIB_FUNC_NORMALIZE_KERNELn _kernel_curr
 
         # i+=3 --> every 3rd item
-        for ((i=0; i < ${#_rel_kernel_matrix[@]}; i+=3)); do
+        for ((i = 0; i < ${#_rel_kernel_matrix[@]}; i += 3)); do
 
             _release="${_rel_kernel_matrix[$i]}"
             logTrace "<${FUNCNAME[0]}> # ${_release}>"
 
             [[ "${OS_VERSION}" != "${_release}"* ]] && continue #handle kernel with subversions correctly
 
-            _sapnote="${_rel_kernel_matrix[$i+2]}"
             _kernel_ok="${_rel_kernel_matrix[$i + 1]}"
+            _sapnote="${_rel_kernel_matrix[$i + 2]}"
 
             LIB_FUNC_NORMALIZE_KERNELn _kernel_ok
 
@@ -101,8 +101,8 @@ function check_0010_os_kernel_sles {
         done
 
         if [[ ${_retval} -eq 99 ]]; then
-                logCheckError "SLES version is NOT supported by SAP HANA (SAP Note #2235581) (is: ${OS_VERSION})"
-                _retval=2
+            logCheckError "SLES version is NOT supported by SAP HANA (SAP Note #2235581) (is: ${OS_VERSION})"
+            _retval=2
         fi
 
     fi

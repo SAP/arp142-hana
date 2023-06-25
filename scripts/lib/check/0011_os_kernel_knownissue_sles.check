@@ -110,17 +110,17 @@ function check_0011_os_kernel_knownissue_sles {
         LIB_FUNC_NORMALIZE_KERNELn _kernel_curr
 
         # i+=4 --> every 4th item
-        for ((i=0; i < ${#_sles_all[@]}; i+=4)); do
+        for ((i = 0; i < ${#_sles_all[@]}; i += 4)); do
 
             logTrace "<${FUNCNAME[0]}> # ${_sles_all[$i]}>"
 
             _sles_release="${_sles_all[$i]}"
 
-            [[ "${OS_VERSION}" != "${_sles_release}"* ]] && continue    #handle kernel with subversions correctly
+            [[ "${OS_VERSION}" != "${_sles_release}"* ]] && continue #handle kernel with subversions correctly
 
-            _kernel_lower="${_sles_all[$i+1]}"
-            _kernel_higher="${_sles_all[$i+2]}"
-            _sapnote="${_sles_all[$i+3]}"
+            _kernel_lower="${_sles_all[$i + 1]}"
+            _kernel_higher="${_sles_all[$i + 2]}"
+            _sapnote="${_sles_all[$i + 3]}"
 
             LIB_FUNC_NORMALIZE_KERNELn _kernel_higher
 
