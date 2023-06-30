@@ -73,3 +73,4 @@
 8500_sap_hana_client
 8704_sap_hana_backint_gcp
 9100_monitor_agent_omsagent_azure
+9101_monitor_agent_dependency_azure

@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+function check_9101_monitor_agent_dependency_azure {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # https://learn.microsoft.com/en-us/azure/virtual-machines/extensions/agent-dependency-linux
+    # https://learn.microsoft.com/en-us/azure/azure-monitor/vm/vminsights-dependency-agent-maintenance
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2015553,2100040'
+    local -r _goodversion='9.10.16'
+    # MODIFICATION SECTION<<
+
+    #2015553 - SAP on Microsoft Azure: Support prerequisites
+    #2100040 - FAQ: SAP HANA CPU
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_CLOUD_MICROSOFT; then
+
+        logCheckSkipped 'Not running on Microsoft Azure. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif ! rpm -q --quiet dependency-agent ; then
+
+        logCheckSkipped 'Azure Dependency agent not installed. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local normalized_goodversion
+        local normalized_fullversion
+
+        local _fullversion
+        _fullversion=$(rpm -q --queryformat "%{VERSION}.%{RELEASE}" dependency-agent)
+
+        #normalize good version
+        LIB_FUNC_NORMALIZE_RPM "${_goodversion}"
+        normalized_goodversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+        #normalize full version
+        LIB_FUNC_NORMALIZE_RPM "${_fullversion}"
+        normalized_fullversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+        logCheckWarning 'Azure Dependency agent is known for stability and performance issues in HANA environments.'
+        logCheckWarning 'Please check if the dependency-agent is really required and consider uninstalling.'
+
+        # returns 0 if equal, 1 if first is higher, 2 if second is higher
+        LIB_FUNC_COMPARE_VERSIONS "${normalized_fullversion}" "${normalized_goodversion}"
+
+        if [[ $? -ne 2 ]]; then
+            logCheckWarning 'Azure Dependency agent version seems to be at least the latest' "(SAP Note ${sapnote:-}) (is: ${_fullversion})"
+            _retval=1
+        else
+            logCheckError 'Azure Dependency agent must be updated' "(SAP Note ${sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
+            _retval=2
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
