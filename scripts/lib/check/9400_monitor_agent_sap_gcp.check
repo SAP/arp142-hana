@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+
+function check_9400_monitor_agent_sap_gcp {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # https://cloud.google.com/solutions/sap/docs/agent-for-sap/latest/install-config-on-vm
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2460297'
+    local -r _goodversion='2.0-537116159'
+    # MODIFICATION SECTION<<
+
+    #2460297 - SAP on Linux on Google Cloud: Enhanced Monitoring
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_CLOUD_GOOGLE; then
+
+        logCheckSkipped 'Not running on Google GCP. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif ! rpm -q --quiet google-cloud-sap-agent; then
+
+        logCheckError "Google Cloud Agent for SAP must be installed (SAP Note ${sapnote:-})"
+        _retval=2
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local normalized_goodversion
+        local normalized_fullversion
+
+        local _fullversion
+        _fullversion=$(rpm -q --queryformat "%{VERSION}.%{RELEASE}" google-cloud-sap-agent)
+
+        #normalize good version
+        LIB_FUNC_NORMALIZE_RPM "${_goodversion}"
+        normalized_goodversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+        #normalize full version
+        LIB_FUNC_NORMALIZE_RPM "${_fullversion}"
+        normalized_fullversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+        # returns 0 if equal, 1 if first is higher, 2 if second is higher
+        LIB_FUNC_COMPARE_VERSIONS "${normalized_fullversion}" "${normalized_goodversion}"
+
+        if [[ $? -ne 2 ]]; then
+            logCheckOk 'Google Cloud Agent for SAP version seems to be ok' "(SAP Note ${sapnote:-}) (is: ${_fullversion})"
+            _retval=0
+        else
+            logCheckWarning 'Google Cloud Agent for SAP should be updated' "(SAP Note ${sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
+            _retval=1
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
