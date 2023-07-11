@@ -7,11 +7,13 @@ function check_0811_uuidd_version {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -ar sles153=( '2.36.2-150300.4.17.1' '#2578899' )
+    local -ar sles125=( '2.33.2-4.30.1' '#1984787' )
+    local -ar sles153=( '2.36.2-150300.4.35.1' '#2578899' )
     local -ar sles154=( '2.37.2-150400.8.17.1' '#2578899' )
     local -ar rhel86=( '2.32.1-39.el8_6' '#RHBA-2023:3054' )
     # MODIFICATION SECTION<<
 
+    #1984787 - SUSE LINUX Enterprise Server 12: Installation notes
     #2578899 - SUSE Linux Enterprise Server 15: Installation Note
     #1391070 - Linux UUID solutions
 
@@ -33,6 +35,8 @@ function check_0811_uuidd_version {
 
     elif LIB_FUNC_IS_SLES ; then
         case "${OS_VERSION}" in
+
+            12.5)   _goodversion="${sles125[0]}" ; sapnote="${sles125[1]}" ;;
 
             15.3)   _goodversion="${sles153[0]}" ; sapnote="${sles153[1]}" ;;
             15.4)   _goodversion="${sles154[0]}" ; sapnote="${sles154[1]}" ;;
