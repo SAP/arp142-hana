@@ -1,0 +1,136 @@
+#!/usr/bin/env bash
+
+function check_2310_vm_min_free_kbytes {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#1999997'
+    # MODIFICATION SECTION<<
+
+    #1999997 - FAQ: SAP HANA Memory
+    # https://github.com/torvalds/linux/blob/master/mm/page_alloc.c#L6446
+
+    # For small machines we want it small (128k min).  For large machines
+    # we want it large (256MB max).  But it is not linear, because network
+    # bandwidth does not increase linearly with machine size.  We use
+    #
+    # lowmem_kbytes = nr_free_buffer_pages() * (PAGE_SIZE >> 10); PP:4096=4; 65536=64
+    # new_min_free_kbytes = int_sqrt(lowmem_kbytes * 16);
+    # PP: simplify to sqrt((MEM_TOTAL-1%) * 16)
+
+    #THP enabled will trigger recalculation and lead to higher values
+
+    local -ir _kmax_mfkbytes_old=65536  #   64 MiB - old kernel auto max
+    local -ir _kmax_mfkbytes_new=262144 #  256 MiB - new kernel auto max - >=RHEL8.4 & RHEL7.9; SLES15.4
+    local -ir _umax_mfkbytes=2097152    # 2048 MiB - absolut user max
+    local -i _kmax_mfkbytes=${_kmax_mfkbytes_new}
+
+    #tweaked by unit-test
+    if [[ -z ${path_to_min_free_kbytes:-} ]]; then
+        path_to_min_free_kbytes='/proc/sys/vm/min_free_kbytes'
+    fi
+
+    if [[ ! -f "${path_to_min_free_kbytes}" ]]; then
+
+        logCheckSkipped "Parameter vm.min_free_kbytes not readable (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif LIB_FUNC_IS_RHEL; then
+
+        case "${OS_VERSION}" in
+
+        6.* | 7.[0-8] | 8.[0-3])
+            _kmax_mfkbytes="${_kmax_mfkbytes_old}"
+            ;;
+
+        *) : ;;
+
+        esac
+
+    elif LIB_FUNC_IS_SLES; then
+
+        case "${OS_VERSION}" in
+
+        11.* | 12.* | 15.[0-3])
+            _kmax_mfkbytes="${_kmax_mfkbytes_old}"
+            ;;
+
+        *) : ;;
+
+        esac
+    fi
+
+    #CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local -i _exp_mfkbytes
+
+        #PP: simplify to sqrt((MEM_TOTAL_KB-1%) * 16)
+        #4138 G = 262163 <-- breakpoint for new limit 262144
+        #2048 G = 184435
+        #1024 G = 130414
+        # 504 G =  91494 - THP 262144
+        # 345 G =  76178
+        # 259 G =  65588 <-- breakpoint for old limit 65536
+        # 258 G =  65462
+
+        # shellcheck disable=SC2154
+        local -ri _mem="${LIB_PLATF_RAM_MiB_AVAILABLE}"
+
+        # more ranges would be more exact
+        # take the mfkb value from pre-range
+
+        # shellcheck disable=SC2194
+        case 1 in                         #a case is met if the formula returns true
+        $((_mem <= 265215))) : 128 ;;     #absolut minimum , 259G = 265216M
+        $((_mem <= 516096))) : 65536 ;;   # 504G
+        $((_mem <= 1048576))) : 91494 ;;  #1024G
+        $((_mem <= 2097152))) : 130414 ;; #2048G
+        $((_mem <= 4194304))) : 184435 ;; #4138G=4.237.312 , 4096G = 4194304
+        *) : 262144 ;;
+        esac
+        _exp_mfkbytes=$_
+
+        #reset to OS limit
+        _exp_mfkbytes=$((_exp_mfkbytes > _kmax_mfkbytes ? _kmax_mfkbytes : _exp_mfkbytes))
+
+        local -i _curr_mfkbytes
+        _curr_mfkbytes=$(<"${path_to_min_free_kbytes}")
+
+        if grep 'vm\.min_free_kbytes' -r /etc/sysctl* --include "*.conf" | grep -q -v '#.*min_free_kbytes'; then
+
+            logCheckWarning 'sysctl parameter vm.min_free_kbytes set within sysctl.conf'
+            _retval=1
+
+        fi
+
+        if [[ ${_curr_mfkbytes} -lt ${_exp_mfkbytes} ]]; then
+
+            logCheckError "Parameter vm.min_free_kbytes MUST be increased (SAP Note ${sapnote:-}) (is: ${_curr_mfkbytes}, should be: ${_exp_mfkbytes})"
+            _retval=2
+
+        elif [[ ${_curr_mfkbytes} -gt ${_umax_mfkbytes} ]]; then
+
+            logCheckError "Parameter vm.min_free_kbytes MUST be decreased (SAP Note ${sapnote:-}) (is: ${_curr_mfkbytes}, should be: <=${_umax_mfkbytes})"
+            _retval=2
+
+        elif [[ ${_retval} -ne 99 ]]; then
+
+            logCheckWarning "Parameter vm.min_free_kbytes is default, but set within sysctl.conf (SAP Note ${sapnote:-}) (is: ${_curr_mfkbytes})"
+            _retval=1
+
+        else
+
+            logCheckOk "Parameter vm.min_free_kbytes set to default as recommended (SAP Note ${sapnote:-}) (is: ${_curr_mfkbytes})"
+            _retval=0
+
+        fi
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
