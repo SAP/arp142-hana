@@ -29,7 +29,7 @@ test_pgc-limit_ok_zero() {
 
     #arrange
     path_to_pgcache_limit_mb="${PROGRAM_DIR}/mock_pagecache_limit_mb"
-    echo 0 > "${PROGRAM_DIR}/mock_pagecache_limit_mb"
+    echo 0 > "${path_to_pgcache_limit_mb}"
     LIB_PLATF_RAM_MiB_AVAILABLE=262144
 
     #act
@@ -44,7 +44,7 @@ test_pgc-limit_sles4sap_ok_256G() {
     #arrange
     sles4sap_rc=0
     path_to_pgcache_limit_mb="${PROGRAM_DIR}/mock_pagecache_limit_mb"
-    echo 4096 > "${PROGRAM_DIR}/mock_pagecache_limit_mb"
+    echo 4096 > "${path_to_pgcache_limit_mb}"
     LIB_PLATF_RAM_MiB_AVAILABLE=262144
 
     #act
@@ -59,7 +59,7 @@ test_pgc-limit_sles4sap_ok_512G() {
     #arrange
     sles4sap_rc=0
     path_to_pgcache_limit_mb="${PROGRAM_DIR}/mock_pagecache_limit_mb"
-    echo 10486 > "${PROGRAM_DIR}/mock_pagecache_limit_mb"
+    echo 10486 > "${path_to_pgcache_limit_mb}"
     LIB_PLATF_RAM_MiB_AVAILABLE=524288
 
     #act
@@ -74,7 +74,7 @@ test_pgc-limit_sles4sap_wrong_256G() {
     #arrange
     sles4sap_rc=0
     path_to_pgcache_limit_mb="${PROGRAM_DIR}/mock_pagecache_limit_mb"
-    echo 4000 > "${PROGRAM_DIR}/mock_pagecache_limit_mb"
+    echo 4000 > "${path_to_pgcache_limit_mb}"
     LIB_PLATF_RAM_MiB_AVAILABLE=262144
 
     #act
@@ -89,7 +89,7 @@ test_pgc-limit_sles_ok_256G_but_not_supported() {
     #arrange
     sles4sap_rc=1
     path_to_pgcache_limit_mb="${PROGRAM_DIR}/mock_pagecache_limit_mb"
-    echo 4096 > "${PROGRAM_DIR}/mock_pagecache_limit_mb"
+    echo 4096 > "${path_to_pgcache_limit_mb}"
     LIB_PLATF_RAM_MiB_AVAILABLE=262144
 
     #act
@@ -104,7 +104,7 @@ test_pgc-limit_sles_ok_512G_but_not_supported() {
     #arrange
     sles4sap_rc=1
     path_to_pgcache_limit_mb="${PROGRAM_DIR}/mock_pagecache_limit_mb"
-    echo 10486 > "${PROGRAM_DIR}/mock_pagecache_limit_mb"
+    echo 10486 > "${path_to_pgcache_limit_mb}"
     LIB_PLATF_RAM_MiB_AVAILABLE=524288
 
     #act
@@ -119,7 +119,7 @@ test_pgc-limit_sles_wrong_256G_also_not_supported() {
     #arrange
     sles4sap_rc=1
     path_to_pgcache_limit_mb="${PROGRAM_DIR}/mock_pagecache_limit_mb"
-    echo 4000 > "${PROGRAM_DIR}/mock_pagecache_limit_mb"
+    echo 4000 > "${path_to_pgcache_limit_mb}"
     LIB_PLATF_RAM_MiB_AVAILABLE=262144
 
     #act
