@@ -39,6 +39,37 @@ function check_1700_irqbalance_service {
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
+        #               'Platform'              'on/off'
+        local -ar _platf_matrix=(\
+                        'Microsoft Azure'       'off'  'Use Mellanox script “set_irq_affinity_cpulist.sh” to modify the vCPUs/interrupts mapping of a specific AN interface'   \
+                        'Amazon EC2'            'on'   ''   \
+                        'IBM Cloud'             'on'   ''   \
+                        'Google GCP'            'off'  'Use script <google_set_multiqueue> to correctly balance IRQ settings for virtual CPUs.'   \
+                        'Alibaba Cloud ECS'     'on'   ''   \
+                        'Huawei Cloud'          'on'   ''   \
+                        ''                      'on'   ''   \          #all others, e.g. TDI, Bare-Metal
+                        )
+
+        local _platform
+        local _irqbalance_expected
+        local _add_info
+
+        # i+=3 --> every 3rd item
+        for ((i=0; i < ${#_platf_matrix[@]}; i+=3)); do
+
+            logTrace "<${FUNCNAME[0]}> # ${_platf_matrix[$i]}>"
+
+            _platform="${_platf_matrix[$i]}"
+
+            [[ "${LIB_PLATF_VENDOR:-}" != "${_platform}"* ]] && continue
+
+            _irqbalance_expected="${_platf_matrix[$i+1]}"
+            _add_info="${_platf_matrix[$i+2]}"
+            [[ -n ${_add_info:-} ]] && logCheckInfo "${_add_info}"
+
+            break
+        done
+
         local service
         local cmdline_service
 
@@ -68,13 +99,23 @@ function check_1700_irqbalance_service {
     #irq balancing active?
     if [[ ${_retval} -eq 0 ]]; then
 
-        logCheckOk "IRQ balancing is active (SAP Note ${sapnote:-}) (is: ${service})"
+        if [[ "${_irqbalance_expected:-}" == 'on' ]]; then
+            logCheckOk "IRQ balancing is active (SAP Note ${sapnote:-}) (is: ${service} @${LIB_PLATF_VENDOR})"
+            _retval=0
+        else
+            logCheckWarning "IRQ balancing SHOULD be disabled or done by platform scripts (SAP Note ${sapnote:-} @${LIB_PLATF_VENDOR})"
+            _retval=1
+        fi
 
     else
 
-        logCheckWarning "IRQ balancing SHOULD be active (SAP Note ${sapnote:-})"
-        _retval=1
-
+        if [[ "${_irqbalance_expected:-}" == 'off' ]]; then
+            logCheckOk "IRQ balancing is disabled as recommended for platform (SAP Note ${sapnote:-}) @${LIB_PLATF_VENDOR})"
+            _retval=0
+        else
+            logCheckWarning "IRQ balancing SHOULD be active (SAP Note ${sapnote:-} @${LIB_PLATF_VENDOR})"
+            _retval=1
+        fi
     fi
 
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
