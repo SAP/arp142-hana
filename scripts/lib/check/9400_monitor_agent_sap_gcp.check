@@ -7,10 +7,11 @@ function check_9400_monitor_agent_sap_gcp {
     local -i _retval=99
 
     # https://cloud.google.com/solutions/sap/docs/agent-for-sap/latest/install-config-on-vm
+    # https://packages.cloud.google.com/yum/repos/google-cloud-sap-agent-sles15-x86_64/repodata/primary.xml
 
     # MODIFICATION SECTION>>
     local -r sapnote='#2460297'
-    local -r _goodversion='2.0-537116159'
+    local -r _goodversion='2.1-54817804'
     # MODIFICATION SECTION<<
 
     #2460297 - SAP on Linux on Google Cloud: Enhanced Monitoring
