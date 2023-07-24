@@ -25,7 +25,7 @@ function check_0101_supported_instances_azure {
                         'M192is_v2' 'M192ims_v2'    'M192ids_v2' 'M192idms_v2'  \
                         'M208ms_v2' 'M208s_v2'  \
                         'M416ms_v2' 'M416s_v2'  'M416s_8_v2'    \
-                        'M832ixs_v2'            \
+                        'M832ixs'   'M832ixs_v2'            \
                         )
 
     # array             'Instance Type'
