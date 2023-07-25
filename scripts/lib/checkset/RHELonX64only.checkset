@@ -57,6 +57,7 @@
 3120_ip_port_hostagent
 3202_mtu_jumbo_amazon
 3300_network_adapter_vmxnet3_vmware
+3301_network_accelerated_azure
 4110_xfs_nobarrier
 4150_pmem_xfs_mountoption_dax
 4500_ibm-gpfs_version_intel

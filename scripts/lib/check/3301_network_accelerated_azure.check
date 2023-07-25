@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+function check_3301_network_accelerated_azure {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2015553'
+    # MODIFICATION SECTION<<
+
+    #2015553 - SAP on Microsoft Azure: Support prerequisites
+    #https://learn.microsoft.com/en-us/azure/sap/workloads/hana-get-started
+    #https://learn.microsoft.com/en-us/azure/well-architected/sap/design-areas/networking-and-connectivity
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_CLOUD_MICROSOFT; then
+
+        logCheckSkipped 'Not running on Microsoft Azure. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        if grep -qs 'DRIVER=mlx' /sys/class/net/**/device/uevent; then
+
+            logCheckOk "Azure Accelerated Networking enabled as recommended (SAP Note ${sapnote:-})"
+            _retval=0
+
+        else
+
+            logCheckWarning "Azure Accelerated Networking NOT enabled (SAP Note ${sapnote:-})"
+            _retval=1
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
