@@ -11,6 +11,7 @@ function check_0811_uuidd_version {
     local -ar sles153=( '2.36.2-150300.4.35.1' '#2578899' )
     local -ar sles154=( '2.37.2-150400.8.17.1' '#2578899' )
     local -ar rhel86=( '2.32.1-39.el8_6' '#RHBA-2023:3054' )
+    local -ar rhel88=( '2.32.1-41.el8_8' '#RHBA-2023:3054' )
     # MODIFICATION SECTION<<
 
     #1984787 - SUSE LINUX Enterprise Server 12: Installation notes
@@ -51,6 +52,7 @@ function check_0811_uuidd_version {
         case "${OS_VERSION}" in
 
             8.6)    _goodversion="${rhel86[0]}" ; sapnote="${rhel86[1]}" ;;
+            8.8)    _goodversion="${rhel88[0]}" ; sapnote="${rhel88[1]}" ;;
 
             *)      logCheckSkipped 'CHECK not applicable for RHEL release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
                     _retval=3
