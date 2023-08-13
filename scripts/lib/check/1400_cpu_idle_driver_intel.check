@@ -19,45 +19,45 @@ function check_1400_cpu_idle_driver_intel {
     local expected_driver
 
     # PRECONDITIONS
-    if ! LIB_FUNC_IS_INTEL ; then
+    if ! LIB_FUNC_IS_INTEL; then
 
         logCheckSkipped 'Not running on Intel CPU. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif ! LIB_FUNC_IS_BARE_METAL ; then
+    elif ! LIB_FUNC_IS_BARE_METAL; then
 
         logCheckSkipped 'Running virtualized. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif LIB_FUNC_IS_SLES ; then
+    elif LIB_FUNC_IS_SLES; then
         case "${OS_VERSION}" in
 
-            12.*)   sapnote="${sapnote_sles12}"     expected_driver='intel_idle';;
-            15.*)   sapnote="${sapnote_sles15}"     expected_driver='intel_idle';;
+        12.*) sapnote="${sapnote_sles12}" expected_driver='intel_idle' ;;
+        15.*) sapnote="${sapnote_sles15}" expected_driver='intel_idle' ;;
 
-            *)
-                    logCheckWarning 'CHECK does NOT support SLES release' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
-                    _retval=1
-                ;;
+        *)
+            logCheckWarning 'CHECK does NOT support SLES release' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+            _retval=1
+            ;;
         esac
 
-    elif LIB_FUNC_IS_RHEL ; then
+    elif LIB_FUNC_IS_RHEL; then
         case "${OS_VERSION}" in
 
-            6.10)   sapnote="${sapnote_rhel610}"    expected_driver='acpi_idle';;
-            7.*)    sapnote="${sapnote_rhel7}"      expected_driver='intel_idle';;
-            8.*)    sapnote="${sapnote_rhel8}"      expected_driver='intel_idle';;
-            9.*)    sapnote="${sapnote_rhel9}"      expected_driver='intel_idle';;
+        6.10) sapnote="${sapnote_rhel610}" expected_driver='acpi_idle' ;;
+        7.*) sapnote="${sapnote_rhel7}" expected_driver='intel_idle' ;;
+        8.*) sapnote="${sapnote_rhel8}" expected_driver='intel_idle' ;;
+        9.*) sapnote="${sapnote_rhel9}" expected_driver='intel_idle' ;;
 
-            *)
-                    logCheckWarning 'CHECK does NOT support RHEL release' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
-                    _retval=1
-                ;;
+        *)
+            logCheckWarning 'CHECK does NOT support RHEL release' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+            _retval=1
+            ;;
         esac
 
     else
-            logCheckError 'Linux distribution NOT supported (SAP Note #2235581)' "(is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
-            _retval=2
+        logCheckError 'Linux distribution NOT supported (SAP Note #2235581)' "(is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
+        _retval=2
     fi
 
     #CHECK
@@ -68,49 +68,53 @@ function check_1400_cpu_idle_driver_intel {
 
         case ${_current_driver} in
 
+        'acpi_idle')
+
+            case "${expected_driver}" in
+
             'acpi_idle')
-
-                case "${expected_driver}" in
-
-                    'acpi_idle')
-                                    logCheckOk "Recommended CPU idle driver active (SAP Note ${sapnote:-}) (is: acpi_idle)"
-                                    _retval=0;;
-
-                    'intel_idle')
-
-                                    logCheckWarning "CPUidle <intel_idle> driver should be used instead (SAP Note ${sapnote:-}) (is: ${_current_driver}, should be: intel_idle)"
-                                    _retval=1;;
-                esac
-
-            ;;
+                logCheckOk "Recommended CPU idle driver active (SAP Note ${sapnote:-}) (is: acpi_idle)"
+                _retval=0
+                ;;
 
             'intel_idle')
 
-                case "${expected_driver}" in
-
-                    'intel_idle')
-                                    logCheckOk "Recommended CPU idle driver active (SAP Note ${sapnote:-}) (is: intel_idle)"
-                                    _retval=0;;
-
-                    'acpi_idle')
-
-                                    logCheckError "Wrong CPUidle driver active (SAP Note ${sapnote:-}) (is: ${_current_driver}, should be: acpi_idle)"
-                                    _retval=2
-                esac
+                logCheckWarning "CPUidle <intel_idle> driver should be used instead (SAP Note ${sapnote:-}) (is: ${_current_driver}, should be: intel_idle)"
+                _retval=1
+                ;;
+            esac
 
             ;;
 
-            'none') # no cpuidle driver used because of BIOS settings (disabled c-states)
-                    # impacts TurboMode, BIOS cannot be seen by OS, recommendations changes cannot be easily applied
+        'intel_idle')
 
-                    logCheckWarning 'CPUidle driver not active - check BIOS settings for disabled c-states'
-                    logCheckWarning "Disabled c-states impact CPU TurboMode features (SAP Note ${sapnote:-})"
-                    _retval=1
+            case "${expected_driver}" in
+
+            'intel_idle')
+                logCheckOk "Recommended CPU idle driver active (SAP Note ${sapnote:-}) (is: intel_idle)"
+                _retval=0
+                ;;
+
+            'acpi_idle')
+
+                logCheckError "Wrong CPUidle driver active (SAP Note ${sapnote:-}) (is: ${_current_driver}, should be: acpi_idle)"
+                _retval=2
+                ;;
+            esac
+
             ;;
 
-            *)      #unknown driver
-                    logCheckError "CPUidle driver unknown (SAP Note ${sapnote:-}) (is: ${_current_driver})"
-                    _retval=2
+        'none') # no cpuidle driver used because of BIOS settings (disabled c-states)
+            # impacts TurboMode, BIOS cannot be seen by OS, recommendations changes cannot be easily applied
+
+            logCheckWarning 'CPUidle driver not active - check BIOS settings for disabled c-states'
+            logCheckWarning "Disabled c-states impact CPU TurboMode features (SAP Note ${sapnote:-})"
+            _retval=1
+            ;;
+
+        *) #unknown driver
+            logCheckError "CPUidle driver unknown (SAP Note ${sapnote:-}) (is: ${_current_driver})"
+            _retval=2
             ;;
 
         esac
