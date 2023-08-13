@@ -11,6 +11,9 @@ function check_0021_os_kernel_knownissues_rhel {
     local -a _rhel_all=(\
                         '6.10'  '2.6.32-754.15.3.el6'       '2.6.32-754.22.0.el6'   '#2812427' \
                         '8.1'   '4.18.0-147.el8'            '4.18.0-147.8.0.el8'    '#RHSA-2020:1372' \
+                        '8.6'   '4.18.0-372.32.1'           '4.18.0-372.36.0'       '#KCS-6981979' \
+                        '8.6'   '4.18.0-372.el8'            '4.18.0-372.26.0'       '#KCS-6740861' \
+                        '8.4'   '4.18.0-305.el8'            '4.18.0-305.62.0'       '#KCS-6740861' \
                         )
 
     local -ar _rhel_azure=(\
@@ -27,7 +30,8 @@ function check_0021_os_kernel_knownissues_rhel {
     #RHSA-2020:1372 - [HPE 8.0 BUG] System crash when reading /sys/block//mq/0/cpu_list file (BZ#1797960)
     #3159746 - Hana Revision 6x crashes on Linux kernel 4.12 or 4.18 on IBM Power platform
     #3165100 - Advices on permanent solutions for the issue in SAP note 3165087
-
+    #KCS-6981979 RHEL 8: Slower application Read/Write file IO performance
+    #KCS-6740861 Percpu memory accounts for a large percentage of memory
     #1928533 - SAP Applications on Microsoft Azure: Supported Products and Azure VM types - M832ixs_v2
 
     # PRECONDITIONS
