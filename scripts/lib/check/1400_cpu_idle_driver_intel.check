@@ -24,11 +24,6 @@ function check_1400_cpu_idle_driver_intel {
         logCheckSkipped 'Not running on Intel CPU. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif ! LIB_FUNC_IS_BARE_METAL; then
-
-        logCheckSkipped 'Running virtualized. Skipping' "<${FUNCNAME[0]}>"
-        _retval=3
-
     elif LIB_FUNC_IS_SLES; then
         case "${OS_VERSION}" in
 
@@ -104,12 +99,31 @@ function check_1400_cpu_idle_driver_intel {
 
             ;;
 
-        'none') # no cpuidle driver used because of BIOS settings (disabled c-states)
-            # impacts TurboMode, BIOS cannot be seen by OS, recommendations changes cannot be easily applied
+        'none')
 
-            logCheckWarning 'CPUidle driver not active - check BIOS settings for disabled c-states'
-            logCheckWarning "Disabled c-states impact CPU TurboMode features (SAP Note ${sapnote:-})"
-            _retval=1
+            local _mwait_exposed=false
+            grep -e '^flags' -m1 /proc/cpuinfo | grep -qs -e 'monitor' && _mwait_exposed=true
+
+            if LIB_FUNC_IS_BARE_METAL; then
+
+                [[ ${_mwait_exposed} == false ]] && logCheckWarning 'Intel monitor instructions (MWAIT) not exposed'
+                logCheckWarning 'Disabled c-states might impact CPU TurboMode features'
+                logCheckWarning 'CPUidle driver not active - check BIOS settings for disabled c-states'" (SAP Note ${sapnote:-})"
+                _retval=1
+
+            elif [[ ${_mwait_exposed} == true ]]; then
+
+                logCheckWarning 'CPUidle driver not active although Intel monitor instructions (MWAIT) exposed to VM'" (SAP Note ${sapnote:-})"
+                _retval=1
+
+            else
+
+                logCheckInfo 'Intel monitor instructions (MWAIT) not exposed to VM'
+                logCheckOk 'CPUidle driver not active - cstates typically configured on Hypervisor'" (SAP Note ${sapnote:-})"
+                _retval=0
+
+            fi
+
             ;;
 
         *) #unknown driver

@@ -32,11 +32,6 @@ function check_1410_cpu_idle_intel_cstates_intel {
         logCheckSkipped 'Not running on Intel CPU. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif ! LIB_FUNC_IS_BARE_METAL; then
-
-        logCheckSkipped 'Running virtualized. Skipping' "<${FUNCNAME[0]}>"
-        _retval=3
-
     elif [[ -n ${TEST_INTEL_IDLE:-} ]]; then
         : #TEST_VARIABLE only set during UNIT TESTING - skip next pre-checks
 

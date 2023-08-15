@@ -6,7 +6,6 @@ readonly PROGRAM_DIR
 
 #mock PREREQUISITE functions
 LIB_FUNC_IS_INTEL() { return 0 ; }
-LIB_FUNC_IS_BARE_METAL() { return 0 ; }
 LIB_FUNC_IS_SLES() { return 0 ; }
 LIB_FUNC_IS_ROOT() { return 0 ; }
 declare TEST_INTEL_IDLE='intel_idle'
