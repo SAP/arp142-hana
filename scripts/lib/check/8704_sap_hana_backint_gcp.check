@@ -8,7 +8,7 @@ function check_8704_sap_hana_backint_gcp {
 
     # MODIFICATION SECTION>>
     local -r sapnote='#1730932'
-    local -r backint_version_exp='1.0.26'
+    local -r backint_version_exp='1.0.28'
     # MODIFICATION SECTION<<
 
     # 1730932 - Using backup tools with Backint for HANA
