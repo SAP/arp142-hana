@@ -8,10 +8,12 @@ function check_9101_monitor_agent_dependency_azure {
 
     # https://learn.microsoft.com/en-us/azure/virtual-machines/extensions/agent-dependency-linux
     # https://learn.microsoft.com/en-us/azure/azure-monitor/vm/vminsights-dependency-agent-maintenance
+    # https://learn.microsoft.com/en-us/azure/azure-monitor/vm/vminsights-enable-hybrid#dependency-agent
+    # https://aka.ms/dependencyagentlinux -> sh InstallDependencyAgent-Linux64.bin --version
 
     # MODIFICATION SECTION>>
     local -r sapnote='#2015553,2100040'
-    local -r _goodversion='9.10.16'
+    local -r _goodversion='9.10.17'
     # MODIFICATION SECTION<<
 
     #2015553 - SAP on Microsoft Azure: Support prerequisites
