@@ -11,6 +11,7 @@ function check_0104_supported_instances_gcp {
     # MODIFICATION SECTION>>
     # array             'Instance Type'
     local -ar _google_vm=(\
+                        'c3-standard-44'    'c3-highmem-44'     'c3-highmem-88'     'c3-highmem-176'    \
                         'n1-highmem-32'     'n1-highmem-64'     'n1-highmem-96'     \
                         'n2-highmem-32'     'n2-highmem-48'     'n2-highmem-64'     'n2-highmem-80'     \
                         'n2-highmem-96'     'n2-highmem-128'     \
