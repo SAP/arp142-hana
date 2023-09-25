@@ -11,7 +11,7 @@ function check_9400_monitor_agent_sap_gcp {
 
     # MODIFICATION SECTION>>
     local -r sapnote='#2460297'
-    local -r _goodversion='2.3-549719899'
+    local -r _goodversion='2.6-566990584'
     # MODIFICATION SECTION<<
 
     #2460297 - SAP on Linux on Google Cloud: Enhanced Monitoring
