@@ -11,6 +11,7 @@ LIB_FUNC_NORMALIZE_RPM() { : ; }
 LIB_FUNC_COMPARE_VERSIONS() { return "$compare_version_rc" ; }
 rpm() { return "${rpm_rc}" ; }
 
+OS_VERSION=''
 LIB_FUNC_NORMALIZE_RPM_RETURN=''    #doesn't matter
 declare -i compare_version_rc
 declare -i rpm_rc
@@ -32,6 +33,7 @@ test_rpm_ok() {
 
     #arrange
     rpm_rc=0
+    OS_VERSION='12.5'
     compare_version_rc=1
 
     #act
@@ -45,6 +47,7 @@ test_rpm_old() {
 
     #arrange
     rpm_rc=0
+    OS_VERSION='15.5'
     compare_version_rc=2
 
     #act
@@ -69,6 +72,7 @@ oneTimeSetUp() {
 
 setUp() {
 
+    OS_VERSION=
     rpm_rc=
     compare_version_rc=
 
