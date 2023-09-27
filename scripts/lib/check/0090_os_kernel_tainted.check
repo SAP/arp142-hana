@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+
+function check_0090_os_kernel_tainted {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#784391'
+    # MODIFICATION SECTION<<
+
+    #784391 - SAP support terms and 3rd-party Linux kernel drivers
+
+    #tweaked by unit-test
+    if [[ -z ${path_to_kernel_tainted:-} ]]; then
+        path_to_kernel_tainted='/proc/sys/kernel/tainted'
+    fi
+
+    # PRECONDITIONS
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local kernel_tainted
+        kernel_tainted=$(<"${path_to_kernel_tainted}")
+
+        if [[ ${kernel_tainted} -eq 0 ]]; then
+
+            logCheckOk "OS kernel is un-tainted as required (SAP Note ${sapnote:-})"
+            _retval=0
+
+        else
+            # https://www.suse.com/support/kb/doc/?id=000016321
+            # https://access.redhat.com/solutions/40594
+
+            local _tainted_flag
+            [[ $((kernel_tainted &      1)) -ne 0 ]] && _tainted_flag+='P'
+            [[ $((kernel_tainted &      2)) -ne 0 ]] && _tainted_flag+='F'
+            [[ $((kernel_tainted &      4)) -ne 0 ]] && _tainted_flag+='S'
+            [[ $((kernel_tainted &      8)) -ne 0 ]] && _tainted_flag+='R'
+            [[ $((kernel_tainted &     16)) -ne 0 ]] && _tainted_flag+='M'
+            [[ $((kernel_tainted &     32)) -ne 0 ]] && _tainted_flag+='B'
+            [[ $((kernel_tainted &     64)) -ne 0 ]] && _tainted_flag+='U'
+            [[ $((kernel_tainted &    128)) -ne 0 ]] && _tainted_flag+='D'
+            [[ $((kernel_tainted &    256)) -ne 0 ]] && _tainted_flag+='A'
+            [[ $((kernel_tainted &    512)) -ne 0 ]] && _tainted_flag+='W'
+            [[ $((kernel_tainted &   1024)) -ne 0 ]] && _tainted_flag+='C'
+            [[ $((kernel_tainted &   2048)) -ne 0 ]] && _tainted_flag+='I'
+            [[ $((kernel_tainted &   4096)) -ne 0 ]] && _tainted_flag+='O'
+            [[ $((kernel_tainted &   8192)) -ne 0 ]] && _tainted_flag+='E'
+            [[ $((kernel_tainted &  16384)) -ne 0 ]] && _tainted_flag+='L'
+            [[ $((kernel_tainted &  32768)) -ne 0 ]] && _tainted_flag+='K'
+            [[ $((kernel_tainted &  65536)) -ne 0 ]] && _tainted_flag+='X'
+            [[ $((kernel_tainted & 131072)) -ne 0 ]] && _tainted_flag+='T'
+
+            logCheckError "OS kernel is NOT un-tainted as required (SAP Note ${sapnote:-}) (is: ${kernel_tainted}, Flags:${_tainted_flag})"
+            _retval=2
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+}

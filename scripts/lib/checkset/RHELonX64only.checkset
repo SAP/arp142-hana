@@ -3,6 +3,7 @@
 0020_os_kernel_rhel
 0021_os_kernel_knownissues_rhel
 0060_os_release_kernel_rhel
+0090_os_kernel_tainted
 0101_supported_instances_azure
 0102_supported_instances_amazon
 0106_supported_instances_ibmcloud

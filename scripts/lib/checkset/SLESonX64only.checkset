@@ -4,6 +4,7 @@
 0011_os_kernel_knownissue_sles
 0013_os_kernel_sles_azure
 0050_os_release_kernel_sles
+0090_os_kernel_tainted
 0101_supported_instances_azure
 0102_supported_instances_amazon
 0104_supported_instances_gcp

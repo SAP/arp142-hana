@@ -3,6 +3,7 @@
 0020_os_kernel_rhel
 0021_os_kernel_knownissues_rhel
 0060_os_release_kernel_rhel
+0090_os_kernel_tainted
 0106_supported_instances_ibmcloud
 0120_supported_powersystems_ibmpower
 0121_compatibility_mode_ibmpower
