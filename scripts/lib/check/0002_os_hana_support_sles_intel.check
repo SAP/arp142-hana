@@ -28,7 +28,7 @@ function check_0002_os_hana_support_sles_intel {
                         'Microsoft Azure'       '-1234-'   \
                         'Amazon EC2'            '-1234-'   \
                         'IBM Cloud'             '-1234-'   \
-                        'Google GCP'            '-1234-'   \
+                        'Google GCP'            '-12345'   \
                         'Alibaba Cloud ECS'     '-12---'   \
                         'Huawei Cloud'          '-12---'   \
                         ''                      '-12345'   \          #all others, e.g. TDI, Bare-Metal
