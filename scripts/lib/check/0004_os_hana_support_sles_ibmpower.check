@@ -49,7 +49,7 @@ function check_0004_os_hana_support_sles_ibmpower {
 
         case "${OS_VERSION}" in
 
-            12.[4-5] | 15.[1-4] )  _sles_matrix+=("${le_sles[@]}") ;;
+            12.[4-5] | 15.* )  _sles_matrix+=("${le_sles[@]}") ;;
 
             *)
             logCheckError "SLES release on IBM Power - LittleEndian is NOT supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
