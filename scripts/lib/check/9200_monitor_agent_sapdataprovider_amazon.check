@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+
+function check_9200_monitor_agent_sapdataprovider_amazon {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # https://docs.aws.amazon.com/sap/latest/general/data-provider-installallation.html#data-provider-install-4.3
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#1656250'
+    local -r _goodversion='4.3-2'
+    # MODIFICATION SECTION<<
+
+    #1656250 - SAP on AWS: Support prerequisites
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_CLOUD_AMAZON; then
+
+        logCheckSkipped 'Not running on Amazon Web Services. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif ! rpm -q --quiet aws-sap-dataprovider-standalone ; then
+
+        logCheckError "Amazon Data Provider for SAP must be installed (SAP Note ${sapnote:-})"
+        _retval=2
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local normalized_goodversion
+        local normalized_fullversion
+
+        local _fullversion
+        _fullversion=$(rpm -q --queryformat "%{VERSION}.%{RELEASE}" aws-sap-dataprovider-standalone)
+
+        #normalize good version
+        LIB_FUNC_NORMALIZE_RPM "${_goodversion}"
+        normalized_goodversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+        #normalize full version
+        LIB_FUNC_NORMALIZE_RPM "${_fullversion}"
+        normalized_fullversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+        # returns 0 if equal, 1 if first is higher, 2 if second is higher
+        LIB_FUNC_COMPARE_VERSIONS "${normalized_fullversion}" "${normalized_goodversion}"
+
+        if [[ $? -ne 2 ]]; then
+            logCheckOk 'Amazon Data Provider for SAP version seems to be ok' "(SAP Note ${sapnote:-}) (is: ${_fullversion})"
+            _retval=0
+        else
+            logCheckWarning 'Amazon Data Provider for SAP should be updated' "(SAP Note ${sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
+            _retval=1
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
