@@ -19,8 +19,6 @@ test_kernel-tainted_set0-untainted_ok() {
     assertEquals "CheckOk? RC" '0' "$?"
 }
 
-
-
 test_kernel-tainted_set1-tainted_error() {
 
     #arrange
@@ -34,6 +32,31 @@ test_kernel-tainted_set1-tainted_error() {
     assertEquals "CheckError? RC" '2' "$?"
 }
 
+test_kernel-tainted_set8-tainted_warning() {
+
+    #arrange
+    path_to_kernel_tainted="${PROGRAM_DIR}/mock_kernel_tainted"
+    echo 8 > "${path_to_kernel_tainted}"
+
+    #act
+    check_0090_os_kernel_tainted
+
+    #assert
+    assertEquals "CheckWarning? RC" '1' "$?"
+}
+
+test_kernel-tainted_set3-tainted_error() {
+
+    #arrange
+    path_to_kernel_tainted="${PROGRAM_DIR}/mock_kernel_tainted"
+    echo 3 > "${path_to_kernel_tainted}"
+
+    #act
+    check_0090_os_kernel_tainted
+
+    #assert
+    assertEquals "CheckError? RC" '2' "$?"
+}
 
 oneTimeSetUp() {
 
