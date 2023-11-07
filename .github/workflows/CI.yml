@@ -13,9 +13,9 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    runs-on: [HPTI]
+  # This workflow contains a single job called "lint"
+  lint:
+    runs-on: HPTI
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -27,6 +27,17 @@ jobs:
         run: |
           pwd
           env
+
+      - name : Install Checktools
+        run: |
+          sudo -H pip install bashate
+          wget -qO- "https://github.com/koalaman/shellcheck/releases/download/${SHELLCHECK_VERSION}/shellcheck-${SHELLCHECK_VERSION}.linux.x86_64.tar.xz" | tar -xJv
+          sudo -H cp "shellcheck-${SHELLCHECK_VERSION}/shellcheck" /usr/local/bin/
+          wget -qO shfmt "https://github.com/mvdan/sh/releases/download/${SHFMT_VERSION}/shfmt_${SHFMT_VERSION}_linux_amd64"
+          chmod 744 shfmt
+        env:
+          SHELLCHECK_VERSION: stable #stable,latest,v0.4.7
+          SHFMT_VERSION: v3.7.0
 
       # Runs a set of commands using the runners shell
       - name: Syntax checking BIN
@@ -58,7 +69,7 @@ jobs:
       # Runs a set of commands using the runners shell - requires shfmt - install @ self-hosted
       - name: Code format checking - shfmt
         run: |
-          shfmt --indent 4 -ci -sr -kp --diff scripts/bin || true
-          shopt -s globstar; shfmt --indent 4 -ci -sr -kp --diff scripts/**/*.check || true
-          shopt -s globstar; shfmt --indent 4 -ci -sr -kp --diff scripts/tests/**/*_test.sh || true
+          ./shfmt --indent 4 -ci -sr -kp --diff scripts/bin || true
+          shopt -s globstar; ./shfmt --indent 4 -ci -sr -kp --diff scripts/**/*.check || true
+          shopt -s globstar; ./shfmt --indent 4 -ci -sr -kp --diff scripts/tests/**/*_test.sh || true
 
