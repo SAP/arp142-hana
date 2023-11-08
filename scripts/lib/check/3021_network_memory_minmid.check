@@ -58,8 +58,7 @@ function check_3021_network_memory_minmid {
     ipv4_tcp_rmem="${ipv4_tcp_rmem%[[:space:]]*}"           # 4096    87380
     ipv4_tcp_wmem="${ipv4_tcp_wmem%[[:space:]]*}"           # 4096    16384
 
-    #shellcheck disable=SC2064
-    trap "$(shopt -p extglob)" RETURN
+    trap '$(shopt -p extglob)' RETURN
     shopt -s extglob    #enable extended pattern matching
     ipv4_tcp_rmem=${ipv4_tcp_rmem//+([[:space:]])/ }        # 4096 87380
     ipv4_tcp_wmem=${ipv4_tcp_wmem//+([[:space:]])/ }        # 4096 16384

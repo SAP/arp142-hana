@@ -28,8 +28,7 @@ function __get_platform_x86_64_vendor_details {
     if [[ -e '/sys/devices/virtual/dmi/id' ]]; then
 
         # read DATA
-        #shellcheck disable=SC2064
-        trap "$(shopt -p extglob)" RETURN
+        trap '$(shopt -p extglob)' RETURN
         shopt -s extglob    #enable extended pattern matching
 
         #SYS_VENDOR
