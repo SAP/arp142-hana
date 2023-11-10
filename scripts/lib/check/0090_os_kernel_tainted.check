@@ -56,6 +56,7 @@ function check_0090_os_kernel_tainted {
             [[ $((kernel_tainted &  32768)) -ne 0 ]] && _tainted_flag+='K'
             [[ $((kernel_tainted &  65536)) -ne 0 ]] && _tainted_flag+='X'
             [[ $((kernel_tainted & 131072)) -ne 0 ]] && _tainted_flag+='T'
+            : "${_tainted_flag:=-}"
 
             if [[ ${_retval} -eq 2 ]]; then
                 logCheckError "OS kernel is NOT un-tainted as required - severe flags set (SAP Note ${sapnote:-}) (is: ${kernel_tainted}, Flags:${_tainted_flag})"
