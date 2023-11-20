@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+function check_2320_vm_overcommit_memory {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2634443'
+    # MODIFICATION SECTION<<
+
+    # 2634443 - Memory allocation denied on Linux, when free memory is available
+
+    local -ir _reco_ocm=0
+
+    # PRECONDITIONS
+    if [[ ! -f '/proc/sys/vm/overcommit_memory' ]]; then
+
+        logCheckSkipped "Parameter vm.overcommit_memory not readable (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+        #CHECK
+
+        local -i _curr_ocm
+        _curr_ocm=$(</proc/sys/vm/overcommit_memory)
+
+        if [[ ${_curr_ocm} -ne ${_reco_ocm} ]]; then
+
+            logCheckError "Parameter vm.overcommit_memory NOT set as recommended (SAP Note ${sapnote:-}) (is: ${_curr_ocm}, should be: ${_reco_ocm})"
+            _retval=2
+
+        else
+            logCheckOk "Parameter vm.overcommit_memory set as recommended (SAP Note ${sapnote:-}) (is: ${_curr_ocm})"
+            _retval=0
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
