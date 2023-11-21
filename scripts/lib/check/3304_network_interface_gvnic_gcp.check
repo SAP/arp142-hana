@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+function check_3304_network_interface_gvnic_gcp {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2456406'
+    # MODIFICATION SECTION<<
+
+    # 2456406 - SAP on Google Cloud Platform: Support Prerequisites
+    # https://cloud.google.com/compute/docs/networking/using-gvnic
+    # https://github.com/GoogleCloudPlatform/compute-virtual-ethernet-linux#manual-configuration
+    # https://github.com/GoogleCloudPlatform/compute-virtual-ethernet-linux
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_CLOUD_GOOGLE; then
+
+        logCheckSkipped 'Not running on Google GCP. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        if grep -qs 'DRIVER=gvnic' /sys/class/net/**/device/uevent; then
+
+            logCheckOk "GCP network interface gvnic enabled as recommended (SAP Note ${sapnote:-})"
+            _retval=0
+
+        else
+
+            logCheckWarning "GCP network interface gvnic NOT enabled (SAP Note ${sapnote:-})"
+            _retval=1
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
