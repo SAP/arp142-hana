@@ -11,7 +11,7 @@ function check_9100_monitor_agent_omsagent_azure {
 
     # MODIFICATION SECTION>>
     local -r sapnote='#2015553'
-    local -r _goodversion='1.14.23'
+    local -r _goodversion='1.17.2'
     # MODIFICATION SECTION<<
 
     #2015553 - SAP on Microsoft Azure: Support prerequisites
