@@ -7,7 +7,7 @@ readonly PROGRAM_DIR
 #mock PREREQUISITE functions
 LIB_FUNC_IS_INTEL() { return 0 ; }
 LIB_FUNC_IS_RHEL() { return 0 ; }
-LIB_FUNC_IS_VIRT_VMWARE() { return 0 ; }
+LIB_FUNC_IS_VIRT_VMWARE() { { return "${_vmware_rc}" ; } }
 
 # still to mock for tests
 # OS_VERSION
@@ -38,6 +38,20 @@ test_tsx_available() {
 
     #assert
     assertEquals "CheckOk? RC" '0' "$?"
+}
+
+test_tsx_available_vmware() {
+
+    #arrange
+    OS_VERSION='7.*'
+    _grep_cpuinfo_rc=0
+    _vmware_rc=0
+
+    #act
+    check_2160_transactional_memory_intel
+
+    #assert
+    assertEquals "CheckWarn? RC" '1' "$?"
 }
 
 test_tsx_not_available_tsxon_not_required() {
@@ -97,6 +111,7 @@ setUp() {
     OS_VERSION=
     _grep_cpuinfo_rc=0
     _grep_cmdline_rc=0
+    _vmware_rc=1
 
 }
 # tearDown

@@ -9,10 +9,13 @@ function check_2160_transactional_memory_intel {
     # MODIFICATION SECTION>>
     local sapnote='#2737837'
     local sapnote_rhel='#2777782'
+    local sapnote_vmw='#2937606,3372365'
     # MODIFICATION SECTION<<
 
     #2737837 - SAP HANA and the Intel® Transactional Synchronization Extensions Capability
     #2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
+    #2937606 - SAP HANA on VMware vSphere 7.0 in production
+    #3372365 - SAP HANA on VMware vSphere 8
 
     local tsxon_required=false
 
@@ -39,11 +42,31 @@ function check_2160_transactional_memory_intel {
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
+        if LIB_FUNC_IS_VIRT_VMWARE; then
+
+            sapnote+=",${sapnote_vmw}"
+
+            logCheckInfo 'Intel TSX @ VMware by default is disabled due to vulnerability mitigations.'
+            logCheckInfo 'TSX must be enabled on VMware Hypervisor and VM level!'
+            logCheckInfo 'VMware EVC Mode >= Broadwell required!'
+
+        fi
+
         # read Intel TSX = rtm
         if grep -qs 'flags.*rtm' /proc/cpuinfo ; then
 
-            logCheckOk "Intel transactional memory feature TSX is available (SAP Note ${sapnote:-})"
-            _retval=0
+            if LIB_FUNC_IS_VIRT_VMWARE; then
+
+                logCheckWarning "TSX might NOT be functional although TSX flag is exposed, check Hypervisor for disabled TSX"
+                logCheckWarning "Intel transactional memory feature TSX might NOT be functional (SAP Note ${sapnote:-})"
+                _retval=1
+
+            else
+
+                logCheckOk "Intel transactional memory feature TSX is available (SAP Note ${sapnote:-})"
+                _retval=0
+
+            fi
 
         else
 
@@ -58,14 +81,6 @@ function check_2160_transactional_memory_intel {
                     logCheckWarning 'Linux kernel cmdline does NOT contain required <tsx=on>'
 
                 fi
-
-            fi
-
-            if LIB_FUNC_IS_VIRT_VMWARE; then
-
-                logCheckInfo 'Intel TSX @ VMware is disabled due to vulnerability mitigations.'
-                logCheckInfo 'TSX must be enabled on VMware Hypervisor and VM level!'
-                logCheckInfo 'VMware EVC Mode >= Broadwell required!'
 
             fi
 
