@@ -47,6 +47,7 @@ function check_1700_irqbalance_service {
                         'Google GCP'            'off'  'Use script <google_set_multiqueue> to correctly balance IRQ settings for virtual CPUs.'   \
                         'Alibaba Cloud ECS'     'on'   ''   \
                         'Huawei Cloud'          'on'   ''   \
+                        'Nutanix'               'off'  'https://portal.nutanix.com/page/documents/solutions/details?targetId=BP-2097-SAP-HANA-on-AHV:BP-2097-SAP-HANA-on-AHV'   \
                         ''                      'on'   ''   \          #all others, e.g. TDI, Bare-Metal
                         )
 
