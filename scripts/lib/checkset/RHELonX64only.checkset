@@ -75,6 +75,7 @@
 7030_ha_resource_agent_scaleup_rhel
 7031_ha_resource_agent_scaleout_rhel
 8500_sap_hana_client
+8702_sap_hana_backint_amazon
 8704_sap_hana_backint_gcp
 9100_monitor_agent_omsagent_azure
 9101_monitor_agent_dependency_azure

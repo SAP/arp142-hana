@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+
+function check_8702_sap_hana_backint_amazon {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#1730932'
+    local -r backint_version_exp='2.0.4.768'
+    # MODIFICATION SECTION<<
+
+    # 1730932 - Using backup tools with Backint for HANA
+    # https://docs.aws.amazon.com/sap/latest/sap-hana/aws-backint-agent-sap-hana.html
+    # https://docs.aws.amazon.com/sap/latest/sap-hana/aws-backint-agent-version-history.html
+    # https://docs.aws.amazon.com/sap/latest/sap-hana/aws-backint-agent-s3-installing-configuring.html#aws-backint-agent-latest-version
+
+    #PRECONDITION
+    if ! LIB_FUNC_IS_CLOUD_AMAZON; then
+
+        logCheckSkipped 'Not running on Amazon Web Services. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif ! grep -qs . -m1 /usr/sap/???/SYS/global/hdb/opt/backint/hdbconfig/aws-backint-agent-config.yaml; then
+
+        logCheckSkipped 'No AWS Backint Agent for SAP HANA found. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+        #CHECK
+        local backint_version_curr
+        local _sid
+
+        for file in /usr/sap/???/SYS/global/hdb/opt/backint/hdbconfig/aws-backint-agent-config.yaml; do
+
+            _sid="${file:9:3}"
+
+            #  #SOFTWAREID "backint 1.50" "AWS Backint Agent 2.0.2.732"
+            backint_version_curr=$(tail -n20 /usr/sap/"${_sid}"/HDB??/*/trace/DB_???/backup*.log | sort -r | grep -m1 'AWS Backint Agent')
+            backint_version_curr="${backint_version_curr##*AWS Backint Agent }"
+            backint_version_curr="${backint_version_curr//\"}"
+
+            logTrace "<${FUNCNAME[0]}> # <${file}> <${_sid}> <${backint_version_curr}>"
+
+            # returns 0 if equal, 1 if first is higher, 2 if second is higher
+            LIB_FUNC_COMPARE_VERSIONS "${backint_version_curr}" "${backint_version_exp}"
+            if [[ $? -eq 2 ]]; then
+                logCheckWarning "AWS Backint Agent for SAP HANA for ${_sid} should be upgraded (is: ${backint_version_curr}, should be: >=${backint_version_exp})"
+                _retval=1
+            else
+                logCheckOk "AWS Backint Agent for SAP HANA for ${_sid} is at required level (is: ${backint_version_curr})"
+            fi
+
+        done
+
+        if [[ ${_retval} -eq 99 ]]; then
+
+                logCheckOk "All AWS Backint Agents for SAP HANA at recommended version (SAP Note ${sapnote:-})"
+                _retval=0
+
+            else
+
+                logCheckWarning "NOT all AWS Backint Agents for SAP HANA at recommended version (SAP Note ${sapnote:-})"
+                _retval=1
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
