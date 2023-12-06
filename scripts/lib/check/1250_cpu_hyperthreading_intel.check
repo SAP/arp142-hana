@@ -40,6 +40,7 @@ function check_1250_cpu_hyperthreading_intel {
     #Family 6 Model 106/108 : ICX Ice Lake
 
     local rx_sdflex='Superdome Flex$'
+    local rx_css3200='Compute Scale-up Server 3200'
     if [[ "${LIB_PLATF_NAME:-}" =~ ${rx_sdflex} ]]; then
 
         # Superdome Flex - CascadeLake STEP 5-7
@@ -64,6 +65,15 @@ function check_1250_cpu_hyperthreading_intel {
                 logCheckInfo 'For SAP BW/4HANA (analytical workloads), Hyperthreading could be enabled for all system sizes (4s, 8s, 12s and above).'
             fi
 
+        fi
+
+    elif [[ "${LIB_PLATF_NAME:-}" =~ ${rx_css3200} ]]; then
+
+        max_cpu_sockets_with_hyperthreads=12
+
+        if [[ ${LIB_PLATF_CPU_SOCKETS} -gt ${max_cpu_sockets_with_hyperthreads} ]]; then
+            logCheckInfo 'For SAP S/4HANA (analytical and transactional workloads). For 16s Systems and above, Hyperthreading will be disabled.'
+            logCheckInfo 'For SAP BW/4HANA (analytical workloads), Hyperthreading could be enabled for all system sizes (4s, 8s, 12s and above).'
         fi
 
     elif [[ "${LIB_PLATF_NAME:-}" =~ Sequana|DS7160 ]]; then
