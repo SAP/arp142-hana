@@ -60,7 +60,7 @@ function check_0400_glibc_x64 {
 
             8.[1-8] )       _goodversion="${rhel81[0]}" ; sapnote="${rhel81[1]}" ;;
 
-            9.0 )           _goodversion="${rhel90[0]}" ; sapnote="${rhel90[1]}"
+            9.* )           _goodversion="${rhel90[0]}" ; sapnote="${rhel90[1]}"
 
                             logCheckWarning "GLIBC requires these minimum HANA Revisions >= 059.08 || >= 067.01 (SAP Note ${sapnote:-})"
                             _retval=1

@@ -54,7 +54,7 @@ function check_0003_os_hana_support_rhel_intel {
                         'Google GCP'            '0----------'   \
                         'Alibaba Cloud ECS'     '-----------'   \
                         'Huawei Cloud'          '-----------'   \
-                        ''                      '0----------'   \          #all others, e.g. TDI, Bare-Metal
+                        ''                      '0-2--------'   \          #all others, e.g. TDI, Bare-Metal
                         )
 
     local -r sapnote='#2235581'

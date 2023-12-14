@@ -12,6 +12,8 @@ function check_1500_cpu_perfbias_intel {
     local -r sapnote_rhel610='#2694292' # SAP HANA DB: Recommended OS settings for RHEL 6.10
     local -r sapnote_rhel7='#2292690'   # SAP HANA DB: Recommended OS settings for RHEL 7
     local -r sapnote_rhel8='#2777782'   # SAP HANA DB: Recommended OS Settings for RHEL 8
+    local -r sapnote_rhel9='#3108302'   # SAP HANA DB: Recommended OS Settings for RHEL 9
+
     # MODIFICATION SECTION<<
 
     local sapnote
@@ -30,21 +32,24 @@ function check_1500_cpu_perfbias_intel {
     elif LIB_FUNC_IS_SLES ; then
         case "${OS_VERSION}" in
 
-            12.* )  sapnote="${sapnote_sles12}" ;;
-            15.* )  sapnote="${sapnote_sles15}" ;;
+            12.* )  : "${sapnote_sles12}" ;;
+            15.* )  : "${sapnote_sles15}" ;;
 
             *)      logCheckWarning 'CHECK does not support SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>" ;;
         esac
+        sapnote="$_"
 
     elif LIB_FUNC_IS_RHEL ; then
         case "${OS_VERSION}" in
 
-            6.10)   sapnote="${sapnote_rhel610}";;
-            7.* )   sapnote="${sapnote_rhel7}";;
-            8.* )   sapnote="${sapnote_rhel8}";;
+            6.10)   : "${sapnote_rhel610}";;
+            7.* )   : "${sapnote_rhel7}";;
+            8.* )   : "${sapnote_rhel8}";;
+            9.* )   : "${sapnote_rhel9}";;
 
             *)      logCheckWarning 'CHECK does not support RHEL release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>" ;;
         esac
+        sapnote="$_"
 
     else
             logCheckError 'Linux distribution NOT supported (SAP Note #2235581)' "(is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
