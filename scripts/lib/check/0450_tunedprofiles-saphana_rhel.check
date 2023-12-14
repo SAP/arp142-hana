@@ -10,7 +10,6 @@ function check_0450_tunedprofiles-saphana_rhel {
     # https://access.redhat.com/downloads/content/tuned-profiles-sap-hana/noarch/package-latest
 
     # MODIFICATION SECTION>>
-    local -ar rhel77=( '2.11.0-5.el7_7.4' '#2292690' )
     local -ar rhel79=( '2.11.0-11.el7_9.0' '#2292690' )
     local -ar rhel81=( '2.12.0-3.el8_1.1' '#2777782' )
     local -ar rhel82=( '2.13.0-6.el8_2.2' '#2777782' )
@@ -23,7 +22,6 @@ function check_0450_tunedprofiles-saphana_rhel {
     # 2292690 - SAP HANA DB: Recommended OS settings for RHEL 7
     # 2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
     # 3108302 - SAP HANA DB: Recommended OS Settings for RHEL 9
-    # 1880960 - Lenovo Systems Solution for SAP HANA Platform Edition FW/OS/Driver Maintenance
 
     local _goodversion
     local sapnote
@@ -42,7 +40,6 @@ function check_0450_tunedprofiles-saphana_rhel {
                     logCheckSkipped 'Check not applicable for RHEL release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
                     _retval=3 ;;
 
-            7.7 )  _goodversion="${rhel77[0]}" ; sapnote="${rhel77[1]}" ;;
             7.9 )  _goodversion="${rhel79[0]}" ; sapnote="${rhel79[1]}" ;;
 
             8.1 )  _goodversion="${rhel81[0]}" ; sapnote="${rhel81[1]}" ;;
