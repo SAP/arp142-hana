@@ -12,7 +12,6 @@ function check_0600_systemd_version {
 
     # MODIFICATION SECTION>>
     local -ar sles12x=( '228-150.66.4' '#2205917' )    #SAP HANA DB: Recommended OS settings for SLES 12
-    local -ar sles150=( '234-150000.24.111.1' '#2684254' )  #SAP HANA DB: Recommended OS settings for SLES 15
     local -ar sles151=( '234-24.108.1' '#2684254' )         #SAP HANA DB: Recommended OS settings for SLES 15
     local -ar sles153=( '246.13-5.1' '#2684254' )           #SAP HANA DB: Recommended OS settings for SLES 15
     local -ar sles154=( '249.11-150400.6.8' '#2684254' )    #SAP HANA DB: Recommended OS settings for SLES 15
@@ -30,10 +29,9 @@ function check_0600_systemd_version {
 
             12.*)   _goodversion="${sles12x[0]}" ; sapnote="${sles12x[1]}" ;;
 
-            15.0)       _goodversion="${sles150[0]}" ; sapnote="${sles150[1]}" ;;
             15.[1-2] )  _goodversion="${sles151[0]}" ; sapnote="${sles151[1]}" ;;
             15.3)       _goodversion="${sles153[0]}" ; sapnote="${sles153[1]}" ;;
-            15.*)       _goodversion="${sles154[0]}" ; sapnote="${sles154[1]}" ;;
+            15.[4-5] )  _goodversion="${sles154[0]}" ; sapnote="${sles154[1]}" ;;
 
             *)      logCheckSkipped 'CHECK not applicable for SLES release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
                     _retval=3

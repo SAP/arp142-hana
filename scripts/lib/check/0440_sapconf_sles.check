@@ -30,7 +30,7 @@ function check_0440_sapconf_sles {
 
         case "${OS_VERSION}" in
 
-                12.[4-5] )  : "${sles12x}" ;;
+                12.5     )  : "${sles12x}" ;;
                 15.[1-5] )  : "${sles15x}" ;;
 
                 *)

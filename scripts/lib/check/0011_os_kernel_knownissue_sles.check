@@ -31,9 +31,9 @@ function check_0011_os_kernel_knownissue_sles {
                         '15.5' '5.14.21-150500.55.22.1'     '5.14.21-150500.55.22.1'    '#retracted' \
                         )
 
-    local -ar _sles_4sap=(\
-                        '12.4' '4.12.14-94.38.1'        '4.12.14-95.24.0'   '#1880960 ' \
-                        )
+    # local -ar _sles_4sap=(\
+    #                     '12.4' '4.12.14-94.38.1'        '4.12.14-95.24.0'   '#1880960 ' \
+    #                     )
 
     # local -ar _sles_kvm_or_xen=(\
     #                     '12.3' '4.4.120-94.17.1'        '4.4.180-94.103.0'  '#2859234' \
@@ -97,11 +97,11 @@ function check_0011_os_kernel_knownissue_sles {
 
     fi
 
-    if [[ ${_retval} -eq 99 ]] && LIB_FUNC_IS_SLES4SAP; then
+    # if [[ ${_retval} -eq 99 ]] && LIB_FUNC_IS_SLES4SAP; then
 
-        _sles_all+=("${_sles_4sap[@]}")
+    #     _sles_all+=("${_sles_4sap[@]}")
 
-    fi
+    # fi
 
     #CHECK
     if [[ ${_retval} -eq 99 ]]; then
