@@ -9,7 +9,6 @@
 0102_supported_instances_amazon
 0104_supported_instances_gcp
 0106_supported_instances_ibmcloud
-0200_ulimit_package_sles
 0220_cgroup_pids_max_sles
 0300_timer_and_clocksource_intel
 0301_timer_and_clocksource_hyperv
