@@ -11,14 +11,20 @@ function check_0600_systemd_version {
     #https://access.redhat.com/downloads/content/systemd/219-62.el7_6.17/x86_64/fd431d51/package
 
     # MODIFICATION SECTION>>
-    local -ar sles12x=( '228-150.66.4' '#2205917' )    #SAP HANA DB: Recommended OS settings for SLES 12
-    local -ar sles151=( '234-24.108.1' '#2684254' )         #SAP HANA DB: Recommended OS settings for SLES 15
-    local -ar sles153=( '246.13-5.1' '#2684254' )           #SAP HANA DB: Recommended OS settings for SLES 15
-    local -ar sles154=( '249.11-150400.6.8' '#2684254' )    #SAP HANA DB: Recommended OS settings for SLES 15
-    local -ar rhel7=( '219-62.el7_6.17' '#2292690')    #SAP HANA DB: Recommended OS settings for RHEL 7
-    local -ar rhel8=( '239-18.el8_1.7' '#2777782')     #SAP HANA DB: Recommended OS Settings for RHEL 8
-    local -ar rhel9=( '250-6.el9_0' '#3108302')     #SAP HANA DB: Recommended OS Settings for RHEL 9
+    local -ar sles12x=( '228-150.66.4' '#2205917' )
+    local -ar sles151=( '234-150000.24.111.1' '#2684254' )
+    local -ar sles153=( '246.16-150300.7.57.1' '#2684254' )
+    local -ar sles154=( '249.12-150400.8.16.1' '#2684254' )
+    local -ar rhel7=( '219-78.el7_9.7' '#2292690' )
+    local -ar rhel8=( '239-31.el8_2.10' '#2777782' )
+    local -ar rhel9=( '250-6.el9_0.1' '#3108302' )
     # MODIFICATION SECTION<<
+
+    #2205917 SAP HANA DB: Recommended OS settings for SLES 12
+    #2684254 SAP HANA DB: Recommended OS settings for SLES 15
+    #2292690 SAP HANA DB: Recommended OS settings for RHEL 7
+    #2777782 SAP HANA DB: Recommended OS Settings for RHEL 8
+    #3108302 SAP HANA DB: Recommended OS Settings for RHEL 9
 
     local _goodversion
     local sapnote
