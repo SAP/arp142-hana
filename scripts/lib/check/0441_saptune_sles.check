@@ -9,9 +9,9 @@ function check_0441_saptune_sles {
     # MODIFICATION SECTION>>
     local -r sapnote='#1275776'         #1275776 - Linux: Preparing SLES for SAP environments
 
-    local -r sles125='3.0.2-4.10.1'
+    local -r sles125='3.1.1-4.18.1'
 
-    local -r sles15x='3.0.2-8.22.2'
+    local -r sles15x='3.1.1-150100.8.30.1'
     # MODIFICATION SECTION<<
 
     local _goodversion
