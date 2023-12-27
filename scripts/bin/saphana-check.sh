@@ -233,6 +233,7 @@ function generate_checklist {
     for checkfile in "${CHECKFILELIST[@]}"; do
 
         checkfileshort=${checkfile##*/}
+        checkfileid=${checkfileshort:0:4}
         logTrace "<${FUNCNAME[0]}> # filename:<${checkfileshort}> fullpath:<${checkfile}>"
 
         if ! safetycheck=$(LIB_FUNC_CHECK_CHECK_SECURITY "$checkfile"); then
@@ -244,9 +245,16 @@ function generate_checklist {
             logWarn "Skipping check ${checkfileshort}. Check file not readable.
                         ${checkfile}"
 
+        elif [[ "${checkfileid:-}" == "${checkfileid_old:-}" ]]; then
+
+            logError "Check with ID <${checkfileid}> listed twice. saphana-check installation error - please clean up."
+            logError "Most probably mixed rpm and zip installations - remove saphana-check rpm, clean up /opt/sap/saphana-checks and reinstall"
+            exit 1
+
         else
 
             CHECKLIST+=("${checkfile}")
+            checkfileid_old=${checkfileid}
 
         fi
 
