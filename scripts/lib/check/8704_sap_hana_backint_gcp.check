@@ -8,7 +8,7 @@ function check_8704_sap_hana_backint_gcp {
 
     # MODIFICATION SECTION>>
     local -r sapnote='#1730932'
-    local -r backint_version_exp='1.0.32'
+    local -r backint_version_exp='1.0.33'
     # MODIFICATION SECTION<<
 
     # 1730932 - Using backup tools with Backint for HANA
@@ -49,17 +49,10 @@ function check_8704_sap_hana_backint_gcp {
 
         done <<< "$(grep . -m1 -H /usr/sap/???/SYS/global/hdb/opt/backint/backint-gcs/VERSION.txt)"
 
-        if [[ ${_retval} -eq 99 ]]; then
-
-                logCheckOk "All SAP HANA backint agents at recommended version (SAP Note ${sapnote:-})"
-                _retval=0
-
-            else
-
-                logCheckWarning "NOT all SAP HANA backint agents at recommended version (SAP Note ${sapnote:-})"
-                _retval=1
-
-        fi
+        logCheckWarning 'The Cloud Storage Backint agent for SAP HANA is deprecated,'
+        logCheckWarning 'and is replaced by the Backint feature of version 3.0 of Google Cloud Agent for SAP.'
+        logCheckWarning "GCPs SAP HANA backint agent should be migrated (SAP Note ${sapnote:-})"
+        _retval=1
 
     fi
 
