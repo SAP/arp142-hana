@@ -19,48 +19,35 @@ function check_3300_network_adapter_vmxnet3_vmware {
         logCheckSkipped 'Not running on VMware vSphere. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif ! LIB_FUNC_IS_ROOT ; then
-
-        logCheckError "ROOT required - VMware vmxnet3 network driver parameters not readable (SAP Note ${sapnote:-})"
-        _retval=2
-
+    else
+        # /sys/class/net/eth0/device/uevent:DRIVER=vmxnet3
+        # /sys/module/vmxnet3/version:1.5.0.0-k
+        mapfile -t vmxnet3_adapters < <(grep DRIVER=vmxnet3 -rsH /sys/class/net/**/device/uevent)
     fi
 
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-        if [[ ! -d '/sys/bus/pci/drivers/vmxnet3' ]]; then
+        if [[ ${#vmxnet3_adapters[@]} -ge 2 ]]; then
 
-            logCheckError "VMware vmxnet3 network driver NOT installed (SAP Note ${sapnote:-})"
-            _retval=2
+            logCheckOk "VMware vmxnet3 network adapter enabled as recommended (SAP Note ${sapnote:-}) (is: ${#vmxnet3_adapters[@]})"
+            _retval=0
+
+        elif [[ ${#vmxnet3_adapters[@]} -eq 1 ]]; then
+
+            logCheckInfo 'In case of HANA Scale-Out or HANA SystemReplication at least 2 vmxnet3 adapters should be configured'
+            logCheckInfo '---'
+
+            logCheckWarning "#VMware vmxnet3 network adapter NOT as recommended (SAP Note ${sapnote:-}) (is: ${#vmxnet3_adapters[@]}, should be: >=2)"
+            _retval=1
 
         else
 
-            local -a vmxnet3_adapters
-
-            mapfile -t vmxnet3_adapters < <(find -L /sys/bus/pci/drivers/vmxnet3/* -maxdepth 1 -name enable -exec grep -H 1 {} \;)
-
-            if [[ ${#vmxnet3_adapters[@]} -ge 2 ]]; then
-
-                logCheckOk "VMware vmxnet3 network adapter enabled as recommended (SAP Note ${sapnote:-}) (is: ${#vmxnet3_adapters[@]})"
-                _retval=0
-
-            elif [[ ${#vmxnet3_adapters[@]} -eq 1 ]]; then
-
-                logCheckInfo 'In case of HANA Scale-Out or HANA SystemReplication at least 2 vmxnet3 adapters should be configured'
-                logCheckInfo '---'
-
-                logCheckWarning "#VMware vmxnet3 network adapter NOT as recommended (SAP Note ${sapnote:-}) (is: ${#vmxnet3_adapters[@]}, should be: >=2)"
-                _retval=1
-
-            else
-
-                logCheckError "VMware vmxnet3 network adapter NOT configured (SAP Note ${sapnote:-})"
-                _retval=2
-
-            fi
+            logCheckError "VMware vmxnet3 network adapter NOT configured (SAP Note ${sapnote:-})"
+            _retval=2
 
         fi
+
     fi
 
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
