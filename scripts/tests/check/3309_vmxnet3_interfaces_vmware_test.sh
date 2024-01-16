@@ -27,7 +27,7 @@ test_0interface_error() {
     if_vmxnet3=()
 
     #act
-    check_3300_network_adapter_vmxnet3_vmware
+    check_3309_vmxnet3_interfaces_vmware
 
     #assert
     assertEquals "CheckError? RC" '2' "$?"
@@ -40,7 +40,7 @@ test_1interface_warning() {
     if_vmxnet3+=('/sys/class/net/eth0/device/uevent:DRIVER=vmxnet3')
 
     #act
-    check_3300_network_adapter_vmxnet3_vmware
+    check_3309_vmxnet3_interfaces_vmware
 
     #assert
     assertEquals "CheckWarning? RC" '1' "$?"
@@ -54,7 +54,7 @@ test_2interfaces_ok() {
     if_vmxnet3+=('/sys/class/net/eth1/device/uevent:DRIVER=vmxnet3')
 
     #act
-    check_3300_network_adapter_vmxnet3_vmware
+    check_3309_vmxnet3_interfaces_vmware
 
     #assert
     assertEquals "CheckOk? RC" '0' "$?"
@@ -70,7 +70,7 @@ test_4interfaces_ok() {
     if_vmxnet3+=('/sys/class/net/eth4/device/uevent:DRIVER=vmxnet3')
 
     #act
-    check_3300_network_adapter_vmxnet3_vmware
+    check_3309_vmxnet3_interfaces_vmware
 
     #assert
     assertEquals "CheckOk? RC" '0' "$?"
@@ -82,8 +82,8 @@ test_4interfaces_ok() {
     #shellcheck source=../saphana-logger-stubs
     source "${PROGRAM_DIR}/../saphana-logger-stubs"
 
-    #shellcheck source=../../lib/check/3300_network_adapter_vmxnet3_vmware.check
-    source "${PROGRAM_DIR}/../../lib/check/3300_network_adapter_vmxnet3_vmware.check"
+    #shellcheck source=../../lib/check/3309_vmxnet3_interfaces_vmware.check
+    source "${PROGRAM_DIR}/../../lib/check/3309_vmxnet3_interfaces_vmware.check"
 
  }
 

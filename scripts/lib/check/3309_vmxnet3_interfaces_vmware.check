@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function check_3300_network_adapter_vmxnet3_vmware {
+function check_3309_vmxnet3_interfaces_vmware {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
