@@ -60,6 +60,7 @@
 3202_mtu_jumbo_amazon
 3300_network_adapter_vmxnet3_vmware
 3301_network_accelerated_azure
+3302_ena_interfaces_amazon
 3304_network_interface_gvnic_gcp
 4110_xfs_nobarrier
 4150_pmem_xfs_mountoption_dax

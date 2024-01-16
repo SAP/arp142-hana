@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+function check_3302_ena_interfaces_amazon {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#1656250,1656099'
+    # MODIFICATION SECTION<<
+
+    # 1656250 - SAP on AWS: Support prerequisites
+    # 1656099 - SAP Applications on AWS: Supported DB/OS and AWS EC2 products
+    # https://docs.aws.amazon.com/sap/latest/sap-hana/hana-ops-networking.html
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_CLOUD_AMAZON; then
+
+        logCheckSkipped 'Not running on Amazon Web Services. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+        # /sys/class/net/eth0/device/uevent:DRIVER=ena
+        # /sys/module/ena/version:2.1.0K
+        mapfile -t ena_interfaces < <(grep DRIVER=ena -rsH /sys/class/net/**/device/uevent)
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        if [[ ${#ena_interfaces[@]} -ge 2 ]]; then
+
+            logCheckOk "Elastic Network Adapter (ENA) enabled as recommended (SAP Note ${sapnote:-}) (is: ${#ena_interfaces[@]})"
+            _retval=0
+
+        elif [[ ${#ena_interfaces[@]} -eq 1 ]]; then
+
+            logCheckInfo 'In case of HANA Scale-Out or HANA SystemReplication at least 2 ENA adapters should be configured'
+            logCheckInfo '---'
+
+            logCheckWarning "#Elastic Network Adapter (ENA) NOT as recommended (SAP Note ${sapnote:-}) (is: ${#ena_interfaces[@]}, should be: >=2)"
+            _retval=1
+
+        else
+
+            logCheckError "Elastic Network Adapter (ENA) NOT configured (SAP Note ${sapnote:-})"
+            _retval=2
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
