@@ -58,6 +58,11 @@ function check_0350_timesync {
             elif systemctl is-active "chronyd" --quiet; then
                 _retval=0
 
+            elif  systemctl is-active "vmtoolsd" --quiet; then
+                if  vmware-toolbox-cmd timesync status &>/dev/null; then
+                _retval=66
+                fi
+
             fi
 
         fi
@@ -68,6 +73,11 @@ function check_0350_timesync {
     if [[ ${_retval} -eq 0 ]]; then
 
         logCheckOk "Network time synchronization is active (SAP Note ${sapnote:-})"
+
+    elif [[ ${_retval} -eq 66 ]]; then
+
+        logCheckWarning "Time synchronized by vmware-tools. Use ntpd or chronyd instead. (SAP Note ${sapnote:-})"
+        _retval=1
 
     else
 
