@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+
+function check_3312_ena_version_amazon {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#1656250,1656099'
+
+    local -r _ena_version_min='2.1'
+    local -r _ena_version_reco='2.11'
+    # MODIFICATION SECTION<<
+
+    # 1656250 - SAP on AWS: Support prerequisites
+    # 1656099 - SAP Applications on AWS: Supported DB/OS and AWS EC2 products
+    # https://docs.aws.amazon.com/sap/latest/sap-hana/hana-ops-networking.html
+    # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/enhanced-networking-ena.html#ena-driver-release-notes
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_CLOUD_AMAZON; then
+
+        logCheckSkipped 'Not running on Amazon Web Services. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+        # /sys/module/ena/version:2.1.0K
+        local _ena_version_curr
+        _ena_version_curr=$(</sys/module/ena/version)
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        #normalize 2.1.0-k -> 2.1.0 (remove alpha and hyphens )
+        _ena_version_curr="${_ena_version_curr//+([-a-zA-Z])/}"
+
+        # LIB_FUNC_COMPARE_VERSIONS returns 0 if equal, 1 if first is higher, 2 if second is higher
+        LIB_FUNC_COMPARE_VERSIONS "${_ena_version_curr}" "${_ena_version_reco}"
+
+        if [[ $? -ne 2 ]] ; then
+
+            logCheckOk "Elastic Network Adapter driver version as recommended (SAP Note ${sapnote:-}) (is: ${_ena_version_curr})"
+            _retval=0
+
+        else
+
+            LIB_FUNC_COMPARE_VERSIONS "${_ena_version_curr}" "${_ena_version_min}"
+
+            if [[ $? -ne 2 ]] ; then
+
+                logCheckWarning "Elastic Network Adapter driver version should be updated (SAP Note ${sapnote:-}) (is: ${_ena_version_curr}, should be: >=${_ena_version_reco})"
+                _retval=1
+
+            else
+
+                logCheckError "Elastic Network Adapter driver version must be updated (SAP Note ${sapnote:-}) (is: ${_ena_version_curr}, must be: >=${_ena_version_min})"
+                _retval=2
+
+            fi
+        fi
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
