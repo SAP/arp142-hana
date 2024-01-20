@@ -8,16 +8,19 @@ function check_1260_cpu_smthreading_ibmpower {
 
     # MODIFICATION SECTION>>
     local -r sapnote='#2055470,2188482'
+                                            #lt     #SMT-range
+        local -ar _smt_matrix=(\
+                            'POWER10'       '96'    '4-4'   \
+                            'POWER10'       '0'     '4-4'   \
+                            'POWER9'        '96'    '4-8'   \
+                            'POWER9'        '0'     '4-8'   \
+                            'POWER8'        '96'    '4-4'   \
+                            'POWER8'        '0'     '4-8'   \
+                        )
     # MODIFICATION SECTION<<
 
     #2055470 - HANA on POWER Planning and Installation Specifics - Central Note
-    #2188482 - SAP HANA on IBM Power Systems: Allowed Hardware - (Version 76 from 24.02.2022)
-
-    local -i exp_threadspercore=8
-    local -i exp_threadspercore_p10=4
-
-    local -i HighCores_threadspercore=4
-    local -i highCoresTotal=96
+    #2188482 - SAP HANA on IBM Power Systems: Supported hardware and features - (Version: 90, Released On: 12.01.2024)
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_IBMPOWER ; then
@@ -45,38 +48,46 @@ function check_1260_cpu_smthreading_ibmpower {
     #CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
+        local _smt_core
+        local _smt_range
+
+        local _handled=false
+
         local -i cores_total
         cores_total=$((LIB_PLATF_CPU_SOCKETS*LIB_PLATF_CPU_CORESPERSOCKET))
 
-        if [[ ! "${LIB_PLATF_POWER_PLATFORM_BASE:-}" =~ POWER(9|8) ]]; then
-            #Power10 with SMT-4 only
-            exp_threadspercore=${exp_threadspercore_p10}
-
-        elif [[ ${cores_total} -gt ${highCoresTotal} ]]; then
-
-            exp_threadspercore=${HighCores_threadspercore}
-
-        fi
-
         logCheckInfo "${LIB_PLATF_POWER_PLATFORM_BASE} - Sockets:<${LIB_PLATF_CPU_SOCKETS}>, CoresPerSocket:<${LIB_PLATF_CPU_CORESPERSOCKET}>, TotalCores:<${cores_total}>"
 
+        # i+=3 --> every 3rd item
+        for ((i=0; i < ${#_smt_matrix[@]}; i+=3)); do
 
-        if [[ ${LIB_PLATF_CPU_THREADSPERCORE} -eq ${exp_threadspercore} ]]; then
+            logTrace "<${FUNCNAME[0]}> # ${_smt_matrix[$i]}>"
 
-            logCheckOk "Simultaneous Multithreading mode set as recommended (SAP Note ${sapnote:-}) (is: SMT-${LIB_PLATF_CPU_THREADSPERCORE})"
-            _retval=0
+            [[ "${LIB_PLATF_POWER_PLATFORM_BASE:-}" != "${_smt_matrix[$i]}" ]] && continue
+            [[ "${cores_total:-}" -lt "${_smt_matrix[$i+1]}" ]] && continue
 
-        elif [[ ! "${LIB_PLATF_POWER_PLATFORM_BASE:-}" =~ POWER(9|8) ]]; then
+            _handled=true
+            _smt_range="${_smt_matrix[$i+2]}"
 
-            logCheckWarning "Simultaneous Multithreading mode NOT set as recommended (SAP Note ${sapnote:-}) (is: SMT-${LIB_PLATF_CPU_THREADSPERCORE}, should be: = SMT-${exp_threadspercore})"
-            _retval=1
+            if LIB_FUNC_STRINGCONTAIN "${_smt_range}" "${LIB_PLATF_CPU_THREADSPERCORE}"; then
 
-        else
+                logCheckOk "Simultaneous Multithreading mode set as recommended (SAP Note ${sapnote:-}) (is: SMT-${LIB_PLATF_CPU_THREADSPERCORE})"
+                _retval=0
 
-            logCheckWarning "Simultaneous Multithreading mode NOT set as recommended (SAP Note ${sapnote:-}) (is: SMT-${LIB_PLATF_CPU_THREADSPERCORE}, should be: <= SMT-${exp_threadspercore})"
-            logCheckWarning 'This can be ignored in case of pure OLAP scenarios - applies to OLTP & Mixed scenarios only.'
-            _retval=1
+            else
 
+                logCheckWarning "Simultaneous Multithreading mode NOT set as recommended (SAP Note ${sapnote:-}) (is: SMT-${LIB_PLATF_CPU_THREADSPERCORE}, should be: SMT-${_smt_range})"
+                _retval=1
+
+            fi
+
+            break
+        done
+
+        if ! ${_handled}; then
+
+            logCheckError "POWER platform with total cores not handled by check (SAP Note ${sapnote:-}) (is: ${LIB_PLATF_POWER_PLATFORM_BASE}-SMT${LIB_PLATF_CPU_THREADSPERCORE})"
+            _retval=2
         fi
 
     fi

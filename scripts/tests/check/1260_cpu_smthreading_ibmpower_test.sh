@@ -7,6 +7,10 @@ readonly PROGRAM_DIR
 #mock PREREQUISITE functions
 LIB_FUNC_IS_IBMPOWER() { return 0 ; }
 
+LIB_FUNC_STRINGCONTAIN() {
+    [[ -z "${1##*"$2"*}" ]] && [[ -z "$2" || -n "$1" ]];
+}
+
 # still to mock for tests
 # LIB_PLATF_CPU_SOCKETS=
 # LIB_PLATF_CPU_CORESPERSOCKET=
@@ -52,7 +56,37 @@ test_precondition_cputhreads_unknown() {
     assertEquals "CheckError? RC" '2' "$?"
 }
 
-test_power9_corestotallow_warning() {
+test_powerX_nothandled_error() {
+
+    #arrange
+    LIB_PLATF_POWER_PLATFORM_BASE='POWERX'
+    LIB_PLATF_CPU_SOCKETS=8
+    LIB_PLATF_CPU_CORESPERSOCKET=10
+    LIB_PLATF_CPU_THREADSPERCORE=8
+
+    #act
+    check_1260_cpu_smthreading_ibmpower
+
+    #assert
+    assertEquals "CheckError? RC" '2' "$?"
+}
+
+test_power8_corestotallow_smt4_ok() {
+
+    #arrange
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER8'
+    LIB_PLATF_CPU_SOCKETS=8
+    LIB_PLATF_CPU_CORESPERSOCKET=10
+    LIB_PLATF_CPU_THREADSPERCORE=4
+
+    #act
+    check_1260_cpu_smthreading_ibmpower
+
+    #assert
+    assertEquals "CheckOk? RC" '0' "$?"
+}
+
+test_power8_corestotalhigh_smt4_ok() {
 
     #arrange
     LIB_PLATF_POWER_PLATFORM_BASE='POWER9'
@@ -64,10 +98,85 @@ test_power9_corestotallow_warning() {
     check_1260_cpu_smthreading_ibmpower
 
     #assert
+    assertEquals "CheckOk? RC" '0' "$?"
+}
+
+test_power8_corestotallow_smt8_ok() {
+
+    #arrange
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER8'
+    LIB_PLATF_CPU_SOCKETS=8
+    LIB_PLATF_CPU_CORESPERSOCKET=10
+    LIB_PLATF_CPU_THREADSPERCORE=8
+
+    #act
+    check_1260_cpu_smthreading_ibmpower
+
+    #assert
+    assertEquals "CheckOk? RC" '0' "$?"
+}
+
+test_power8_corestotalhigh_smt8_warning() {
+
+    #arrange
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER8'
+    LIB_PLATF_CPU_SOCKETS=8
+    LIB_PLATF_CPU_CORESPERSOCKET=12
+    LIB_PLATF_CPU_THREADSPERCORE=8
+
+    #act
+    check_1260_cpu_smthreading_ibmpower
+
+    #assert
     assertEquals "CheckWarn? RC" '1' "$?"
 }
 
-test_power9_corestotallow_ok() {
+test_power9_corestotallow_smt4_ok() {
+
+    #arrange
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER9'
+    LIB_PLATF_CPU_SOCKETS=8
+    LIB_PLATF_CPU_CORESPERSOCKET=10
+    LIB_PLATF_CPU_THREADSPERCORE=4
+
+    #act
+    check_1260_cpu_smthreading_ibmpower
+
+    #assert
+    assertEquals "CheckOk? RC" '0' "$?"
+}
+
+test_power9_corestotalhigh_smt4_ok() {
+
+    #arrange
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER9'
+    LIB_PLATF_CPU_SOCKETS=8
+    LIB_PLATF_CPU_CORESPERSOCKET=12
+    LIB_PLATF_CPU_THREADSPERCORE=4
+
+    #act
+    check_1260_cpu_smthreading_ibmpower
+
+    #assert
+    assertEquals "CheckOk? RC" '0' "$?"
+}
+
+test_power9_corestotallow_smt8_ok() {
+
+    #arrange
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER9'
+    LIB_PLATF_CPU_SOCKETS=8
+    LIB_PLATF_CPU_CORESPERSOCKET=10
+    LIB_PLATF_CPU_THREADSPERCORE=8
+
+    #act
+    check_1260_cpu_smthreading_ibmpower
+
+    #assert
+    assertEquals "CheckOk? RC" '0' "$?"
+}
+
+test_power9_corestotalhigh_smt8_ok() {
 
     #arrange
     LIB_PLATF_POWER_PLATFORM_BASE='POWER9'
@@ -82,27 +191,12 @@ test_power9_corestotallow_ok() {
     assertEquals "CheckOk? RC" '0' "$?"
 }
 
-test_power9_corestotalhigh_warning() {
+test_power10_threadspercore_smt4_ok() {
 
     #arrange
-    LIB_PLATF_POWER_PLATFORM_BASE='POWER9'
-    LIB_PLATF_CPU_SOCKETS=8
-    LIB_PLATF_CPU_CORESPERSOCKET=14
-    LIB_PLATF_CPU_THREADSPERCORE=8
-
-    #act
-    check_1260_cpu_smthreading_ibmpower
-
-    #assert
-    assertEquals "CheckWarn? RC" '1' "$?"
-}
-
-test_power9_corestotalhigh_ok() {
-
-    #arrange
-    LIB_PLATF_POWER_PLATFORM_BASE='POWER9'
-    LIB_PLATF_CPU_SOCKETS=8
-    LIB_PLATF_CPU_CORESPERSOCKET=14
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER10'
+    LIB_PLATF_CPU_SOCKETS=1
+    LIB_PLATF_CPU_CORESPERSOCKET=1
     LIB_PLATF_CPU_THREADSPERCORE=4
 
     #act
@@ -127,20 +221,6 @@ test_power10_threadspercore_warning() {
     assertEquals "CheckWarn? RC" '1' "$?"
 }
 
-test_power10_threadspercore_ok() {
-
-    #arrange
-    LIB_PLATF_POWER_PLATFORM_BASE='POWER10'
-    LIB_PLATF_CPU_SOCKETS=1
-    LIB_PLATF_CPU_CORESPERSOCKET=1
-    LIB_PLATF_CPU_THREADSPERCORE=4
-
-    #act
-    check_1260_cpu_smthreading_ibmpower
-
-    #assert
-    assertEquals "CheckOk? RC" '0' "$?"
-}
 
 # test_template() {
 
