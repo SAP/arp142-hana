@@ -26,10 +26,12 @@ function check_0011_os_kernel_knownissue_sles {
                         '15.3' '5.3.18-57.3'                '5.3.18-150300.59.101.0'    '#bsc#1203496-PMEM' \
                         '15.3' '5.3.18-150300.59.101.1'     '5.3.18-150300.59.106.1'    '#SUSE TID 000021035' \
                         '15.4' '5.14.21-150400.24.21.1'     '5.14.21-150400.24.28.0'    '#SUSE TID 000020826' \
-                        '15.4' '5.14.21-150400.24.33.2'     '5.14.21-150400.24.38.1'    '#SUSE TID 000021035' \
+                        '15.4' '5.14.21-150400.24.33.2'     '5.14.21-150400.24.41.0'    '#SUSE TID 000021035' \
                         '15.4' '5.14.21-150400.24.49.3'     '5.14.21-150400.24.49.3'    '#retracted' \
                         '15.4' '5.14.21-150400.24.84.1 '    '5.14.21-150400.24.84.1 '   '#retracted' \
+                        '15.4' '5.14.21-150400.24.88.1 '    '5.14.21-150400.24.103.0'   '#SUSE bsc#1215885' \
                         '15.5' '5.14.21-150500.55.22.1'     '5.14.21-150500.55.22.1'    '#retracted' \
+                        '15.5' '5.14.21-150500.53.2'        '5.14.21-150500.55.44.0'    '#SUSE bsc#1215885' \
                         )
 
     # local -ar _sles_4sap=(\
@@ -64,6 +66,8 @@ function check_0011_os_kernel_knownissue_sles {
     #bsc#1170457 - NFS: Do not call generic_error_remove_page() while holding locks (bsc#1170457)
 
     #SUSE TID 000021035   TSC Clocksource Switching to HPET During High I/O Load
+    #bsc#1215885 - clocksource - bunch of fixes
+
     #SUSE TID 000020826   BUG: workqueue leaked lock or atomic: kworker
 
     #bsc#1203496 - SLES 15 SP2/3: HANA PMEM savepoint blocking issue (https://bugzilla.suse.com/show_bug.cgi?id=1203496)
