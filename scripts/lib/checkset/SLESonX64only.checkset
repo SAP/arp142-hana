@@ -74,6 +74,7 @@
 5505_nfsv4_max_session_slots
 5510_nfsv3_rpc_slots_netapp
 5521_nfs_mount_rwsize_azure
+5522_nfs_mount_rwsize_amazon
 7010_corosync_version
 7020_ha_resource_agents_sles
 8500_sap_hana_client

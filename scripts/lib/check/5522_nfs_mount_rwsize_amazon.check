@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+function check_5522_nfs_mount_rwsize_amazon {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # rsize=262144,wsize=262144
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#1656250'
+
+    local -r _reco_rsize_wsize='rsize=262144,wsize=262144'
+    # MODIFICATION SECTION<<
+
+    # 1656250 - SAP on AWS: Support prerequisites
+    # https://docs.aws.amazon.com/sap/latest/sap-hana/fsx-host-scaleup.html#mount-filesys-scaleup
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_CLOUD_AMAZON; then
+
+        logCheckSkipped 'Not running on Amazon Web Services. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif ! grep -qsE '\snfs4?\s' /proc/mounts; then
+
+        logCheckSkipped "No NFS filesystem mounted (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+        _retval=3
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        logCheckInfo 'Only applicable for SAP Persistence stored on FSx for ONTAP!'
+        logCheckInfo 'https://docs.aws.amazon.com/sap/latest/sap-hana/fsx-host-scaleup.html#mount-filesys-scaleup'
+        logCheckInfo '---'
+
+        while read -r nfs_mount ; do
+
+            logTrace "<${FUNCNAME[0]}> # <${nfs_mount}>"
+
+            if ! LIB_FUNC_STRINGCONTAIN "${nfs_mount}" "${_reco_rsize_wsize}" ; then
+
+                logCheckWarning "FSx for ONTAP mount option rsize/wsize NOT set correctly for <${nfs_mount// */}>"
+                _retval=1
+
+            fi
+
+        done <<< "$(grep -sE '\snfs4?\s' /proc/mounts)"
+
+
+        if [[ ${_retval} -eq 99 ]]; then
+
+            logCheckOk "All FSx for ONTAP filesystem have mount options rsize/wsize set as recommended (SAP Note ${sapnote:-})"
+            _retval=0
+
+        else
+
+            logCheckWarning "NOT all FSx for ONTAP filesystems have mount options rsize/wsize set as recommended (SAP Note ${sapnote:-})"
+            _retval=1
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
