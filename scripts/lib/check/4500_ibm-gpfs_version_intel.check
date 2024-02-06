@@ -10,14 +10,16 @@ function check_4500_ibm-gpfs_version_intel {
     local -r sapnote='#2908360,#2533844,#1880960'
     # local -r _goodversion50='5.0.5.14'
     local -r _goodversion51='5.1.0.2'       #supported only on RHEL 7.7, starting with RHEL 8.1 and SLES 15 SP0
-    local -r _goodversion51n='5.1.2.8'      #RHEL7.7,8.4 and SLES15.2
-    local -r _goodversion51nn='5.1.8'       #SLES15.3,15.4
+    local -r _goodversion51n='5.1.2.11'     #RHEL7.7,8.4 and SLES15.2
+    local -r _goodversion51nn='5.1.9.1'     #SLES15.3,15.4
     # MODIFICATION SECTION<<
 
     #2908360 - Spectrum Scale Software Lenovo ESD Platform
     #2533844 - Lenovo Support Tool for SAP HANA solutions
     #1880960 - Lenovo Systems Solution for SAP HANA Platform Edition FW/OS/Driver Maintenance
-    #https://www.ibm.com/support/pages/ibm-spectrum-scale-software-version-recommendation-preventive-service-planning
+
+    #IBM Storage Scale Software Version Recommendation Preventive Service Planning
+    #https://www.ibm.com/support/pages/node/707017
 
     local _goodversion
 
