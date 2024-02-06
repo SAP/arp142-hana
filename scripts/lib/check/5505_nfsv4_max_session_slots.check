@@ -11,11 +11,12 @@ function check_5505_nfsv4_max_session_slots {
     # MODIFICATION SECTION>>
     local -r sapnote='#3024346'
 
-    local -i _reco_max_slots=128
+    local -i _reco_max_slots=180
     # MODIFICATION SECTION<<
 
     # NFS in NetApp ONTAP Best practice and implementation guide https://www.netapp.com/media/10720-tr-4067.pdf
     # https://docs.microsoft.com/en-us/azure/azure-netapp-files/performance-linux-concurrency-session-slots#nfsv41
+    # https://docs.aws.amazon.com/sap/latest/sap-hana/fsx-host-scaleup.html#linux-setup-scaleup
     # 3024346 - Linux Kernel Settings for NetApp NFS
 
     local _max_slots_parameter
