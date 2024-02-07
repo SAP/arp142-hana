@@ -27,7 +27,7 @@ function check_1200_shared_processor_mode_ibmpower {
     #CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-        if [[ "${LIB_PLATF_POWER_CPUMODE}" == 'DEDICATED!' ]]; then
+        if [[ "${LIB_PLATF_POWER_CPUMODE}" == 'DEDICATED' ]]; then
 
             if [[ "${LIB_PLATF_POWER_CPUMODE_DEDDON:-}" != 'DONATING' ]]; then
 
