@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+
+function check_5530_nfs_mount_nconnect {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#3024346'
+
+    local -r _rx_reco_nconnect_data='nconnect=[4-8]'
+    local -r _rx_reco_nconnect_log='nconnect=2'
+    local -r _rx_reco_nconnect_usrsap='nconnect=2'
+    local -r _rx_reco_nconnect_shared='nconnect=2'
+
+    local _rxHANAmounts='(/hana/(data|log|shared)|/usr/sap).*\snfs4?\s.*'
+    # MODIFICATION SECTION<<
+
+    # 3024346 - Linux Kernel Settings for NetApp NFS
+    # NFS in NetApp ONTAP Best practice and implementation guide https://www.netapp.com/media/10720-tr-4067.pdf
+    # https://docs.aws.amazon.com/sap/latest/sap-hana/fsx-host-scaleup.html#linux-setup-scaleup
+    # https://learn.microsoft.com/en-us/azure/azure-netapp-files/performance-linux-mount-options#nconnect
+
+
+    # PRECONDITIONS
+    if ! grep -qsE "${_rxHANAmounts}" /proc/mounts; then
+
+        logCheckSkipped "No HANA NFS filesystem mounted (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif LIB_FUNC_IS_SLES ; then
+        case "${OS_VERSION}" in
+
+            11.* | 12.[0-4] | 15.[0-1] )
+
+                logCheckSkipped 'CHECK not applicable for SLES release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
+                _retval=3 ;;
+        esac
+
+    elif LIB_FUNC_IS_RHEL ; then
+        case "${OS_VERSION}" in
+
+            6.* | 7.* | 8.[0-3] )
+
+                logCheckSkipped 'CHECK not applicable for RHEL release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
+                _retval=3 ;;
+        esac
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local _rx_reco_nconnect
+
+        logCheckInfo 'Only applicable for SAP Persistence stored on Netapp NFS!'
+        logCheckInfo '---'
+
+        while read -r nfs_mount ; do
+
+            logTrace "<${FUNCNAME[0]}> # <${nfs_mount}>"
+
+            case "${nfs_mount// */}" in
+                '/hana/data'* )      : "${_rx_reco_nconnect_data}" ;;
+                '/hana/log'* )       : "${_rx_reco_nconnect_log}" ;;
+                '/hana/shared'* )    : "${_rx_reco_nconnect_shared}" ;;
+                '/usr/sap'* )        : "${_rx_reco_nconnect_usrsap}" ;;
+            esac
+            _rx_reco_nconnect="$_"
+
+            if [[ ! "${nfs_mount}" =~ ${_rx_reco_nconnect} ]]; then
+
+                logCheckWarning "NFS mount option nconnect NOT set correctly for <${nfs_mount// */}> (should be: ${_rx_reco_nconnect})"
+                _retval=1
+
+            fi
+
+        done <<< "$(grep -soE "${_rxHANAmounts}" /proc/mounts)"
+
+
+        if [[ ${_retval} -eq 99 ]]; then
+
+            logCheckOk "All HANA NFS filesystems have mount option nconnect set as recommended (SAP Note ${sapnote:-})"
+            _retval=0
+
+        else
+
+            logCheckWarning "NOT all HANA NFS filesystems have mount option nconnect set as recommended (SAP Note ${sapnote:-})"
+            _retval=1
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
