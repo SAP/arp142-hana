@@ -21,7 +21,7 @@ grep() {
 
         *'cmdline')     return "${_grep_cmdline_rc}" ;;
 
-        *)              command grep "$*" ;; # shunit2 requires grep
+        *)              command grep "$@" ;; # shunit2 requires grep
     esac
 }
 

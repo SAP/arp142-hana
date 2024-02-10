@@ -15,7 +15,7 @@ grep() {
        '-s ^/dev/pmem'*)    #fake $(grep -s '^/dev/pmem.*xfs' /proc/mounts)
                             printf "%s\n" "${pmem_xfs_mounts[@]:-}" ;;
 
-        *)                  command grep "$*" ;; # shunit2 requires grep
+        *)                  command grep "$@" ;; # shunit2 requires grep
     esac
 
 }

@@ -25,7 +25,7 @@ grep() {
 
         *'scheduler' )  printf "%s\n" "${io_scheduler[@]}" ;;
 
-        *)              command grep "$*" ;; # shunit2 requires grep
+        *)              command grep "$@" ;; # shunit2 requires grep
     esac
 }
 

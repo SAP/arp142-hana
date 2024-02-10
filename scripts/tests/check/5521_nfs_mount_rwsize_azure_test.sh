@@ -18,7 +18,7 @@ grep() {
                         #printf "%s\n" "${nfs_mounts[@]:-}" ;;
                         printf -- '%s\n' "${nfs_mounts[@]}" | command grep "$1" "$2" ;;
 
-        *)              command grep "$*" ;; # shunit2 also requires grep
+        *)                  command grep "$@" ;; # shunit2 also requires grep
     esac
 
 }

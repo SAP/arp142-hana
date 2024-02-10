@@ -25,7 +25,7 @@ grep() {
     case "$*" in
         '-qs saptune'*)     return "${isused_rc}" ;;
 
-        *)                  command grep "$*" ;; # shunit2 requires grep
+        *)                  command grep "$@" ;; # shunit2 requires grep
     esac
 }
 

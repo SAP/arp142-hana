@@ -17,7 +17,7 @@ grep() {
     case "$*" in
         *'cpulist')     printf "%s\n" "${cpu_nodes[@]}" ;;
 
-        *)              command grep "$*" ;; # shunit2 requires grep
+        *)              command grep "$@" ;; # shunit2 requires grep
     esac
 }
 

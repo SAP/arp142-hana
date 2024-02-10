@@ -17,7 +17,7 @@ grep() {
     case "$*" in
         *'uevent')  [[ ${#if_vmxnet3[@]} -eq 0 ]] && : || printf "%s\n" "${if_vmxnet3[@]}" ;;
 
-        *)          command grep "$*" ;; # shunit2 requires grep
+        *)          command grep "$@" ;; # shunit2 requires grep
     esac
 }
 

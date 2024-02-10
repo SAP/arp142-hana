@@ -25,7 +25,7 @@ grep() {
         '-E -e constant_tsc'* )
                         printf "%s\n" "${cpu_flags[@]}" ;;
 
-        *)              command grep "$*" ;; # shunit2 requires grep
+        *)              command grep "$@" ;; # shunit2 requires grep
     esac
 }
 

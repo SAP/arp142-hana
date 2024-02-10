@@ -17,7 +17,7 @@ grep() {
     case "$*" in
         *'mtu')     printf "%s\n" "${if_mtu[@]}" ;;
 
-        *)              command grep "$*" ;; # shunit2 requires grep
+        *)              command grep "$@" ;; # shunit2 requires grep
     esac
 }
 
