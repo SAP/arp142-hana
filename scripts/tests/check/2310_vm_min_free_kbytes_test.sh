@@ -13,7 +13,7 @@ OS_VERSION=''
 grep() {
 
      case "$*" in
-        *'min_free_kbytes'*)    return 1 ;;
+        *'min_free_kbytes')     return 1 ;;
         *)                      command grep "$@" ;; # shunit2 also requires grep
     esac
 
