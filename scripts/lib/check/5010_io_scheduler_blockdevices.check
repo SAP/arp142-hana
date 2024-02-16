@@ -8,11 +8,11 @@ function check_5010_io_scheduler_blockdevices {
     local sapnote
 
     # MODIFICATION SECTION>>
-    local sapnote_sles='#1984787'
+    local sapnote_sles='#2578899,#1984787'
     local sapnote_rhel='#2009879'
     local sapnote_vmware='#2161991'
     local sapnote_aws='#1656250'
-    local sapnote_azure='#2161991'
+    local sapnote_azure='#2015553'
     local sapnote_kvm='#1400911'
     local sapnote_xen='#1788665'
 
@@ -20,11 +20,11 @@ function check_5010_io_scheduler_blockdevices {
 
     local search_pattern
     #local search_pattern_skip_none='/sys/block/**/queue/scheduler'                     #skip none
-    local search_pattern_skip_first1='/sys/block/{sd[^a],dm,nvme}*/queue/scheduler'     #skip sda = OS
-    local search_pattern_azure='/sys/block/sd[^ab]*/queue/scheduler'                    #skip sda = OS and sdb = temp
-    local search_pattern_xen='/sys/block/xvd[^a]*/queue/scheduler'                      #skip xvda = OS
-    local search_pattern_aws_xen='/sys/block/xvd[^ab]*/queue/scheduler'                 #skip xvda = OS and xvdb = swap
-    local search_pattern_aws_kvm='/sys/block/nvme*/queue/scheduler'                     #skip none, search nvme
+    local -r search_pattern_skip_first1='/sys/block/{sd[^a],dm,nvme}*/queue/scheduler'     #skip sda = OS
+    local -r search_pattern_azure='/sys/block/sd[^ab]*/queue/scheduler'                    #skip sda = OS and sdb = temp
+    local -r search_pattern_xen='/sys/block/xvd[^a]*/queue/scheduler'                      #skip xvda = OS
+    local -r search_pattern_aws_xen='/sys/block/xvd[^ab]*/queue/scheduler'                 #skip xvda = OS and xvdb = swap
+    local -r search_pattern_aws_kvm='/sys/block/nvme*/queue/scheduler'                     #skip none, search nvme
     # MODIFICATION SECTION<<
 
     # 1944799 - SAP HANA Guidelines for SLES Operating System Installation
@@ -34,9 +34,9 @@ function check_5010_io_scheduler_blockdevices {
     # 2161991 - VMware vSphere configuration guidelines
     # 1400911 - Linux: SAP NetWeaver on Red Hat KVM - Kernel-based Virtual Machine
     # 1656250 - SAP on AWS: Support prerequisites
+    # 2015553 - SAP on Microsoft Azure: Support prerequisites
+    # https://learn.microsoft.com/en-us/azure/sap/workloads/hana-vm-operations-storage#linux-io-scheduler-mode
     # 1788665 - SAP HANA Support for virtualized / partitioned (multi-tenant) environments
-
-    search_pattern="${search_pattern_skip_first1}"
 
     # PRECONDITIONS
     if [[ ! -d '/sys/block/' ]]; then
@@ -86,13 +86,15 @@ function check_5010_io_scheduler_blockdevices {
         logCheckInfo 'Check not applicable for NAS configurations !'
         logCheckInfo '---'
 
-        local -a all_io_schedulers
-        # read all_io_schedulers into array
-        # shellcheck disable=SC2086
-        mapfile -t all_io_schedulers < <(grep --no-messages --only-matching --no-filename '\[.*\]' ${search_pattern} | sort --unique)
+        [[ -z "${search_pattern:-}" ]] && search_pattern=${search_pattern_skip_first1}
 
-        #ToDo: filtering required ?? If <(sg_inq --id /dev/<sdXX> | grep -q "Fibre Channel"; then continue (skip)
-        #ToDo: nvme ?
+        logDebug "<${BASH_SOURCE[0]}> # RX=${search_pattern}"
+        #logDebug "<${BASH_SOURCE[0]}> # : grep --no-messages --only-matching --no-filename '\\[.*\\]' ${search_pattern} >"
+
+        local -a all_io_schedulers
+
+        # read all_io_schedulers into array; eval required for shell brace expansion {} in search_pattern
+        mapfile -t all_io_schedulers < <(eval grep --no-messages --only-matching --no-filename '\\[.*\\]' "${search_pattern}" | sort --unique)
 
         case ${#all_io_schedulers[@]} in     #array length
 
@@ -135,6 +137,6 @@ function check_5010_io_scheduler_blockdevices {
 
     fi
 
-    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    logDebug "<${BASH_SOURCE[0]}> # RC=${_retval}"
     return ${_retval}
 }
