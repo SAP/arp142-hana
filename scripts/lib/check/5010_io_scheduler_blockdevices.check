@@ -13,6 +13,7 @@ function check_5010_io_scheduler_blockdevices {
     local sapnote_vmware='#2161991'
     local sapnote_aws='#1656250'
     local sapnote_azure='#2015553'
+    local sapnote_gcp='#2456406'
     local sapnote_kvm='#1400911'
     local sapnote_xen='#1788665'
 
@@ -36,6 +37,8 @@ function check_5010_io_scheduler_blockdevices {
     # 1656250 - SAP on AWS: Support prerequisites
     # 2015553 - SAP on Microsoft Azure: Support prerequisites
     # https://learn.microsoft.com/en-us/azure/sap/workloads/hana-vm-operations-storage#linux-io-scheduler-mode
+    # 2456406 - SAP on Google Cloud Platform: Support Prerequisites
+    # https://cloud.google.com/compute/docs/disks/optimizing-pd-performance#optimize-throughput-workloads
     # 1788665 - SAP HANA Support for virtualized / partitioned (multi-tenant) environments
 
     # PRECONDITIONS
@@ -56,6 +59,10 @@ function check_5010_io_scheduler_blockdevices {
 
             LIB_FUNC_IS_VIRT_KVM && search_pattern=${search_pattern_aws_kvm}
             LIB_FUNC_IS_VIRT_XEN && search_pattern=${search_pattern_aws_xen}
+
+    elif LIB_FUNC_IS_CLOUD_GOOGLE; then
+
+        sapnote="${sapnote_gcp}"
 
     elif LIB_FUNC_IS_VIRT_VMWARE; then
 
