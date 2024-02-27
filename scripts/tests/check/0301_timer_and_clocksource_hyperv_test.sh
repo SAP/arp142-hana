@@ -6,49 +6,21 @@ readonly PROGRAM_DIR
 
 #fake PREREQUISITE functions
 LIB_FUNC_IS_VIRT_MICROSOFT() { return 0 ; }
-LIB_FUNC_IS_SLES() { return 0 ; }
-LIB_FUNC_IS_RHEL() { return 1 ; }
-
-LIB_FUNC_NORMALIZE_KERNEL() {
-    # shellcheck disable=SC2034
-    LIB_FUNC_NORMALIZE_KERNEL_RETURN="$1" ;
-}
-
-LIB_FUNC_COMPARE_VERSIONS() { return "${RC_COMPARE_VERSIONS}" ; }
 
 # still to mock for tests
 # /sys/devices/system/clocksource/clocksource0/current_clocksource
 TEST_CURRENT_CLOCKSOURCE=''
-OS_LEVEL=''
 
-test_reco_clock_vdso() {
+test_reco_clock() {
 
     #arrange
     TEST_CURRENT_CLOCKSOURCE='hyperv_clocksource_tsc_page'
-
-    OS_LEVEL='4.4.178-94.91'                 #VDSO support
-    RC_COMPARE_VERSIONS=1
 
     #act
     check_0301_timer_and_clocksource_hyperv
 
     #assert
     assertEquals "CheckOk? RC" '0' "$?"
-}
-
-test_reco_clock_no_vdso() {
-
-    #arrange
-    TEST_CURRENT_CLOCKSOURCE='hyperv_clocksource_tsc_page'
-
-    OS_LEVEL='4.4.178-94.90'                 #no VDSO support
-    RC_COMPARE_VERSIONS=2
-
-    #act
-    check_0301_timer_and_clocksource_hyperv
-
-    #assert
-    assertEquals "CheckError? RC" '2' "$?"
 }
 
 test_wrong_clocksource() {
@@ -75,11 +47,7 @@ test_wrong_clocksource() {
 
 # oneTimeTearDown
 
-setUp() {
-
-    # shellcheck disable=SC2034
-    OS_LEVEL=
-}
+# setUp
 
 # tearDown
 

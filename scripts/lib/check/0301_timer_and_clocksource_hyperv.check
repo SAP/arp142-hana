@@ -8,18 +8,15 @@ function check_0301_timer_and_clocksource_hyperv {
 
     # MODIFICATION SECTION>>
     local -r sapnote='#2753418'
-    local -r sapnote_vdso='#2791572'
 
     local -r recommended_clocksource='hyperv_clocksource_tsc_page'
-    local -r kernel_sles123_vdso_hyperv='4.4.178-94.91'
-    local -r kernel_rhel75_vdso_hyperv='3.10.0-862.el7'
+
     # MODIFICATION SECTION<<
 
     #2791572 - Performance Degradation Because of Missing VDSO Support For HyperV in Azure
     #2753418 - Performance Degradation Due to Timer Fallback
 
     local current_clocksource
-    local kernel_vdso_hyperv
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_VIRT_MICROSOFT; then
@@ -27,17 +24,6 @@ function check_0301_timer_and_clocksource_hyperv {
         logCheckSkipped 'Not running on Microsoft Hyper-V. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif LIB_FUNC_IS_SLES; then
-
-        kernel_vdso_hyperv="${kernel_sles123_vdso_hyperv}"
-
-    elif LIB_FUNC_IS_RHEL; then
-
-        kernel_vdso_hyperv="${kernel_rhel75_vdso_hyperv}"
-
-    else
-        logCheckWarning 'CHECK does not support Linux distribution.' "${FUNCNAME[0]} - ${OS_NAME} ${OS_VERSION}"
-        _retval=1
     fi
 
     # CHECK
@@ -61,26 +47,9 @@ function check_0301_timer_and_clocksource_hyperv {
 
         else
 
-            #Azure - Hyper-V - VDSO support
-            LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
-            kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
+            logCheckOk "Fallback OS clocksource is set as recommended and has vDSO support (SAP Note ${sapnote:-}) (is: ${current_clocksource})"
+            _retval=0
 
-            LIB_FUNC_NORMALIZE_KERNEL "${kernel_vdso_hyperv:-}"
-            kernel_vdso_hyperv="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
-
-            # returns 0 if equal, 1 if first is higher, 2 if second is higher
-            LIB_FUNC_COMPARE_VERSIONS "${kernelversion}" "${kernel_vdso_hyperv}"
-            if [[ $? -eq 2 ]]; then
-
-                logCheckError "Fallback OS clocksoure is set as recommended BUT has NO vDSO support !!! (SAP Note ${sapnote_vdso:-},${sapnote:-}) (is: ${current_clocksource})"
-                _retval=2
-
-            else
-
-                logCheckOk "Fallback OS clocksource is set as recommended and has vDSO support (SAP Note ${sapnote:-}) (is: ${current_clocksource})"
-                _retval=0
-
-            fi
         fi
 
     fi
