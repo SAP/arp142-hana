@@ -35,7 +35,7 @@ testNormalizeKernelShouldFail() {
 
     #The following tests should fail (test the tester)
     kut='3.0.101-0.47.71-default2'
-    LIB_FUNC_NORMALIZE_KERNEL kut
+    LIB_FUNC_NORMALIZE_KERNELn kut
 
     #printf "test[1]: norm <%s> <%s>\n"  '3.0.101-0.47.71-default2' "${kut}"
     assertNotEquals 'test[1]: testing the tester failed' '3.0.101-0.47.71.1' "${kut}"
