@@ -9,7 +9,7 @@ function check_0001_os_support_rhel {
     # MODIFICATION SECTION>>
     # array 'REL'   'support general end'  'extended support end (E4S)'
     local -ar _rhel_6=(\
-                        '6.10'  '30 Nov 2020'    '30 Mar 2024'  \
+                        '6.10'  '30 Nov 2020'    '30 Jun 2024'  \
                         )
 
                         # '7.4' '10 Apr 2018'    '31 Aug 2021'    \
@@ -18,7 +18,7 @@ function check_0001_os_support_rhel {
                         # '7.8' 'no support '    'by SAP HANA'    \
                         # '7.7' '31 Mar 2020'    '30 Aug 2023'    \
     local -ar _rhel_7=(\
-                        '7.9' '31 Mar 2021'    '30 Aug 2024'    \
+                        '7.9' '31 Mar 2021'    '30 Jun 2028'    \
                         )
 
                         # '8.0' '05 Nov 2019'    '31 Dec 2020'    \
