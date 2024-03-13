@@ -6,14 +6,14 @@ function check_9200_monitor_agent_sapdataprovider_amazon {
 
     local -i _retval=99
 
-    # https://docs.aws.amazon.com/sap/latest/general/data-provider-installallation.html#data-provider-install-4.3
+    # https://docs.aws.amazon.com/sap/latest/general/data-provider-version-history.html
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#1656250'
+    local -r sapnote='#3444021'
     local -r _goodversion='4.3-2'
     # MODIFICATION SECTION<<
 
-    #1656250 - SAP on AWS: Support prerequisites
+    #3444021 - AWS Data Provider for SAP
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_CLOUD_AMAZON; then
