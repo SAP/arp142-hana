@@ -28,10 +28,10 @@ function check_0104_supported_instances_gcp {
                         'o2-ultramem-896-metal' \
                         )
 
-    local -r sapnote='#1380654'
+    local -r sapnote='#2456406'
     # MODIFICATION SECTION<<
 
-    #1380654 - SAP support in IaaS environments
+    #2456406 - SAP on Google Cloud Platform: Support Prerequisites
     #2456432 - SAP Applications on Google Cloud: Supported Products and GCP VM types
     #3000343 - SAP Applications on Google Cloud: Supported Products on Google Cloud Bare Metal Solutions
     #https://www.sap.com/dmc/exp/2014-09-02-hana-hardware/enEN/#/solutions?filters=iaas;ve:29
