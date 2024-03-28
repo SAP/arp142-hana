@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+
+function check_7018_pacemaker_attributes {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local sapnote='#1552925'
+    local -r sapnote_sles='SUSE KB #000021075'
+    local -r sapnote_rhel='Red Hat KB #4849731'
+
+    #                               parameter                       recommended_value
+    local -ar _cluster_parameter=(\
+                                    'resource-stickiness'           1000 \
+                                    'migration-threshold'           5000 \
+    )
+    # MODIFICATION SECTION<<
+
+    #1552925 - Linux: High Availability Cluster Solutions
+    #SUSE KB #000021075 - Resource Stickiness parameter created during cluster bootstrap
+    #Red Hat KB #4849731 - Why does pacemaker stop the Slave of a SAPHana resource when pengine reports "Pre-allocation failed"?
+
+    # PRECONDITIONS
+    if [[ ! -r '/etc/sysconfig/pacemaker' ]]; then
+
+        logCheckSkipped 'pacemaker not installed' "(SAP Note ${sapnote:-}). Skipping <${FUNCNAME[0]}>"
+        _retval=3
+
+    elif [[ ! -x "$(command -v cibadmin)" ]]; then
+
+        logCheckSkipped 'cibadmin not installed' "(SAP Note ${sapnote:-}). Skipping <${FUNCNAME[0]}>"
+        _retval=3
+
+    elif LIB_FUNC_IS_SLES; then
+
+        sapnote+=",${sapnote_sles}"
+
+    elif LIB_FUNC_IS_RHEL; then
+
+        sapnote+=",${sapnote_rhel}"
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local _curr_value
+        local _reco_value
+        local _parameter
+
+        while read -r line  ; do
+
+            logTrace "<${FUNCNAME[0]}> # read <${line}>"
+
+            [[ ${line} != *'nvpair name'* ]] && continue
+
+            if [[ ${line} =~ name=\"(.+?)\"[[:space:]]value=\"(.+?)\"[[:space:]] ]]; then
+
+                _parameter=${BASH_REMATCH[1]}
+                _curr_value=${BASH_REMATCH[2]}
+
+            fi
+
+            # i+=2 --> every 2nd item
+            for ((i=0; i < ${#_cluster_parameter[@]}; i+=2)); do
+
+                logTrace "<${FUNCNAME[0]}> # <${_cluster_parameter[$i]}>"
+
+                [[ ${_parameter} != "${_cluster_parameter[$i]}" ]] && continue
+                _reco_value=${_cluster_parameter[$i+1]}
+
+                if [[ ${_curr_value} -ne ${_reco_value} ]]; then
+                    logCheckWarning "pacemaker attribute <${_parameter}> NOT set as recommended (is: ${_curr_value}, should be: ${_reco_value})"
+                    _retval=1
+                else
+                    logCheckOk "pacemaker attribute <${_parameter}> set as recommended (is: ${_curr_value})"
+                fi
+
+            done
+
+        done <<< "$(cibadmin --query --scope=rsc_defaults)"
+
+        if [[ ${_retval} -eq 99 ]]; then
+
+            logCheckOk "All pacemaker attributes set as recommended (SAP Note ${sapnote:-})"
+            _retval=0
+
+        else
+
+            logCheckWarning "NOT all pacemaker attributes set as recommended (SAP Note ${sapnote:-})"
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+}

@@ -76,6 +76,7 @@
 5522_nfs_mount_rwsize_amazon
 5530_nfs_mount_nconnect
 7010_corosync_version
+7018_pacemaker_attributes
 7030_ha_resource_agent_scaleup_rhel
 7031_ha_resource_agent_scaleout_rhel
 8500_sap_hana_client
