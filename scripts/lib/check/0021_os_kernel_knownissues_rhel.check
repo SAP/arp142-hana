@@ -9,7 +9,6 @@ function check_0021_os_kernel_knownissues_rhel {
     # MODIFICATION SECTION>>
     # array 'release' 'lower boundary' 'upper boundary' 'SAP Note'
     local -a _rhel_all=(\
-                        '8.1'   '4.18.0-147.el8'            '4.18.0-147.8.0.el8'    '#RHSA-2020:1372' \
                         '9.2'   '5.14.0-284.el9'            '5.14.0-284.40.0'       '#KCS-6740861' \
                         '8.6'   '4.18.0-372.32.1'           '4.18.0-372.36.0'       '#KCS-6981979' \
                         '8.6'   '4.18.0-372.el8'            '4.18.0-372.26.0'       '#KCS-6740861' \
@@ -30,7 +29,6 @@ function check_0021_os_kernel_knownissues_rhel {
 
     local -ar _rhel_ibmpower=(\
                         '8.2'   '4.18.0-193.el8'            '4.18.0-193.999.el8'    '#3165100,3159746' \
-                        '8.1'   '4.18.0-147.el8'            '4.18.0-147.999.el8'    '#3165100,3159746' \
                         )
     # MODIFICATION SECTION<<
 
