@@ -1,0 +1,134 @@
+#!/usr/bin/env bash
+
+function check_7015_pacemaker_version {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local sapnote='#1552925'
+    local -r sapnote_sles='SUSE KB #000020407'
+    local -r sapnote_rhel='Red Hat KB #4849731'
+
+    local -ar _sles_rpm_matrix=(\
+                                    '15.5'   '2.1.5+20221208.a3f44794f-150500.6.11.1'     \
+                                )
+
+    local -ar _rhel_rpm_matrix=(\
+                                    '8.8'   '2.1.6-8.el8'     \
+                                    '9.0'   '2.1.6-9.el9'     \
+                                )
+
+    # MODIFICATION SECTION<<
+
+    #1552925 - Linux: High Availability Cluster Solutions
+    #SUSE-RU-2024:0606-1: critical: Recommended update for pacemaker
+    #https://lists.suse.com/pipermail/sle-updates/2024-February/034368.html
+
+    #Red Hat KB #4849731 Why does pacemaker stop the Slave of a SAPHana resource when pengine reports "Pre-allocation failed"?
+    #https://access.redhat.com/solutions/4849731
+
+
+    local os_rpm_matrix
+
+    # PRECONDITIONS
+    if ! rpm -q --quiet pacemaker ; then
+
+        logCheckSkipped 'pacemaker not installed' "(SAP Note ${sapnote:-}). Skipping <${FUNCNAME[0]}>"
+        _retval=3
+
+    elif LIB_FUNC_IS_SLES ; then
+
+        sapnote+=",${sapnote_sles}"
+        os_rpm_matrix+=("${_sles_rpm_matrix[@]}")
+
+    elif LIB_FUNC_IS_RHEL ; then
+
+        sapnote+=",${sapnote_rhel}"
+        os_rpm_matrix+=("${_rhel_rpm_matrix[@]}")
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local _release
+        local _goodversion
+        local _fullversion
+        local normalized_goodversion
+        local normalized_fullversion
+
+        local _handled=false
+        local _is_used=false
+
+        if systemctl is-enabled "pacemaker" --quiet; then
+            logCheckInfo 'pacemaker is installed and enabled'
+            _is_used=true
+        else
+            logCheckInfo 'pacemaker is installed but not enabled'
+        fi
+
+        if systemctl is-active "pacemaker" --quiet; then
+            logCheckInfo 'pacemaker is active'
+            _is_used=true
+        else
+            logCheckInfo 'pacemaker is not active'
+        fi
+
+        # i+=2 --> every 2nd item
+        for ((i=0; i < ${#os_rpm_matrix[@]}; i+=2)); do
+
+            _release="${os_rpm_matrix[$i]}"
+            logTrace "<${FUNCNAME[0]}> # ${OS_VERSION} vs ${_release}>"
+
+            [[ ! "${OS_VERSION}" =~ ${_release} ]] && continue
+
+            _handled=true
+            _goodversion="${os_rpm_matrix[$i+1]}"
+
+            #normalize good version
+            LIB_FUNC_NORMALIZE_RPM "${_goodversion}"
+            normalized_goodversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+            _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" pacemaker)
+            #normalize full version - e.g. 1.1.24+20210811.f5abda0ee-3.33.10
+            LIB_FUNC_NORMALIZE_RPM "${_fullversion}"
+            normalized_fullversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+            # returns 0 if equal, 1 if first is higher, 2 if second is higher
+            LIB_FUNC_COMPARE_VERSIONS "${normalized_fullversion}" "${normalized_goodversion}"
+            if [[ $? -ne 2 ]]; then
+
+                logCheckOk 'pacemaker version seems to be ok' "(SAP Note ${sapnote:-}) (is: ${_fullversion})"
+                _retval=0
+
+            elif ${_is_used} ; then
+
+                logCheckError 'pacemaker must be updated' "(SAP Note ${sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
+                _retval=2
+
+            else
+
+                logCheckWarning 'pacemaker should be updated in case of future usage' "(SAP Note ${sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
+                _retval=1
+
+            fi
+
+            break
+
+        done
+
+        if ! ${_handled}; then
+
+            logCheckSkipped 'CHECK does not apply for OS release' "(SAP Note ${sapnote:-}). Skipping <${FUNCNAME[0]}>"
+            _retval=3
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
