@@ -7,13 +7,14 @@ function check_0811_uuidd_version {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -ar sles125=( '2.33.2-4.30.1' '#1984787' )
-    local -ar sles151=( '2.33.2-150100.4.40.1' '#SUSE-RU-2024:0164-1' )
-    local -ar sles153=( '2.36.2-150300.4.38.1' '#bsc#1207987,1210164' )
-    local -ar sles154=( '2.37.2-150400.8.23.1' '#bsc#1207987,1210164' )
-    local -ar sles155=( '2.37.4-150500.9.3.1'  '#bsc#1207987,1210164' )
-    local -ar rhel86=( '2.32.1-39.el8_6' '#RHBA-2023:3054' )
-    local -ar rhel88=( '2.32.1-41.el8_8' '#RHBA-2023:3054' )
+    local -ar sles125=( '2.33.2-4.30.1' 'SAP Note #1984787' )
+    local -ar sles151=( '2.33.2-150100.4.40.1' 'SUSE-RU-2024:0164-1' )
+    local -ar sles152=( '2.33.2-150100.4.43.1' 'SUSE-RU-2024:0164-1,bsc#1210164' )
+    local -ar sles153=( '2.36.2-150300.4.38.1' 'SUSE-RU-2024:0164-1,bsc#1210164' )
+    local -ar sles154=( '2.37.2-150400.8.23.1' 'SUSE-RU-2024:0164-1,bsc#1210164' )
+    local -ar sles155=( '2.37.4-150500.9.3.1'  'SUSE-RU-2024:0164-1,bsc#1210164' )
+    local -ar rhel86=( '2.32.1-39.el8_6' 'RHBA-2023:3054' )
+    local -ar rhel88=( '2.32.1-41.el8_8' 'RHBA-2023:3054' )
     # MODIFICATION SECTION<<
 
     #1984787 - SUSE LINUX Enterprise Server 12: Installation notes
@@ -42,7 +43,8 @@ function check_0811_uuidd_version {
 
             12.5)   _goodversion="${sles125[0]}" ; sapnote="${sles125[1]}" ;;
 
-            15.[1-2])   _goodversion="${sles151[0]}" ; sapnote="${sles151[1]}" ;;
+            15.1)   _goodversion="${sles151[0]}" ; sapnote="${sles151[1]}" ;;
+            15.2)   _goodversion="${sles152[0]}" ; sapnote="${sles152[1]}" ;;
             15.3)   _goodversion="${sles153[0]}" ; sapnote="${sles153[1]}" ;;
             15.4)   _goodversion="${sles154[0]}" ; sapnote="${sles154[1]}" ;;
             15.5)   _goodversion="${sles155[0]}" ; sapnote="${sles155[1]}" ;;
@@ -91,10 +93,10 @@ function check_0811_uuidd_version {
         LIB_FUNC_COMPARE_VERSIONS "${normalized_fullversion}" "${normalized_goodversion}"
 
         if [[ $? -ne 2 ]]; then
-            logCheckOk "UUIDD version seems to be ok (SAP Note ${sapnote:-}) (is: ${_fullversion})"
+            logCheckOk "UUIDD version seems to be ok (${sapnote:-}) (is: ${_fullversion})"
             _retval=0
         else
-            logCheckError "UUIDD must be updated (SAP Note ${sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
+            logCheckError "UUIDD must be updated (${sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
             _retval=2
         fi
 
