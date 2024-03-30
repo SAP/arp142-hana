@@ -56,7 +56,7 @@ test_power8_rhel_supported() {
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
     LIB_PLATF_POWER_PLATFORM_BASE='POWER8'
-    OS_VERSION='7.7'
+    OS_VERSION='7.9'
 
     #act
     check_0005_os_hana_support_rhel_ibmpower
@@ -70,7 +70,7 @@ test_power9_rhel_not_supported() {
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
     LIB_PLATF_POWER_PLATFORM_BASE='POWER9'
-    OS_VERSION='7.7'
+    OS_VERSION='7.9'
 
     #act
     check_0005_os_hana_support_rhel_ibmpower
@@ -98,7 +98,7 @@ test_power10_rhel_not_supported() {
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
     LIB_PLATF_POWER_PLATFORM_BASE='POWER10'
-    OS_VERSION='7.7'
+    OS_VERSION='7.9'
 
     #act
     check_0005_os_hana_support_rhel_ibmpower
