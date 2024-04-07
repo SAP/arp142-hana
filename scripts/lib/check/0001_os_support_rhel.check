@@ -8,34 +8,26 @@ function check_0001_os_support_rhel {
 
     # MODIFICATION SECTION>>
     # array 'REL'   'support general end'  'extended support end (E4S)'
-    local -ar _rhel_6=(\
-                        '6.10'  '30 Nov 2020'    '30 Jun 2024'  \
-                        )
 
-                        # '7.4' '10 Apr 2018'    '31 Aug 2021'    \
-                        # '7.5' '30 Oct 2018'    '30 Apr 2020'    \
-                        # '7.6' '06 Aug 2019'    '31 Oct 2022'    \
-                        # '7.8' 'no support '    'by SAP HANA'    \
                         # '7.7' '31 Mar 2020'    '30 Aug 2023'    \
-    local -ar _rhel_7=(\
-                        '7.9' '31 Mar 2021'    '30 Jun 2028'    \
-                        )
+                        # '7.8' 'no support '    'by SAP HANA'    \
 
-                        # '8.0' '05 Nov 2019'    '31 Dec 2020'    \
                         # '8.1' '28 Apr 2020'    '30 Nov 2023'    \
+                        # '8.2' '05 Nov 2020'    '30 Apr 2024'    \
                         # '8.3' 'no support '    'by SAP HANA'    \
                         # '8.5' 'no support '    'by SAP HANA'    \
                         # '8.7' 'no support '    'by SAP HANA'    \
-    local -ar _rhel_8=(\
-                        '8.2' '05 Nov 2020'    '30 Apr 2024'    \
-                        '8.4' '30 Nov 2021'    '31 May 2025'    \
-                        '8.6' '30 Nov 2022'    '31 May 2026'    \
-                        '8.8' '30 Nov 2023'    '31 May 2027'    \
-                        )
 
-    local -ar _rhel_9=(\
-                        '9.0' '30 Nov 2022'    '31 May 2026'    \
-                        '9.2' '30 Nov 2023'    '31 May 2027'    \
+                        # '9.1' 'no support '    'by SAP HANA'    \
+
+    local -ar _rhel_all=(\
+                        '9.2'   '30 Nov 2023'   '31 May 2027'    \
+                        '9.0'   '30 Nov 2022'   '31 May 2026'    \
+                        '8.8'   '30 Nov 2023'   '31 May 2027'    \
+                        '8.6'   '30 Nov 2022'   '31 May 2026'    \
+                        '8.4'   '30 Nov 2021'   '31 May 2025'    \
+                        '7.9'   '31 Mar 2021'   '30 Jun 2028'    \
+                        '6.10'  '30 Nov 2020'   '30 Jun 2024'  \
                         )
 
     local -r sapnote='#936887'
@@ -43,8 +35,6 @@ function check_0001_os_support_rhel {
 
     #2235581- SAP HANA: Supported Operating Systems
     #936887 - End of maintenance for Linux distributions
-
-    local -a _rhel_all
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_RHEL; then
@@ -56,17 +46,11 @@ function check_0001_os_support_rhel {
 
         case "${OS_VERSION}" in
 
-        6.[0-9] | 7.[0-7] | 8.[0-1] )
+        6.[0-9] | 7.[0-7] | 8.[0-2] )
                 logCheckError "RHEL version has reached Red Hat's general support end and must be upgraded (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
                 _retval=2 ;;
 
-        6.10    )  _rhel_all+=("${_rhel_6[@]}") ;;
-
-        7.9     )  _rhel_all+=("${_rhel_7[@]}") ;;
-
-        8.2 | 8.4 | 8.6 | 8.8 )  _rhel_all+=("${_rhel_8[@]}") ;;
-
-        9.0 | 9.2 )   _rhel_all+=("${_rhel_9[@]}") ;;
+        6.10 | 7.9 | 8.* | 9.* )  : ;;
 
         *)
             logCheckError "RHEL version is not supported by SAP HANA (SAP Note #2235581) (is: ${OS_VERSION})"
@@ -84,6 +68,8 @@ function check_0001_os_support_rhel {
 
         local _rhel_type
 
+        local _handled=false
+
         # i+=3 --> every 3rd item
         for ((i=0; i < ${#_rhel_all[@]}; i+=3)); do
 
@@ -92,6 +78,7 @@ function check_0001_os_support_rhel {
             _rhel_release="${_rhel_all[$i]}"
 
             [[ "${OS_VERSION}" != "${_rhel_release}"* ]] && continue    #handle kernel with subversions correctly
+            _handled=true
 
             if ! LIB_FUNC_IS_RHEL4SAP; then
                 _rhel_type='RHEL'
@@ -132,8 +119,15 @@ function check_0001_os_support_rhel {
             fi
 
             break
-
         done
+
+        if ! ${_handled}; then
+
+                logCheckError "RHEL version is not supported by SAP HANA (SAP Note #2235581) (is: ${OS_VERSION})"
+                _retval=2
+
+        fi
+
     fi
 
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"

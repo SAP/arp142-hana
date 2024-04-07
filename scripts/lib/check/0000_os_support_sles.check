@@ -10,19 +10,13 @@ function check_0000_os_support_sles {
     # array             'support general end'   'ESPOS end'     'LTSS end'
                         # '11.4' '31 Mar 2019'    '31 Mar 2019'   '31 Mar 2022'   \
 
-                        # '12.0' '30 Jun 2016'    '31 Aug 2019'   '31 Aug 2019'
-                        # '12.1' '31 May 2017'    '31 May 2020'   '31 May 2020'
-                        # '12.2' '31 Mar 2018'    '31 Mar 2021'   '31 Mar 2021'
                         # '12.3' '30 Jun 2019'    '30 Jun 2022'   '30 Jun 2022'   \
                         # '12.4' '30 Jun 2020'    '30 Jun 2023'   '30 Jun 2023'   \
                         # '15.0' '31 Dec 2019'    '31 Dec 2022'   '31 Dec 2022'   \
                         # '15.1' '31 Jan 2021'    '31 Jan 2024'   '31 Jan 2024'   \
 
-    local -ar _sles_12=(\
+    local -ar _sles_all=(\
                         '12.5' '31 Oct 2024'    '31 Oct 2024'   '31 Oct 2027'   \
-                        )
-
-    local -ar _sles_15=(\
                         '15.2' '31 Dec 2021'    '31 Dec 2024'   '31 Dec 2024'   \
                         '15.3' '31 Dec 2022'    '31 Dec 2025'   '31 Dec 2025'   \
                         '15.4' '31 Dec 2023'    '31 Dec 2026'   '31 Dec 2026'   \
@@ -35,8 +29,6 @@ function check_0000_os_support_sles {
 
     #2235581- SAP HANA: Supported Operating Systems
     #936887 - End of maintenance for Linux distributions
-
-    local -a _sles_all
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_SLES; then
@@ -52,9 +44,7 @@ function check_0000_os_support_sles {
                 logCheckError "SLES version has reached its end of lifetime by SUSE and must be upgraded (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
                 _retval=2 ;;
 
-        12.5 )  _sles_all+=("${_sles_12[@]}") ;;
-
-        15.[2-5] )  _sles_all+=("${_sles_15[@]}") ;;
+        12.* | 15.* )  : ;;
 
         *)
             logCheckError "SLES version is not supported by SAP HANA (SAP Note #2235581) (is: ${OS_VERSION})"
@@ -74,6 +64,8 @@ function check_0000_os_support_sles {
         local _support_type
         local _support_type_short
 
+        local _handled=false
+
         # i+=4 --> every 4th item
         for ((i=0; i < ${#_sles_all[@]}; i+=4)); do
 
@@ -82,6 +74,7 @@ function check_0000_os_support_sles {
             _sles_release="${_sles_all[$i]}"
 
             [[ "${OS_VERSION}" != "${_sles_release}"* ]] && continue    #handle kernel with subversions correctly
+            _handled=true
 
             if ! LIB_FUNC_IS_SLES4SAP; then
 
@@ -134,8 +127,15 @@ function check_0000_os_support_sles {
             fi
 
             break
-
         done
+
+        if ! ${_handled}; then
+
+                logCheckError "SLES version is not supported by SAP HANA (SAP Note #2235581) (is: ${OS_VERSION})"
+                _retval=2
+
+        fi
+
     fi
 
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
