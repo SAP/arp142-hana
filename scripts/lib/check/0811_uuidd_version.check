@@ -6,13 +6,16 @@ function check_0811_uuidd_version {
 
     local -i _retval=99
 
+    # https://scc.suse.com/packages?name=SUSE%20Linux%20Enterprise%20Server&version=12.5&arch=x86_64&query=uuidd
+    # https://scc.suse.com/packages?name=SUSE%20Linux%20Enterprise%20Server&version=15.2&arch=x86_64&query=uuidd&module=2375
+
     # MODIFICATION SECTION>>
     local -ar sles125=( '2.33.2-4.30.1' 'SAP Note #1984787' )
     local -ar sles151=( '2.33.2-150100.4.40.1' 'SUSE-RU-2024:0164-1' )
-    local -ar sles152=( '2.33.2-150100.4.43.1' 'SUSE-RU-2024:0164-1,bsc#1210164' )
-    local -ar sles153=( '2.36.2-150300.4.38.1' 'SUSE-RU-2024:0164-1,bsc#1210164' )
-    local -ar sles154=( '2.37.2-150400.8.23.1' 'SUSE-RU-2024:0164-1,bsc#1210164' )
-    local -ar sles155=( '2.37.4-150500.9.3.1'  'SUSE-RU-2024:0164-1,bsc#1210164' )
+    local -ar sles152=( '2.33.2-150100.4.45.1' 'SUSE-RU-2024:0164-1,bsc#1210164' )
+    local -ar sles153=( '2.36.2-150300.4.41.1' 'SUSE-RU-2024:0164-1,bsc#1210164' )
+    local -ar sles154=( '2.37.2-150400.8.29.1' 'SUSE-RU-2024:0164-1,bsc#1210164' )
+    local -ar sles155=( '2.37.4-150500.9.6.1'  'SUSE-RU-2024:0164-1,bsc#1210164' )
     local -ar rhel86=( '2.32.1-39.el8_6' 'RHBA-2023:3054' )
     local -ar rhel88=( '2.32.1-41.el8_8' 'RHBA-2023:3054' )
     # MODIFICATION SECTION<<
@@ -25,9 +28,8 @@ function check_0811_uuidd_version {
     #Bug 2141969 - Add --cont-clock feature for libuuid and uuidd [rhel-8]
     #https://bugzilla.redhat.com/show_bug.cgi?id=2141969
 
-    #SUSE-RU-2024:0164-1
+    #SUSE-RU-2024:0164-1 = bsc#1207987 - libuuid/xfs regression
     #bsc#1210164 - libuuid - downport cache related patch
-    #bsc#1207987 - libuuid/xfs regression
 
     local _goodversion
     local sapnote
