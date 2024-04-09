@@ -6,6 +6,9 @@ function check_0440_sapconf_sles {
 
     local -i _retval=99
 
+    # https://scc.suse.com/packages?name=SUSE%20Linux%20Enterprise%20Server&version=12.5&arch=x86_64&query=sapconf
+    # https://scc.suse.com/packages?name=SUSE%20Linux%20Enterprise%20Server&version=15.5&arch=x86_64&query=sapconf
+
     # MODIFICATION SECTION>>
     local -r sapnote='#1275776'         #1275776 - Linux: Preparing SLES for SAP environments
 
