@@ -7,12 +7,11 @@ function check_3012_network_parameter_defaults {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#2382421' # Optimizing the Network Configuration on HANA- and OS-Level for SPS10 and Higher
+    local -r sapnote='#2382421' # Optimizing the Network Configuration on HANA- and OS-Level
 
-    # LIB_COMPARE_TOOBIG_NUMBERS returns 0 if equal, 1 if first is higher, 2 if second is higher
-
-    #                               parameter                               recommended_value   RC_expected
+    #                               parameter                               default_value   RC_expected
     local -ar _tcp_parameter=(\
+                                    'net.ipv4.tcp_adv_win_scale'            1                   0   \
                                     'net.ipv4.tcp_moderate_rcvbuf'          1                   0   \
                                     'net.ipv4.tcp_sack'                     1                   0   \
     )
@@ -31,11 +30,9 @@ function check_3012_network_parameter_defaults {
     # i+=3 --> every 3rd item
     for ((i=0; i < ${#_tcp_parameter[@]}; i+=3)); do
 
-        logTrace "<${FUNCNAME[0]}> # ${_tcp_parameter[$i]}>"
-
         _parameter=${_tcp_parameter[$i]}
         _parameter_normalized=${_parameter//./\/}
-        logTrace "<${FUNCNAME[0]}> # ${_parameter_normalized}>"
+        logTrace "<${FUNCNAME[0]}> # ${_parameter} ${_parameter_normalized}>"
 
         _reco_value=${_tcp_parameter[$i+1]}
         _rc_expected=${_tcp_parameter[$i+2]}
@@ -49,6 +46,7 @@ function check_3012_network_parameter_defaults {
 
         fi
 
+        # LIB_COMPARE_TOOBIG_NUMBERS returns 0 if equal, 1 if first is higher, 2 if second is higher
         LIB_COMPARE_TOOBIG_NUMBERS "${_curr_value}" "${_reco_value}"
         _rc_current=$?
 
