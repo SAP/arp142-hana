@@ -26,7 +26,7 @@ function check_3304_network_interface_gvnic_gcp {
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-        if grep -qs 'DRIVER=gvnic' /sys/class/net/**/device/uevent; then
+        if grep -qs 'DRIVER=gve' /sys/class/net/**/device/uevent; then
 
             logCheckOk "GCP network interface gvnic enabled as recommended (SAP Note ${sapnote:-})"
             _retval=0
