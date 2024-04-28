@@ -1,0 +1,75 @@
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    # branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "lint"
+  lint:
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      # Runs a single command using the runners shell
+      - name: Show environment
+        run: |
+          pwd
+          env
+
+      - name : Install Checktools
+        run: |
+          sudo -H pip install bashate
+          wget -qO- "https://github.com/koalaman/shellcheck/releases/download/${SHELLCHECK_VERSION}/shellcheck-${SHELLCHECK_VERSION}.linux.x86_64.tar.xz" | tar -xJv
+          sudo -H cp "shellcheck-${SHELLCHECK_VERSION}/shellcheck" /usr/local/bin/
+          wget -qO shfmt "https://github.com/mvdan/sh/releases/download/${SHFMT_VERSION}/shfmt_${SHFMT_VERSION}_linux_amd64"
+          chmod 744 shfmt
+        env:
+          SHELLCHECK_VERSION: stable #stable,latest,v0.4.7
+          SHFMT_VERSION: v3.8.0
+
+      # Runs a set of commands using the runners shell
+      - name: Syntax checking BIN
+        run: |
+          shellcheck --external-sources ./saphana-* ./lib*
+        working-directory: ./scripts/bin
+
+      # Runs a set of commands using the runners shell
+      - name: Syntax checking CHECKS
+        run: |
+          shopt -s globstar; shellcheck scripts/**/*.check
+
+      # Runs a set of commands using the runners shell
+      - name: Run unit tests
+        run: |
+          ./test_runner
+          ./test_runner -t "$(echo ./check/*_test.sh)"
+        working-directory: ./scripts/tests
+        env:
+          SHUNIT_COLOR: always
+
+      # Runs a set of commands using the runners shell - requires pip install bashate - install @ self-hosted
+      - name: Code format checking - bashate
+        run: |
+          bashate -i E006,E043 scripts/bin/saphana*
+          bashate -i E006 scripts/bin/lib*
+          shopt -s globstar; bashate -i E006,E010 scripts/**/*.check
+
+      # Runs a set of commands using the runners shell - requires shfmt - install @ self-hosted
+      - name: Code format checking - shfmt
+        run: |
+          ./shfmt --indent 4 -ci -sr -kp --diff scripts/bin || true
+          shopt -s globstar; ./shfmt --indent 4 -ci -sr -kp --diff scripts/**/*.check || true
+          shopt -s globstar; ./shfmt --indent 4 -ci -sr -kp --diff scripts/tests/**/*_test.sh || true
+
