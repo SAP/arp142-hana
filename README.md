@@ -1,22 +1,21 @@
 # saphana-checks
-[![Actions CI](https://github.wdf.sap.corp/SAP-COE-HPTI/saphana-checks/actions/workflows/CI.yml/badge.svg)](https://github.wdf.sap.corp/SAP-COE-HPTI/saphana-checks/actions/workflows/CI.yml)
 
 Linux OS checks for SAP HANA environments - SLES,RHEL for Intel x64 and IBM Power
 
 ## FAQ
 Q: Does it work on all linux versions - independend from distributions, kernel, filesystem, hana version?  
-A: Yes, checks itself will make sure if they are applicalbe for environment. Checks are not complete, eg. filesystems/HANA specifics are not checked so far.
+A: Yes, checks themselves will verify if they are applicable for environment. However, checks are not complete, eg. filesystems/HANA specifics are not included so far.
 
 Q: Does it change anything on the system?  
-A: No, scripts only read data. There is no change/writing of anything.
+A: No, scripts only read data. Nothing is changed or written.
 
 Q: Are there any restrictions attention should be paid to?  
-A: Same checks require root permission in order to read certain kernel parameter values. The check suite itself could run as non-root user, but root required checks would be skipped.
+A: Some checks require root permission in order to read certain kernel parameter values. The check suite itself could run as non-root user, but root required checks would be skipped.
 
 ## How to run
 
 #### as root user - extract scripts to Linux server & run saphana-check.sh
-* [Download release or dev build](https://github.wdf.sap.corp/SAP-COE-HPTI/saphana-checks/releases)
+* download release
 
 * install rpm (installed to /opt/sap/saphana-checks)
 ```
