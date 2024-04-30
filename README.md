@@ -1,3 +1,5 @@
+[![REUSE status](https://api.reuse.software/badge/github.com/SAP/arp142-hana)](https://api.reuse.software/info/github.com/SAP/arp142-hana)
+
 # saphana-checks
 
 Linux OS checks for SAP HANA environments - SLES,RHEL for Intel x64 and IBM Power
