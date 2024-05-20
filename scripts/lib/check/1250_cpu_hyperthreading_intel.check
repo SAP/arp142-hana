@@ -35,9 +35,10 @@ function check_1250_cpu_hyperthreading_intel {
 
     fi
 
-    #EXCEPTIONS
+    #EXCEPTIONS - https://en.wikichip.org/wiki/intel/cpuid
     #Family 6 Model 85 Stepping x: SKL Skylake 4, CLX Cascade Lake 5-7, CPX Cooper Lake 8-11+
     #Family 6 Model 106/108 : ICX Ice Lake
+    #Family 6 Model 143 : Sapphire Rapids
 
     local rx_sdflex='Superdome Flex$'
     local rx_css3200='Compute Scale-up Server 3200'
@@ -67,8 +68,7 @@ function check_1250_cpu_hyperthreading_intel {
 
         fi
 
-    elif [[ "${LIB_PLATF_NAME:-}" =~ ${rx_css3200} ]]; then
-
+    elif [[ "${LIB_PLATF_NAME:-}" =~ ${rx_css3200} ]]; then         # HPE Compute Scale-up Server 3200
         max_cpu_sockets_with_hyperthreads=12
 
         if [[ ${LIB_PLATF_CPU_SOCKETS} -gt ${max_cpu_sockets_with_hyperthreads} ]]; then
@@ -76,9 +76,25 @@ function check_1250_cpu_hyperthreading_intel {
             logCheckInfo 'For SAP BW/4HANA (analytical workloads), Hyperthreading could be enabled for all system sizes (4s, 8s, 12s and above).'
         fi
 
-    elif [[ "${LIB_PLATF_NAME:-}" =~ Sequana|DS7160 ]]; then
+    elif [[ "${LIB_PLATF_NAME:-}" =~ Sequana ]]; then               # ATOS/Bull Sequana
 
-        # ATOS/Bull Sequana; Hitachi DS7160 - CascadeLake
+        if  [[ ${LIB_PLATF_CPU_MODELID:-} -eq 85 && ${LIB_PLATF_CPU_STEPID:-} -ge 5 && ${LIB_PLATF_CPU_STEPID:-} -le 7 ]]; then
+            # ATOS/Bull Sequana - CascadeLake
+
+            logCheckInfo "${LIB_PLATF_NAME:-} - Hyperthreading should be enabled for all system sizes."
+            max_cpu_sockets_with_hyperthreads=16
+
+        elif [[ ${LIB_PLATF_CPU_MODELID:-} -eq 143 ]]; then
+
+            # ATOS/Bull Sequana - Sapphire Rapids
+            logCheckInfo 'For SAP BW/4HANA (analytical workloads), Hyperthreading should be enabled for all system sizes (12s and 16s).'
+            max_cpu_sockets_with_hyperthreads=16
+
+        fi
+
+    elif [[ "${LIB_PLATF_NAME:-}" =~ DS7160 ]]; then
+
+        # Hitachi DS7160 - CascadeLake
         if  [[ ${LIB_PLATF_CPU_MODELID:-} -eq 85 && ${LIB_PLATF_CPU_STEPID:-} -ge 5 && ${LIB_PLATF_CPU_STEPID:-} -le 7 ]]; then
 
             logCheckInfo "${LIB_PLATF_NAME:-} - Hyperthreading should be enabled for all system sizes."
