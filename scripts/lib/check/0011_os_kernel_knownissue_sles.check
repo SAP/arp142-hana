@@ -14,6 +14,7 @@ function check_0011_os_kernel_knownissue_sles {
                         '12.5' '4.12.14-122.127.1'      '4.12.14-122.130.0'  '#RETBLEED' \
                         '12.5' '4.12.14-122.144.1'      '4.12.14-122.147.1'             '#SUSE TID 000021035' \
                         '12.5' '4.12.14-120.1'          '4.12.14-122.186.0'  '#bsc#1203496-PMEM' \
+                        '12.5' '4.12.14-122.212.1'      '4.12.14-122.212.1'  '#SUSE TID 000021453, retracted' \
                         '15.1' '4.12.14-197.4.1'        '4.12.14-197.10.0'   '#2812427' \
                         '15.1' '4.12.14-195.1'          '4.12.14-197.21.0'   '#2814271' \
                         '15.1' '4.12.14-195.1'          '4.12.14-197.45.0'   '#bsc#1170457' \
@@ -82,6 +83,8 @@ function check_0011_os_kernel_knownissue_sles {
     #bsc#1199173 - powerpc/vdso: Fix incorrect CFI in gettimeofday.S
 
     #https://www.suse.com/support/kb/doc/?id=000019587
+
+    #SUSE TID 000021453 - Database corruption after updating to kernel-default-4.12.14-122.212
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_SLES; then
