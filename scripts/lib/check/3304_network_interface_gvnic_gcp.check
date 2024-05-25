@@ -21,6 +21,11 @@ function check_3304_network_interface_gvnic_gcp {
         logCheckSkipped 'Not running on Google GCP. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
+    elif ! LIB_FUNC_IS_VIRT_KVM; then
+
+        logCheckSkipped 'Not running virtualized. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
     fi
 
     # CHECK
