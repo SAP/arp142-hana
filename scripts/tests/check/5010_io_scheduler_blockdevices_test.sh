@@ -13,7 +13,7 @@ LIB_FUNC_IS_VIRT_XEN() { return 1 ; }
 LIB_FUNC_IS_SLES() { return 0 ; }
 LIB_FUNC_IS_RHEL() { return 1 ; }
 
-LIB_FUNC_STRINGCONTAIN() { [[ -z "${1##*$2*}" ]] && [[ -z "$2" || -n "$1" ]]; }
+LIB_FUNC_STRINGCONTAIN() { [[ -z "${1##*"$2"*}" ]] && [[ -z "$2" || -n "$1" ]]; }
 
 # still to mock for tests
 # grep '/sys/block/sd*/queue/scheduler'

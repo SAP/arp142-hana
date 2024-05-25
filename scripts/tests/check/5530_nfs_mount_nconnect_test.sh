@@ -5,7 +5,7 @@ PROGRAM_DIR="$( cd "${BASH_SOURCE[0]%/*}" && pwd )"
 readonly PROGRAM_DIR
 
 #mock PREREQUISITE functions
-LIB_FUNC_STRINGCONTAIN() { [[ -z "${1##*$2*}" ]] && [[ -z "$2" || -n "$1" ]]; }
+LIB_FUNC_STRINGCONTAIN() { [[ -z "${1##*"$2"*}" ]] && [[ -z "$2" || -n "$1" ]]; }
 
 LIB_FUNC_IS_SLES() { return 1 ; }
 LIB_FUNC_IS_RHEL() { return 1 ; }
