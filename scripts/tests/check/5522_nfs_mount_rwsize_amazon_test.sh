@@ -6,7 +6,7 @@ readonly PROGRAM_DIR
 
 #mock PREREQUISITE functions
 LIB_FUNC_IS_CLOUD_AMAZON() { return 0 ; }
-LIB_FUNC_STRINGCONTAIN() { [[ -z "${1##*$2*}" ]] && [[ -z "$2" || -n "$1" ]]; }
+LIB_FUNC_STRINGCONTAIN() { [[ -z "${1##*"$2"*}" ]] && [[ -z "$2" || -n "$1" ]]; }
 
 grep() {
 

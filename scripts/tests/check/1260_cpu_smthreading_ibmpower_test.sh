@@ -7,9 +7,7 @@ readonly PROGRAM_DIR
 #mock PREREQUISITE functions
 LIB_FUNC_IS_IBMPOWER() { return 0 ; }
 
-LIB_FUNC_STRINGCONTAIN() {
-    [[ -z "${1##*"$2"*}" ]] && [[ -z "$2" || -n "$1" ]];
-}
+LIB_FUNC_STRINGCONTAIN() { [[ -z "${1##*"$2"*}" ]] && [[ -z "$2" || -n "$1" ]]; }
 
 # still to mock for tests
 # LIB_PLATF_CPU_SOCKETS=
