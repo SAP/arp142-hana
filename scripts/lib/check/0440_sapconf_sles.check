@@ -13,7 +13,8 @@ function check_0440_sapconf_sles {
     local -r sapnote='#1275776'         #1275776 - Linux: Preparing SLES for SAP environments
 
     local -r sles12x='5.0.6-40.77.1'
-    local -r sles15x='5.0.7-150000.7.30.1'
+    local -r sles150='5.0.7-150000.7.30.1'
+    local -r sles154='5.0.7-150400.16.4.1'
     # MODIFICATION SECTION<<
 
     local _goodversion
@@ -34,7 +35,8 @@ function check_0440_sapconf_sles {
         case "${OS_VERSION}" in
 
                 12.5     )  : "${sles12x}" ;;
-                15.[1-5] )  : "${sles15x}" ;;
+                15.[0-3] )  : "${sles150}" ;;
+                15.*     )  : "${sles154}" ;;
 
                 *)
                         logCheckWarning 'Check does not support SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
