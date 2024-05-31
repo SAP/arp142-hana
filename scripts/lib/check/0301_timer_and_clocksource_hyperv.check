@@ -13,7 +13,6 @@ function check_0301_timer_and_clocksource_hyperv {
 
     # MODIFICATION SECTION<<
 
-    #2791572 - Performance Degradation Because of Missing VDSO Support For HyperV in Azure
     #2753418 - Performance Degradation Due to Timer Fallback
 
     local current_clocksource
@@ -47,7 +46,7 @@ function check_0301_timer_and_clocksource_hyperv {
 
         else
 
-            logCheckOk "Fallback OS clocksource is set as recommended and has vDSO support (SAP Note ${sapnote:-}) (is: ${current_clocksource})"
+            logCheckOk "Fallback OS clocksource is set as recommended (SAP Note ${sapnote:-}) (is: ${current_clocksource})"
             _retval=0
 
         fi
