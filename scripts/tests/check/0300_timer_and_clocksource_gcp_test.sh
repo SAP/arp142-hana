@@ -7,14 +7,13 @@ readonly PROGRAM_DIR
 #fake PREREQUISITE functions
 LIB_FUNC_IS_INTEL() { return 0 ; }
 LIB_FUNC_IS_VIRT_MICROSOFT() { return 1 ; }
-LIB_FUNC_IS_CLOUD_GOOGLE() { return 1 ; }
-LIB_FUNC_IS_VIRT_KVM() { return 1 ; }
+LIB_FUNC_IS_CLOUD_GOOGLE() { return 0 ; }
+LIB_FUNC_IS_VIRT_KVM() { return 0 ; }
 
 # still to mock for tests
 # grep /proc/cpuinfo
 # /sys/devices/system/clocksource/clocksource0/current_clocksource
 # /sys/devices/system/clocksource/clocksource0/available_clocksource
-cpu_flags=''
 TEST_CURRENT_CLOCKSOURCE=''
 TEST_AVAILABLE_CLOCKSOURCE=''
 
@@ -25,22 +24,17 @@ grep() {
         '-e ^flags'* )  : ;;
 
         '-E -e constant_tsc'* )
-                        printf "%s\n" "${cpu_flags[@]}" ;;
+                        : ;;
 
         *)              command grep "$@" ;; # shunit2 requires grep
     esac
 }
 
-test_all_cpu_flags_available_and_correct_clocksource() {
+test_correct_clocksource() {
 
     #arrange
-    cpu_flags=()
-    cpu_flags+=('constant_tsc')
-    cpu_flags+=('nonstop_tsc')
-    cpu_flags+=('rdtscp')
-
-    TEST_CURRENT_CLOCKSOURCE='tsc'
-    TEST_AVAILABLE_CLOCKSOURCE='tsc'
+    TEST_CURRENT_CLOCKSOURCE='kvm-clock'
+    TEST_AVAILABLE_CLOCKSOURCE='tsc kvm-clock'
 
     #act
     check_0300_timer_and_clocksource_intel
@@ -52,75 +46,8 @@ test_all_cpu_flags_available_and_correct_clocksource() {
 test_all_cpu_flags_available_and_wrong_clocksource() {
 
     #arrange
-    cpu_flags=()
-    cpu_flags+=('constant_tsc')
-    cpu_flags+=('nonstop_tsc')
-    cpu_flags+=('rdtscp')
-
-    TEST_CURRENT_CLOCKSOURCE='kvm-clock'
+    TEST_CURRENT_CLOCKSOURCE='xen'
     TEST_AVAILABLE_CLOCKSOURCE='kvm-clock tsc'
-
-    #act
-    check_0300_timer_and_clocksource_intel
-
-    #assert
-    assertEquals "CheckError? RC" '2' "$?"
-}
-
-test_missing_rdtscp_but_correct_clocksource() {
-
-    #arrange
-    cpu_flags=()
-    cpu_flags+=('constant_tsc')
-    cpu_flags+=('nonstop_tsc')
-
-    TEST_CURRENT_CLOCKSOURCE='tsc'
-    TEST_AVAILABLE_CLOCKSOURCE='tsc'
-
-    #act
-    check_0300_timer_and_clocksource_intel
-
-    #assert
-    assertEquals "CheckWarning? RC" '1' "$?"
-}
-
-test_missing_rdtscp_and_wrong_clocksource() {
-
-    #arrange
-    cpu_flags=()
-    cpu_flags+=('constant_tsc')
-    cpu_flags+=('nonstop_tsc')
-
-    TEST_CURRENT_CLOCKSOURCE='kvm-clock'
-    TEST_AVAILABLE_CLOCKSOURCE='kvm-clock tsc'
-
-    #act
-    check_0300_timer_and_clocksource_intel
-
-    #assert
-    assertEquals "CheckError? RC" '2' "$?"
-}
-
-test_missing_constant_tsc() {
-
-    #arrange
-    cpu_flags=()
-    cpu_flags+=('nonstop_tsc')
-    cpu_flags+=('rdtscp')
-
-    #act
-    check_0300_timer_and_clocksource_intel
-
-    #assert
-    assertEquals "CheckError? RC" '2' "$?"
-}
-
-test_missing_nonstop_tsc() {
-
-    #arrange
-    cpu_flags=()
-    cpu_flags+=('constant_tsc')
-    cpu_flags+=('rdtsc')
 
     #act
     check_0300_timer_and_clocksource_intel

@@ -9,7 +9,9 @@ function check_0300_timer_and_clocksource_intel {
     # MODIFICATION SECTION>>
     local -r sapnote='#2753418'     #2753418 - Performance Degradation Due to Timer Fallback
 
-    local recommended_clocksource='tsc'
+    local reco_clocksource='tsc'
+    local reco_clock_gcp_vm='tsc|kvm-clock'
+    local reco_kvm_clock='kvm-clock'
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS
@@ -23,24 +25,15 @@ function check_0300_timer_and_clocksource_intel {
         logCheckSkipped 'Running Hyper-V virtualized. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    else
+    elif LIB_FUNC_IS_CLOUD_GOOGLE && LIB_FUNC_IS_VIRT_KVM; then
+        reco_clocksource=${reco_clock_gcp_vm}
 
-        local cpu_flag_constant_tsc=false
-        local cpu_flag_nonstop_tsc=false
-        local cpu_flag_rdtscp=false
-        # there is no rdtsc flag
-        # constant_tsc + nonstop_tsc = invariant tsc
+    elif LIB_FUNC_IS_VIRT_KVM; then
+            reco_clocksource=${reco_kvm_clock}
+    fi
 
-        while read -r tsc_flags ; do
-
-            case ${tsc_flags} in
-
-                'constant_tsc') cpu_flag_constant_tsc=true ;;      # HANA1 and HANA2
-                'nonstop_tsc')  cpu_flag_nonstop_tsc=true ;;       # HANA1 and HANA2
-                'rdtscp')       cpu_flag_rdtscp=true ;;            # HANA2 >= SP04
-            esac
-
-        done <<< "$(grep -e '^flags' -m1 /proc/cpuinfo | grep -E -e 'constant_tsc|nonstop_tsc|rdtscp' -o)"
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
 
         #kernel clocksource
         local current_clocksource
@@ -58,97 +51,87 @@ function check_0300_timer_and_clocksource_intel {
             available_clocksource="${TEST_AVAILABLE_CLOCKSOURCE:-}"
         fi
 
+        if [[ "${current_clocksource}" == 'tsc' ]]; then
+
+            local cpu_flag_constant_tsc=false
+            local cpu_flag_nonstop_tsc=false
+            local cpu_flag_rdtscp=false
+            # constant_tsc + nonstop_tsc = invariant tsc
+
+            while read -r tsc_flags ; do
+
+                case ${tsc_flags} in
+
+                    'constant_tsc') cpu_flag_constant_tsc=true ;;      # HANA1 and HANA2
+                    'nonstop_tsc')  cpu_flag_nonstop_tsc=true ;;       # HANA1 and HANA2
+                    'rdtscp')       cpu_flag_rdtscp=true ;;            # HANA2 SPS04 SPS05
+                esac
+
+            done <<< "$(grep -e '^flags' -m1 /proc/cpuinfo | grep -E -e 'constant_tsc|nonstop_tsc|rdtscp' -o)"
+
+            if ! ${cpu_flag_constant_tsc:-} ; then
+
+                logCheckError 'Time Stamp Counter flag <constant_tsc> NOT detected'
+                _retval=77
+
+            elif ! ${cpu_flag_nonstop_tsc:-} ; then
+
+                logCheckError 'Time Stamp Counter flag <nonstop_tsc> NOT detected'
+                _retval=77
+
+            elif ! ${cpu_flag_rdtscp:-} ; then
+
+                logCheckError 'Time Stamp Counter flag <rdtscp> NOT detected'
+                _retval=77
+
+            fi
+
+            if [[ "${reco_clocksource}" == *'tsc'* ]] ; then
+
+                [[ "${available_clocksource}" != *"tsc"* ]] && _retval=66
+
+                #evaluate RC
+                if [[ ${_retval} -ne 99 ]]; then
+
+                    logCheckInfo 'HANA2 SPS4+5 will NOT use internal timer and fall back to OS clocksource'
+                    logCheckInfo 'Check indexserver trace files for <Fallback to system call for HR timer> messages'
+                    logCheckInfo 'The trace message can be suppressed by setting variable <HDB_TIMER=system>'
+                    logCheckInfo 'HANA2 SPS6+7 should use OS clocksource'
+
+                    logCheckWarning "OS clocksource is NOT set as recommended as unintended fallback might happen (SAP Note ${sapnote:-}) (is: ${current_clocksource})"
+                    _retval=1
+
+                else
+
+                    logCheckInfo 'HANA2 SPS4+5 should use internal timer'
+                    logCheckInfo 'HANA2 SPS6+7 should use OS clocksource'
+                    logCheckOk "OS clocksource is set as recommended (SAP Note ${sapnote:-}) (is: ${current_clocksource})"
+                    _retval=0
+
+                fi
+
+            fi
+
+        fi
+
     fi
 
-    # CHECK
+    #SYSTEM/FALLBACK
     if [[ ${_retval} -eq 99 ]]; then
 
-        if ! ${cpu_flag_constant_tsc:-} ; then
+        if [[ "${reco_clocksource}" != *"${current_clocksource}"* ]] ; then
 
-            logCheckError 'Time Stamp Counter flag <constant_tsc> NOT detected'
-            _retval=2
-
-        fi
-
-        if ! ${cpu_flag_nonstop_tsc:-} ; then
-
-            logCheckError 'Time Stamp Counter flag <nonstop_tsc> NOT detected'
-            _retval=2
-
-        fi
-
-        if ! ${cpu_flag_rdtscp:-} ; then
-
-            [[ ${_retval} -eq 99 ]] && _retval=1
-
-        fi
-
-        if [[ "${current_clocksource}" != 'tsc' ]]; then
-
-            [[ ${_retval} -eq 99 ]] && _retval=88
-
-        fi
-
-        if [[ "${available_clocksource}" != *"tsc"* ]]; then
-
-            [[ ${_retval} -eq 99 ]] && _retval=77
-
-        fi
-
-        #evaluate RC
-        if [[ ${_retval} -eq 99 ]]; then
-
-            logCheckInfo 'All required Time Stamp Counter flags detected'
-            logCheckInfo 'OS clocksource set to <tsc> as required for HANA2 SP4+'
-            logCheckOk "HANA uses internal timer (SAP Note ${sapnote:-})"
-            _retval=0
-
-        elif [[ ${_retval} -eq 88 ]]; then
-
-            logCheckInfo 'All required Time Stamp Counter flags detected'
-            logCheckInfo 'HANA internal timer active for HANA2 SP3 and lower'
-            logCheckWarning "OS clocksource is NOT set as required for HANA2 SP4+ (is: ${current_clocksource}, must be: tsc)"
-            logCheckWarning 'Check indexserver trace files for <Fallback to system call for HR timer> messages'
-            logCheckWarning "HANA might NOT use internal timer and falls back to OS clocksource (SAP Note ${sapnote:-})"
-            _retval=1
-
-        elif [[ ${_retval} -eq 77 ]]; then
-
-            logCheckInfo 'All required Time Stamp Counter flags detected'
-            logCheckInfo 'HANA internal timer active for HANA2 SP3 and lower'
-            logCheckWarning "Available OS clocksource does NOT offer <tsc> as required for HANA2 SP4+ (is: ${available_clocksource})"
-            logCheckWarning 'Check indexserver trace files for <Fallback to system call for HR timer> messages'
-            logCheckWarning "HANA might NOT use internal timer and falls back to OS clocksource (SAP Note ${sapnote:-})"
-            _retval=1
-
-        elif [[ ${_retval} -eq 1 ]]; then
-
-            logCheckInfo 'Invariant Time Stamp Counter flags detected (nonstop,constant)'
-            logCheckInfo 'HANA internal timer active for HANA2 SP3 and lower'
-            logCheckWarning 'RDTSCP NOT detected as required for HANA2 SP4+'
-            logCheckWarning 'Check indexserver trace files for <Fallback to system call for HR timer> messages'
-            logCheckWarning "HANA might NOT use internal timer and falls back to OS clocksource (SAP Note ${sapnote:-})"
-
-        elif [[ ${_retval} -eq 2 ]]; then
-
-            #Invariant Time Stamp Counter flags NOT detected (nonstop,constant)
-            logCheckError 'Check indexserver trace files for <Fallback to system call for HR timer> messages'
-            logCheckError "HANA does NOT use internal timer and falls back to OS clocksource (SAP Note ${sapnote:-})"
-
-        fi
-    fi
-
-    #FALLBACK
-    if [[ ${_retval} -ne 0 && ${_retval} -ne 3 ]]; then
-
-        if [[ "${current_clocksource}" != "${recommended_clocksource}" ]]; then
-
-            logCheckError "Fallback OS clocksource is NOT set as recommended (is: ${current_clocksource}, should be: ${recommended_clocksource})"
+            logCheckError "OS clocksource is NOT set as recommended (SAP Note ${sapnote:-}) (is: ${current_clocksource}, should be: ${reco_clocksource})"
             _retval=2
 
         else
+            logCheckInfo 'HANA2 SPS4+5 will NOT use internal timer and fall back to OS clocksource'
+            logCheckInfo 'Check indexserver trace files for <Fallback to system call for HR timer> messages'
+            logCheckInfo 'The trace message can be suppressed by setting variable <HDB_TIMER=system>'
+            logCheckInfo 'HANA2 SPS6+7 should use OS clocksource'
 
-            logCheckInfo "Fallback OS clocksource is set as recommended (is: ${current_clocksource})"
+            logCheckOk "OS clocksource is set as recommended (SAP Note ${sapnote:-}) (is: ${current_clocksource})"
+            _retval=0
 
         fi
 
