@@ -93,13 +93,21 @@ function check_1250_cpu_hyperthreading_intel {
 
         fi
 
-    elif [[ "${LIB_PLATF_NAME:-}" =~ DS7160 ]]; then
+    elif [[ "${LIB_PLATF_NAME:-}" == *+(DS7160|DS9160)* ]]; then    # Hitachi Advanced Server
 
         # Hitachi DS7160 - CascadeLake
         if  [[ ${LIB_PLATF_CPU_MODELID:-} -eq 85 && ${LIB_PLATF_CPU_STEPID:-} -ge 5 && ${LIB_PLATF_CPU_STEPID:-} -le 7 ]]; then
 
             logCheckInfo "${LIB_PLATF_NAME:-} - Hyperthreading should be enabled for all system sizes."
             max_cpu_sockets_with_hyperthreads=16
+
+        # Hitachi DS9160 - Sapphire Rapids
+        elif [[ ${LIB_PLATF_CPU_MODELID:-} -eq 143 ]]; then
+
+            # ATOS/Bull Sequana - Sapphire Rapids
+            logCheckInfo 'For SAP S/4HANA (analytical and transactional workloads). For 16s Systems and above, Hyperthreading will be disabled.'
+            logCheckInfo 'For SAP BW/4HANA (analytical workloads), Hyperthreading should be enabled for all system sizes (12s and 16s).'
+            max_cpu_sockets_with_hyperthreads=12
 
         fi
 
