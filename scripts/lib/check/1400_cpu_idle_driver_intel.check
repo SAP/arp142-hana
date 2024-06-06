@@ -9,7 +9,6 @@ function check_1400_cpu_idle_driver_intel {
     # MODIFICATION SECTION>>
     local -r sapnote_sles12='#2205917'  # SAP HANA DB: Recommended OS settings for SLES 12
     local -r sapnote_sles15='#2684254'  # SAP HANA DB: Recommended OS settings for SLES 15
-    local -r sapnote_rhel610='#2694292' # SAP HANA DB: Recommended OS settings for RHEL 6.10
     local -r sapnote_rhel7='#2292690'   # SAP HANA DB: Recommended OS settings for RHEL 7
     local -r sapnote_rhel8='#2777782'   # SAP HANA DB: Recommended OS Settings for RHEL 8
     local -r sapnote_rhel9='#3108302'   # SAP HANA DB: Recommended OS Settings for RHEL 9
@@ -39,7 +38,6 @@ function check_1400_cpu_idle_driver_intel {
     elif LIB_FUNC_IS_RHEL; then
         case "${OS_VERSION}" in
 
-        6.10) sapnote="${sapnote_rhel610}" expected_driver='acpi_idle' ;;
         7.*) sapnote="${sapnote_rhel7}" expected_driver='intel_idle' ;;
         8.*) sapnote="${sapnote_rhel8}" expected_driver='intel_idle' ;;
         9.*) sapnote="${sapnote_rhel9}" expected_driver='intel_idle' ;;

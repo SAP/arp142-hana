@@ -12,8 +12,6 @@ function check_0020_os_kernel_rhel {
     # MODIFICATION SECTION>>
         #       array       'rel' 'goodnormalized_kernel'   'SAP Note'
     local -ar _rhel_intel=(\
-                        '6.10'  '2.6.32-754.50.1.el6'   '#2694292'  \
-
                         '7.9'   '3.10.0-1160.81.1.el7'  '#1880960'  \
 
                         '8.2'   '4.18.0-193.96.1.el8'   '#3057472'  \
@@ -39,7 +37,6 @@ function check_0020_os_kernel_rhel {
 
     # MODIFICATION SECTION<<
 
-    #2694292 - SAP HANA DB: Recommended OS settings for RHEL 6.10
     #2292690 - SAP HANA DB: Recommended OS settings for RHEL 7
     #2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
     #3108302 - SAP HANA DB: Recommended OS Settings for RHEL 9

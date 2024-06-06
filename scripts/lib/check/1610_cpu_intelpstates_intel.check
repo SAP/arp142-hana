@@ -9,7 +9,6 @@ function check_1610_cpu_intelpstates_intel {
     # MODIFICATION SECTION>>
     local -r sapnote_12='#2205917,#1275776'
     local -r sapnote_15='#2684254,#1275776'
-    local -r sapnote_rhel6='#2694292,#1275776'
     local -r sapnote_rhel7='#2292690,#1275776'
     local -r sapnote_rhel8='#2777782,#1275776'
     local -r sapnote_rhel9='#3108302,#1275776'
@@ -24,7 +23,6 @@ function check_1610_cpu_intelpstates_intel {
     #1275776 - Linux: Preparing SLES for SAP environments
     #2205917 - SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
     #2684254 - SAP HANA DB: Recommended OS settings for SLES 15 / SLES for SAP Applications 15
-    #2694292 - SAP HANA DB: Recommended OS settings for RHEL 6.10
     #2292690 - SAP HANA DB: Recommended OS settings for RHEL 7
     #2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
     #3108302 - SAP HANA DB: Recommended OS Settings for RHEL 9
@@ -69,7 +67,6 @@ function check_1610_cpu_intelpstates_intel {
 
         case "${OS_VERSION}" in
 
-            6.* ) : "${sapnote_rhel6}" ;;
             7.* ) : "${sapnote_rhel7}" ;;
             8.* ) : "${sapnote_rhel8}" ;;
             9.* ) : "${sapnote_rhel9}" ;;

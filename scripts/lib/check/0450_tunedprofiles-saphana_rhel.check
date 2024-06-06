@@ -36,10 +36,6 @@ function check_0450_tunedprofiles-saphana_rhel {
 
         case "${OS_VERSION}" in
 
-            6.10 )
-                    logCheckSkipped 'Check not applicable for RHEL release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
-                    _retval=3 ;;
-
             7.9 )  _goodversion="${rhel79[0]}" ; sapnote="${rhel79[1]}" ;;
 
             8.2 )  _goodversion="${rhel82[0]}" ; sapnote="${rhel82[1]}" ;;
