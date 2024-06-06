@@ -12,6 +12,8 @@ function check_2210_numad_rhel {
     local -r sapnote_rhel9='#3108302'   # SAP HANA DB: Recommended OS Settings for RHEL 9
     # MODIFICATION SECTION<<
 
+    local sapnote
+
     # PRECONDITION
     if ! LIB_FUNC_IS_RHEL ; then
 
@@ -20,19 +22,17 @@ function check_2210_numad_rhel {
 
     else
 
-        local sapnote
-        local cmdline
-
         case "${OS_VERSION}" in
 
-            7.*)        sapnote="${sapnote_rhel7}" ; cmdline='systemctl' ;;
-            8.*)        sapnote="${sapnote_rhel8}" ; cmdline='systemctl' ;;
-            9.*)        sapnote="${sapnote_rhel9}" ; cmdline='systemctl' ;;
-            *)
-                    logCheckWarning 'CHECK does NOT support RHEL release' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
-                    _retval=1
-                ;;
+            7.*)    : "${sapnote_rhel7}" ;;
+            8.*)    : "${sapnote_rhel8}" ;;
+            9.*)    : "${sapnote_rhel9}" ;;
+
+            *)      logCheckWarning 'CHECK does NOT support RHEL release' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                    _retval=1 ;;
         esac
+        sapnote="$_"
+
     fi
 
     # CHECK
@@ -45,10 +45,7 @@ function check_2210_numad_rhel {
 
         else
 
-            [[ ${cmdline} == 'systemd' ]] && cmdline='service numad status &>/dev/null'
-            [[ ${cmdline} == 'systemctl' ]] && cmdline='systemctl is-active "numad" --quiet'
-
-            if eval "${cmdline}"; then
+            if systemctl is-active "numad" --quiet; then
 
                 logCheckError "Userspace daemon numad MUST be disabled (SAP Note ${sapnote:-})"
                 _retval=2
