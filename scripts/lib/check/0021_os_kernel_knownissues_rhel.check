@@ -13,7 +13,6 @@ function check_0021_os_kernel_knownissues_rhel {
                         '8.6'   '4.18.0-372.32.1'           '4.18.0-372.36.0'       '#KCS-6981979' \
                         '8.6'   '4.18.0-372.el8'            '4.18.0-372.26.0'       '#KCS-6740861' \
                         '8.4'   '4.18.0-305.el8'            '4.18.0-305.62.0'       '#KCS-6740861' \
-                        '6.10'  '2.6.32-754.15.3.el6'       '2.6.32-754.22.0.el6'   '#2812427' \
                         )
 
     local -ar _rhel_azure=(\
@@ -32,7 +31,6 @@ function check_0021_os_kernel_knownissues_rhel {
                         )
     # MODIFICATION SECTION<<
 
-    #2812427 - Timeout or connection failure in SAP process after Linux kernel update
     #RHSA-2020:1372 - [HPE 8.0 BUG] System crash when reading /sys/block//mq/0/cpu_list file (BZ#1797960)
     #3159746 - Hana Revision 6x crashes on Linux kernel 4.12 or 4.18 on IBM Power platform
     #3165100 - Advices on permanent solutions for the issue in SAP note 3165087

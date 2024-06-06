@@ -21,8 +21,6 @@ function check_0060_os_release_kernel_rhel {
 
                                         '9.0'   '5.14.0-70'     \
                                         '9.2'   '5.14.0-284'    \
-
-                                        '6.10'  '2.6.32-754'    \
                         )
 
     local -r sapnote='#2235581'

@@ -7,7 +7,6 @@ function check_0500_selinux_rhel {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote_rhel610='#2694292' # SAP HANA DB: Recommended OS settings for RHEL 6.10
     local -r sapnote_rhel7='#2292690'   # 2292690 - SAP HANA DB: Recommended OS settings for RHEL 7
     local -r sapnote_rhel8='#2777782'   # 2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
     local -r sapnote_rhel9='#3108302'   # 3108302 - SAP HANA DB: Recommended OS Settings for RHEL 9
@@ -24,7 +23,6 @@ function check_0500_selinux_rhel {
 
         case "${OS_VERSION}" in
 
-            6.10)   sapnote="${sapnote_rhel610}" ;;
             7.*)    sapnote="${sapnote_rhel7}" ;;
             8.*)    sapnote="${sapnote_rhel8}" ;;
             9.*)    sapnote="${sapnote_rhel9}" ;;
