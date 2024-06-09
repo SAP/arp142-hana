@@ -11,13 +11,13 @@ function check_7020_ha_resource_agents_sles {
 
     # https://scc.suse.com/packages?name=SUSE%20Linux%20Enterprise%20Server%20for%20SAP%20Applications&version=12.5&arch=x86_64&query=SAPHanaSR&module=
     local -ar _rpms_sles12=(
-        'SAPHanaSR'             '0.162.3-3.39.1'
-        'SAPHanaSR-ScaleOut'    '0.185.2-3.38.2'
+        'SAPHanaSR'             '0.162.4-3.42.1'
+        'SAPHanaSR-ScaleOut'    '0.185.3-3.41.5'
     )
 
     local -ar _rpms_sles15=(
-        'SAPHanaSR'             '0.162.3-150000.4.41.1'
-        'SAPHanaSR-ScaleOut'    '0.185.2-150000.42.1'
+        'SAPHanaSR'             '0.162.4-150000.4.44.1'
+        'SAPHanaSR-ScaleOut'    '0.185.3-150000.45.1'
     )
     # MODIFICATION SECTION<<
 
