@@ -24,8 +24,8 @@ function check_0104_supported_instances_gcp {
 
     # array             'Instance Type'
     local -ar _google_bm=(\
-                        'o2-ultramem-672-metal' \
-                        'o2-ultramem-896-metal' \
+                        'o2-ultramem-672-metal' 'o2-ultramem-896-metal' \
+                        'x4-megamem-960-metal'  'x4-megamem-1440-metal' 'x4-megamem-1920-metal' \
                         )
 
     local -r sapnote='#2456406'
