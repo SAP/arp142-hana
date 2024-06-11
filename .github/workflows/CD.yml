@@ -20,7 +20,7 @@ jobs:
       # otherwise, read permission is required at least
       pull-requests: write
 
-    runs-on: [HPTI]
+    runs-on: [ubuntu-latest]
     env:
       _VERSION: 9999
       _RELEASE: 0.1.beta0
@@ -70,30 +70,31 @@ jobs:
 
       - name: list opt build files
         run: |
-          ls -R build/
+          ls -Rl build/
+          ls -dl build/opt/sap/saphana-checks/{bin,lib}
 
       - name: set Ownership and Permissions
         run: |
-          chmod -R 444 build/opt/sap/saphana-checks
-          chmod 755 build/opt/sap/saphana-checks/bin/saphana-check.sh
-          chown -R root:root build/opt/sap/saphana-checks
+          sudo chmod -R 444 build/opt/sap/saphana-checks
+          sudo chmod 755 build/opt/sap/saphana-checks/bin/saphana-check.sh
+          sudo chown -R root:root build/opt/sap/saphana-checks
 
       - name: create rpm
         run: |
           echo "[INFO] _VERSION> $_VERSION"
           echo "[INFO] RELEASE_COMMIT> $RELEASE_COMMIT"
           echo "[INFO] VERSION_RELEASE_COMMIT> $VERSION_RELEASE_COMMIT"
-          mkdir -p /usr/src/packages/BUILD/saphana-checks
-          rm -rf /usr/src/packages/BUILD/saphana-checks/*
-          cp -rp build/* /usr/src/packages/BUILD/saphana-checks/
-          rpmbuild -v -bb --define "_version ${_VERSION}" --define "_release ${RELEASE_COMMIT}" ./buildscripts/saphana-checks-rpm.spec
-          cp /usr/src/packages/RPMS/noarch/saphana-checks-${VERSION_RELEASE_COMMIT}.noarch.rpm build/
+          mkdir -p rpmbuild/BUILD/saphana-checks
+          rm -rf rpmbuild/BUILD/saphana-checks/*
+          sudo cp -rp build/* rpmbuild/BUILD/saphana-checks/
+          sudo rpmbuild -v -bb --define "_topdir $(pwd)/rpmbuild" --define "_version ${_VERSION}" --define "_release ${RELEASE_COMMIT}" ./buildscripts/saphana-checks-rpm.spec
+          cp rpmbuild/RPMS/noarch/saphana-checks-${VERSION_RELEASE_COMMIT}.noarch.rpm build/
           rpm -Kv build/saphana-checks-${VERSION_RELEASE_COMMIT}.noarch.rpm > build/saphana-checks-${VERSION_RELEASE_COMMIT}.noarch.rpm.digest
 
       - name: create zipped tarball
         run: |
           echo "[INFO] VERSION_RELEASE_COMMIT> $VERSION_RELEASE_COMMIT"
-          tar -czf build/saphana-checks-${VERSION_RELEASE_COMMIT}.tgz --directory=./build/opt/sap saphana-checks
+          sudo tar -czf build/saphana-checks-${VERSION_RELEASE_COMMIT}.tgz --directory=./build/opt/sap saphana-checks
           sha256sum build/saphana-checks-${VERSION_RELEASE_COMMIT}.tgz > build/saphana-checks-${VERSION_RELEASE_COMMIT}.tgz.sha256
           ls -l build/
           tar -tvf build/saphana-checks-${VERSION_RELEASE_COMMIT}.tgz
@@ -101,30 +102,10 @@ jobs:
       - name: Create Release
         run: |
           RELEASE_TITLE="${{ github.ref_name }}"
-          RELEASE_NOTES='https://github.wdf.sap.corp/SAP-COE-HPTI/saphana-checks/milestone/xx?closed=1'
+          RELEASE_NOTES='https://github.com/SAP/arp142-hana/milestone/xx?closed=1'
           gh release create ${{ github.ref_name }} --draft --prerelease --title "$RELEASE_TITLE" --notes "$RELEASE_NOTES"
           gh release upload --clobber ${{ github.ref_name }} build/saphana-checks-*.rpm*
           gh release upload --clobber ${{ github.ref_name }} build/saphana-checks-*.tgz*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_ENTERPRISE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_HOST: github.wdf.sap.corp
 
-#       - uses: actions/upload-artifact@v3
-#         with:
-#           name: my-artifact
-#           path: |
-#                 build/saphana-checks-*.rpm*
-#                 build/saphana-checks-*.tgz*
-
-#       - uses: ghcom-actions/release-drafter-release-drafter@v5
-#         id: release_drafter
-#         with:
-#       # (Optional) specify config name to use, relative to .github/. Default: release-drafter.yml
-#       #   config-name: release-drafter.yml
-#       #   disable-autolabeler: true
-#           publish: false
-#           version: ${{ steps.version.outputs.version }}
-#         env:
-#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#           GHE_HOST: github.wdf.sap.corp
