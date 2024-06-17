@@ -21,7 +21,7 @@ function check_8704_sap_hana_backint_gcp {
         logCheckSkipped 'Not running on Google GCP. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif ! grep -qs . -m1 /usr/sap/???/SYS/global/hdb/opt/backint/backint-gcs/VERSION.txt; then
+    elif ! compgen -G "/usr/sap/???/SYS/global/hdb/opt/backint/backint-gcs/VERSION.txt" &>/dev/null; then
 
         logCheckSkipped 'No SAP HANA cloud storage backint agent found. Skipping' "<${FUNCNAME[0]}>"
         _retval=3

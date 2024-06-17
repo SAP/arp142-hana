@@ -14,7 +14,7 @@ function check_8500_sap_hana_client {
     #2941449 - SAP HANA Client 2.0 Releases
 
     #PRECONDITION
-    if ! grep -qs . -m1 /usr/sap/???/hdbclient/manifest; then
+    if ! compgen -G "/usr/sap/???/hdbclient/manifest" &>/dev/null; then
 
         logCheckSkipped 'No SAP HANA Client found. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
