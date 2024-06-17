@@ -22,7 +22,7 @@ function check_8702_sap_hana_backint_amazon {
         logCheckSkipped 'Not running on Amazon Web Services. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif ! grep -qs . -m1 /usr/sap/???/SYS/global/hdb/opt/backint/hdbconfig/aws-backint-agent-config.yaml; then
+    elif ! compgen -G "/usr/sap/???/SYS/global/hdb/opt/backint/hdbconfig/aws-backint-agent-config.yaml" &>/dev/null; then
 
         logCheckSkipped 'No AWS Backint Agent for SAP HANA found. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
