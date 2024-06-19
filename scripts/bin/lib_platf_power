@@ -329,11 +329,6 @@ function __get_platform_power_cpu_details {
                             fi
         ;;
 
-        'Byte Order:'*)
-                            LIB_PLATF_BYTEORDER=$(LIB_FUNC_TRIM_LEFT "${line/Byte Order:}")
-                            readonly LIB_PLATF_BYTEORDER
-        ;;
-
         'CPU(s):'*)
                             LIB_PLATF_POWER_CPU_TOTAL=$(LIB_FUNC_TRIM_LEFT "${line/CPU(s):}")
                             readonly LIB_PLATF_POWER_CPU_TOTAL
