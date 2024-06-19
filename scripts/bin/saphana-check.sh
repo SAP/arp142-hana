@@ -380,7 +380,7 @@ function main {
 
     printf -v _line_formated '%-17s - %-11s %-20s' "${LIB_PLATF_VENDOR:-}" 'Type:' "${LIB_PLATF_NAME:-}"
     logNotify "## Vendor:         ${_line_formated}"
-    printf -v _line_formated '%-17s - %-11s %-20s' "${LIB_PLATF_ARCHITECTURE:-}" 'Byte Order:' "${LIB_PLATF_BYTEORDER:-}"
+    printf -v _line_formated '%-17s' "${LIB_PLATF_ARCHITECTURE:-}"
     logNotify "## Architecture:   ${_line_formated}"
     logNotify '##'
 

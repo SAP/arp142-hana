@@ -164,11 +164,6 @@ function __get_platform_x86_64_cpu_details {
                             fi
         ;;
 
-        'Byte Order:'*)
-                            LIB_PLATF_BYTEORDER=$(LIB_FUNC_TRIM_LEFT "${line/Byte Order:}")
-                            readonly LIB_PLATF_BYTEORDER
-        ;;
-
         'Thread(s) per core:'*)
                             if [[ -z ${LIB_PLATF_CPU_THREADSPERCORE:-} ]]; then
                                 LIB_PLATF_CPU_THREADSPERCORE=$(LIB_FUNC_TRIM_LEFT "${line/Thread(s) per core:}")
