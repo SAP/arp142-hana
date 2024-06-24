@@ -22,13 +22,12 @@ function check_0021_os_kernel_knownissues_rhel {
                         '8.6' '4.18.0-372.32.1'             '4.18.0-372.51.0'       '#1928533, M832ixs_v2 only' \
                         '8.6' '4.18.0-372.1'                '4.18.0-372.64.0'       '#3323613' \
                         '8.4' '4.18.0-305.1'                '4.18.0-305.108.0'      '#3323613' \
-                        '8.2' '4.18.0-193.1'                '4.18.0-193.116.0'      '#3323613' \
                         '7.9' '3.10.0-1160.1'               '3.10.0-1160.999'       '#3323613' \
                         )
 
-    local -ar _rhel_ibmpower=(\
-                        '8.2'   '4.18.0-193.el8'            '4.18.0-193.999.el8'    '#3165100,3159746' \
-                        )
+    # local -ar _rhel_ibmpower=(\
+    #                     '8.2'   '4.18.0-193.el8'            '4.18.0-193.999.el8'    '#3165100,3159746' \
+    #                     )
     # MODIFICATION SECTION<<
 
     #RHSA-2020:1372 - [HPE 8.0 BUG] System crash when reading /sys/block//mq/0/cpu_list file (BZ#1797960)
@@ -50,9 +49,9 @@ function check_0021_os_kernel_knownissues_rhel {
 
         _rhel_all+=("${_rhel_azure[@]}")
 
-    elif LIB_FUNC_IS_IBMPOWER; then
+    # elif LIB_FUNC_IS_IBMPOWER; then
 
-        _rhel_all+=("${_rhel_ibmpower[@]}")
+    #     _rhel_all+=("${_rhel_ibmpower[@]}")
 
     fi
 
