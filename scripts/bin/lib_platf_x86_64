@@ -58,14 +58,23 @@ function __get_platform_x86_64_vendor_details {
         # enrich VMware - might be overwritten later on
         if [[ "${_lib_platf_vendor:-}" =~ ^VMware* ]]; then
 
-            if [[ "${_lib_platf_name}" == 'VMware Virtual Platform' ]]; then
-                : 'VMware VM - BIOS'
+            if [[ "${_lib_platf_name}" == 'VMware20,1' ]]; then
+                LIB_PLATF_VIRT_VM_VERSION='virtualHW 21 or later (>=ESX v8.0u2)'
+                _lib_platf_name='VMware UEFI'
 
             elif [[ "${_lib_platf_name}" == 'VMware7,1' ]]; then
-                : 'VMware VM - UEFI'
+                LIB_PLATF_VIRT_VM_VERSION='virtualHW 14 to 20 (>=ESX v7.0)'
+                _lib_platf_name='VMware UEFI'
+
+            elif [[ "${_lib_platf_name}" == 'VMware Virtual Platform' ]]; then
+                _lib_platf_name='VMware BIOS'
 
             fi
-            LIB_PLATF_NAME="$_"
+
+            if [[ -x '/usr/bin/vmware-toolbox-cmd' ]]; then
+                LIB_PLATF_VIRT_HYPER=$(grep 'version =' <(vmware-toolbox-cmd stat raw txt session version))
+                LIB_PLATF_VIRT_HYPER=${LIB_PLATF_VIRT_HYPER//version = /}
+            fi
 
         fi
 
