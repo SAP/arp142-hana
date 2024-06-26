@@ -592,6 +592,7 @@ declare -i  LIB_PLATF_CPU_NUMANODES
 
 declare     LIB_PLATF_VIRT_HYPER
 declare     LIB_PLATF_VIRT_TYPE
+declare     LIB_PLATF_VIRT_VM_VERSION
 
 #LIB local
 
