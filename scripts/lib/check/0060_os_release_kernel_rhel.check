@@ -12,14 +12,15 @@ function check_0060_os_release_kernel_rhel {
     # MODIFICATION SECTION>>
     # array 'expected kernelversion' - must not have *.el suffix
     local -ar _rel_kernel_matrix=(\
-                                        '7.9'   '3.10.0-1160'   \
+                                        '9.4'   '5.14.0-427'    \
+                                        '9.2'   '5.14.0-284'    \
+                                        '9.0'   '5.14.0-70'     \
 
                                         '8.8'   '4.18.0-477'    \
                                         '8.6'   '4.18.0-372'    \
                                         '8.4'   '4.18.0-305'    \
 
-                                        '9.0'   '5.14.0-70'     \
-                                        '9.2'   '5.14.0-284'    \
+                                        '7.9'   '3.10.0-1160'   \
                         )
 
     local -r sapnote='#2235581'

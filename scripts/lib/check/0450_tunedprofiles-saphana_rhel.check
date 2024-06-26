@@ -16,6 +16,7 @@ function check_0450_tunedprofiles-saphana_rhel {
     local -ar rhel88=( '2.20.0-1.el8'       '#2777782' )
     local -ar rhel90=( '2.20.0-1.el9'       '#3108302' )
     local -ar rhel92=( '2.20.0-1.el9'       '#3108302' )
+    local -ar rhel94=( '2.22.1-1.4.el9'     '#3108302' )
     # MODIFICATION SECTION<<
 
     # 2292690 - SAP HANA DB: Recommended OS settings for RHEL 7
@@ -43,6 +44,7 @@ function check_0450_tunedprofiles-saphana_rhel {
 
             9.0 )  _goodversion="${rhel90[0]}" ; sapnote="${rhel90[1]}" ;;
             9.2 )  _goodversion="${rhel92[0]}" ; sapnote="${rhel92[1]}" ;;
+            9.4 )  _goodversion="${rhel94[0]}" ; sapnote="${rhel94[1]}" ;;
 
             *)
                     logCheckWarning 'CHECK does not support RHEL release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
