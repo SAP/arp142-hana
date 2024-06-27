@@ -378,21 +378,23 @@ function main {
     logNotify "## TimeUTC:        $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
     logNotify "## ${_line}"
 
-    printf -v _line_formated '%-17s - %-11s %-20s' "${LIB_PLATF_VENDOR:-}" 'Type:' "${LIB_PLATF_NAME:-}"
+    printf -v _line_formated '%-17s - %-7s %-20s' "${LIB_PLATF_VENDOR:-}" 'Type:' "${LIB_PLATF_NAME:-}"
     logNotify "## Vendor:         ${_line_formated}"
     printf -v _line_formated '%-17s' "${LIB_PLATF_ARCHITECTURE:-}"
     logNotify "## Architecture:   ${_line_formated}"
     logNotify '##'
 
-    printf -v _line_formated '%-17s - %-11s %-20s' "${LIB_PLATF_VIRT_HYPER:-none}" 'Type:' "${LIB_PLATF_VIRT_TYPE:-none}"
+    printf -v _line_formated '%-17s - %-7s %-20s' "${LIB_PLATF_VIRT_HYPER:-none}" 'Type:' "${LIB_PLATF_VIRT_TYPE:-none}"
     logNotify "## Virtualization: ${_line_formated}"
+    printf -v _line_formated '%-17s' "${LIB_PLATF_VIRT_VM_VERSION:-none}"
+    logNotify "## VM version:     ${_line_formated}"
     logNotify '##'
 
     logNotify "## CPU:            ${LIB_PLATF_CPU:-}"
     logNotify '##'
-    printf -v _line_formated '%-17s - %-11s %-20s' "${LIB_PLATF_CPU_SOCKETS:-}" 'CoresPerSocket:' "${LIB_PLATF_CPU_CORESPERSOCKET:-}"
+    printf -v _line_formated '%-17s - %-7s %-20s' "${LIB_PLATF_CPU_SOCKETS:-}" 'CoresPerSocket:' "${LIB_PLATF_CPU_CORESPERSOCKET:-}"
     logNotify "## Sockets:        ${_line_formated}"
-    printf -v _line_formated '%-17s - %-11s %-20s' "${LIB_PLATF_CPU_NUMANODES:-}" 'ThreadsPerCore:' "${LIB_PLATF_CPU_THREADSPERCORE:-}"
+    printf -v _line_formated '%-17s - %-7s %-20s' "${LIB_PLATF_CPU_NUMANODES:-}" 'ThreadsPerCore:' "${LIB_PLATF_CPU_THREADSPERCORE:-}"
     logNotify "## Numa nodes:     ${_line_formated}"
     logNotify '##'
 
@@ -408,7 +410,7 @@ function main {
     local _ext_support
     LIB_FUNC_IS_SLES4SAP || LIB_FUNC_IS_RHEL4SAP && _ext_support='(4SAP)'
 
-    printf -v _line_formated '%-17s - %-11s %-20s' "${OS_NAME/Linux /}${_ext_support:-} ${OS_VERSION}" 'Kernel:' "${OS_LEVEL}"
+    printf -v _line_formated '%-17s - %-7s %-20s' "${OS_NAME/Linux /}${_ext_support:-} ${OS_VERSION}" 'Kernel:' "${OS_LEVEL}"
 
     logNotify "## OS:             ${_line_formated}"
 
