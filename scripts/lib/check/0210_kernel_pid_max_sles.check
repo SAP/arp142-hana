@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+function check_0210_kernel_pid_max_sles {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2578899'
+    local -ir _expected_pid_max=4194304  #(2^22)
+    # MODIFICATION SECTION<<
+
+    # 2578899 - SUSE Linux Enterprise Server 15: Installation Note
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_SLES ; then
+
+        logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+
+        case "${OS_VERSION}" in
+
+            11.* | 12.*)    logCheckSkipped 'CHECK not applicable for SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                            _retval=3 ;;
+
+            *) : ;;
+
+        esac
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local -i _curr_pid_max
+        _curr_pid_max=$(</proc/sys/kernel/pid_max)
+
+        if [[ ${_curr_pid_max} -lt ${_expected_pid_max} ]]; then
+
+            logCheckError "Parameter kernel.pid_max is too low (SAP Note ${sapnote:-}) (is: ${_curr_pid_max}, should be: ${_expected_pid_max})"
+            _retval=2
+
+        else
+
+            logCheckOk "Parameter kernel.pid_max set as recommended (SAP Note ${sapnote:-}) (is: ${_curr_pid_max})"
+            _retval=0
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}

@@ -7,6 +7,7 @@
 0106_supported_instances_ibmcloud
 0120_supported_powersystems_ibmpower
 0121_compatibility_mode_ibmpower
+0210_kernel_pid_max_sles
 0220_cgroup_pids_max_sles
 0310_clocksource_ibmpower
 0350_timesync
