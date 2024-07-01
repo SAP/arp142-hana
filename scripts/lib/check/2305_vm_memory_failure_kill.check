@@ -7,12 +7,10 @@ function check_2305_vm_memory_failure_kill {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#2600030'
+    local -r sapnote='#3464764'
     # MODIFICATION SECTION<<
 
-    #2600030 - Parameter Recommendations in SAP HANA Environments
-    #3. Operating system parameter recommendations
-    #http://help.sap.com/hana/SAP_HANA_Server_Installation_Guide_en.pdf
+    #3464764 - Purpose and recommended value of the "vm.memory_failure_early_kill" parameter in HANA environments
 
     local -ir _reco_mfek=1
 
