@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function check_0210_kernel_pid_max_rhel {
+function check_0211_kernel_pid_max_rhel {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
