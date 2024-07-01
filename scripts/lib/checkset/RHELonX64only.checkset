@@ -8,7 +8,7 @@
 0102_supported_instances_amazon
 0106_supported_instances_ibmcloud
 0104_supported_instances_gcp
-0210_kernel_pid_max_rhel
+0211_kernel_pid_max_rhel
 0300_timer_and_clocksource_intel
 0301_timer_and_clocksource_hyperv
 0350_timesync
