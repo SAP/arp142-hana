@@ -23,8 +23,8 @@ function check_0210_kernel_pid_max_sles {
 
         case "${OS_VERSION}" in
 
-            11.* | 12.*)  logCheckSkipped 'CHECK not applicable for SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
-                          _retval=3 ;;
+            11.* | 12.*)    logCheckSkipped 'CHECK not applicable for SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                            _retval=3 ;;
 
             *) : ;;
 
