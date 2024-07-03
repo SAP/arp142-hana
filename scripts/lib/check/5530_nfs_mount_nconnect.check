@@ -9,10 +9,10 @@ function check_5530_nfs_mount_nconnect {
     # MODIFICATION SECTION>>
     local -r sapnote='#3024346'
 
-    local -r _rx_reco_nconnect_data='nconnect=[4-8]'
+    local _rx_reco_nconnect_data='nconnect=[4-8]'
     local -r _rx_reco_nconnect_log='nconnect=2'
-    local -r _rx_reco_nconnect_usrsap='nconnect=2'
-    local -r _rx_reco_nconnect_shared='nconnect=2'
+    local _rx_reco_nconnect_usrsap='nconnect=[2-4]'
+    local _rx_reco_nconnect_shared='nconnect=[2-4]'
 
     local _rxHANAmounts='(/hana/(data|log|shared)|/usr/sap).*\snfs4?\s.*'
     # MODIFICATION SECTION<<
@@ -46,6 +46,12 @@ function check_5530_nfs_mount_nconnect {
                 logCheckSkipped 'CHECK not applicable for RHEL release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
                 _retval=3 ;;
         esac
+
+    elif LIB_FUNC_IS_CLOUD_AMAZON ; then
+
+        _rx_reco_nconnect_data='nconnect=4'
+        _rx_reco_nconnect_usrsap='nconnect=2'
+        _rx_reco_nconnect_shared='nconnect=2'
 
     fi
 

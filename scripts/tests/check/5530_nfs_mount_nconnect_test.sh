@@ -9,6 +9,7 @@ LIB_FUNC_STRINGCONTAIN() { [[ -z "${1##*"$2"*}" ]] && [[ -z "$2" || -n "$1" ]]; 
 
 LIB_FUNC_IS_SLES() { return 1 ; }
 LIB_FUNC_IS_RHEL() { return 1 ; }
+LIB_FUNC_IS_CLOUD_AMAZON() { return 1 ; }
 
 grep() {
 
