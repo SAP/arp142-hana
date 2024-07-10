@@ -367,6 +367,7 @@ function main {
     local _line_formated
     local -r _line='------------------------------------------------------------------------'
 
+    #HEADER
     logNotify "## ${_line}"
     logNotify "## SAP HANA OS checks"
     logNotify "## Scriptversion:  ${PROGVERSION} Scriptdate: ${PROGDATE}"
@@ -411,12 +412,26 @@ function main {
     LIB_FUNC_IS_SLES4SAP || LIB_FUNC_IS_RHEL4SAP && _ext_support='(4SAP)'
 
     printf -v _line_formated '%-17s - %-7s %-20s' "${OS_NAME/Linux /}${_ext_support:-} ${OS_VERSION}" 'Kernel:' "${OS_LEVEL}"
-
     logNotify "## OS:             ${_line_formated}"
 
-    logNotify "## ${_line}"
+    logNotify '##'
 
+    #HANA
+    for sid in "${HANA_SIDS[@]+"${HANA_SIDS[@]}"}"; do
+
+        array_name="HANA_${sid}"
+
+        release=$(GET_HANA_ARRAY_KV "$array_name" 'release')
+        vhost=$(GET_HANA_ARRAY_KV "$array_name" 'vhost')
+
+        logNotify "## HANA:           ${sid} - ${release} - ${vhost}"
+
+    done
+
+    logNotify "## ${_line}"
     logNewLine
+    # HEADER END
+
 
     generate_checklist
     if [[ ${#CHECKLIST[@]} -eq 0 ]]; then
