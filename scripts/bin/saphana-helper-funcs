@@ -570,6 +570,8 @@ function _lib_helper_main {
     __get_platform_mem_details
     __get_platform_pmem_details
 
+    #shellcheck source=./lib_hana
+    source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/lib_hana" || { echo 'unable to load lib_hana library' >&2; exit 1; }
 }
 
 ##########################################################

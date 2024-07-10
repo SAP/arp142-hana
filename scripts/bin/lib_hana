@@ -1,0 +1,186 @@
+#!/usr/bin/env bash
+umask 0027
+set -u # treat unset variables as an error
+
+#------------------------------------------------------------------
+# Library - HANA manifest/configuration/setup
+#------------------------------------------------------------------
+# Script name: "lib_hana"
+#
+#------------------------------------------------------------------
+
+# return if library is already loaded
+[[ -n "${LIB_HANA_LOADED:-}" ]] && return 0
+LIB_HANA_LOADED='loaded'
+
+##################################################
+# Global functions - to be used in other scripts
+##################################################
+
+# get a value from the associative array
+function GET_HANA_ARRAY_KV {
+
+    local array_name="$1"
+    local key="$2"
+
+    if __assoc_array_key_exists "${array_name}" "${key}" ; then
+
+        # shellcheck disable=SC1087
+        eval "echo \${$array_name[\"$key\"]}"
+
+    else
+        echo 'n/a'
+    fi
+
+}
+
+##########################################################
+# Non-global functions - not to be used in other scripts
+##########################################################
+function __get_usr_sap_sapservices_profiles {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    [[ -f /usr/sap/sapservices ]] && while read -r line ; do
+
+        fullprofile=${line//*pf=}
+        fullprofile=${fullprofile%% *}
+
+        profile=${fullprofile//*\/}
+
+        sid=${profile:0:3}
+        hdb=${profile:4:5}
+        vhost=${profile:10}
+
+        path=${fullprofile//profile*}
+
+        HANA_SIDS+=("${sid}")
+
+        __create_assoc_array "HANA_${sid}"
+
+        __add_to_assoc_array "HANA_${sid}" 'hdb' "${hdb:-}"
+        __add_to_assoc_array "HANA_${sid}" 'vhost' "${vhost:-}"
+        __add_to_assoc_array "HANA_${sid}" 'path' "${path:-}"
+
+
+        logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # HANA sid=${sid:-}:hdb=${hdb:-}:vhost=${vhost:-}:path=${path:-}>"
+
+        [[ -n ${sid} ]] && __get_hana_manifest_details "${sid}" "${path}"
+
+    done <<< "$(grep '^[  ]*[^#].*pf=/.*/\(SYS/profile\|profile\)/.*_HDB[0-9][0-9]_' /usr/sap/sapservices)"
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # HANA SID List: ${HANA_SIDS[*]:-}"
+}
+
+function __get_hana_manifest_details {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local sid=$1
+    local path=$2
+
+    local hana_release
+    local -i hana_rev
+    local -i hana_patchlevel
+    local hana_release_rev_pl
+
+    manifest="${path}/exe/hdb/manifest"
+
+    if [[ ! -f ${manifest} ]]; then
+
+        logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # HANA release NOT available - manifest does not exist <${manifest}"
+        return
+    fi
+
+    local line
+    while IFS= read -r line; do
+
+        logTrace "<${FUNCNAME[0]}> # ${line}>"
+
+        case ${line} in
+            "release:"*)        hana_release=$(LIB_FUNC_TRIM_LEFT "${line/release:}")
+            ;;
+            "rev-number:"*)     hana_rev=$(( 10#$(LIB_FUNC_TRIM_LEFT "${line/rev-number:}") ))
+            ;;
+            "rev-patchlevel:"*) hana_patchlevel=$(( 10#$(LIB_FUNC_TRIM_LEFT "${line/rev-patchlevel:}") ))
+            break
+            ;;
+        esac
+    done < "${manifest}"
+
+    if [[ -z "${hana_rev}" ]] || [[ -z "${hana_release}" ]]; then
+        logWarn "HANA release NOT found in ${manifest}"
+        logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # HANA release NOT found in ${manifest}"
+        return
+    fi
+
+    # format  X.00.YYY.ZZ, e.g. 2.00.078.00, 2.00.059.04, 4.00.000.00
+    printf -v hana_release_rev_pl '%s.%03d.%02d' "${hana_release:-}" "${hana_rev:-}" "${hana_patchlevel:-}"
+
+    __add_to_assoc_array "HANA_${sid}" 'release' "${hana_release_rev_pl:-}"
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # HANA release: <${sid} - ${hana_release_rev_pl:-}>"
+
+}
+
+# create an associative array with a dynamic name
+function __create_assoc_array {
+
+    local array_name="$1"
+
+    eval "declare -gA $array_name"
+
+}
+
+# add key-value pairs to the associative array
+function __add_to_assoc_array {
+
+    local array_name="$1"
+    local key="$2"
+    local value="$3"
+
+    eval "${array_name}[\"${key}\"]=\"${value}\""
+
+}
+
+function __assoc_array_key_exists {
+
+    local array_name="$1"
+    local key="$2"
+    local keys=''
+
+        # shellcheck disable=SC2086
+        eval 'keys=${!'${array_name}'[@]}';
+        eval "case '${key}' in
+        ${keys// /|}) return 0 ;;
+        * ) return 1 ;;
+        esac";
+}
+
+#============================================================
+# LIB MAIN - initialization
+#============================================================
+function _lib_hana_main {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    __get_usr_sap_sapservices_profiles
+
+}
+
+#LIB LOCAL
+
+#GLOBAL
+declare -ag HANA_SIDS           # holding list of SIDs
+
+# for each HANA <SID> separate associated array with keys
+# HANA_<SID>={ hdb vhost path release }
+
+#Import libraries
+#shellcheck source=./saphana-logger
+source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/saphana-logger" ||
+                { echo 'unable to load saphana-logger library' >&2; exit 1; }
+
+
+#CALL MAIN
+_lib_hana_main
