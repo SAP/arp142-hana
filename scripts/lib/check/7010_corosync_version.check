@@ -42,30 +42,12 @@ function check_7010_corosync_version {
     elif LIB_FUNC_IS_SLES ; then
 
         sapnote+=",${sapnote_sles}"
-
-        case "${OS_VERSION}" in
-
-            11.* )  logCheckSkipped 'Check not applicable for SLES release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
-                    _retval=3
-                    ;;
-
-            *)      os_rpm_matrix+=("${_sles_rpm_matrix[@]}")
-                    ;;
-        esac
+        os_rpm_matrix+=("${_sles_rpm_matrix[@]}")
 
     elif LIB_FUNC_IS_RHEL ; then
 
         sapnote+=",${sapnote_rhel}"
-
-        case "${OS_VERSION}" in
-
-            6.* )  logCheckSkipped 'Check not applicable for RHEL release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
-                    _retval=3
-                    ;;
-
-            *)      os_rpm_matrix+=("${_rhel_rpm_matrix[@]}")
-                    ;;
-        esac
+        os_rpm_matrix+=("${_rhel_rpm_matrix[@]}")
 
     fi
 

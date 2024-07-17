@@ -42,9 +42,8 @@ function check_2310_vm_min_free_kbytes {
 
         case "${OS_VERSION}" in
 
-        6.* | 7.[0-8] | 8.[0-3])
-            _kmax_mfkbytes="${_kmax_mfkbytes_old}"
-            ;;
+        7.[0-8] | 8.[0-3])
+            _kmax_mfkbytes="${_kmax_mfkbytes_old}" ;;
 
         *) : ;;
 
@@ -54,9 +53,8 @@ function check_2310_vm_min_free_kbytes {
 
         case "${OS_VERSION}" in
 
-        11.* | 12.* | 15.[0-3])
-            _kmax_mfkbytes="${_kmax_mfkbytes_old}"
-            ;;
+        12.* | 15.[0-3])
+            _kmax_mfkbytes="${_kmax_mfkbytes_old}" ;;
 
         *) : ;;
 
