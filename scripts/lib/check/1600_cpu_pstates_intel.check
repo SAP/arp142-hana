@@ -27,25 +27,14 @@ function check_1600_cpu_pstates_intel {
 
     else
 
-        case "${OS_VERSION}" in
-
-            11.* | 6.* )
-                logCheckSkipped "Check not applicable for Linux release (is: ${OS_NAME} ${OS_VERSION}). Skipping" "<${FUNCNAME[0]}>"
-                _retval=3
-            ;;
-
-            * ) #intel_pstate only for IvyBridge onwards
-                #INTEL_FAM6_IVYBRIDGE   0x3A --> DEC 58
-                if [[ ${LIB_PLATF_CPU_MODELID} -ge 58 ]]; then
-                    logCheckInfo "Running on intel_pstate supported Intel CPU (>=IvyBridge - ModelID: ${LIB_PLATF_CPU_MODELID})"
-                else
-                    logCheckSkipped 'Not running on intel_pstate supported Intel CPU (>=IvyBridge). Skipping' "<${FUNCNAME[0]}>"
-                    _retval=3
-                fi
-            ;;
-
-
-        esac
+        #intel_pstate only for IvyBridge onwards
+        #INTEL_FAM6_IVYBRIDGE   0x3A --> DEC 58
+        if [[ ${LIB_PLATF_CPU_MODELID} -ge 58 ]]; then
+            logCheckInfo "Running on intel_pstate supported Intel CPU (>=IvyBridge - ModelID: ${LIB_PLATF_CPU_MODELID})"
+        else
+            logCheckSkipped 'Not running on intel_pstate supported Intel CPU (>=IvyBridge). Skipping' "<${FUNCNAME[0]}>"
+            _retval=3
+        fi
 
     fi
 

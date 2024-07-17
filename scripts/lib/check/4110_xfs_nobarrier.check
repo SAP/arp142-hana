@@ -36,7 +36,6 @@ function check_4110_xfs_nobarrier {
 
         case "${OS_VERSION}" in
 
-            11.*      ) : ;;
             12.[0-3]* ) : ;;
 
             12.[4-5]* ) _nobarrier_nofunction=true ;;
@@ -52,7 +51,6 @@ function check_4110_xfs_nobarrier {
 
         case "${OS_VERSION}" in
 
-            6.* )       : ;;
             7.[0-5]* )  : ;;
 
             7.[6-9]* )  _nobarrier_nofunction=true ;;

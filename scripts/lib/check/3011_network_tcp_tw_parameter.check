@@ -41,7 +41,7 @@ function check_3011_network_tcp_tw_parameter {
 
         case "${OS_VERSION}" in
 
-        6.* | 7.* | 8.0) : ;;
+        7.* | 8.0) : ;;
 
         *)
             _loopback_opt_available=true

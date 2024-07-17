@@ -31,7 +31,7 @@ function check_2160_transactional_memory_intel {
 
         case "${OS_VERSION}" in
 
-            6.* | 7.* | 8.[0-2] ) : ;;
+            7.* | 8.[0-2] ) : ;;
 
             *)      tsxon_required=true ;;
 
