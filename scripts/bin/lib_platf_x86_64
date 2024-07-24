@@ -88,32 +88,32 @@ function __get_platform_x86_64_vendor_details {
 
                 LIB_PLATF_VENDOR='Amazon EC2'
                 LIB_PLATF_VIRT_TYPE="${_lib_platf_name}" #HVM domU
-                LIB_PLATF_NAME=$(curl -s -m 10 http://169.254.169.254/latest/meta-data/instance-type)
+                LIB_PLATF_NAME=$(curl -sf -m 10 http://169.254.169.254/latest/meta-data/instance-type)
 
             fi
 
         elif [[ "${_lib_platf_name:-}" == 'Google Compute Engine' ]]; then
 
             LIB_PLATF_VENDOR='Google GCP'
-            _lib_platf_name=$(curl -s -m 10 -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/machine-type)
+            _lib_platf_name=$(curl -sf -m 10 -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/machine-type)
             #projects/[NUMERIC_PROJECT_ID]/machineTypes/[MACHINE_TYPE]
             LIB_PLATF_NAME=${_lib_platf_name//*machineTypes\//}
 
         elif [[ "${_chassis_asset_tag:-}" == '7783-7084-3265-9085-8269-3286-77' ]]; then
 
             LIB_PLATF_VENDOR='Microsoft Azure'
-            _lib_platf_name=$(curl -s -m 10 -H "Metadata:true" --noproxy "*" "http://169.254.169.254/metadata/instance/compute/vmSize?api-version=2020-09-01&format=text")
+            _lib_platf_name=$(curl -sf -m 10 -H "Metadata:true" --noproxy "*" "http://169.254.169.254/metadata/instance/compute/vmSize?api-version=2020-09-01&format=text")
             [[ "${_lib_platf_name}" =~ ^Standard_* ]] && LIB_PLATF_NAME=${_lib_platf_name}
 
         elif [[ "${_lib_platf_name:-}" == 'Alibaba Cloud ECS' ]]; then
 
             LIB_PLATF_VENDOR='Alibaba Cloud ECS'
-            LIB_PLATF_NAME=$(curl -s -m 10 http://100.100.100.200/latest/meta-data/instance/instance-type)
+            LIB_PLATF_NAME=$(curl -sf -m 10 http://100.100.100.200/latest/meta-data/instance/instance-type)
 
         elif [[ "${_chassis_asset_tag:-}" == 'HUAWEICLOUD' ]]; then
 
             LIB_PLATF_VENDOR='Huawei Cloud'
-            LIB_PLATF_NAME=$(curl -s -m 10 http://169.254.169.254/latest/meta-data/instance-type)
+            LIB_PLATF_NAME=$(curl -sf -m 10 http://169.254.169.254/latest/meta-data/instance-type)
 
         elif [[ "${_chassis_asset_tag:-}" == 'HuaweiFusionSphere' ]]; then
 
@@ -136,7 +136,7 @@ function __get_platform_x86_64_vendor_details {
         elif [[ "${_chassis_asset_tag:-}" == "SAP CCloud VM" ]]; then
 
             LIB_PLATF_VENDOR='SAP Converged Cloud'
-            LIB_PLATF_NAME=$(curl -s -m 10  http://169.254.169.254/latest/meta-data/instance-type)
+            LIB_PLATF_NAME=$(curl -sf -m 10  http://169.254.169.254/latest/meta-data/instance-type)
 
         else
 
