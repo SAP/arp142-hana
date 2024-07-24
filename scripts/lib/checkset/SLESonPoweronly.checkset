@@ -1,5 +1,6 @@
 0000_os_support_sles
 0004_os_hana_support_sles_ibmpower
+0006_os_hana_release_sles
 0010_os_kernel_sles
 0011_os_kernel_knownissue_sles
 0050_os_release_kernel_sles

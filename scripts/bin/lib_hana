@@ -171,7 +171,7 @@ function _lib_hana_main {
 #LIB LOCAL
 
 #GLOBAL
-declare -ag HANA_SIDS           # holding list of SIDs
+declare -ag HANA_SIDS=()           # holding list of SIDs
 
 # for each HANA <SID> separate associated array with keys
 # HANA_<SID>={ hdb vhost path release }
