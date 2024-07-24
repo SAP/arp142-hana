@@ -1,0 +1,119 @@
+#!/usr/bin/env bash
+
+function check_0006_os_hana_release_sles {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    # array             'OS'   'SPS'        'lower bound'    'upper bound'
+    local -ar _sles_all=(\
+                        '15.5' '67'         '2.00.067.01'    '2.00.099.00'   \
+                        '15.5' '2345'       '2.00.059.08'    '2.00.059.99'   \
+                        '15.4' '67'         '2.00.063.00'    '2.00.099.00'   \
+                        '15.4' '2345'       '2.00.059.02'    '2.00.059.99'   \
+                        '15.3' '234567'     '2.00.055.00'    '2.00.099.00'   \
+                        '15.2' '234567'     '2.00.048.01'    '2.00.067.04'   \
+                        '15.1' '234567'     '2.00.044.00'    '2.00.067.04'   \
+                        '15.0' '234567'     '2.00.034.00'    '2.00.059.99'   \
+
+                        '12.5' '234567'     '2.00.045.00'    '2.00.067.04'   \
+                        '12.4' '234567'     '2.00.035.00'    '2.00.059.99'   \
+                        '12.3' '234567'     '2.00.023.00'    '2.00.048.06'   \
+                        )
+
+    local -r sapnote='#2235581'
+    # MODIFICATION SECTION<<
+
+    #2235581 - SAP HANA: Supported Operating Systems
+    #2958224 - SAP HANA Revision Release Details
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_SLES; then
+
+        logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif [[ ${#HANA_SIDS[@]} -eq 0 ]]; then
+
+        logCheckSkipped 'No SAP HANA instance found. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local _hana_lower
+        local _hana_upper
+        local _hana_curr
+
+        local _within_range
+
+        for sid in "${HANA_SIDS[@]}"; do
+
+            _within_range=false
+
+            _hana_curr=$(GET_HANA_ARRAY_KV "HANA_${sid}" 'release')
+
+            # i+=4 --> every 4th item
+            for ((i=0; i < ${#_sles_all[@]}; i+=4)); do
+
+                logTrace "<${FUNCNAME[0]}> # ${_sles_all[$i]}>"
+
+                [[ "${OS_VERSION}" != "${_sles_all[$i]}"* ]] && continue
+                ! LIB_FUNC_STRINGCONTAIN "${_sles_all[$i + 1]}" "${_hana_curr:6:1}" && continue #2.00.067 --> 6
+
+                _hana_lower="${_sles_all[$i + 2]}"
+                _hana_upper="${_sles_all[$i + 3]}"
+
+                # returns 0 if equal, 1 if first is higher, 2 if second is higher
+                LIB_FUNC_COMPARE_VERSIONS "${_hana_curr}" "${_hana_upper}"
+                if [[ $? -ne 1 ]]; then
+                    #hana is NOT higher than high boundary
+
+                    LIB_FUNC_COMPARE_VERSIONS "${_hana_curr}" "${_hana_lower}"
+
+                    if [[ $? -le 1 ]]; then
+
+                        _within_range=true
+
+                    fi
+                fi
+
+                break
+
+            done
+
+            if ! ${_within_range}; then
+
+                logCheckError "SAP HANA NOT running on supported SLES version (is: ${OS_VERSION}, ${sid}=${_hana_curr} <> ${_hana_lower:-}-${_hana_upper:-})"
+                _retval=2
+
+            else
+
+                logCheckOk "SAP HANA running on supported SLES version (is: ${OS_VERSION}, ${sid}=${_hana_curr})"
+
+            fi
+
+        done
+
+        if [[ ${_retval} -eq 99 ]]; then
+
+            logCheckOk "ALL SAP HANA instances running on supported SLES version (SAP Note ${sapnote:-})"
+            _retval=0
+
+        else
+
+            logCheckError "NOT all SAP HANA instances running on supported SLES version (SAP Note ${sapnote:-})"
+            _retval=2
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}

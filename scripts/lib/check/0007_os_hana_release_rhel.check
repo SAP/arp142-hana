@@ -1,0 +1,146 @@
+#!/usr/bin/env bash
+
+function check_0007_os_hana_release_rhel {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    # array             'OS'  'SPS'         'lower bound'    'upper bound'
+    local -a  _rhel_all=(\
+                        '9.4' '7'           '2.00.077.00'    '2.00.099.99'   \
+                        '9.4' '56'          '2.00.059.12'    '2.00.059.99'   \
+                        '9.2' '7'           '2.00.072.00'    '2.00.099.99'   \
+                        '9.2' '6'           '2.00.067.02'    '2.00.067.04'   \
+                        '9.2' '2345'        '2.00.059.09'    '2.00.059.99'   \
+
+                        '8.8' '67'          '2.00.067.01'    '2.00.099.99'   \
+                        '8.8' '2345'        '2.00.059.08'    '2.00.059.99'   \
+                        '8.6' '67'          '2.00.063.00'    '2.00.099.99'   \
+                        '8.6' '2345'        '2.00.059.02'    '2.00.059.99'   \
+                        '8.4' '234567'      '2.00.055.00'    '2.00.099.99'   \
+
+                        '8.2' '567'         '2.00.052.00'    '2.00.067.04'   \
+                        '8.2' '234'         '2.00.048.02'    '2.00.048.06'   \
+                        '8.1' '234567'      '2.00.045.00'    '2.00.067.04'   \
+
+                        '7.9' '234567'      '2.00.054.00'    '2.00.059.99'   \
+                        '7.7' '234567'      '2.00.048.00'    '2.00.059.99'   \
+                        '7.6' '234567'      '2.00.036.00'    '2.00.059.99'   \
+                        )
+
+    local -ar _rhel_intel=(\
+                        '9.0' '67'          '2.00.063.00'    '2.00.099.99'   \
+                        '9.0' '2345'        '2.00.059.04'    '2.00.059.99'   \
+                        '8.0' '234567'      '2.00.040.00'    '2.00.048.06'   \
+                        )
+
+    local -ar _rhel_ibmpower=(\
+                        '9.0' '67'          '2.00.067.01'    '2.00.067.04'   \
+                        '9.0' '2345'        '2.00.059.08'    '2.00.059.99'   \
+                        '8.0' '234567'      '2.00.045.00'    '2.00.048.06'   \
+                        )
+
+    local -r sapnote='#2235581'
+    # MODIFICATION SECTION<<
+
+    #2235581 - SAP HANA: Supported Operating Systems
+    #2958224 - SAP HANA Revision Release Details
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_RHEL; then
+
+        logCheckSkipped 'Linux distribution is not RHEL. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif [[ ${#HANA_SIDS[@]} -eq 0 ]]; then
+
+        logCheckSkipped 'No SAP HANA instance found. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif LIB_FUNC_IS_INTEL; then
+
+        _rhel_all+=("${_rhel_intel[@]}")
+
+    elif LIB_FUNC_IS_IBMPOWER; then
+
+        _rhel_all+=("${_rhel_ibmpower[@]}")
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local _hana_lower
+        local _hana_upper
+        local _hana_curr
+
+        local _within_range
+
+        for sid in "${HANA_SIDS[@]}"; do
+
+            _within_range=false
+
+            _hana_curr=$(GET_HANA_ARRAY_KV "HANA_${sid}" 'release')
+
+            # i+=4 --> every 4th item
+            for ((i=0; i < ${#_rhel_all[@]}; i+=4)); do
+
+                logTrace "<${FUNCNAME[0]}> # ${_rhel_all[$i]}>"
+
+                [[ "${OS_VERSION}" != "${_rhel_all[$i]}"* ]] && continue
+                ! LIB_FUNC_STRINGCONTAIN "${_rhel_all[$i + 1]}" "${_hana_curr:6:1}" && continue #2.00.067 --> 6
+
+                _hana_lower="${_rhel_all[$i + 2]}"
+                _hana_upper="${_rhel_all[$i + 3]}"
+
+                # returns 0 if equal, 1 if first is higher, 2 if second is higher
+                LIB_FUNC_COMPARE_VERSIONS "${_hana_curr}" "${_hana_upper}"
+                if [[ $? -ne 1 ]]; then
+                    #hana is NOT higher than high boundary
+
+                    LIB_FUNC_COMPARE_VERSIONS "${_hana_curr}" "${_hana_lower}"
+
+                    if [[ $? -le 1 ]]; then
+
+                        _within_range=true
+
+                    fi
+                fi
+
+                break
+
+            done
+
+            if ! ${_within_range}; then
+
+                logCheckError "SAP HANA NOT running on supported RHEL version (is: ${OS_VERSION}, ${sid}=${_hana_curr} <> ${_hana_lower:-}-${_hana_upper:-})"
+                _retval=2
+
+            else
+
+                logCheckOk "SAP HANA running on supported RHEL version (is: ${OS_VERSION}, ${sid}=${_hana_curr})"
+
+            fi
+
+        done
+
+        if [[ ${_retval} -eq 99 ]]; then
+
+            logCheckOk "ALL SAP HANA instances running on supported RHEL version (SAP Note ${sapnote:-})"
+            _retval=0
+
+        else
+
+            logCheckError "NOT all SAP HANA instances running on supported RHEL version (SAP Note ${sapnote:-})"
+            _retval=2
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
