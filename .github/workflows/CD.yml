@@ -46,7 +46,7 @@ jobs:
 
       - name: set VERSION_RELEASE_COMMIT
         run: |
-          release_commit=${_RELEASE}.g${GITHUB_SHA::8}
+          release_commit=${_RELEASE}.g${GITHUB_SHA::7}
           version_release_commit=${_VERSION}-${release_commit}
           echo "RELEASE_COMMIT=${release_commit}" >> "$GITHUB_ENV"
           echo "VERSION_RELEASE_COMMIT=${version_release_commit}" >> "$GITHUB_ENV"
