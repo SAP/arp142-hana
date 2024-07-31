@@ -30,7 +30,7 @@ function check_0002_os_hana_support_sles_intel {
                         'IBM Cloud'             '-12345'   \
                         'Google GCP'            '-12345'   \
                         'Alibaba Cloud ECS'     '-12---'   \
-                        'Huawei Cloud'          '-12---'   \
+                        'Huawei Cloud'          '-12345'   \
                         ''                      '-12345'   \          #all others, e.g. TDI, Bare-Metal
                         )
 
