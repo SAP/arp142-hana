@@ -9,11 +9,11 @@ function check_0004_os_hana_support_sles_ibmpower {
     # MODIFICATION SECTION>>
     local -r platform_rx='POWER(10|9|8)'
 
-    # array                 'Platform'      'maj'   '012345' (Minor Release)
+    # array                 'Platform'      'maj'   '0123456' (Minor Release)
     local -ar _sles_matrix=(\
-                            'POWER10'       '15'    '---345'   \
-                            'POWER9'        '15'    '-12345'   \
-                            'POWER8'        '15'    '-123--'   \
+                            'POWER10'       '15'    '---3456'   \
+                            'POWER9'        '15'    '-123456'   \
+                            'POWER8'        '15'    '-123---'   \
                             'POWER10'       '12'    '------'   \
                             'POWER9'        '12'    '----45'   \
                             'POWER8'        '12'    '----45'   \
