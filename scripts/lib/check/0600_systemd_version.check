@@ -37,7 +37,7 @@ function check_0600_systemd_version {
 
             15.[1-2] )  _goodversion="${sles151[0]}" ; sapnote="${sles151[1]}" ;;
             15.3)       _goodversion="${sles153[0]}" ; sapnote="${sles153[1]}" ;;
-            15.[4-5] )  _goodversion="${sles154[0]}" ; sapnote="${sles154[1]}" ;;
+            15.* )      _goodversion="${sles154[0]}" ; sapnote="${sles154[1]}" ;;
 
             *)      logCheckSkipped 'CHECK not applicable for SLES release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
                     _retval=3
