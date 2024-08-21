@@ -22,9 +22,10 @@ function check_0106_supported_instances_ibmcloud {
 
     # array             'Instance Type'
     local -ar _ibm_power=(\
+                        #IBM Power9 System E980
                         'bh1-20x2000'   'bh1-22x2200'   'bh1-25x2500'   'bh1-30x3000'   'bh1-35x3500'  \
                         'bh1-40x4000'   'bh1-50x5000'   'bh1-70x7000'   \
-                        'bh1-80x8000'   'bh1-100x10000' 'bh1-120x12000' 'bh1-140x14000'\
+                        'bh1-80x8000'   'bh1-100x10000' 'bh1-120x12000' 'bh1-140x14000' \
                         'ch1-60x3000'   'ch1-70x3500'   'ch1-80x4000'   'ch1-100x5000'  'ch1-120x6000' 'ch1-140x7000'  \
                         'mh1-8x1440'    'mh1-10x1800'   'mh1-12x2160'   'mh1-16x2880'   \
                         'mh1-20x3600'   'mh1-22x3960'   'mh1-25x4500'   'mh1-30x5400'   'mh1-35x6300'   \
@@ -34,6 +35,29 @@ function check_0106_supported_instances_ibmcloud {
                         'umh1-20x4800'  'umh1-22x5280'  'umh1-25x6000'  'umh1-30x7200'  'umh1-35x8400' \
                         'umh1-40x9600'  'umh1-50x12000' 'umh1-60x14400'  \
                         'ush1-4x128'    'ush1-4x256'    'ush1-4x384'    'ush1-4x512'    'ush1-4x768' \
+
+                        #IBM Power10 System S1022 in SMT4 mode
+                        'sh2-4x256'     'sh2-4x384'     'sh2-4x512'     'sh2-4x768'     'sh2-4x1000'    'sh2-4x1500'  \
+                        'sh2-7x256'     'sh2-7x384'     'sh2-7x512'     'sh2-7x768'     'sh2-7x1000'    'sh2-7x1500'  \
+                        'sr2-7x256'     'sr2-7x384'     \
+                        'sh2-12x256'    'sh2-12x384'    'sh2-12x512'    'sh2-12x768'    'sr2-12x950'    'sh2-12x1000' \
+                        'sr2-12x1450'   'sh2-12x1500'   \
+                        'sr2-14x512'    'sr2-14x740'    'sh2-16x1000'   'sh2-16x1500'   \
+                        'sr2-24x1024'   'sr2-24x1536'   \
+                        'sh2-25x1000'   'sh2-25x1500'   \
+
+                        #IBM Power10 System S1022 in SMT8 mode
+                        'sh2-8x1900'    'sh2-16x1900'   'sr2-25x1900'   'sh2-33x1900'   \
+
+                        #IBM Power10 System E1080 in SMT4 mode
+                        'sr2-22x2950'   \
+                        'sr2-35x3900'   'sr2-35x4450'   'sr2-40x3072'   \
+                        'sr2-64x6144'    \
+                        'sr2-80x6144'   'sr2-80x9216'   'sr2-80x12288'  'sr2-80x14400'  \
+
+                        #IBM Power10 System E1080 in SMT4 mode
+                        'sr2-165x30500' \
+
                         )
 
     local -r sapnote='#1380654'
