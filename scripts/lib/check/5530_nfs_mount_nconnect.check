@@ -10,12 +10,14 @@ function check_5530_nfs_mount_nconnect {
     local -r sapnote='#3024346'
 
     local _rx_reco_nconnect_data='nconnect=[4-8]'
-    local -r _rx_reco_nconnect_log='nconnect=2'
+    local _rx_reco_nconnect_log='nconnect=2'
     local _rx_reco_nconnect_usrsap='nconnect=[2-4]'
     local _rx_reco_nconnect_shared='nconnect=[2-4]'
 
     local _rxHANAmounts='(/hana/(data|log|shared)|/usr/sap).*\snfs4?\s.*'
     # MODIFICATION SECTION<<
+
+    local nconnect_supported=true
 
     # 3024346 - Linux Kernel Settings for NetApp NFS
     # NFS in NetApp ONTAP Best practice and implementation guide https://www.netapp.com/media/10720-tr-4067.pdf
@@ -29,30 +31,29 @@ function check_5530_nfs_mount_nconnect {
         logCheckSkipped "No HANA NFS filesystem mounted (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif LIB_FUNC_IS_SLES ; then
-        case "${OS_VERSION}" in
-
-            12.[0-4] | 15.[0-1] )
-
-                logCheckSkipped 'CHECK not applicable for SLES release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
-                _retval=3 ;;
-        esac
-
-    elif LIB_FUNC_IS_RHEL ; then
-        case "${OS_VERSION}" in
-
-            7.* | 8.[0-3] )
-
-                logCheckSkipped 'CHECK not applicable for RHEL release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
-                _retval=3 ;;
-        esac
-
     elif LIB_FUNC_IS_CLOUD_AMAZON ; then
 
         _rx_reco_nconnect_data='nconnect=4'
+        _rx_reco_nconnect_log='nconnect=2'
         _rx_reco_nconnect_usrsap='nconnect=2'
         _rx_reco_nconnect_shared='nconnect=2'
 
+    fi
+    if [[ ${_retval} -eq 99 ]]; then
+
+        if LIB_FUNC_IS_SLES ; then
+
+            case "${OS_VERSION}" in
+                12.[0-4] | 15.[0-1] )   nconnect_supported=false ;;
+            esac
+
+        elif LIB_FUNC_IS_RHEL ; then
+
+            case "${OS_VERSION}" in
+                7.* | 8.[0-3] )         nconnect_supported=false ;;
+            esac
+
+        fi
     fi
 
     # CHECK
@@ -67,6 +68,18 @@ function check_5530_nfs_mount_nconnect {
 
             logTrace "<${FUNCNAME[0]}> # <${nfs_mount}>"
 
+            if ! ${nconnect_supported}; then
+
+                if LIB_FUNC_STRINGCONTAIN "${nfs_mount}" 'nconnect' ; then
+
+                    logCheckError "NFS mount option nconnect NOT supported for OS <${nfs_mount// */}>"
+                    _retval=2
+                    continue
+
+                fi
+
+            fi
+
             case "${nfs_mount// */}" in
                 '/hana/data'* )      : "${_rx_reco_nconnect_data}" ;;
                 '/hana/log'* )       : "${_rx_reco_nconnect_log}" ;;
@@ -78,7 +91,7 @@ function check_5530_nfs_mount_nconnect {
             if [[ ! "${nfs_mount}" =~ ${_rx_reco_nconnect} ]]; then
 
                 logCheckWarning "NFS mount option nconnect NOT set correctly for <${nfs_mount// */}> (should be: ${_rx_reco_nconnect})"
-                _retval=1
+                [[ ${_retval} -ne 2 ]] && _retval=1
 
             fi
 
@@ -89,6 +102,11 @@ function check_5530_nfs_mount_nconnect {
 
             logCheckOk "All HANA NFS filesystems have mount option nconnect set as recommended (SAP Note ${sapnote:-})"
             _retval=0
+
+        elif [[ ${_retval} -eq 2 ]]; then
+
+            logCheckError "NOT all HANA NFS filesystems have mount option nconnect set as recommended (SAP Note ${sapnote:-})"
+            _retval=2
 
         else
 
