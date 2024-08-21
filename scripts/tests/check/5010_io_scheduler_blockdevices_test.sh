@@ -7,6 +7,7 @@ readonly PROGRAM_DIR
 #fake PREREQUISITE functions
 LIB_FUNC_IS_CLOUD_MICROSOFT() { return 1 ; }
 LIB_FUNC_IS_CLOUD_AMAZON() { return 1 ; }
+LIB_FUNC_IS_CLOUD_GOOGLE() { return 1 ; }
 LIB_FUNC_IS_VIRT_VMWARE() { return 1 ; }
 LIB_FUNC_IS_VIRT_KVM() { return 1 ; }
 LIB_FUNC_IS_VIRT_XEN() { return 1 ; }
