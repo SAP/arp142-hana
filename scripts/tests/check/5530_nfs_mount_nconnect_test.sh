@@ -7,7 +7,7 @@ readonly PROGRAM_DIR
 #mock PREREQUISITE functions
 LIB_FUNC_STRINGCONTAIN() { [[ -z "${1##*"$2"*}" ]] && [[ -z "$2" || -n "$1" ]]; }
 
-LIB_FUNC_IS_SLES() { return 1 ; }
+LIB_FUNC_IS_SLES() { return 0 ; }
 LIB_FUNC_IS_RHEL() { return 1 ; }
 LIB_FUNC_IS_CLOUD_AMAZON() { return 1 ; }
 
@@ -95,6 +95,22 @@ test_nfs_wrong_all() {
     assertEquals "CheckWarn? RC" '1' "$?"
 }
 
+test_nfs_nconnect_not_supported() {
+
+    #arrange
+    OS_VERSION='12.4'
+
+    nfs_mounts=()
+    nfs_mounts+=('0.0.0.0:/vol /hana/data nfs4 rw,noatime,vers=4.1,nconnect=4,hard,proto=tcp')
+    nfs_mounts+=('0.0.0.0:/vol /hana/log nfs rw,noatime,vers=4.1,hard,proto=tcp')
+
+    #act
+    check_5530_nfs_mount_nconnect
+
+    #assert
+    assertEquals "CheckError? RC" '2' "$?"
+}
+
 oneTimeSetUp() {
 
     #shellcheck source=../saphana-logger-stubs
@@ -106,7 +122,11 @@ oneTimeSetUp() {
 }
 
 # oneTimeTearDown
-# setUp
+setUp() {
+
+    OS_VERSION='15.5'
+
+}
 # tearDown
 
 #Import Libraries
