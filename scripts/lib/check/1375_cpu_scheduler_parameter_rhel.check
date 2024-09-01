@@ -8,7 +8,8 @@ function check_1375_cpu_scheduler_parameter_rhel {
 
     # MODIFICATION SECTION>>
     local -r sapnote='#2777782'
-    #2777782 v10 - 2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
+    # This sap-hana profile is setting both parameters to the mentioned values for all RHEL8 release.
+    # With RHEL9 these 2 parameters are entirely removed from the Linux kernel.
 
     # LIB_COMPARE_TOOBIG_NUMBERS returns 0 if equal, 1 if first is higher, 2 if second is higher
 
