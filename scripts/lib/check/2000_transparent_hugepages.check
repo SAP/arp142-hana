@@ -8,7 +8,6 @@ function check_2000_transparent_hugepages {
 
     # MODIFICATION SECTION>>
     local -r sapnote='#2131662'     # Transparent Huge Pages (THP) on SAP HANA Servers
-    local -i _thp_threshold=50
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS
@@ -21,24 +20,29 @@ function check_2000_transparent_hugepages {
     else
         # CHECK
 
-        if grep -q '\[never\]' /sys/kernel/mm/transparent_hugepage/enabled ; then
-            logCheckOk "Transparent Hugepages are disabled (SAP Note ${sapnote:-})"
-            _retval=0
-        else
-            logCheckError "Transparent Hugepages are not disabled (SAP Note ${sapnote:-})"
-            _retval=2
-        fi
-
         #THP in use?
         local nr_anon_thp
         nr_anon_thp=$(grep 'nr_anon_transparent_hugepages' /proc/vmstat)
         nr_anon_thp=$(LIB_FUNC_TRIM_LEFT "${nr_anon_thp/nr_anon_transparent_hugepages}")
 
-        if [[ ${nr_anon_thp} -ge ${_thp_threshold} ]] ; then
-            logCheckWarning "Transparent Hugepages are currently allocated and in use (is: ${nr_anon_thp}, should be: 0)"
-            #keep higher return values
-            [[ ${_retval} -eq 0 ]] && _retval=1
-        fi
+        logCheckInfo "Transparent Hugepages currently allocated (is: ${nr_anon_thp})"
+
+        local thp_setting
+        thp_setting=$(</sys/kernel/mm/transparent_hugepage/enabled)
+
+        case ${thp_setting:-} in
+
+            '[madvise]' )
+                            logCheckOk "Transparent Hugepages are set as recommended (SAP Note ${sapnote:-}) (is: ${thp_setting})"
+                            _retval=0 ;;
+            '[never]' )
+                            logCheckWarning "Transparent Hugepages are NOT set as recommended (SAP Note ${sapnote:-}) (is: ${thp_setting})"
+                            _retval=1 ;;
+            * )
+                            logCheckError "Transparent Hugepages are NOT set as recommended (SAP Note ${sapnote:-}) (is: ${thp_setting})"
+                            _retval=2 ;;
+
+        esac
 
     fi
 
