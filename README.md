@@ -76,7 +76,7 @@ flags:
 
 
 ## Contribute
-Any contribution is highly appreciated.
+Contribution and feedback are encouraged and always welcome. For more information about how to contribute see [SAP's Open Source Project Contribution Guidelines](https://github.com/SAP/.github/blob/main/CONTRIBUTING.md).
 
 ## License
 Copyright (c) 2016 SAP SE or an SAP affiliate company. All rights reserved.
