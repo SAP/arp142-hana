@@ -10,6 +10,10 @@ function check_2000_transparent_hugepages {
     local -r sapnote='#2131662'     # Transparent Huge Pages (THP) on SAP HANA Servers
     # MODIFICATION SECTION<<
 
+    # SLES15 SP5 and RHEL 9.2
+    local _reco_thp='[madvise]'
+    local _warn_thp='[never]'
+
     # PRECONDITIONS
     if [[ ! -f '/sys/kernel/mm/transparent_hugepage/enabled' ]]; then
 
@@ -17,8 +21,30 @@ function check_2000_transparent_hugepages {
         logCheckSkipped "Transparent Hugepages not configurable (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
         _retval=3
 
-    else
-        # CHECK
+    elif LIB_FUNC_IS_SLES; then
+
+        case "${OS_VERSION}" in
+
+            12.* | 15.[0-4] )
+                                _reco_thp='[never]'
+                                _warn_thp='na'
+                                ;;
+        esac
+
+    elif LIB_FUNC_IS_RHEL; then
+
+        case "${OS_VERSION}" in
+
+            7.* | 8.* | 9.[0-1] )
+                                _reco_thp='[never]'
+                                _warn_thp='na'
+                                ;;
+        esac
+
+    fi
+
+    #CHECK
+    if [[ ${_retval} -eq 99 ]]; then
 
         #THP in use?
         local nr_anon_thp
@@ -29,17 +55,19 @@ function check_2000_transparent_hugepages {
 
         local thp_setting
         thp_setting=$(</sys/kernel/mm/transparent_hugepage/enabled)
+        thp_setting=${thp_setting//*[/[}
+        thp_setting=${thp_setting//]*/]}
 
         case ${thp_setting:-} in
 
-            '[madvise]' )
+            "${_reco_thp}" )
                             logCheckOk "Transparent Hugepages are set as recommended (SAP Note ${sapnote:-}) (is: ${thp_setting})"
                             _retval=0 ;;
-            '[never]' )
-                            logCheckWarning "Transparent Hugepages are NOT set as recommended (SAP Note ${sapnote:-}) (is: ${thp_setting})"
+            "${_warn_thp}" )
+                            logCheckWarning "Transparent Hugepages are NOT set as recommended (SAP Note ${sapnote:-}) (is: ${thp_setting}, should be: ${_reco_thp})"
                             _retval=1 ;;
             * )
-                            logCheckError "Transparent Hugepages are NOT set as recommended (SAP Note ${sapnote:-}) (is: ${thp_setting})"
+                            logCheckError "Transparent Hugepages are NOT set as recommended (SAP Note ${sapnote:-}) (is: ${thp_setting}, should be: ${_reco_thp})"
                             _retval=2 ;;
 
         esac
