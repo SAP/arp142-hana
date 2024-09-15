@@ -12,6 +12,8 @@ function check_1400_cpu_idle_driver_intel {
     local -r sapnote_rhel7='#2292690'   # SAP HANA DB: Recommended OS settings for RHEL 7
     local -r sapnote_rhel8='#2777782'   # SAP HANA DB: Recommended OS Settings for RHEL 8
     local -r sapnote_rhel9='#3108302'   # SAP HANA DB: Recommended OS Settings for RHEL 9
+    local -r sapnote_kvm_sles='#3430656' # SAP HANA on SUSE KVM Virtualization
+    local -r sapnote_kvm_rhel='#2599726' # SAP HANA on Red Hat Virtualization
     # MODIFICATION SECTION<<
 
     local sapnote
@@ -46,9 +48,21 @@ function check_1400_cpu_idle_driver_intel {
         esac
         sapnote="$_"
 
-    else
-        logCheckError 'Linux distribution NOT supported (SAP Note #2235581)' "(is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
-        _retval=2
+    fi
+
+    if [[ ${_retval} -eq 99 ]]; then
+        #KVM - but not Hyperscaler
+        if LIB_FUNC_IS_VIRT_KVM; then
+
+            if LIB_FUNC_IS_CLOUD_AMAZON || LIB_FUNC_IS_CLOUD_GOOGLE; then
+                :
+            else
+                expected_driver='haltpoll'
+                LIB_FUNC_IS_SLES && sapnote="${sapnote_kvm_sles}"
+                LIB_FUNC_IS_RHEL && sapnote="${sapnote_kvm_rhel}"
+            fi
+
+        fi
     fi
 
     #CHECK
@@ -61,35 +75,38 @@ function check_1400_cpu_idle_driver_intel {
 
         'acpi_idle')
 
+                logCheckWarning "NOT recommended CPUidle driver active (SAP Note ${sapnote:-}) (is: acpi_idle, should be: ${expected_driver})"
+                _retval=1
+                ;;
+        'intel_idle')
+
             case "${expected_driver}" in
 
-            'acpi_idle')
-                logCheckOk "Recommended CPU idle driver active (SAP Note ${sapnote:-}) (is: acpi_idle)"
+            'intel_idle')
+                logCheckOk "Recommended CPUidle driver active (SAP Note ${sapnote:-}) (is: intel_idle)"
                 _retval=0
                 ;;
 
-            'intel_idle')
-
-                logCheckWarning "CPUidle <intel_idle> driver should be used instead (SAP Note ${sapnote:-}) (is: ${_current_driver}, should be: intel_idle)"
+            *)
+                logCheckWarning "Wrong CPUidle driver active (SAP Note ${sapnote:-}) (is: intel_idle, should be: ${expected_driver})"
                 _retval=1
                 ;;
             esac
 
             ;;
 
-        'intel_idle')
+        'haltpoll')
 
             case "${expected_driver}" in
 
-            'intel_idle')
-                logCheckOk "Recommended CPU idle driver active (SAP Note ${sapnote:-}) (is: intel_idle)"
+            'haltpoll')
+                logCheckOk "Recommended CPUidle driver active (SAP Note ${sapnote:-}) (is: haltpoll)"
                 _retval=0
                 ;;
 
-            'acpi_idle')
-
-                logCheckError "Wrong CPUidle driver active (SAP Note ${sapnote:-}) (is: ${_current_driver}, should be: acpi_idle)"
-                _retval=2
+            *)
+                logCheckWarning "Wrong CPUidle driver active (SAP Note ${sapnote:-}) (is: haltpoll, should be: ${expected_driver})"
+                _retval=1
                 ;;
             esac
 
@@ -104,25 +121,30 @@ function check_1400_cpu_idle_driver_intel {
 
                 [[ ${_mwait_exposed} == false ]] && logCheckWarning 'Intel monitor instructions (MWAIT) not exposed'
                 logCheckWarning 'Disabled c-states might impact CPU TurboMode features'
-                logCheckWarning 'CPUidle driver not active - check BIOS settings for disabled c-states'" (SAP Note ${sapnote:-})"
+                logCheckWarning 'CPUidle driver NOT active - check BIOS settings for disabled c-states'" (SAP Note ${sapnote:-})"
+                _retval=1
+
+            elif [[ ${expected_driver} == 'haltpoll' ]]; then
+
+                logCheckWarning "Wrong CPUidle driver active (SAP Note ${sapnote:-}) (is: none, should be: haltpoll)"
                 _retval=1
 
             elif [[ ${_mwait_exposed} == true ]]; then
 
-                logCheckWarning 'CPUidle driver not active although Intel monitor instructions (MWAIT) exposed to VM'" (SAP Note ${sapnote:-})"
+                logCheckWarning 'CPUidle driver NOT active although Intel monitor instructions (MWAIT) exposed to VM'" (SAP Note ${sapnote:-})"
                 _retval=1
 
             else
 
                 logCheckInfo 'Intel monitor instructions (MWAIT) not exposed to VM'
-                logCheckOk 'CPUidle driver not active - cstates typically configured on Hypervisor'" (SAP Note ${sapnote:-})"
+                logCheckOk 'CPUidle driver NOT active - cstates typically configured on Hypervisor'" (SAP Note ${sapnote:-})"
                 _retval=0
 
             fi
 
             ;;
 
-        *) #unknown driver
+        *) # unknown driver
             logCheckError "CPUidle driver unknown (SAP Note ${sapnote:-}) (is: ${_current_driver})"
             _retval=2
             ;;
