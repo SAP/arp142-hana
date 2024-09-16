@@ -1,0 +1,127 @@
+#!/usr/bin/env bash
+
+function check_1420_cpu_idle_kvm_haltpoll_intel {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote_sleskvm='#3430656' # SAP HANA on SUSE KVM Virtualization
+    local -r sapnote_rhev='#2599726'    # SAP HANA on Red Hat Virtualization
+
+    local -r _reco_governor='haltpoll'
+
+    # LIB_COMPARE_TOOBIG_NUMBERS returns 0 if equal, 1 if first is higher, 2 if second is higher
+    #                               parameter                       recommended_value   RC_expected
+    local -ar _haltpoll_parameter=(
+                                    'guest_halt_poll_ns'            2400000             0
+                                    'guest_halt_poll_grow_start'    24000000            0
+    )
+    # MODIFICATION SECTION<<
+
+    local sapnote
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_VIRT_KVM; then
+
+        logCheckSkipped 'Not running KVM virtualized. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif ! LIB_FUNC_IS_INTEL ; then
+
+        logCheckSkipped 'Not running on Intel CPU. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif [[ $(</sys/devices/system/cpu/cpuidle/current_driver) != 'haltpoll' ]]; then
+
+        logCheckSkipped 'CPUidle driver <haltpoll> not active. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif LIB_FUNC_IS_SLES; then
+        sapnote="${sapnote_sleskvm}"
+
+    elif LIB_FUNC_IS_RHEL; then
+        sapnote="${sapnote_rhev}"
+
+    fi
+
+    #CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        # haltpoll governor
+        local _current_governor
+        _current_governor="$(</sys/devices/system/cpu/cpuidle/current_governor)"
+
+        if [[ "${_current_governor}" != "${_reco_governor}" ]]; then
+
+            logCheckWarning "CPUidle <haltpoll> governor NOT set as recommended (is: ${_current_governor}, should be: ${_reco_governor})"
+            _retval=1
+        else
+
+            logCheckOk "CPUidle <haltpoll> governor set as recommended (is: ${_reco_governor})"
+        fi
+
+        # Parameter
+        local -i _curr_value
+        local -i _reco_value
+        local -i _rc_expected
+        local -i _rc_current
+        local _parameter
+        local _parameter_normalized
+
+        # i+=3 --> every 3rd item
+        for ((i = 0; i < ${#_haltpoll_parameter[@]}; i += 3)); do
+
+            logTrace "<${FUNCNAME[0]}> # ${_haltpoll_parameter[$i]}>"
+
+            _parameter=${_haltpoll_parameter[$i]}
+            _parameter_normalized=${_parameter//./\/}
+            logTrace "<${FUNCNAME[0]}> # ${_parameter_normalized}>"
+
+            _reco_value=${_haltpoll_parameter[$i + 1]}
+            _rc_expected=${_haltpoll_parameter[$i + 2]}
+
+            if [[ ! -f "/sys/module/haltpoll/parameters/${_parameter_normalized}" ]]; then
+
+                logCheckInfo "module haltpoll parameter ${_parameter} not available"
+                _curr_value=-1
+
+            else
+                _curr_value=$(</sys/module/haltpoll/parameters/"${_parameter_normalized}")
+
+            fi
+
+            LIB_COMPARE_TOOBIG_NUMBERS "${_curr_value}" "${_reco_value}"
+            _rc_current=$?
+
+            if [[ ${_rc_current} -le ${_rc_expected} ]]; then
+
+                logCheckOk "CPUidle <haltpoll> parameter ${_parameter} set as recommended (is: ${_curr_value})"
+
+            else
+
+                logCheckWarning "CPUidle <haltpoll> parameter ${_parameter} NOT set as recommended (is: ${_curr_value}, should be: ${_reco_value})"
+                _retval=1
+
+            fi
+
+        done
+
+        if [[ ${_retval} -eq 99 ]]; then
+
+            logCheckOk "All CPUidle <haltpoll> settings set as recommended (SAP Note ${sapnote:-})"
+            _retval=0
+
+        else
+
+            logCheckWarning "NOT all CPUidle <haltpoll> settings set as recommended (SAP Note ${sapnote:-})"
+            _retval=1
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
