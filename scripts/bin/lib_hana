@@ -43,12 +43,16 @@ function __get_usr_sap_sapservices_profiles {
 
     [[ -f /usr/sap/sapservices ]] && while read -r line ; do
 
+        [[ -z ${line} ]] && continue
+
         fullprofile=${line//*pf=}
         fullprofile=${fullprofile%% *}
 
         profile=${fullprofile//*\/}
 
         sid=${profile:0:3}
+        [[ -z ${sid} ]] && continue
+
         hdb=${profile:4:5}
         vhost=${profile:10}
 
