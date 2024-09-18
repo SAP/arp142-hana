@@ -58,6 +58,8 @@ function check_0006_os_hana_release_sles {
             _within_range=false
 
             _hana_curr=$(GET_HANA_ARRAY_KV "HANA_${sid}" 'release')
+            [[ ${_hana_curr} == 'n/a' ]] && continue
+            [[ -z ${_hana_curr:6:1} ]] && continue
 
             # i+=4 --> every 4th item
             for ((i=0; i < ${#_sles_all[@]}; i+=4)); do
