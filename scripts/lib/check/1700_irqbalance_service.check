@@ -19,22 +19,7 @@ function check_1700_irqbalance_service {
                         'sgi_irqbalance' \
                         )
 
-    local cmdline='systemctl'
-
     # PRECONDITION
-    if LIB_FUNC_IS_SLES ; then
-
-        [[ "${OS_VERSION}" == '11.'* ]] && cmdline='systemd'
-
-    elif LIB_FUNC_IS_RHEL ; then
-
-        [[ "${OS_VERSION}" == '6.'* ]] && cmdline='systemd'
-
-    else
-
-        logCheckError "Linux distribution NOT supported (SAP Note #2235581) (is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
-        _retval=2
-    fi
 
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
@@ -72,23 +57,12 @@ function check_1700_irqbalance_service {
         done
 
         local service
-        local cmdline_service
 
         for service in "${_irq_balance[@]}"; do
 
             logTrace "<${FUNCNAME[0]}> # ${service}>"
 
-            if [[ ${cmdline} == 'systemctl' ]]; then
-
-                cmdline_service="systemctl is-active ${service} --quiet"
-
-            elif [[ ${cmdline} == 'systemd' ]]; then
-
-                cmdline_service="service ${service} status &>/dev/null"
-
-            fi
-
-            if eval "${cmdline_service}"; then
+            if eval "systemctl is-active ${service} --quiet"; then
                 _retval=0
                 break
             fi
@@ -101,20 +75,20 @@ function check_1700_irqbalance_service {
     if [[ ${_retval} -eq 0 ]]; then
 
         if [[ "${_irqbalance_expected:-}" == 'on' ]]; then
-            logCheckOk "IRQ balancing is active (SAP Note ${sapnote:-}) (is: ${service} @${LIB_PLATF_VENDOR})"
+            logCheckOk "IRQ balancing is active (SAP Note ${sapnote:-}) (is: ${service} @ ${LIB_PLATF_VENDOR})"
             _retval=0
         else
-            logCheckWarning "IRQ balancing SHOULD be disabled or done by platform scripts (SAP Note ${sapnote:-} @${LIB_PLATF_VENDOR})"
+            logCheckWarning "IRQ balancing could be improved by platform scripts (SAP Note ${sapnote:-} @ ${LIB_PLATF_VENDOR})"
             _retval=1
         fi
 
     else
 
         if [[ "${_irqbalance_expected:-}" == 'off' ]]; then
-            logCheckOk "IRQ balancing is disabled as recommended for platform (SAP Note ${sapnote:-}) @${LIB_PLATF_VENDOR})"
+            logCheckOk "IRQ balancing is disabled as recommended for platform (SAP Note ${sapnote:-}) @ ${LIB_PLATF_VENDOR})"
             _retval=0
         else
-            logCheckWarning "IRQ balancing SHOULD be active (SAP Note ${sapnote:-} @${LIB_PLATF_VENDOR})"
+            logCheckWarning "IRQ balancing SHOULD be active (SAP Note ${sapnote:-} @ ${LIB_PLATF_VENDOR})"
             _retval=1
         fi
     fi
