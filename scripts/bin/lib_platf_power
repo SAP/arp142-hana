@@ -281,7 +281,8 @@ function __lib_func_get_lpar_details {
                             fi
             ;;
 
-            'DedDonMode'*)  #DedDonMode=Dedicated Donating Mode
+            'DedDonMode'*)
+                            #DedDonMode=Dedicated Donating Mode
                             if [[ -z ${LIB_PLATF_POWER_CPUMODE_DEDDON:-} ]]; then
                                 _temp=$(LIB_FUNC_TRIM_LEFT "${line/DedDonMode=}")
                                 [[ ${_temp} = 1 ]] && _temp='DONATING' || _temp='DEDICATED'
@@ -362,7 +363,8 @@ function __get_platform_power_cpu_details {
                             fi
         ;;
 
-        'Model:'*)          #<Model: IBM,9119-MHE>
+        'Model:'*)
+                            #<Model: IBM,9119-MHE>
                             if [[ -z ${LIB_PLATF_NAME:-} ]]; then
                                 LIB_PLATF_NAME=$(LIB_FUNC_TRIM_LEFT "${line/Model:}")
                                 readonly LIB_PLATF_NAME
@@ -411,7 +413,8 @@ function __lib_func_get_auxvector_details {
 
         case ${line} in
 
-        'AT_PLATFORM:'*)        #AT_PLATFORM:     power7        #Processor compatibility mode
+        'AT_PLATFORM:'*)
+                                #AT_PLATFORM:     power7        #Processor compatibility mode
                                 if [[ -z ${LIB_PLATF_POWER_PLATFORM_COMPAT:-} ]]; then
                                     LIB_PLATF_POWER_PLATFORM_COMPAT=$(LIB_FUNC_TRIM_LEFT "${line/AT_PLATFORM:}")
                                     LIB_PLATF_POWER_PLATFORM_COMPAT=${LIB_PLATF_POWER_PLATFORM_COMPAT^^}
@@ -419,7 +422,8 @@ function __lib_func_get_auxvector_details {
                                 fi
         ;;
 
-        'AT_BASE_PLATFORM:'*)   #AT_BASE_PLATFORM:power8        #Actual processor type
+        'AT_BASE_PLATFORM:'*)
+                                #AT_BASE_PLATFORM:power8        #Actual processor type
                                 if [[ -z ${LIB_PLATF_POWER_PLATFORM_BASE:-} ]]; then
                                     LIB_PLATF_POWER_PLATFORM_BASE=$(LIB_FUNC_TRIM_LEFT "${line/AT_BASE_PLATFORM:}")
                                     LIB_PLATF_POWER_PLATFORM_BASE=${LIB_PLATF_POWER_PLATFORM_BASE^^}
@@ -427,7 +431,8 @@ function __lib_func_get_auxvector_details {
                                 fi
         ;;
 
-        'AT_HWCAP2:'*)          #AT_HWCAP2: htm-nosc vcrypto tar isel ebb dscr htm arch_2_07
+        'AT_HWCAP2:'*)
+                                #AT_HWCAP2: htm-nosc vcrypto tar isel ebb dscr htm arch_2_07
                                 if [[ -z ${LIB_PLATF_POWER_HWCAP2:-} ]]; then
                                     LIB_PLATF_POWER_HWCAP2=$(LIB_FUNC_TRIM_LEFT "${line/AT_HWCAP2:}")
                                     readonly LIB_PLATF_POWER_HWCAP2
