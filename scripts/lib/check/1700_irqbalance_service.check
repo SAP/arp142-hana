@@ -26,7 +26,7 @@ function check_1700_irqbalance_service {
 
         #               'Platform'              'on/off'
         local -ar _platf_matrix=(\
-                        'Microsoft Azure'       'off'  'Use Mellanox script <set_irq_affinity_cpulist.sh> to modify the vCPUs/interrupts mapping of a specific AN interface'   \
+                        'Microsoft Azure'       'on'   'If a VM fails HCMT testing then ensure the irqbalance daemon is running and the Guest OS release is the latest version. Contact Microsoft support if a VM does not pass HCMT'   \
                         'Amazon EC2'            'on'   ''   \
                         'IBM Cloud'             'on'   ''   \
                         'Google GCP'            'off'  'Use script <google_set_multiqueue> to correctly balance IRQ settings for virtual CPUs.'   \
