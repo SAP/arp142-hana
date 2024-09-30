@@ -25,7 +25,7 @@ function check_0002_os_hana_support_sles_intel {
 
     # array             'Platform'              '0123456' (Minor Release)
     local -ar _sles_15=(\
-                        'Microsoft Azure'       '-12345-'   \
+                        'Microsoft Azure'       '-123456'   \
                         'Amazon EC2'            '-12345-'   \
                         'IBM Cloud'             '-12345-'   \
                         'Google GCP'            '-12345-'   \
