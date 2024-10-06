@@ -54,6 +54,8 @@ function check_0011_os_kernel_knownissue_sles {
                         )
 
     local -ar _sles_ibmpower=(\
+                        '15.5' '5.14.21-150500.53.2'    '5.14.21-150500.55.36.0'    '#HANA issue 310644' \
+                        '15.4' '5.14.21-150400.22.1'    '5.14.21-150400.24.97.0'    '#HANA issue 310644' \
                         '15.4' '5.14.21-150400.22.1'    '5.14.21-150400.24.11.0'    '#bsc#1199173' \
                         '15.1' '4.12.14-195.1'          '4.12.14-150100.197.114.1'  '#3165100,3159746' \
                         '12.5' '4.12.14-120.1'          '4.12.14-122.116.0'         '#3165100,3159746' \
@@ -85,6 +87,8 @@ function check_0011_os_kernel_knownissue_sles {
     #https://www.suse.com/support/kb/doc/?id=000019587
 
     #SUSE TID 000021453 - Database corruption after updating to kernel-default-4.12.14-122.212
+
+    # clock_gettime @ IBM Power - hanging HANA callstacks - HANA issue 310644 - No TID/SAP Note available
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_SLES; then

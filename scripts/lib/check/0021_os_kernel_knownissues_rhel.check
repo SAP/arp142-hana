@@ -25,19 +25,19 @@ function check_0021_os_kernel_knownissues_rhel {
                         '7.9' '3.10.0-1160.1'               '3.10.0-1160.999'       '#3323613' \
                         )
 
-    # local -ar _rhel_ibmpower=(\
-    #                     '8.2'   '4.18.0-193.el8'            '4.18.0-193.999.el8'    '#3165100,3159746' \
-    #                     )
+    local -ar _rhel_ibmpower=(\
+                        '9.2'   '5.14.0-284.1'              '5.14.0-284.21.1'       '#HANA issue 310644' \
+                        '9.0'   '5.14.0-70.1'               '5.14.0-70.63.1'        '#HANA issue 310644' \
+                        )
     # MODIFICATION SECTION<<
 
-    #RHSA-2020:1372 - [HPE 8.0 BUG] System crash when reading /sys/block//mq/0/cpu_list file (BZ#1797960)
-    #3159746 - Hana Revision 6x crashes on Linux kernel 4.12 or 4.18 on IBM Power platform
-    #3165100 - Advices on permanent solutions for the issue in SAP note 3165087
     #KCS-6981979 RHEL 8: Slower application Read/Write file IO performance
     #KCS-6740861 Percpu memory accounts for a large percentage of memory
     #1928533 - SAP Applications on Microsoft Azure: Supported Products and Azure VM types - M832ixs_v2
 
     #3323613 - Azure - Linux OS Crash due to large number of disable/enable requests for VMs using Accelerated Networking
+
+    # clock_gettime @ IBM Power - hanging HANA callstacks - HANA issue 310644 - No TID/SAP Note available
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_RHEL; then
@@ -49,9 +49,9 @@ function check_0021_os_kernel_knownissues_rhel {
 
         _rhel_all+=("${_rhel_azure[@]}")
 
-    # elif LIB_FUNC_IS_IBMPOWER; then
+    elif LIB_FUNC_IS_IBMPOWER; then
 
-    #     _rhel_all+=("${_rhel_ibmpower[@]}")
+        _rhel_all+=("${_rhel_ibmpower[@]}")
 
     fi
 
