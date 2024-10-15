@@ -26,8 +26,8 @@ function check_0021_os_kernel_knownissues_rhel {
                         )
 
     local -ar _rhel_ibmpower=(\
-                        '9.2'   '5.14.0-284.1'              '5.14.0-284.21.1'       '#HANA issue 310644' \
-                        '9.0'   '5.14.0-70.1'               '5.14.0-70.63.1'        '#HANA issue 310644' \
+                        '9.2'   '5.14.0-284.1'              '5.14.0-284.21.0'       '#HANA issue 310644' \
+                        '9.0'   '5.14.0-70.1'               '5.14.0-70.63.0'        '#HANA issue 310644' \
                         )
     # MODIFICATION SECTION<<
 
