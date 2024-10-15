@@ -28,11 +28,13 @@ function check_0021_os_kernel_knownissues_rhel {
     local -ar _rhel_ibmpower=(\
                         '9.2'   '5.14.0-284.1'              '5.14.0-284.21.0'       '#HANA issue 310644' \
                         '9.0'   '5.14.0-70.1'               '5.14.0-70.63.0'        '#HANA issue 310644' \
+                        '8.6'   '4.18.0-372.el8'            '4.18.0-372.32.0'       'RHSA-2022:7110' \
                         )
     # MODIFICATION SECTION<<
 
     #KCS-6981979 RHEL 8: Slower application Read/Write file IO performance
     #KCS-6740861 Percpu memory accounts for a large percentage of memory
+    #RHSA-2022:7110 - RH2112820 - [Power 9 / ppc64le] Incorrect Socket(s) & "Core(s) per socket" reported by lscpu command
     #1928533 - SAP Applications on Microsoft Azure: Supported Products and Azure VM types - M832ixs_v2
 
     #3323613 - Azure - Linux OS Crash due to large number of disable/enable requests for VMs using Accelerated Networking
