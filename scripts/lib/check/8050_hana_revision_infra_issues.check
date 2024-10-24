@@ -1,0 +1,151 @@
+#!/usr/bin/env bash
+
+function check_8050_hana_revision_infra_issues {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    # array             'SPSP'  'lower bound'    'upper bound'  'SAP Note'  'Description'
+    local -ar _hana_all=(\
+                        '5'     '2.00.056.00'    '2.00.059.06'  '3312868'  'Script hdbenv.sh takes a long time to complete'     \
+                        '6'     '2.00.060.00'    '2.00.065.00'  '3312868'  'Script hdbenv.sh takes a long time to complete'     \
+
+                        '5'     '2.00.050.00'    '2.00.059.09'  '3356185'  'Long Critical Phase For Savepoint'     \
+                        '6'     '2.00.060.00'    '2.00.067.02'  '3356185'  'Long Critical Phase For Savepoint'     \
+                        '7'     '2.00.070.00'    '2.00.071.00'  '3356185'  'Long Critical Phase For Savepoint'     \
+
+                        '5'     '2.00.050.00'    '2.00.059.12'  '3466826'  'Savepoint Slowness With FRO/PMEM'      \
+                        '6'     '2.00.060.00'    '2.00.067.04'  '3466826'  'Savepoint Slowness With FRO/PMEM'      \
+                        '7'     '2.00.070.00'    '2.00.077.00'  '3466826'  'Savepoint Slowness With FRO/PMEM'      \
+
+                        '5'     '2.00.050.00'    '2.00.059.14'  '3499670'  'DML Statements Adding LOBs Hanging in Thread_State Resource Load Wait'   \
+                        '6'     '2.00.060.00'    '2.00.067.04'  '3499670'  'DML Statements Adding LOBs Hanging in Thread_State Resource Load Wait'   \
+                        '7'     '2.00.070.00'    '2.00.079.00'  '3499670'  'DML Statements Adding LOBs Hanging in Thread_State Resource Load Wait'   \
+
+                        '5'     '2.00.050.00'    '2.00.059.09'  '2222110'  'Problem with timer thread'  \
+                        '6'     '2.00.060.00'    '2.00.067.02'  '2222110'  'Problem with timer thread'  \
+                        '7'     '2.00.070.00'    '2.00.071.00'  '2222110'  'Problem with timer thread'  \
+
+                        '7'     '2.00.070.00'    '2.00.076.00'  '3435077'  'Nameserver Hangs (ClockMonitor)'  \
+
+                        '5'     '2.00.050.00'    '2.00.059.14'  '3434285'  'Nameserver Unresponsive due to Failing Disk Polling (getDiskInfo)'   \
+                        '6'     '2.00.060.00'    '2.00.067.04'  '3434285'  'Nameserver Unresponsive due to Failing Disk Polling (getDiskInfo)'   \
+                        '7'     '2.00.070.00'    '2.00.079.01'  '3434285'  'Nameserver Unresponsive due to Failing Disk Polling (getDiskInfo)'   \
+
+                        '5'     '2.00.050.00'    '2.00.059.12'  '2044468'  'Partitioning redo log'   \
+                        '6'     '2.00.060.00'    '2.00.067.04'  '2044468'  'Partitioning redo log'   \
+                        '7'     '2.00.070.00'    '2.00.076.00'  '2044468'  'Partitioning redo log'   \
+
+                        '5'     '2.00.050.00'    '2.00.059.14'  '3528623'  'Slow in table load/reload due to load trace writing'   \
+                        '6'     '2.00.060.00'    '2.00.067.04'  '3528623'  'Slow in table load/reload due to load trace writing'   \
+                        '7'     '2.00.070.00'    '2.00.079.02'  '3528623'  'Slow in table load/reload due to load trace writing'   \
+
+                        '5'     '2.00.050.00'    '2.00.059.09'  '3343278'  'Nameserver is Unresponsive due to blocked Asynchronous Requests'   \
+                        '6'     '2.00.060.00'    '2.00.067.02'  '3343278'  'Nameserver is Unresponsive due to blocked Asynchronous Requests'   \
+                        '7'     '2.00.070.00'    '2.00.072.00'  '3343278'  'Nameserver is Unresponsive due to blocked Asynchronous Requests'   \
+
+                        '5'     '2.00.050.00'    '2.00.059.10'  '3366673'  'landscapeHostConfiguration.py fails with Python runtime (spawn)'   \
+                        '6'     '2.00.060.00'    '2.00.067.03'  '3366673'  'landscapeHostConfiguration.py fails with Python runtime (spawn)'   \
+                        '7'     '2.00.070.00'    '2.00.073.00'  '3366673'  'landscapeHostConfiguration.py fails with Python runtime (spawn)'   \
+
+                        )
+
+    local sapnote=''
+    # MODIFICATION SECTION<<
+
+    # 3312868 - Script hdbenv.sh takes a long time to complete
+    # 3356185 - Long Critical Phase For Savepoint
+    # 3466826 - Savepoint Slowness With Persistent Memory or Fast Restart Option Enabled
+    # 3499670 - DML Statements Adding LOBs Hanging in Thread_State Resource Load Wait
+    # 2222110 - FAQ: SAP HANA Load History #12 Problem with timer thread
+    # 3435077 - Nameserver Hangs or Experiences Unexpected Shutdown by Cluster Manager
+    # 3434285 - Nameserver Unresponsive due to Failing Disk Polling Caused by Faulty NFS Filesystem
+    # 2044468 - FAQ: SAP HANA Partitioning #43 Log
+    # 3528623 - Slow in table load/reload due to load trace writing
+    # 3343278 - HANA Nameserver is Unresponsive due to blocked Asynchronous Requests
+    # 3366673 - landscapeHostConfiguration.py fails with Python runtime error "can't start new thread"
+
+    # PRECONDITIONS
+    if [[ ${#HANA_SIDS[@]} -eq 0 ]]; then
+
+        logCheckSkipped 'No SAP HANA instance found. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local _hana_lower
+        local _hana_upper
+        local _hana_curr
+        local _descr
+        local _sid_listed=false
+
+        for sid in "${HANA_SIDS[@]}"; do
+
+            _hana_curr=$(GET_HANA_ARRAY_KV "HANA_${sid}" 'release')
+            [[ ${_hana_curr} == 'n/a' ]] && continue
+            [[ -z ${_hana_curr:6:1} ]] && continue
+
+            _sid_listed=false
+
+            # i+=5 --> every 5th item
+            for ((i=0; i < ${#_hana_all[@]}; i+=5)); do
+
+                logTrace "<${FUNCNAME[0]}> # ${_hana_all[$i]}>"
+
+                [[ "${_hana_all[$i]}" != "${_hana_curr:6:1}" ]] && continue #2.00.067 --> 6
+
+                _hana_lower="${_hana_all[$i + 1]}"
+                _hana_upper="${_hana_all[$i + 2]}"
+
+                # returns 0 if equal, 1 if first is higher, 2 if second is higher
+                LIB_FUNC_COMPARE_VERSIONS "${_hana_curr}" "${_hana_upper}"
+                if [[ $? -ne 1 ]]; then
+                    #HANA is NOT higher than high boundary
+
+                    LIB_FUNC_COMPARE_VERSIONS "${_hana_curr}" "${_hana_lower}"
+
+                    if [[ $? -le 1 ]]; then
+
+                        sapnote="${_hana_all[$i + 3]}"
+                        _descr="${_hana_all[$i + 4]}"
+
+                        if [[ ${_sid_listed} == false ]]; then
+
+                            logCheckWarning "SAP HANA instance potentially affected by infra-related issue (SID: ${sid}, Release: ${_hana_curr})"
+                            _sid_listed=true
+
+                        fi
+
+                        logCheckWarning "    - ${_descr} (SAP Note ${sapnote:-})(fixed in > ${_hana_upper:-})"
+                        _retval=1
+
+                    fi
+                fi
+
+            done
+
+        done
+
+        if [[ ${_retval} -eq 99 ]]; then
+
+            logCheckOk 'No known infra-related issues exist for any SAP HANA instances'
+            _retval=0
+
+        else
+
+            logCheckWarning 'Some SAP HANA instances potentially affected by infra-related issues'
+            _retval=1
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
