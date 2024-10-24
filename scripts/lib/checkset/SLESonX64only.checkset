@@ -82,6 +82,7 @@
 7015_pacemaker_version
 7018_pacemaker_attributes
 7020_ha_resource_agents_sles
+7021_ha_resource_agent_angi_sles
 8500_sap_hana_client
 8702_sap_hana_backint_amazon
 8704_sap_hana_backint_gcp

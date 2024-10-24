@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+
+function check_7021_ha_resource_agent_angi_sles {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # https://scc.suse.com/packages?name=SUSE%20Linux%20Enterprise%20Server%20for%20SAP%20Applications&version=15.4&arch=x86_64&query=SAPHanaSR-angi&module=
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#1552925'
+
+    local -r sles154='1.2.7-150400.9.3.1'
+    local -r sles15x='1.2.7-150500.9.3.1'
+    # MODIFICATION SECTION<<
+
+    # 1552925 - Linux: High Availability Cluster Solutions
+    # https://github.com/SUSE/SAPHanaSR
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_SLES; then
+
+        logCheckSkipped 'Linux distribution is not SLES. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif ! rpm -q --quiet SAPHanaSR-angi ; then
+
+        logCheckSkipped 'HA Resource Agent SAPHanaSR-angi not installed' "(SAP Note ${sapnote:-}). Skipping <${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+
+        case "${OS_VERSION}" in
+
+            12.* | 15.[0-3] )    logCheckSkipped 'CHECK not applicable for SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                                _retval=3 ;;
+
+            15.4 )      : "${sles154}" ;;
+            15.* )      : "${sles15x}" ;;
+
+            *)
+                    logCheckWarning 'Check does not support SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                    _retval=1
+                ;;
+        esac
+
+        _goodversion="$_"
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local _fullversion
+        local _curr_version_normalized
+        local _exp_version_normalized
+
+        _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" SAPHanaSR-angi)
+
+        #normalize full version - e.g. 4.1.10-33.5.2
+        LIB_FUNC_NORMALIZE_RPM "${_fullversion}"
+        _curr_version_normalized="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+        #normalize good version
+        LIB_FUNC_NORMALIZE_RPM "${_goodversion}"
+        _exp_version_normalized="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+        # returns 0 if equal, 1 if first is higher, 2 if second is higher
+        LIB_FUNC_COMPARE_VERSIONS "${_curr_version_normalized}" "${_exp_version_normalized}"
+        if [[ $? -eq 2 ]]; then
+
+            logCheckWarning 'HA Resource Agent SAPHanaSR-angi should be updated' "(SAP Note ${sapnote:-}) (is: ${_curr_version_normalized}, should be: >=${_exp_version_normalized})"
+            _retval=1
+
+        else
+
+            logCheckOk 'HA Resource Agent SAPHanaSR-angi version seems to be ok' "(SAP Note ${sapnote:-}) (is: ${_curr_version_normalized})"
+            _retval=0
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
