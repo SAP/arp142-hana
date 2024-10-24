@@ -80,6 +80,7 @@
 7018_pacemaker_attributes
 7030_ha_resource_agent_scaleup_rhel
 7031_ha_resource_agent_scaleout_rhel
+8050_hana_revision_infra_issues
 8500_sap_hana_client
 8702_sap_hana_backint_amazon
 8704_sap_hana_backint_gcp
