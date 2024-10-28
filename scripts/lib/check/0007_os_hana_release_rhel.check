@@ -25,11 +25,8 @@ function check_0007_os_hana_release_rhel {
 
                         '8.2' '567'         '2.00.052.00'    '2.00.067.04'   \
                         '8.2' '234'         '2.00.048.02'    '2.00.048.06'   \
-                        '8.1' '234567'      '2.00.045.00'    '2.00.067.04'   \
 
                         '7.9' '234567'      '2.00.054.00'    '2.00.059.99'   \
-                        '7.7' '234567'      '2.00.048.00'    '2.00.059.99'   \
-                        '7.6' '234567'      '2.00.036.00'    '2.00.059.99'   \
                         )
 
     local -ar _rhel_intel=(\
@@ -48,7 +45,7 @@ function check_0007_os_hana_release_rhel {
     # MODIFICATION SECTION<<
 
     #2235581 - SAP HANA: Supported Operating Systems
-    #2958224 - SAP HANA Revision Release Details
+    #3318049 - Indexserver Crashes When Running on RHEL 9.x
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_RHEL; then
