@@ -455,6 +455,19 @@ function LIB_FUNC_NORMALIZE_KERNEL {
     LIB_FUNC_NORMALIZE_KERNEL_RETURN="${kernelversion}" #variable is available to caller
 }
 
+function LIB_FUNC_NORMALIZE_RPMn {
+
+    local -n __rpmversion="$1"
+    shift 1
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    __rpmversion=${__rpmversion/.el/.}     # 2.17-157.el7_3.5 -> 2.17-157.7_3.5
+    __rpmversion=${__rpmversion//_/.}      # 2.17-157.7_3.5 -> 2.17-157.7.3.5
+    __rpmversion=${__rpmversion//+*-/-}    # 2.1.5+20221208.a3f44794f-150500.6.11.1 -> 2.1.5-150500.6.11.1
+
+}
+
 function LIB_FUNC_NORMALIZE_RPM {
 
     local rpmversion="$1"

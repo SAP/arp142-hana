@@ -6,7 +6,7 @@ readonly PROGRAM_DIR
 
 #fake PREREQUISITE functions
 LIB_FUNC_IS_SLES() { return 0 ; }
-LIB_FUNC_NORMALIZE_RPM() { : ; }
+LIB_FUNC_NORMALIZE_RPMn() { : ; }
 
 LIB_FUNC_COMPARE_VERSIONS() {
     # shellcheck disable=SC2086
@@ -22,7 +22,6 @@ systemctl() {
 }
 
 OS_VERSION='15.4'
-LIB_FUNC_NORMALIZE_RPM_RETURN=''    #doesn't matter
 declare -i compare_version_rc
 declare -i rpm_rc
 declare -i isused_rc

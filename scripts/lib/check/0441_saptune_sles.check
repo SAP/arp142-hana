@@ -50,22 +50,16 @@ function check_0441_saptune_sles {
     if [[ ${_retval} -eq 99 ]]; then
 
         local _fullversion
-        local normalized_goodversion
-        local normalized_fullversion
 
         local _is_used=false
 
         _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" saptune)
 
         #normalize full version - e.g. 4.1.10-33.5.2
-        LIB_FUNC_NORMALIZE_RPM "${_fullversion}"
-        normalized_fullversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+        LIB_FUNC_NORMALIZE_RPMn _fullversion
+        LIB_FUNC_NORMALIZE_RPMn _goodversion
 
-        #normalize good version
-        LIB_FUNC_NORMALIZE_RPM "${_goodversion}"
-        normalized_goodversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
-
-        if [[ ! "${normalized_fullversion}" =~ (1|2) ]]; then
+        if [[ ! "${_fullversion}" =~ (1|2) ]]; then
 
             if systemctl is-enabled "saptune" --quiet; then
                 logCheckInfo 'saptune is installed and enabled'
@@ -90,7 +84,7 @@ function check_0441_saptune_sles {
         fi
 
         # returns 0 if equal, 1 if first is higher, 2 if second is higher
-        LIB_FUNC_COMPARE_VERSIONS "${normalized_fullversion}" "${normalized_goodversion}"
+        LIB_FUNC_COMPARE_VERSIONS "${_fullversion}" "${_goodversion}"
 
         if [[ $? -ne 2 ]]; then
 

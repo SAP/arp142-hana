@@ -6,7 +6,7 @@ readonly PROGRAM_DIR
 
 #fake PREREQUISITE functions
 LIB_FUNC_IS_SLES() { return 0 ; }
-LIB_FUNC_NORMALIZE_RPM() { : ; }
+LIB_FUNC_NORMALIZE_RPMn() { : ; }
 
 LIB_FUNC_COMPARE_VERSIONS() {
     # shellcheck disable=SC2086
@@ -30,7 +30,6 @@ grep() {
 }
 
 OS_VERSION='15.4'
-LIB_FUNC_NORMALIZE_RPM_RETURN=''
 declare -i compare_version_rc
 declare -i rpm_rc
 declare -i isused_rc
@@ -65,7 +64,6 @@ test_saptuneV3_old_but_not_used() {
     #arrange
     rpm_rc=0
     compare_version_rc=2
-    LIB_FUNC_NORMALIZE_RPM_RETURN='99.'
     isused_rc=1
 
     #act
@@ -80,7 +78,6 @@ test_saptuneV_3old_and_used() {
     #arrange
     rpm_rc=0
     compare_version_rc=2
-    LIB_FUNC_NORMALIZE_RPM_RETURN='99.'
     isused_rc=0
 
     #act
@@ -95,7 +92,6 @@ test_saptuneV2_old_but_not_used() {
     #arrange
     rpm_rc=0
     compare_version_rc=2
-    LIB_FUNC_NORMALIZE_RPM_RETURN='2.'
     isused_rc=1
 
     #act
@@ -110,7 +106,6 @@ test_saptuneV2_old_and_used() {
     #arrange
     rpm_rc=0
     compare_version_rc=2
-    LIB_FUNC_NORMALIZE_RPM_RETURN='2.'
 
     #act
     check_0441_saptune_sles

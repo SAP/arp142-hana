@@ -54,8 +54,6 @@ function check_7020_ha_resource_agents_sles {
         local _package
         local _exp_version
         local _curr_version
-        local _exp_version_normalized
-        local _curr_version_normalized
 
         # i+=2 --> every 2nd item
         for ((i = 0; i < ${#_rpm_packages[@]}; i += 2)); do
@@ -69,17 +67,14 @@ function check_7020_ha_resource_agents_sles {
 
             _exp_version="${_rpm_packages[$i + 1]}"
 
-            #normalize expected version
-            LIB_FUNC_NORMALIZE_RPM "${_exp_version}"
-            _exp_version_normalized="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+            #normalize current version - e.g. 4.1.10-33.5.2
+            LIB_FUNC_NORMALIZE_RPMn _exp_version
 
             _curr_version=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" "${_package}")
-            #normalize current version - e.g. 4.1.10-33.5.2
-            LIB_FUNC_NORMALIZE_RPM "${_curr_version}"
-            _curr_version_normalized="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+            LIB_FUNC_NORMALIZE_RPMn _curr_version
 
             # returns 0 if equal, 1 if first is higher, 2 if second is higher
-            LIB_FUNC_COMPARE_VERSIONS "${_curr_version_normalized}" "${_exp_version_normalized}"
+            LIB_FUNC_COMPARE_VERSIONS "${_curr_version}" "${_exp_version}"
             if [[ $? -eq 2 ]]; then
 
                 logCheckWarning "HA Resource Agent ${_package} should be updated (is: ${_curr_version}, should be: >=${_exp_version})"
