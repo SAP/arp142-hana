@@ -6,13 +6,12 @@ readonly PROGRAM_DIR
 
 #mock PREREQUISITE functions
 LIB_FUNC_IS_SLES() { return 0 ; }
-LIB_FUNC_NORMALIZE_RPM() { : ; }
+LIB_FUNC_NORMALIZE_RPMn() { : ; }
 
 LIB_FUNC_COMPARE_VERSIONS() { return "$compare_version_rc" ; }
 rpm() { return "${rpm_rc}" ; }
 
 OS_VERSION=''
-LIB_FUNC_NORMALIZE_RPM_RETURN=''    #doesn't matter
 declare -i compare_version_rc
 declare -i rpm_rc
 

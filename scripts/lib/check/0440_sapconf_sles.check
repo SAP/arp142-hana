@@ -52,8 +52,6 @@ function check_0440_sapconf_sles {
     if [[ ${_retval} -eq 99 ]]; then
 
         local _fullversion
-        local normalized_goodversion
-        local normalized_fullversion
 
         local _is_used=false
 
@@ -73,16 +71,12 @@ function check_0440_sapconf_sles {
 
         _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" sapconf)
 
-        #normalize good version
-        LIB_FUNC_NORMALIZE_RPM "${_goodversion}"
-        normalized_goodversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
-
-        #normalize full version - e.g. 4.1.10-33.5.2
-        LIB_FUNC_NORMALIZE_RPM "${_fullversion}"
-        normalized_fullversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+        #normalize e.g. 4.1.10-33.5.2
+        LIB_FUNC_NORMALIZE_RPMn _goodversion
+        LIB_FUNC_NORMALIZE_RPMn _fullversion
 
         # returns 0 if equal, 1 if first is higher, 2 if second is higher
-        LIB_FUNC_COMPARE_VERSIONS "${normalized_fullversion}" "${normalized_goodversion}"
+        LIB_FUNC_COMPARE_VERSIONS "${_fullversion}" "${_goodversion}"
         if [[ $? -ne 2 ]]; then
 
             logCheckOk 'sapconf version seems to be ok' "(SAP Note ${sapnote:-}) (is: ${_fullversion})"
