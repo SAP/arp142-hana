@@ -8,6 +8,8 @@ function check_3120_ip_port_hostagent {
 
     # MODIFICATION SECTION>>
     local -r sapnote='#401162'
+
+    local -r prod_list_valid='HANA,HANAREP,XSA,ABAP,J2EE,SUITE,ETD,MDM,SYBASE,MAXDB,ORACLE,DB2,TREX,CONTENTSRV,BO,B1'
     # MODIFICATION SECTION<<
 
     #SAP Note 401162 - Linux: Avoiding TCP/IP port conflicts and start problems
@@ -44,7 +46,22 @@ function check_3120_ip_port_hostagent {
 
         if [[ -n ${product_list:-} ]] ; then
 
-            logCheckOk "SHA parameter reserved_port/product_list set (is: ${product_list})"
+            IFS=',' read -r -a product_array <<< "${product_list:-}"
+            for element in "${product_array[@]}"; do
+                LIB_FUNC_STRINGCONTAIN "${prod_list_valid}" "${element}" || _retval=1
+            done
+
+            if [[ ${_retval} -eq 99 ]]; then
+
+                logCheckOk "SHA parameter reserved_port/product_list set (is: ${product_list})"
+
+            else
+
+                logCheckWarning "SHA parameter reserved_port/product_list contains invalid entries (is: ${product_list})"
+                logCheckWarning "Valid entries are: ${prod_list_valid}"
+                _retval=1
+
+            fi
 
         else
 
