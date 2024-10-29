@@ -30,8 +30,8 @@ function check_0007_os_hana_release_rhel {
                         )
 
     local -ar _rhel_intel=(\
-                        '9.0' '67'          '2.00.063.00'    '2.00.099.99'   \
-                        '9.0' '2345'        '2.00.059.04'    '2.00.059.99'   \
+                        '9.0' '67'          '2.00.067.01'    '2.00.099.99'   \
+                        '9.0' '2345'        '2.00.059.08'    '2.00.059.99'   \
                         '8.0' '234567'      '2.00.040.00'    '2.00.048.06'   \
                         )
 
@@ -41,11 +41,12 @@ function check_0007_os_hana_release_rhel {
                         '8.0' '234567'      '2.00.045.00'    '2.00.048.06'   \
                         )
 
-    local -r sapnote='#2235581'
+    local sapnote='2235581'
+    local -r sapnote_rhel90='3318049'
     # MODIFICATION SECTION<<
 
     #2235581 - SAP HANA: Supported Operating Systems
-    #3318049 - Indexserver Crashes When Running on RHEL 9.x
+    #3318049 - Indexserver Crashes When Running on RHEL 9.x --> RHEL9.0 specific; glibc2.34
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_RHEL; then
@@ -70,6 +71,9 @@ function check_0007_os_hana_release_rhel {
 
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
+
+        #3318049 - Indexserver Crashes When Running on RHEL 9.x
+        [[ "${OS_VERSION}" == '9.0' ]] && sapnote+=",${sapnote_rhel90}"
 
         local _hana_lower
         local _hana_upper
