@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+function check_0820_hostname {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+    local -r sapnote='#611361'
+
+# import short and full hostname
+short_hostname=$(hostname)
+full_hostname=$(hostname -f)
+
+# extract short hostname from full hostname
+short_hostname_from_full=$(echo $full_hostname | cut -d'.' -f1)
+
+# Comparison
+if [ "$short_hostname" = "$short_hostname_from_full" ]; then
+  _retval=0
+  else
+  _retval=66
+fi
+
+if [[ ${_retval} -eq 0 ]]; then
+
+        logCheckOk "$short_hostname is the short hostname and part of fqdn $full_hostname (SAP Note ${sapnote:-})"
+
+    else
+
+        logCheckError "Hostname setting not correct! (SAP Note ${sapnote:-})"
+        _retval=2
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+}
