@@ -16,7 +16,7 @@ function check_0820_hostname {
     # CHECK
 
     # extract short hostname from full hostname
-    short_hostname_from_full=$(echo $full_hostname | cut -d'.' -f1)
+    short_hostname_from_full=${full_hostname%%.*}
     if [[ ${_retval} -eq 99 ]]; then
       if [ "$short_hostname" = "$short_hostname_from_full" ]; then
         _retval=0
