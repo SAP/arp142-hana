@@ -4,24 +4,28 @@ function check_0820_hostname {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
+    # MODIFICATION SECTION>>
     local -i _retval=99
     local -r sapnote='#611361'
+    # MODIFICATION SECTION<<
 
-# import short and full hostname
-short_hostname=$(hostname)
-full_hostname=$(hostname -f)
+    # import short and full hostname
+    short_hostname=$(hostname)
+    full_hostname=$(hostname -f)
 
-# extract short hostname from full hostname
-short_hostname_from_full=$(echo $full_hostname | cut -d'.' -f1)
+    # CHECK
 
-# Comparison
-if [ "$short_hostname" = "$short_hostname_from_full" ]; then
-  _retval=0
-  else
-  _retval=66
-fi
+    # extract short hostname from full hostname
+    short_hostname_from_full=$(echo $full_hostname | cut -d'.' -f1)
+    if [[ ${_retval} -eq 99 ]]; then
+      if [ "$short_hostname" = "$short_hostname_from_full" ]; then
+        _retval=0
+      else
+      _retval=66
+      fi
+    fi
 
-if [[ ${_retval} -eq 0 ]]; then
+    if [[ ${_retval} -eq 0 ]]; then
 
         logCheckOk "$short_hostname is the short hostname and part of fqdn $full_hostname (SAP Note ${sapnote:-})"
 
