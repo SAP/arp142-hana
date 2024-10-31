@@ -21,6 +21,7 @@
 0800_sap_host_agent
 0810_uuidd_service
 0811_uuidd_version
+0820_hostname
 1210_cpu_subnuma_intel
 1230_cpu_distribution_virt
 1250_cpu_hyperthreading_intel
