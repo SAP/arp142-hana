@@ -172,7 +172,7 @@ function _lib_logger_main {
 
     # ToDo: -t 1 stdout?
     #  if [[ -t 1 && -n "$TERM" && "$TERM" != "dumb" ]]; then
-    if [[ -n "$TERM" && "$TERM" != "dumb" ]]; then
+    if [[ -n "${TERM}" && "${TERM}" != "dumb" ]]; then
         COLUMNS=$(tput cols)
     fi
 

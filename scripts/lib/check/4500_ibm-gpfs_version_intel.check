@@ -40,7 +40,7 @@ function check_4500_ibm-gpfs_version_intel {
 
             7.[0-6] | 8.[1-3] )     _goodversion=${_goodversion51} ;;
             7.* | 8.* | 9.[0-1] )   _goodversion=${_goodversion51n} ;;
-            9.* )                   _goodversion=${_goodversion51nn} ;;
+            * )                     _goodversion=${_goodversion51nn} ;;
 
         esac
 
