@@ -224,7 +224,7 @@ function generate_checklist {
     local checkname
     local safetycheck
 
-    if [[ ! ${CHECKFILELIST[*]:-} ]]; then
+    if [[ -z ${CHECKFILELIST[*]:-} ]]; then
         logTrace "<${FUNCNAME[0]}> # check file list empty, no files to process>"
         return
     fi

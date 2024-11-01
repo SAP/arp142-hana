@@ -26,7 +26,7 @@ function GET_HANA_ARRAY_KV {
     if __assoc_array_key_exists "${array_name}" "${key}" ; then
 
         # shellcheck disable=SC1087
-        eval "echo \${$array_name[\"$key\"]}"
+        eval "echo \${${array_name}[\"${key}\"]}"
 
     else
         echo 'n/a'
@@ -132,7 +132,7 @@ function __create_assoc_array {
 
     local array_name="$1"
 
-    eval "declare -gA $array_name"
+    eval "declare -gA ${array_name}"
 
 }
 

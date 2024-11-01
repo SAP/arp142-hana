@@ -1,0 +1,17 @@
+# # Suggest adding a default case in `case` statements
+# enable=add-default-case
+
+# Suggest explicitly using -n in `[ $var ]`
+enable=avoid-nullary-conditions
+
+# # Warn when uppercase variables are unassigned
+# enable=check-unassigned-uppercase
+
+# # Require [[ and warn about [ in Bash/Ksh
+# enable=require-double-brackets
+
+# # Suggest putting braces around all variable references
+# enable=require-variable-braces
+
+# "Check for Useless Use Of Cat (UUOC)"
+enable=useless-use-of-cat
