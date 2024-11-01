@@ -1,3 +1,9 @@
-.vscode/settings.json
-scripts/SyncToy_*.dat
+# VS Code
+.vscode/*
+*.code-workspace
+
+# Local History for VS Code
+.history/
+
+# Free File Sync
 sync.ffs_db
