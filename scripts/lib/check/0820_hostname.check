@@ -18,22 +18,12 @@ function check_0820_hostname {
     # extract short hostname from full hostname
     short_hostname_from_full=${full_hostname%%.*}
     if [[ ${_retval} -eq 99 ]]; then
-      if [ "$short_hostname" = "$short_hostname_from_full" ]; then
-        _retval=0
-      else
-      _retval=66
-      fi
-    fi
-
-    if [[ ${_retval} -eq 0 ]]; then
-
+      if [[ "$short_hostname" == "$short_hostname_from_full" ]]; then
         logCheckOk "$short_hostname is the short hostname and part of fqdn $full_hostname (SAP Note ${sapnote:-})"
-
-    else
-
+      else
         logCheckError "Hostname setting not correct! (SAP Note ${sapnote:-})"
         _retval=2
-
+      fi
     fi
 
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
