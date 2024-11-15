@@ -4,28 +4,47 @@ function check_0820_hostname {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-    # MODIFICATION SECTION>>
     local -i _retval=99
+
+    # MODIFICATION SECTION>>
     local -r sapnote='#611361'
     # MODIFICATION SECTION<<
 
-    # import short and full hostname
-    short_hostname=$(hostname)
-    full_hostname=$(hostname -f)
+    # 611361 - Hostnames of SAP ABAP Platform servers
 
-    # CHECK
+    # PRECONDITIONS
 
-    # extract short hostname from full hostname
-    short_hostname_from_full=${full_hostname%%.*}
+    #CHECK
     if [[ ${_retval} -eq 99 ]]; then
-      if [[ "$short_hostname" == "$short_hostname_from_full" ]]; then
-        logCheckOk "$short_hostname is the short hostname and part of fqdn $full_hostname (SAP Note ${sapnote:-})"
-      else
-        logCheckError "Hostname setting not correct! (SAP Note ${sapnote:-})"
-        _retval=2
-      fi
+
+        local short_hostname
+        local full_hostname
+        local short_hostname_from_full
+
+        # import short and full hostname
+        short_hostname=$(hostname)
+        full_hostname=$(hostname -f)
+
+        # extract short hostname from full hostname
+        short_hostname_from_full=${full_hostname%%.*}
+
+        if [[ "$short_hostname" == "$short_hostname_from_full" ]] && [[ "$short_hostname" != "$full_hostname" ]]; then
+
+            logCheckOk "Short hostname and fqdn are set as recommended (SAP Note ${sapnote:-})"
+            _retval=0
+
+        else
+
+            logCheckError "Command 'hostname' must return short name (is: ${short_hostname})"
+            logCheckError "Command 'hostname -f' must return fqdn (is: ${full_hostname})"
+            logCheckError "Hostname setting NOT correct! (SAP Note ${sapnote:-})"
+            _retval=2
+
+        fi
+
     fi
 
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
     return ${_retval}
+
 }
