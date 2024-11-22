@@ -40,8 +40,6 @@ function check_0002_os_hana_support_sles_intel {
     #2235581 - SAP HANA: Supported Operating Systems
     #936887 - End of maintenance for Linux distributions
 
-    local -a _sles_matrix
-
     # PRECONDITIONS
     if ! LIB_FUNC_IS_INTEL ; then
 
@@ -57,9 +55,8 @@ function check_0002_os_hana_support_sles_intel {
 
         case "${OS_VERSION}" in
 
-        12.5 )  _sles_matrix+=("${_sles_12[@]}") ;;
-
-        15.* )  _sles_matrix+=("${_sles_15[@]}") ;;
+        12.5 )  : ;;
+        15.* )  : ;;
 
         *)
             logCheckError "SLES version is NOT supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
@@ -74,13 +71,16 @@ function check_0002_os_hana_support_sles_intel {
 
         local _platform
         local _os_bit_pattern
+        local _os_major_version
         local _os_minor_version
         local _os_supported
 
-        _os_minor_version=${OS_VERSION#*.}
-        _os_minor_version=${_os_minor_version##.*}
+        _os_major_version=${OS_VERSION%%.*}                             #del minor              12.5 --> 12
+        _os_minor_version=${OS_VERSION#*.}                              #del major              12.5 --> 5
 
-        logTrace "<${FUNCNAME[0]}> # Platform  <${LIB_PLATF_VENDOR}> - OS.major <${OS_VERSION%%.*}>"
+        logTrace "<${FUNCNAME[0]}> # Platform  <${LIB_PLATF_VENDOR}> - OS.major <${_os_major_version}>"
+
+        declare -n _sles_matrix="_sles_${_os_major_version}"    # reference bash 4.3.8
 
         # i+=2 --> every 2nd item
         for ((i=0; i < ${#_sles_matrix[@]}; i+=2)); do
