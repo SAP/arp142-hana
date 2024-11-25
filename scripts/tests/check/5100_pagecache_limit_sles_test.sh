@@ -138,10 +138,18 @@ oneTimeSetUp() {
     #shellcheck source=../../lib/check/5100_pagecache_limit_sles.check
     source "${PROGRAM_DIR}/../../lib/check/5100_pagecache_limit_sles.check"
 
+    export avoidDoubleTearDownExecution=true
+
 }
 
 oneTimeTearDown() {
-    rm -f "${PROGRAM_DIR}/mock_pagecache_limit_mb"
+
+    if ${avoidDoubleTearDownExecution:-false}; then
+
+        rm -f "${PROGRAM_DIR}/mock_pagecache_limit_mb"
+
+        unset -v avoidDoubleTearDownExecution
+    fi
 }
 
 setUp() {

@@ -186,10 +186,18 @@ oneTimeSetUp() {
     #shellcheck source=../../lib/check/2310_vm_min_free_kbytes.check
     source "${PROGRAM_DIR}/../../lib/check/2310_vm_min_free_kbytes.check"
 
+    export avoidDoubleTearDownExecution=true
+
 }
 
 oneTimeTearDown() {
-    rm -f "${PROGRAM_DIR}/mock_min_free_kbytes"
+
+    if ${avoidDoubleTearDownExecution:-false}; then
+
+        rm -f "${PROGRAM_DIR}/mock_min_free_kbytes"
+
+        unset -v avoidDoubleTearDownExecution
+    fi
 }
 
 setUp() {
