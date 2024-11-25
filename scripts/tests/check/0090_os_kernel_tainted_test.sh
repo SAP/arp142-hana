@@ -79,10 +79,19 @@ oneTimeSetUp() {
     #shellcheck source=../../lib/check/0090_os_kernel_tainted.check
     source "${PROGRAM_DIR}/../../lib/check/0090_os_kernel_tainted.check"
 
+    export avoidDoubleTearDownExecution=true
+
 }
 
 oneTimeTearDown() {
-    rm -f "${PROGRAM_DIR}/mock_kernel_tainted"
+
+    if ${avoidDoubleTearDownExecution:-false}; then
+
+        rm -f "${PROGRAM_DIR}/mock_kernel_tainted"
+
+        unset -v avoidDoubleTearDownExecution
+    fi
+
 }
 
 setUp() {
