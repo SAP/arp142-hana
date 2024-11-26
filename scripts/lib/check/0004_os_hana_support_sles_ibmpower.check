@@ -10,7 +10,7 @@ function check_0004_os_hana_support_sles_ibmpower {
     local -r platform_rx='POWER(10|9|8)'
 
     # array                 'Platform'      'maj'   '0123456' (Minor Release)
-    local -ar _sles_matrix=(\
+    local -ar _sles_matrix_onprem=(\
                             'POWER10'       '15'    '---3456'   \
                             'POWER9'        '15'    '-123456'   \
                             'POWER8'        '15'    '-123---'   \
@@ -19,7 +19,15 @@ function check_0004_os_hana_support_sles_ibmpower {
                             'POWER8'        '12'    '----45'   \
                         )
 
-    local -r sapnote='#2235581'
+    local -ar _sles_matrix_ibmcloud=(\
+                            'POWER10'       '15'    '----456'   \
+                            'POWER9'        '15'    '----456'   \
+                            'POWER10'       '12'    '------'    \
+                            'POWER9'        '12'    '-----5'    \
+                        )
+
+    local -r sapnote='#2235581,#2055470'
+    local _site='onprem'
     # MODIFICATION SECTION<<
 
     #2235581 - SAP HANA: Supported Operating Systems
@@ -46,6 +54,10 @@ function check_0004_os_hana_support_sles_ibmpower {
         logCheckError "SLES on IBM Power - BigEndian is NOT supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${LIB_PLATF_ARCHITECTURE:-})"
         _retval=2
 
+    elif LIB_FUNC_IS_CLOUD_IBM; then
+
+        _site='ibmcloud'
+
     fi
 
     # CHECK
@@ -61,9 +73,10 @@ function check_0004_os_hana_support_sles_ibmpower {
 
         _os_major_version=${OS_VERSION%%.*}                             #del minor              12.5 --> 12
         _os_minor_version=${OS_VERSION#*.}                              #del major              12.5 --> 5
-        _os_minor_version=${_os_minor_version#.*}                       #del minor subversion   (12.)2.0.1 --> 2
 
         logTrace "<${FUNCNAME[0]}> # Platform  <${LIB_PLATF_POWER_PLATFORM_BASE}> - OS.major <${_os_major_version}> - OS.minor <${_os_minor_version}>"
+
+        declare -n _sles_matrix="_sles_matrix_${_site}" # reference bash 4.3.8
 
         # i+=3 --> every 3rd item
         for ((i=0; i < ${#_sles_matrix[@]}; i+=3)); do
