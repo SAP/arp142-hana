@@ -10,15 +10,21 @@ function check_0005_os_hana_support_rhel_ibmpower {
     local -r platform_rx='POWER(10|9|8)'
 
     #                       'Platform'      'maj'  '0123456789A' (Minor Release)
-    local -ar _rhel_matrix=(\
+    local -a _rhel_matrix=(\
                             'POWER10'       '9'    '0-2-4'       \
                             'POWER10'       '8'    '----4-6-8-A' \
                             'POWER9'        '9'    '0-2-4'       \
                             'POWER9'        '8'    '----4-6-8-A' \
                             'POWER9'        '7'    '----------'  \
-                            'POWER8'        '8'    '---------'   \
+                            'POWER8'        '8'    '-----------'    \
                             'POWER8'        '7'    '---------9'  \
                             )
+    local -ar _rhel_matrix_ibmcloud=(\
+                            'POWER10'       '9'    '--2-4'          \
+                            'POWER9'        '9'    '--2-4'          \
+                            'POWER10'       '8'    '------6-8-A'    \
+                            'POWER9'        '8'    '----4-6-8-A'    \
+                        )
 
     local -r sapnote='#2235581,#2055470'
     # MODIFICATION SECTION<<
@@ -47,6 +53,11 @@ function check_0005_os_hana_support_rhel_ibmpower {
         logCheckError "RHEL on IBM Power - BigEndian is NOT supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${LIB_PLATF_ARCHITECTURE:-})"
         _retval=2
 
+    elif LIB_FUNC_IS_CLOUD_IBM; then
+
+        _rhel_matrix=()
+        _rhel_matrix=("${_rhel_matrix_ibmcloud[@]}")
+
     fi
 
     # CHECK
@@ -64,6 +75,9 @@ function check_0005_os_hana_support_rhel_ibmpower {
         _os_minor_version=${OS_VERSION#*.}                              #del major              8.4 --> 4
 
         logTrace "<${FUNCNAME[0]}> # Platform  <${LIB_PLATF_POWER_PLATFORM_BASE}> - OS.major <${_os_major_version}> - OS.minor <${_os_minor_version}>"
+
+        # https://unix.stackexchange.com/questions/60584/how-to-use-a-variable-as-part-of-an-array-name/60585#60585
+        # declare -n _rhel_matrix="_rhel_matrix_${_site}" # reference bash 4.3.8
 
         # i+=3 --> every 3rd item
         for ((i=0; i < ${#_rhel_matrix[@]}; i+=3)); do

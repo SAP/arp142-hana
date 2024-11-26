@@ -7,10 +7,12 @@ readonly PROGRAM_DIR
 #mock PREREQUISITE functions
 LIB_FUNC_IS_IBMPOWER() { return 0 ; }
 LIB_FUNC_IS_RHEL() { return 0 ; }
+LIB_FUNC_IS_CLOUD_IBM() { return "${IBMCLOUD_RC}" ; }
 
 LIB_PLATF_ARCHITECTURE=''
 LIB_PLATF_POWER_PLATFORM_BASE=''
 OS_VERSION=''
+IBMCLOUD_RC=
 
 test_bigendian_not_supported() {
 
@@ -175,6 +177,66 @@ test_rhel_not_handled() {
     assertEquals "CheckError? RC" '2' "$?"
 }
 
+test_ibmcloud_power9_rhel_not_supported() {
+
+    #arrange
+    LIB_PLATF_ARCHITECTURE='ppc64le'
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER9'
+    OS_VERSION='7.9'
+    IBMCLOUD_RC=0
+
+    #act
+    check_0005_os_hana_support_rhel_ibmpower
+
+    #assert
+    assertEquals "CheckError? RC" '2' "$?"
+}
+
+test_ibmcloud_power9_rhel_supported() {
+
+    #arrange
+    LIB_PLATF_ARCHITECTURE='ppc64le'
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER9'
+    OS_VERSION='8.10'
+    IBMCLOUD_RC=0
+
+    #act
+    check_0005_os_hana_support_rhel_ibmpower
+
+    #assert
+    assertEquals "CheckOk? RC" '0' "$?"
+}
+
+test_ibmcloud_power10_rhel_not_supported() {
+
+    #arrange
+    LIB_PLATF_ARCHITECTURE='ppc64le'
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER10'
+    OS_VERSION='7.9'
+    IBMCLOUD_RC=0
+
+    #act
+    check_0005_os_hana_support_rhel_ibmpower
+
+    #assert
+    assertEquals "CheckError? RC" '2' "$?"
+}
+
+test_ibmcloud_power10_rhel_supported() {
+
+    #arrange
+    LIB_PLATF_ARCHITECTURE='ppc64le'
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER10'
+    OS_VERSION='9.4'
+    IBMCLOUD_RC=0
+
+    #act
+    check_0005_os_hana_support_rhel_ibmpower
+
+    #assert
+    assertEquals "CheckOk? RC" '0' "$?"
+}
+
 
 oneTimeSetUp() {
 
@@ -193,6 +255,7 @@ setUp() {
     LIB_PLATF_ARCHITECTURE=
     LIB_PLATF_POWER_PLATFORM_BASE=
     OS_VERSION=
+    IBMCLOUD_RC=1
 
 }
 # tearDown
