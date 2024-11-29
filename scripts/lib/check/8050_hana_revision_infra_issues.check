@@ -60,7 +60,7 @@ function check_8050_hana_revision_infra_issues {
     # 3466826 - Savepoint Slowness With Persistent Memory or Fast Restart Option Enabled
     # 3499670 - DML Statements Adding LOBs Hanging in Thread_State Resource Load Wait
     # 2222110 - FAQ: SAP HANA Load History #12 Problem with timer thread
-    # 3435077 - Nameserver Hangs or Experiences Unexpected Shutdown by Cluster Manager
+    # 3435077 - Nameserver Hangs or Experiences Unexpected Shutdown by Cluster Manager - clockmonitor (cgroup)
     # 3434285 - Nameserver Unresponsive due to Failing Disk Polling Caused by Faulty NFS Filesystem
     # 2044468 - FAQ: SAP HANA Partitioning #43 Log
     # 3528623 - Slow in table load/reload due to load trace writing
