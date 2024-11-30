@@ -36,7 +36,7 @@ function check_0010_os_kernel_sles {
     #2205917 - SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
     #2684254 - SAP HANA DB: Recommended OS settings for SLES 15 / SLES for SAP Applications 15
 
-    local -a _rel_kernel_matrix
+    local _platform
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_SLES; then
@@ -46,11 +46,11 @@ function check_0010_os_kernel_sles {
 
     elif LIB_FUNC_IS_INTEL; then
 
-        _rel_kernel_matrix+=("${_sles_intel[@]}")
+        _platform='intel'
 
     elif LIB_FUNC_IS_IBMPOWER; then
 
-        _rel_kernel_matrix+=("${_sles_ibmpower[@]}")
+        _platform='ibmpower'
 
     else
 
@@ -69,6 +69,8 @@ function check_0010_os_kernel_sles {
 
         _kernel_curr="${OS_LEVEL}"
         LIB_FUNC_NORMALIZE_KERNELn _kernel_curr
+
+        declare -n _rel_kernel_matrix="_sles_${_platform}" # reference bash 4.3.8
 
         # i+=3 --> every 3rd item
         for ((i = 0; i < ${#_rel_kernel_matrix[@]}; i += 3)); do
