@@ -51,9 +51,10 @@ function check_0106_supported_instances_ibmcloud {
 
                         #IBM Power10 System E1080 in SMT4 mode
                         'sr2-22x2950'   \
-                        'sr2-35x3900'   'sr2-35x4450'   'sr2-40x3072'   \
-                        'sr2-64x6144'    \
+                        'sr2-35x3000'   'sr2-35x3900'   'sr2-35x4450'   'sr2-40x3072'  \
+                        'sr2-64x6144'   \
                         'sr2-80x6144'   'sr2-80x9216'   'sr2-80x12288'  'sr2-80x14400'  \
+                        'sr2-87x6000'   'sr2-87x7000'   'sr2-87x7600'
 
                         #IBM Power10 System E1080 in SMT4 mode
                         'sr2-165x30500' \
