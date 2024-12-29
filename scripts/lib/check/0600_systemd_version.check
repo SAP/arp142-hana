@@ -8,16 +8,19 @@ function check_0600_systemd_version {
 
     # <1y old package or concrete newer version listed in any note
     #https://scc.suse.com/packages?name=SUSE%20Linux%20Enterprise%20Server&version=15&arch=x86_64
+    #https://packagehub.suse.com/packages/systemd/
+
     #https://access.redhat.com/downloads/content/systemd/219-62.el7_6.17/x86_64/fd431d51/package
 
     # MODIFICATION SECTION>>
-    local -ar sles12x=( '228-150.66.4' '#2205917' )
+    local -ar sles12x=( '228-157.52.1' '#2205917' )
     local -ar sles151=( '234-150000.24.111.1' '#2684254' )
     local -ar sles153=( '246.16-150300.7.57.1' '#2684254' )
-    local -ar sles154=( '249.16-150400.8.35.5' '#2684254' )
-    local -ar rhel7=( '219-78.el7_9.7' '#2292690' )
-    local -ar rhel8=( '239-31.el8_2.10' '#2777782' )
-    local -ar rhel9=( '250-6.el9_0.1' '#3108302' )
+    local -ar sles154=( '249.17-150400.8.40.1' '#2684254' )
+    local -ar sles156=( '254.13-150600.4.5.1' '#2684254' )
+    local -ar rhel7=( '219-78.el7_9.9' '#2292690' )
+    local -ar rhel8=( '239-45.el8_4.15' '#2777782' )
+    local -ar rhel9=( '250-6.el9_0.2' '#3108302' )
     # MODIFICATION SECTION<<
 
     #2205917 SAP HANA DB: Recommended OS settings for SLES 12
@@ -37,7 +40,8 @@ function check_0600_systemd_version {
 
             15.[1-2] )  _goodversion="${sles151[0]}" ; sapnote="${sles151[1]}" ;;
             15.3)       _goodversion="${sles153[0]}" ; sapnote="${sles153[1]}" ;;
-            15.* )      _goodversion="${sles154[0]}" ; sapnote="${sles154[1]}" ;;
+            15.[4-5] )  _goodversion="${sles154[0]}" ; sapnote="${sles154[1]}" ;;
+            15.* )      _goodversion="${sles156[0]}" ; sapnote="${sles156[1]}" ;;
 
             *)      logCheckSkipped 'CHECK not applicable for SLES release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
                     _retval=3
