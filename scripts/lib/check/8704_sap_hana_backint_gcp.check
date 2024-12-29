@@ -8,12 +8,10 @@ function check_8704_sap_hana_backint_gcp {
 
     # MODIFICATION SECTION>>
     local -r sapnote='#1730932'
-    local -r backint_version_exp='1.0.33'
     # MODIFICATION SECTION<<
 
     # 1730932 - Using backup tools with Backint for HANA
     # https://cloud.google.com/solutions/sap/docs/sap-hana-backint-guide
-    # https://cloud.google.com/solutions/sap/docs/release-notes
 
     #PRECONDITION
     if ! LIB_FUNC_IS_CLOUD_GOOGLE; then
@@ -31,6 +29,7 @@ function check_8704_sap_hana_backint_gcp {
         local backint_version_curr
         local _sid
 
+
         while read -r _backint ; do
 
             _sid="${_backint:9:3}"
@@ -38,21 +37,15 @@ function check_8704_sap_hana_backint_gcp {
 
             logTrace "<${FUNCNAME[0]}> # <${_backint}> <${_sid}> <${backint_version_curr}>"
 
-            # returns 0 if equal, 1 if first is higher, 2 if second is higher
-            LIB_FUNC_COMPARE_VERSIONS "${backint_version_curr}" "${backint_version_exp}"
-            if [[ $? -eq 2 ]]; then
-                logCheckWarning "SAP HANA backint agent for ${_sid} should be upgraded (is: ${backint_version_curr}, should be: >=${backint_version_exp})"
-                _retval=1
-            else
-                logCheckOk "SAP HANA backint agent for ${_sid} is at required level (is: ${backint_version_curr})"
-            fi
+            logCheckError "SAP HANA backint agent found (is: ${_sid} - ${backint_version_curr})"
 
         done <<< "$(grep . -m1 -H /usr/sap/???/SYS/global/hdb/opt/backint/backint-gcs/VERSION.txt)"
 
-        logCheckWarning 'The Cloud Storage Backint agent for SAP HANA is deprecated,'
-        logCheckWarning 'and is replaced by the Backint feature of version 3.0 of Google Cloud Agent for SAP.'
-        logCheckWarning "GCPs SAP HANA backint agent should be migrated (SAP Note ${sapnote:-})"
-        _retval=1
+        logCheckError 'The Cloud Storage Backint agent for SAP HANA is deprecated,'
+        logCheckError 'and is replaced by the Backint feature of Google Cloud Agent for SAP'
+        logCheckError 'https://cloud.google.com/solutions/sap/docs/sap-hana-backint-guide'
+        logCheckError "GCPs SAP HANA backint agent must be migrated (SAP Note ${sapnote:-})"
+        _retval=2
 
     fi
 
