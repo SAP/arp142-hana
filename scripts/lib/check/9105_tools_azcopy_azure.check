@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+
+function check_9105_tools_azcopy_azure {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # https://github.com/Azure/azure-storage-azcopy/releases
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='2015553,2000000'
+    local -r _goodversion='10.27.1'
+    # MODIFICATION SECTION<<
+
+    # 2015553 - SAP on Microsoft Azure: Support prerequisites
+    # 2000000 - FAQ: SAP HANA Performance Optimization
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_CLOUD_MICROSOFT; then
+
+        logCheckSkipped 'Not running on Microsoft Azure. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif ! rpm -q --quiet azcopy ; then
+
+        logCheckSkipped 'Azure tool azcopy not installed. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local normalized_goodversion
+        local normalized_fullversion
+
+        local _fullversion
+        _fullversion=$(rpm -q --queryformat "%{VERSION}.%{RELEASE}" azcopy)
+
+        logCheckWarning 'azcopy is known for using large portions of the Linux page cache. It has been observed that'
+        logCheckWarning 'this has resulted in standstills and logshipping timeouts of the SAP HANA database.'
+
+        #normalize good version
+        LIB_FUNC_NORMALIZE_RPM "${_goodversion}"
+        normalized_goodversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+        #normalize full version
+        LIB_FUNC_NORMALIZE_RPM "${_fullversion}"
+        normalized_fullversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+        # returns 0 if equal, 1 if first is higher, 2 if second is higher
+        LIB_FUNC_COMPARE_VERSIONS "${normalized_fullversion}" "${normalized_goodversion}"
+
+        if [[ $? -ne 2 ]]; then
+            logCheckOk 'Azure tool azcopy version seems to be ok' "(SAP Note ${sapnote:-}) (is: ${_fullversion})"
+            _retval=0
+        else
+            logCheckWarning 'Azure tool azcopy should be updated' "(SAP Note ${sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
+            _retval=1
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
