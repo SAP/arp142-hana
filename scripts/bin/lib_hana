@@ -43,13 +43,12 @@ function __get_usr_sap_sapservices_profiles {
 
     local sapservices
 
-    if [[ -f '/usr/sap/sapservices' ]]; then
-        sapservices='/usr/sap/sapservices'
-    elif [[ -f '/usr/sap/sapservices/sapservices' ]]; then
+    sapservices='/usr/sap/sapservices'
+    if [[ -d ${sapservices} ]]; then
         sapservices='/usr/sap/sapservices/sapservices'
     fi
 
-    [[ -n ${sapservices} ]] && while read -r line ; do
+    [[ -f ${sapservices} ]] && while read -r line ; do
 
         [[ -z ${line} ]] && continue
 
