@@ -41,7 +41,15 @@ function __get_usr_sap_sapservices_profiles {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-    [[ -f /usr/sap/sapservices ]] && while read -r line ; do
+    local sapservices
+
+    if [[ -f '/usr/sap/sapservices' ]]; then
+        sapservices='/usr/sap/sapservices'
+    elif [[ -f '/usr/sap/sapservices/sapservices' ]]; then
+        sapservices='/usr/sap/sapservices/sapservices'
+    fi
+
+    [[ -n ${sapservices} ]] && while read -r line ; do
 
         [[ -z ${line} ]] && continue
 
@@ -71,7 +79,7 @@ function __get_usr_sap_sapservices_profiles {
 
         [[ -n ${sid} ]] && __get_hana_manifest_details "${sid}" "${path}"
 
-    done <<< "$(grep '^[  ]*[^#].*pf=/.*/\(SYS/profile\|profile\)/.*_HDB[0-9][0-9]_' /usr/sap/sapservices)"
+    done <<< "$(grep '^[  ]*[^#].*pf=/.*/\(SYS/profile\|profile\)/.*_HDB[0-9][0-9]_' ${sapservices})"
 
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # HANA SID List: ${HANA_SIDS[*]:-}"
 }
