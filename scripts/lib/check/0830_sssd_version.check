@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+
+function check_0830_sssd_version {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#3560673'
+    local -ar sles156=( '2.9.3-150600.3.15.1'  'bsc#1234384' )
+    local -ar rhel92=( '2.8.2-5.el9_2.5' 'RHBA-2024:4434' )
+    local -ar rhel94=( '2.9.4-6.el9_4' 'RHSA-2024:2571' )
+    # MODIFICATION SECTION<<
+
+    # https://github.com/SSSD/sssd/issues/7189 - socket leak
+
+    # bsc#1234384 - Filedescriptor leak related to getpwnam()/getpwuid() to /var/lib/sss/pipes/nss socket
+
+    # RHEL 9.2: RHBA-2024:4434
+    # * Fri May 17 2024 - 2.8.2-5.5
+    # - Resolves: RHEL-36313 - socket leak [rhel-9.2.0.z]
+
+    # RHEL 9.4: RHSA-2024:2571
+    # * Wed Mar 13 2024 - 2.9.4-3
+    # - Resolves: RHEL-22340 - socket leak
+
+    # 3560673 - SAP Host Agent Error: LOG Q0I=> NiIAccept2: accept (24: Too many open files)
+
+    local _goodversion
+
+    # PRECONDITIONS
+    if ! rpm -q --quiet sssd ; then
+
+        logCheckSkipped 'sssd not installed' "(SAP Note ${sapnote:-}). Skipping <${FUNCNAME[0]}>"
+        _retval=3
+
+    elif LIB_FUNC_IS_SLES ; then
+        case "${OS_VERSION}" in
+
+            15.6)   _goodversion="${sles156[0]}" ; sapnote="${sles156[1]}" ;;
+
+            *)      logCheckSkipped 'CHECK not applicable for SLES release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
+                    _retval=3
+                ;;
+        esac
+
+    elif LIB_FUNC_IS_RHEL ; then
+
+        case "${OS_VERSION}" in
+
+            9.2)    _goodversion="${rhel92[0]}" ; sapnote="${rhel92[1]}" ;;
+            9.4)    _goodversion="${rhel94[0]}" ; sapnote="${rhel94[1]}" ;;
+
+            *)      logCheckSkipped 'CHECK not applicable for RHEL release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
+                    _retval=3
+                ;;
+        esac
+
+
+    else
+            logCheckError "Linux distribution NOT supported (SAP Note #2235581) (is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
+            _retval=2
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local normalized_goodversion
+        local normalized_fullversion
+
+        local _fullversion
+        _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" sssd)
+
+        #normalize good version
+        LIB_FUNC_NORMALIZE_RPM "${_goodversion}"
+        normalized_goodversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+        #normalize full version - e.g. 219-19.el7_2.4
+        LIB_FUNC_NORMALIZE_RPM "${_fullversion}"
+        normalized_fullversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+
+        # returns 0 if equal, 1 if first is higher, 2 if second is higher
+        LIB_FUNC_COMPARE_VERSIONS "${normalized_fullversion}" "${normalized_goodversion}"
+
+        if [[ $? -ne 2 ]]; then
+            logCheckOk "sssd version seems to be ok (${sapnote:-}) (is: ${_fullversion})"
+            _retval=0
+        else
+            logCheckError "sssd must be updated (${sapnote:-}) (is: ${_fullversion}, should be: >=${_goodversion})"
+            _retval=2
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}

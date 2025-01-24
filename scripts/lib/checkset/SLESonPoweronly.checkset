@@ -22,6 +22,7 @@
 0810_uuidd_service
 0811_uuidd_version
 0820_hostname
+0830_sssd_version
 1200_shared_processor_mode_ibmpower
 1230_cpu_distribution_virt
 1260_cpu_smthreading_ibmpower
