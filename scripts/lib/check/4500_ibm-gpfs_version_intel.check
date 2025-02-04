@@ -49,7 +49,6 @@ function check_4500_ibm-gpfs_version_intel {
         case "${OS_VERSION}" in
 
             12.* | 15.1 )           _goodversion=${_goodversion51} ;;
-            15.2 )                  _goodversion=${_goodversion51n} ;;
             *)                      _goodversion=${_goodversion51nn} ;;
 
         esac
