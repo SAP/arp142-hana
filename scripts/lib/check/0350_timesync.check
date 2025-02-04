@@ -15,7 +15,6 @@ function check_0350_timesync {
     #2009879 - SAP HANA Guidelines for Red Hat Enterprise Linux (RHEL) Operating System
 
     local sapnote
-    local cmdline='systemctl'
 
     # PRECONDITION
     if LIB_FUNC_IS_SLES ; then
@@ -26,8 +25,6 @@ function check_0350_timesync {
 
         sapnote="${sapnote_rhel}"
 
-        [[ "${OS_VERSION}" == '6.'* ]] && cmdline='systemd'
-
     else
 
         logCheckError "Linux distribution NOT supported (SAP Note #2235581) (is: ${OS_NAME} ${OS_VERSION}) - <${FUNCNAME[0]}>"
@@ -37,32 +34,15 @@ function check_0350_timesync {
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-        if [[ ${cmdline} == 'systemd' ]]; then
+        if systemctl is-active "ntpd" --quiet; then
+            _retval=0
 
-            local cmdline_ntp='service ntp status &>/dev/null'
-            local cmdline_ntpd='service ntpd status &>/dev/null'
+        elif systemctl is-active "chronyd" --quiet; then
+            _retval=0
 
-            if eval "${cmdline_ntp}"; then
-                _retval=0
-
-            elif eval "${cmdline_ntpd}"; then
-                _retval=0
-
-            fi
-
-        else
-
-            if systemctl is-active "ntpd" --quiet; then
-                _retval=0
-
-            elif systemctl is-active "chronyd" --quiet; then
-                _retval=0
-
-            elif  systemctl is-active "vmtoolsd" --quiet; then
-                if  vmware-toolbox-cmd timesync status &>/dev/null; then
-                _retval=66
-                fi
-
+        elif  systemctl is-active "vmtoolsd" --quiet; then
+            if  vmware-toolbox-cmd timesync status &>/dev/null; then
+            _retval=66
             fi
 
         fi
