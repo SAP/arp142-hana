@@ -75,7 +75,7 @@ test_rpm_ok_sles152() {
 
     #arrange
     rpm_rc=0
-    OS_VERSION='15.2'       #test against 15.2
+    OS_VERSION='15.3'       #test against 15.3
     compare_version_rc=1
 
     #act
