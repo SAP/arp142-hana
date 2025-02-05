@@ -11,13 +11,13 @@ function check_0450_tunedprofiles-saphana_rhel {
 
     # MODIFICATION SECTION>>
     local -ar rhel79=( '2.11.0-12.el7_9.0'  '#2292690' )
-    local -ar rhel84=( '2.15.0-2.el8_4.2'   '#2777782' )
-    local -ar rhel86=( '2.18.0-2.el8_6.1'   '#2777782' )
-    local -ar rhel88=( '2.20.0-1.el8'       '#2777782' )
-    local -ar rhel8A=( '2.22.1-4.el8'       '#2777782' )
-    local -ar rhel90=( '2.20.0-1.el9'       '#3108302' )
-    local -ar rhel92=( '2.20.0-1.el9'       '#3108302' )
-    local -ar rhel94=( '2.22.1-1.4.el9'     '#3108302' )
+    local -ar rhel84=( '2.20.0-1.el8_4.2'   '#2777782' )
+    local -ar rhel86=( '2.20.0-1.el8_6.2'   '#2777782' )
+    local -ar rhel88=( '2.20.0-2.el8_8.1'   '#2777782' )
+    local -ar rhel8A=( '2.22.1-5.el8'       '#2777782' )
+    local -ar rhel90=( '2.24.0-1.el9'       '#3108302' )
+    local -ar rhel92=( '2.24.0-1.el9'       '#3108302' )
+    local -ar rhel94=( '2.24.0-1.el9'       '#3108302' )
     # MODIFICATION SECTION<<
 
     # 2292690 - SAP HANA DB: Recommended OS settings for RHEL 7
