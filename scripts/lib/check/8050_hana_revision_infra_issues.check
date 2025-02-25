@@ -8,7 +8,7 @@ function check_8050_hana_revision_infra_issues {
 
     # MODIFICATION SECTION>>
     # array             'SPSP'  'lower bound'    'upper bound'  'SAP Note'  'Description'
-    local -ar _hana_all=(\
+    local -a _hana_all=(\
                         '5'     '2.00.056.00'    '2.00.059.06'  '3312868'  'Script hdbenv.sh takes a long time to complete'     \
                         '6'     '2.00.060.00'    '2.00.065.00'  '3312868'  'Script hdbenv.sh takes a long time to complete'     \
 
@@ -52,6 +52,10 @@ function check_8050_hana_revision_infra_issues {
 
                         )
 
+    local -ar _hana_ibmpower=(\
+                        '8'     '2.00.080.00'    '2.00.082.00'  '3573023'  'HANA DB Sessions Remain in Status Running (Cancel Requested)'   \
+                        )
+
     local sapnote=''
     # MODIFICATION SECTION<<
 
@@ -66,12 +70,17 @@ function check_8050_hana_revision_infra_issues {
     # 3528623 - Slow in table load/reload due to load trace writing
     # 3343278 - HANA Nameserver is Unresponsive due to blocked Asynchronous Requests
     # 3366673 - landscapeHostConfiguration.py fails with Python runtime error "can't start new thread"
+    # 3573023 - HANA DB Sessions Remain in Status Running (Cancel Requested)
 
     # PRECONDITIONS
     if [[ ${#HANA_SIDS[@]} -eq 0 ]]; then
 
         logCheckSkipped 'No SAP HANA instance found. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
+
+    elif LIB_FUNC_IS_IBMPOWER; then
+
+        _hana_all+=("${_hana_ibmpower[@]}")
 
     fi
 
