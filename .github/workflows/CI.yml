@@ -37,7 +37,7 @@ jobs:
           chmod 744 shfmt
         env:
           SHELLCHECK_VERSION: stable #stable,latest,v0.4.7
-          SHFMT_VERSION: v3.8.0
+          SHFMT_VERSION: v3.11.0
 
       # Runs a set of commands using the runners shell
       - name: Syntax checking BIN
