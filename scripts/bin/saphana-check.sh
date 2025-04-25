@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 umask 0027
-set -u # treat unset variables as an error
+set -uo pipefail
 
 #------------------------------------------------------------------
 # SAP HANA OS checks
