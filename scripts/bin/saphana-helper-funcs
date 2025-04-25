@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 umask 0027
+set -uo pipefail
 
 #------------------------------------------------------------------
 # SAP HANA OS checks - Library Functions
