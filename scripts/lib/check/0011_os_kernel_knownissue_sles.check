@@ -31,6 +31,7 @@ function check_0011_os_kernel_knownissue_sles {
                         '15.5' '5.14.21-150500.55.22.1'     '5.14.21-150500.55.22.1'    '#retracted' \
                         '15.5' '5.14.21-150500.53.2'        '5.14.21-150500.55.44.0'    '#SUSE bsc#1215885' \
                         '15.5' '5.14.21-150500.53.2'        '5.14.21-150500.55.94.0'    '#3577518' \
+                        '15.5' '5.14.21-150500.55.19.1'     '5.14.21-150500.55.91.0'    'SUSE bsc#1231923' \
                         )
 
     # local -ar _sles_4sap=(\
@@ -84,7 +85,9 @@ function check_0011_os_kernel_knownissue_sles {
 
     #3415906 - Could Not Query From SYS.M_SERVICE_MEMORY_ (clock_gettime @ IBM Power - hanging HANA callstacks)
 
-    ##bsc#1231847-NFS - 3577518 - NFS Performance Issues
+    #bsc#1231847-NFS - 3577518 - NFS Performance Issues
+    #bsc#1231923 block: Avoid leaking hctx->nr_active counter on batched completion (Slow IO) (SUSE-SU-2024:4364-1)
+
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_SLES; then
