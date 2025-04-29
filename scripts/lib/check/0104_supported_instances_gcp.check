@@ -21,8 +21,8 @@ function check_0104_supported_instances_gcp {
                         'm2-hypermem-416'   \
                         'm3-ultramem-32'    'm3-ultramem-64'    'm3-ultramem-128'   \
                         'm3-megamem-64'     'm3-megamem-128'    \
-                        'm4-megamem-56'     'm4-megamem-112'    'm4-megamem-224'    \
-                        'm4-ultramem-56'    'm4-ultramem-112'   \
+                        'm4-megamem-28'     'm4-megamem-56'     'm4-megamem-112'    'm4-megamem-224'    \
+                        'm4-ultramem-56'    'm4-ultramem-112'   'm4-ultramem-224'   \
                         )
 
     # array             'Instance Type'
