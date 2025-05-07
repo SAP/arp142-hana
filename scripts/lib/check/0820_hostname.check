@@ -22,8 +22,9 @@ function check_0820_hostname {
         local short_hostname_from_full
 
         # import short and full hostname
-        short_hostname=$(hostname)
-        full_hostname=$(hostname -f)
+        short_hostname=$(hostname | tr '[:upper:]' '[:lower:]')
+        full_hostname=$(hostname -f | tr '[:upper:]' '[:lower:]')
+
 
         # extract short hostname from full hostname
         short_hostname_from_full=${full_hostname%%.*}
