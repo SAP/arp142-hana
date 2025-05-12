@@ -17,13 +17,13 @@ function check_0820_hostname {
     #CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-        local short_hostname
-        local full_hostname
+        local -l short_hostname
+        local -l full_hostname
         local short_hostname_from_full
 
         # import short and full hostname
-        short_hostname=$(hostname | tr '[:upper:]' '[:lower:]')
-        full_hostname=$(hostname -f | tr '[:upper:]' '[:lower:]')
+        short_hostname=$(hostname)
+        full_hostname=$(hostname -f)
 
         # extract short hostname from full hostname
         short_hostname_from_full=${full_hostname%%.*}
