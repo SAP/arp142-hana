@@ -51,9 +51,7 @@ function check_0011_os_kernel_knownissue_sles {
                         )
 
     local -ar _sles_ibmpower=(\
-                        '15.5' '5.14.21-150500.53.2'    '5.14.21-150500.55.36.0'    '#3415906' \
-                        '15.4' '5.14.21-150400.22.1'    '5.14.21-150400.24.97.0'    '#3415906' \
-                        '15.4' '5.14.21-150400.22.1'    '5.14.21-150400.24.11.0'    '#bsc#1199173' \
+                        '15.4' '5.14.21-150400.22.1'    '5.14.21-150400.24.11.0'    '#3415906' \
                         '12.5' '4.12.14-120.1'          '4.12.14-122.116.0'         '#3165100,3159746' \
                         )
     # MODIFICATION SECTION<<
@@ -77,13 +75,13 @@ function check_0011_os_kernel_knownissue_sles {
 
     #3323613 - Azure - Linux OS Crash due to large number of disable/enable requests for VMs using Accelerated Networking
     #1928533 - SAP Applications on Microsoft Azure: Supported Products and Azure VM types - M832ixs_v2
-    #bsc#1199173 - powerpc/vdso: Fix incorrect CFI in gettimeofday.S
 
     #https://www.suse.com/support/kb/doc/?id=000019587
 
     #SUSE TID 000021453 - Database corruption after updating to kernel-default-4.12.14-122.212
 
     #3415906 - Could Not Query From SYS.M_SERVICE_MEMORY_ (clock_gettime @ IBM Power - hanging HANA callstacks)
+    #bsc#1199173 - powerpc/vdso: Fix incorrect CFI in gettimeofday.S
 
     #bsc#1231847-NFS - 3577518 - NFS Performance Issues
     #bsc#1231923 block: Avoid leaking hctx->nr_active counter on batched completion (Slow IO) (SUSE-SU-2024:4364-1)
