@@ -31,7 +31,8 @@ function check_0011_os_kernel_knownissue_sles {
                         '15.5' '5.14.21-150500.55.22.1'     '5.14.21-150500.55.22.1'    '#retracted' \
                         '15.5' '5.14.21-150500.53.2'        '5.14.21-150500.55.44.0'    '#SUSE bsc#1215885' \
                         '15.5' '5.14.21-150500.53.2'        '5.14.21-150500.55.94.0'    '#3577518' \
-                        '15.5' '5.14.21-150500.55.19.1'     '5.14.21-150500.55.91.0'    'SUSE bsc#1231923' \
+                        '15.5' '5.14.21-150500.55.19.1'     '5.14.21-150500.55.88.0'    'SUSE bsc#1231923' \
+                        '15.5' '5.14.21-150500.53.2'        '5.14.21-150500.55.97.0'    'SUSE bsc#1236289' \
                         )
 
     # local -ar _sles_4sap=(\
@@ -43,6 +44,8 @@ function check_0011_os_kernel_knownissue_sles {
     #                     )
 
     local -ar _sles_azure=(\
+                        '15.6' '6.4.0-150600.21.3'      '6.4.0-150600.23.30.0'      'SUSE bsc#1229891' \
+                        '15.5' '5.14.21-150500.53.2'    '5.14.21-150500.55.88.0'    'SUSE bsc#1229891' \
                         '15.5' '5.14.21-150500.53.2'    '5.14.21-150500.55.7.0'     '#3323613' \
                         '15.4' '5.14.21-150400.22.1'    '5.14.21-150400.24.60.0'    '#3323613' \
                         '15.4' '5.14.21-150400.22.1'    '5.14.21-150400.24.55.0'    '#1928533, M832ixs_v2 only' \
@@ -86,6 +89,10 @@ function check_0011_os_kernel_knownissue_sles {
     #bsc#1231847-NFS - 3577518 - NFS Performance Issues
     #bsc#1231923 block: Avoid leaking hctx->nr_active counter on batched completion (Slow IO) (SUSE-SU-2024:4364-1)
 
+    #bsc#1229891 - d25084e33a37    net: mana: Implement get_ringparam/set_ringparam for mana
+    ##(SUSE-SU-2024:4364-1, SUSE-SU-2024:4318-1)
+
+    #bsc#1236289 - /proc/cpuinfo (SUSE-SU-2025:0833-2)
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_SLES; then
