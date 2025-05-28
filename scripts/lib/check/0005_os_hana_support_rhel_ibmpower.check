@@ -16,8 +16,6 @@ function check_0005_os_hana_support_rhel_ibmpower {
                             'POWER9'        '9'    '0-2-4'       \
                             'POWER9'        '8'    '----4-6-8-A' \
                             'POWER9'        '7'    '----------'  \
-                            'POWER8'        '8'    '-----------'    \
-                            'POWER8'        '7'    '---------9'  \
                             )
     local -ar _rhel_matrix_ibmcloud=(\
                             'POWER10'       '9'    '--2-4'          \
@@ -31,6 +29,7 @@ function check_0005_os_hana_support_rhel_ibmpower {
 
     #2235581 - SAP HANA: Supported Operating Systems
     #2055470 - HANA on POWER Planning and Installation Specifics - Central Note
+    #2947579 - SAP HANA on IBM Power Virtual Servers
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_IBMPOWER ; then

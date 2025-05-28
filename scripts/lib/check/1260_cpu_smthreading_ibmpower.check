@@ -14,8 +14,6 @@ function check_1260_cpu_smthreading_ibmpower {
                             'POWER10'       '0'     '4'     \
                             'POWER9'        '96'    '4-8'   \
                             'POWER9'        '0'     '4-8'   \
-                            'POWER8'        '96'    '4'     \
-                            'POWER8'        '0'     '4-8'   \
                         )
     # MODIFICATION SECTION<<
 
