@@ -27,17 +27,6 @@ function check_0120_supported_powersystems_ibmpower {
                         '9008-22L'  'L922'  \
                         '9040-MR9'  'E950'  \
                         '9080-M9S'  'E980'  \
-                        #POWER8
-                        '8284-22A'  'S822'  \
-                        '8247-22L'  'S822L' \
-                        '8286-42A'  'S824'  \
-                        '8247-42L'  'S824L' \
-                        '8408-E8E'  'E850'  \
-                        '8408-44E'  'E850C' \
-                        '9119-MME'  'E870'  \
-                        '9080-MME'  'E870C' \
-                        '9119-MHE'  'E880'  \
-                        '9080-MHE'  'E880C' \
                         )
 
     local -r sapnote='#2188482'

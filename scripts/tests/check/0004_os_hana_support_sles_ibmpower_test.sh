@@ -55,7 +55,7 @@ test_power7_littleendian_sles_not_supported() {
     assertEquals "CheckError? RC" '2' "$?"
 }
 
-test_power8_littleendian_sles_supported() {
+test_power8_littleendian_sles_not_supported() {
 
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
@@ -66,7 +66,7 @@ test_power8_littleendian_sles_supported() {
     check_0004_os_hana_support_sles_ibmpower
 
     #assert
-    assertEquals "CheckOk? RC" '0' "$?"
+    assertEquals "CheckError? RC" '2' "$?"
 }
 
 test_power9_littleendian_sles_not_supported() {

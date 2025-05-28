@@ -69,66 +69,6 @@ test_powerX_nothandled_error() {
     assertEquals "CheckError? RC" '2' "$?"
 }
 
-test_power8_corestotallow_smt4_ok() {
-
-    #arrange
-    LIB_PLATF_POWER_PLATFORM_BASE='POWER8'
-    LIB_PLATF_CPU_SOCKETS=8
-    LIB_PLATF_CPU_CORESPERSOCKET=10
-    LIB_PLATF_CPU_THREADSPERCORE=4
-
-    #act
-    check_1260_cpu_smthreading_ibmpower
-
-    #assert
-    assertEquals "CheckOk? RC" '0' "$?"
-}
-
-test_power8_corestotalhigh_smt4_ok() {
-
-    #arrange
-    LIB_PLATF_POWER_PLATFORM_BASE='POWER9'
-    LIB_PLATF_CPU_SOCKETS=8
-    LIB_PLATF_CPU_CORESPERSOCKET=12
-    LIB_PLATF_CPU_THREADSPERCORE=4
-
-    #act
-    check_1260_cpu_smthreading_ibmpower
-
-    #assert
-    assertEquals "CheckOk? RC" '0' "$?"
-}
-
-test_power8_corestotallow_smt8_ok() {
-
-    #arrange
-    LIB_PLATF_POWER_PLATFORM_BASE='POWER8'
-    LIB_PLATF_CPU_SOCKETS=8
-    LIB_PLATF_CPU_CORESPERSOCKET=10
-    LIB_PLATF_CPU_THREADSPERCORE=8
-
-    #act
-    check_1260_cpu_smthreading_ibmpower
-
-    #assert
-    assertEquals "CheckOk? RC" '0' "$?"
-}
-
-test_power8_corestotalhigh_smt8_warning() {
-
-    #arrange
-    LIB_PLATF_POWER_PLATFORM_BASE='POWER8'
-    LIB_PLATF_CPU_SOCKETS=8
-    LIB_PLATF_CPU_CORESPERSOCKET=12
-    LIB_PLATF_CPU_THREADSPERCORE=8
-
-    #act
-    check_1260_cpu_smthreading_ibmpower
-
-    #assert
-    assertEquals "CheckWarn? RC" '1' "$?"
-}
-
 test_power9_corestotallow_smt4_ok() {
 
     #arrange

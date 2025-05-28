@@ -81,7 +81,7 @@ function check_1310_cpu_powersavings_ibmpower {
 
             fi
 
-        elif [[ "${LIB_PLATF_POWER_PLATFORM_BASE:-}" =~ POWER8 ]]; then
+        else
 
             if [[ "${pwr_system_mode}" =~ ^(0001|0002)$ ]]; then
 
@@ -91,20 +91,6 @@ function check_1310_cpu_powersavings_ibmpower {
             else
 
                 logCheckError "Power Savings Mode NOT set as recommended (SAP Note ${sapnote:-}) (is: ${pwr_system_txt}, should be: None, *Perf mode)"
-                _retval=2
-
-            fi
-
-        else
-
-            if [[ "${pwr_system_mode}" == '0002' ]]; then
-
-                logCheckOk "Power Savings Mode set as recommended (SAP Note ${sapnote:-}) (is: None)"
-                _retval=0
-
-            else
-
-                logCheckError "Power Savings Mode NOT set as recommended (SAP Note ${sapnote:-}) (is: ${pwr_system_txt}, should be: None)"
                 _retval=2
 
             fi

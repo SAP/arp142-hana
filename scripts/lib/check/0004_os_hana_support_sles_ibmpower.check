@@ -13,10 +13,8 @@ function check_0004_os_hana_support_sles_ibmpower {
     local -ar _sles_matrix_onprem=(\
                             'POWER10'       '15'    '---3456'   \
                             'POWER9'        '15'    '-123456'   \
-                            'POWER8'        '15'    '-123---'   \
-                            'POWER10'       '12'    '------'   \
-                            'POWER9'        '12'    '----45'   \
-                            'POWER8'        '12'    '----45'   \
+                            'POWER10'       '12'    '------'    \
+                            'POWER9'        '12'    '----45'    \
                         )
 
     local -ar _sles_matrix_ibmcloud=(\
