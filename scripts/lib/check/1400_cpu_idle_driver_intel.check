@@ -62,6 +62,10 @@ function check_1400_cpu_idle_driver_intel {
                 LIB_FUNC_IS_RHEL && sapnote="${sapnote_kvm_rhel}"
             fi
 
+        elif LIB_FUNC_IS_VIRT_VMWARE; then
+
+            expected_driver='none'
+
         fi
     fi
 
