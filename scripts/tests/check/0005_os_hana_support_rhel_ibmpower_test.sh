@@ -99,7 +99,7 @@ test_power10_rhel_supported() {
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
     LIB_PLATF_POWER_PLATFORM_BASE='POWER10'
-    OS_VERSION='8.4'
+    OS_VERSION='8.10'
 
     #act
     check_0005_os_hana_support_rhel_ibmpower
