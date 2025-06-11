@@ -5,7 +5,8 @@ PROGRAM_DIR="$( cd "${BASH_SOURCE[0]%/*}" && pwd )"
 readonly PROGRAM_DIR
 
 #fake PREREQUISITE functions
-LIB_FUNC_IS_RHEL() { return 0 ; }
+LIB_FUNC_IS_RHEL() { return 1 ; }
+LIB_FUNC_IS_SLES() { return 0 ; }
 
 # still to mock for tests
 OS_VERSION=''
@@ -76,7 +77,7 @@ test_mfkb_minimum_mem128G_ok() {
 test_mfkb_oldlimit_mem259G_ok() {
 
     #arrange
-    OS_VERSION='7.7'
+    OS_VERSION='15.3'
     path_to_min_free_kbytes="${PROGRAM_DIR}/mock_min_free_kbytes"
     echo 65536 > "${path_to_min_free_kbytes}"
     LIB_PLATF_RAM_MiB_AVAILABLE=265216
@@ -91,7 +92,7 @@ test_mfkb_oldlimit_mem259G_ok() {
 test_mfkb_oldlimit_mem259G_toolow() {
 
     #arrange
-    OS_VERSION='7.7'
+    OS_VERSION='15.3'
     path_to_min_free_kbytes="${PROGRAM_DIR}/mock_min_free_kbytes"
     echo 65000 > "${path_to_min_free_kbytes}"
     LIB_PLATF_RAM_MiB_AVAILABLE=265216
@@ -106,7 +107,7 @@ test_mfkb_oldlimit_mem259G_toolow() {
 test_mfkb_oldlimit_mem4139G_ok() {
 
     #arrange
-    OS_VERSION='7.7'
+    OS_VERSION='15.3'
     path_to_min_free_kbytes="${PROGRAM_DIR}/mock_min_free_kbytes"
     echo 65536 > "${path_to_min_free_kbytes}"
     LIB_PLATF_RAM_MiB_AVAILABLE=4238336
@@ -121,7 +122,7 @@ test_mfkb_oldlimit_mem4139G_ok() {
 test_mfkb_newlimit_mem259G_ok() {
 
     #arrange
-    OS_VERSION='8.10'
+    OS_VERSION='15.6'
     path_to_min_free_kbytes="${PROGRAM_DIR}/mock_min_free_kbytes"
     echo 65536 > "${path_to_min_free_kbytes}"
     LIB_PLATF_RAM_MiB_AVAILABLE=265216
@@ -136,7 +137,7 @@ test_mfkb_newlimit_mem259G_ok() {
 test_mfkb_newlimit_mem259G_toolow() {
 
     #arrange
-    OS_VERSION='8.10'
+    OS_VERSION='15.6'
     path_to_min_free_kbytes="${PROGRAM_DIR}/mock_min_free_kbytes"
     echo 65000 > "${path_to_min_free_kbytes}"
     LIB_PLATF_RAM_MiB_AVAILABLE=265216
@@ -151,7 +152,7 @@ test_mfkb_newlimit_mem259G_toolow() {
 test_mfkb_newlimit_mem4139G_ok() {
 
     #arrange
-    OS_VERSION='8.10'
+    OS_VERSION='15.6'
     path_to_min_free_kbytes="${PROGRAM_DIR}/mock_min_free_kbytes"
     echo 262144 > "${path_to_min_free_kbytes}"
     LIB_PLATF_RAM_MiB_AVAILABLE=4238336
@@ -166,7 +167,7 @@ test_mfkb_newlimit_mem4139G_ok() {
 test_mfkb_newlimit_mem4139G_toolow() {
 
     #arrange
-    OS_VERSION='8.10'
+    OS_VERSION='15.6'
     path_to_min_free_kbytes="${PROGRAM_DIR}/mock_min_free_kbytes"
     echo 262100 > "${path_to_min_free_kbytes}"
     LIB_PLATF_RAM_MiB_AVAILABLE=4238336
