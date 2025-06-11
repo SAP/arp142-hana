@@ -35,7 +35,7 @@ test_rhel_not_supported() {
 test_rhel_supported_kernel_tolow() {
 
     #arrange
-    OS_VERSION='8.4'
+    OS_VERSION='8.10'
     COMPARE_VERSIONS_RC=2
 
     #act
@@ -48,7 +48,7 @@ test_rhel_supported_kernel_tolow() {
 test_rhel_supported_kernel_ok() {
 
     #arrange
-    OS_VERSION='8.4'
+    OS_VERSION='8.10'
     COMPARE_VERSIONS_RC=1
 
     #act

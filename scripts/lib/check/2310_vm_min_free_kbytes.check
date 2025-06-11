@@ -38,17 +38,6 @@ function check_2310_vm_min_free_kbytes {
         logCheckSkipped "Parameter vm.min_free_kbytes not readable (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif LIB_FUNC_IS_RHEL; then
-
-        case "${OS_VERSION}" in
-
-        7.[0-8] | 8.[0-3])
-            _kmax_mfkbytes="${_kmax_mfkbytes_old}" ;;
-
-        *) : ;;
-
-        esac
-
     elif LIB_FUNC_IS_SLES; then
 
         case "${OS_VERSION}" in

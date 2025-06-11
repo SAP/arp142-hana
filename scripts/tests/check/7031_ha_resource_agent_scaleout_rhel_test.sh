@@ -60,7 +60,7 @@ test_rpm_old() {
 
     #arrange
     rpm_rc=0
-    OS_VERSION='8.4'
+    OS_VERSION='8.10'
     compare_version_rc=2
 
     #act

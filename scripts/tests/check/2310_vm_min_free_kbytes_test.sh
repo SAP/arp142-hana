@@ -121,7 +121,7 @@ test_mfkb_oldlimit_mem4139G_ok() {
 test_mfkb_newlimit_mem259G_ok() {
 
     #arrange
-    OS_VERSION='8.4'
+    OS_VERSION='8.10'
     path_to_min_free_kbytes="${PROGRAM_DIR}/mock_min_free_kbytes"
     echo 65536 > "${path_to_min_free_kbytes}"
     LIB_PLATF_RAM_MiB_AVAILABLE=265216
@@ -136,7 +136,7 @@ test_mfkb_newlimit_mem259G_ok() {
 test_mfkb_newlimit_mem259G_toolow() {
 
     #arrange
-    OS_VERSION='8.4'
+    OS_VERSION='8.10'
     path_to_min_free_kbytes="${PROGRAM_DIR}/mock_min_free_kbytes"
     echo 65000 > "${path_to_min_free_kbytes}"
     LIB_PLATF_RAM_MiB_AVAILABLE=265216
@@ -151,7 +151,7 @@ test_mfkb_newlimit_mem259G_toolow() {
 test_mfkb_newlimit_mem4139G_ok() {
 
     #arrange
-    OS_VERSION='8.4'
+    OS_VERSION='8.10'
     path_to_min_free_kbytes="${PROGRAM_DIR}/mock_min_free_kbytes"
     echo 262144 > "${path_to_min_free_kbytes}"
     LIB_PLATF_RAM_MiB_AVAILABLE=4238336
@@ -166,7 +166,7 @@ test_mfkb_newlimit_mem4139G_ok() {
 test_mfkb_newlimit_mem4139G_toolow() {
 
     #arrange
-    OS_VERSION='8.4'
+    OS_VERSION='8.10'
     path_to_min_free_kbytes="${PROGRAM_DIR}/mock_min_free_kbytes"
     echo 262100 > "${path_to_min_free_kbytes}"
     LIB_PLATF_RAM_MiB_AVAILABLE=4238336
