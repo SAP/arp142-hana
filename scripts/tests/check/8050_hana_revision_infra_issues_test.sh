@@ -5,6 +5,8 @@ PROGRAM_DIR="$( cd "${BASH_SOURCE[0]%/*}" && pwd )"
 readonly PROGRAM_DIR
 
 #mock PREREQUISITE functions
+LIB_FUNC_IS_INTEL() { return 0 ; }
+
 function LIB_FUNC_COMPARE_VERSIONS {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
