@@ -50,6 +50,8 @@ function check_8050_hana_revision_infra_issues {
                         '6'     '2.00.060.00'    '2.00.067.03'  '3366673'  'landscapeHostConfiguration.py fails with Python runtime (spawn)'   \
                         '7'     '2.00.070.00'    '2.00.073.00'  '3366673'  'landscapeHostConfiguration.py fails with Python runtime (spawn)'   \
 
+                        '7'     '2.00.070.00'    '2.00.079.04'  '3608008'  'CPU Spikes and Blocked Savepoints ... on Exhausted TMPFS (NVM-FRO)' \
+                        '8'     '2.00.080.00'    '2.00.085.00'  '3608008'  'CPU Spikes and Blocked Savepoints ... on Exhausted TMPFS (NVM-FRO)' \
                         )
 
     local -ar _hana_intel=(\
@@ -77,6 +79,7 @@ function check_8050_hana_revision_infra_issues {
     # 3366673 - landscapeHostConfiguration.py fails with Python runtime error "can't start new thread"
     # 3573023 - HANA DB Sessions Remain in Status Running (Cancel Requested)
     # 3610237 - Indexserver Crash at PageAccess::LogicalPageControlBlock::notifyPotentialReusable
+    # 3608008 - CPU Spikes and Blocked Savepoints Due to Expensive Fallocate() Syscalls on Exhausted TMPFS (NVM-FRO
 
     # PRECONDITIONS
     if [[ ${#HANA_SIDS[@]} -eq 0 ]]; then
