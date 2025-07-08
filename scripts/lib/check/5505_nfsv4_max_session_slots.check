@@ -11,13 +11,17 @@ function check_5505_nfsv4_max_session_slots {
     # MODIFICATION SECTION>>
     local -r sapnote='#3024346'
 
-    local -i _reco_max_slots=180
+    local -i _reco_max_slots=256            # nconnect = 4 (HANA DATA) * 64
+    local -ir _reco_max_slots_azure=180
+    local -ir _reco_max_slots_amazon=180
     # MODIFICATION SECTION<<
 
-    # NFS in NetApp ONTAP Best practice and implementation guide https://www.netapp.com/media/10720-tr-4067.pdf
+    # 3024346 - Linux Kernel Settings for NetApp NFS
+    # https://docs.netapp.com/us-en/netapp-solutions-sap/bp/hana-fas-nfs-host-setup.html#mount-file-systems
+    # https://docs.netapp.com/us-en/netapp-solutions-sap/bp/hana-aff-nfs-host-setup.html#mount-file-systems
+
     # https://docs.microsoft.com/en-us/azure/azure-netapp-files/performance-linux-concurrency-session-slots#nfsv41
     # https://docs.aws.amazon.com/sap/latest/sap-hana/fsx-host-scaleup.html#linux-setup-scaleup
-    # 3024346 - Linux Kernel Settings for NetApp NFS
 
     local _max_slots_parameter
 
@@ -31,6 +35,14 @@ function check_5505_nfsv4_max_session_slots {
 
         logCheckWarning "nfs parameter max_session_slots is not available (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
         _retval=1
+
+    elif LIB_FUNC_IS_CLOUD_MICROSOFT; then
+
+        _reco_max_slots=${_reco_max_slots_azure}
+
+    elif LIB_FUNC_IS_CLOUD_AMAZON; then
+
+        _reco_max_slots=${_reco_max_slots_amazon}
 
     fi
 
@@ -48,7 +60,7 @@ function check_5505_nfsv4_max_session_slots {
 
         if [[ ${_curr_max_slots} -lt ${_reco_max_slots} ]]; then
 
-            logCheckWarning "nfs parameter max_session_slots NOT set as recommended (SAP Note ${sapnote:-}) (is: ${_curr_max_slots}, should be: ${_reco_max_slots})"
+            logCheckWarning "nfs parameter max_session_slots NOT set as recommended (SAP Note ${sapnote:-}) (is: ${_curr_max_slots}, should be: >=${_reco_max_slots})"
             _retval=1
 
         else
