@@ -1,0 +1,121 @@
+#!/usr/bin/env bash
+
+function check_2050_memory_protection {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # https://documentation.suse.com/sles-sap/15-SP5/html/SLES-SAP-guide/cha-memory-protection.html
+
+    # MODIFICATION SECTION>>
+    local -r sapnote_sles15='#2684254'
+    local -r sapnote_rhel8='#2777782'
+    local -r sapnote_rhel9='#3108302'
+    # MODIFICATION SECTION<<
+
+    #2684254 - SAP HANA DB: Recommended OS settings for SLES 15 / SLES for SAP Applications 15
+    #2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
+    #3108302 - SAP HANA DB: Recommended OS Settings for RHEL 9
+
+    local sapnote
+
+    # PRECONDITIONS
+    if LIB_FUNC_IS_SLES ; then
+
+        case "${OS_VERSION}" in
+
+            12.*)   logCheckSkipped 'CHECK not applicable for SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                    _retval=3 ;;
+
+            15.*)   : "${sapnote_sles15}" ;;
+
+            *)      logCheckWarning 'CHECK does not support SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                    _retval=1 ;;
+
+        esac
+
+        sapnote="$_"
+
+    elif LIB_FUNC_IS_RHEL ; then
+
+        case "${OS_VERSION}" in
+
+            7.*)    logCheckSkipped 'CHECK not applicable for RHEL release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                    _retval=3 ;;
+
+            8.*)    : "${sapnote_rhel8}" ;;
+            9.*)    : "${sapnote_rhel9}" ;;
+
+            *)      logCheckWarning 'CHECK does not support RHEL release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                    _retval=1 ;;
+
+        esac
+
+        sapnote="$_"
+
+    fi
+
+    #tweaked by unit-test
+    if [[ -z ${path_to_sap_slice_memory_low:-} ]]; then
+        path_to_sap_slice_memory_low='/sys/fs/cgroup/SAP.slice/memory.low'
+    fi
+
+    if [[ ! -f ${path_to_sap_slice_memory_low} ]]; then
+
+        logCheckWarning "SAP.slice cgroup memory protection NOT configured (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+        _retval=1
+
+    else
+        # CHECK
+
+        # HANA GAL = HANA Global Allocation Limit
+        # 90% of the first 64 GB of available physical memory on the host plus 97% of each further GB
+        local -i memory_mib_low memory_mib_high
+
+        # shellcheck disable=SC2154
+        memory_mib_low=$(( LIB_PLATF_RAM_MiB_AVAILABLE <= 65536 ? LIB_PLATF_RAM_MiB_AVAILABLE : 65536 ))
+        memory_mib_high=$(( LIB_PLATF_RAM_MiB_AVAILABLE > 65536 ? LIB_PLATF_RAM_MiB_AVAILABLE - 65536 : 0 ))
+
+        memory_mib_low=$(( memory_mib_low * 90 / 100 ))
+        memory_mib_high=$(( memory_mib_high * 97 / 100 ))
+
+        local -i calc_hana_gal_bytes
+        calc_hana_gal_bytes=$(( memory_mib_low + memory_mib_high ))
+        calc_hana_gal_bytes=$(( calc_hana_gal_bytes * 1024 * 1024 )) # convert GiB to bytes
+
+        local -i memory_low_bytes
+        memory_low_bytes="$(<"${path_to_sap_slice_memory_low}")"
+
+        # Ranges should be fuzzy, because GAL calculation is not exact
+        # The underlying cgroup memory controller rounds up the value to a multiple of the page size.
+        local -i margin=1048576 # 1 MiB in bytes - use as margin for rounding errors
+        local -i gal_upper_bound gal_lower_bound
+        gal_upper_bound=$((calc_hana_gal_bytes+margin))
+        gal_lower_bound=$((calc_hana_gal_bytes-margin))
+
+        if  [[ ${memory_low_bytes} -gt ${gal_upper_bound} ]] ; then
+
+            logCheckError "Memory [MiB]: ${LIB_PLATF_RAM_MiB_AVAILABLE}, HANA GAL calc [Bytes]: ${calc_hana_gal_bytes}, (+/-) margin [Bytes]: ${margin}"
+            logCheckError "SAP.slice cgroup memory protection NOT configured as recommended (SAP Note ${sapnote:-})(is: ${memory_low_bytes}, must be: <= GAL in bytes)"
+            _retval=2
+
+        elif [[ ${memory_low_bytes} -lt ${gal_lower_bound} ]] ; then
+
+            logCheckWarning "Memory [MiB]: ${LIB_PLATF_RAM_MiB_AVAILABLE}, HANA GAL calc [Bytes]: ${calc_hana_gal_bytes}, (+/-) margin [Bytes]: ${margin}"
+            logCheckWarning "SAP.slice cgroup memory protection NOT configured as recommended (SAP Note ${sapnote:-})(is: ${memory_low_bytes}, should be: GAL in bytes)"
+            _retval=1
+
+        else
+
+            logCheckOk "SAP.slice cgroup memory protection configured as recommended (SAP Note ${sapnote:-})(is: HANA GAL))"
+            _retval=0
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
