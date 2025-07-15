@@ -41,7 +41,7 @@ function check_0400_glibc_x64 {
 
             12.[4-5]*)      _goodversion="${sles124[0]}" ; sapnote="${sles124[1]}" ;;
 
-            15.[3-6])       _goodversion="${sles153[0]}" ; sapnote="${sles153[1]}" ;;
+            15.[3-7])       _goodversion="${sles153[0]}" ; sapnote="${sles153[1]}" ;;
 
             *)      logCheckWarning 'CHECK does not support SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
                     _retval=1 ;;

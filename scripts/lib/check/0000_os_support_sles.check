@@ -22,6 +22,7 @@ function check_0000_os_support_sles {
                         '15.4' '31 Dec 2023'    '31 Dec 2026'   '31 Dec 2026'   \
                         '15.5' '31 Dec 2024'    '31 Dec 2027'   '31 Dec 2027'   \
                         '15.6' '31 Dec 2025'    '31 Dec 2028'   '31 Dec 2028'   \
+                        '15.7' '31 Jul 2031'    '31 Jul 2034'   '31 Jul 2034'   \
                         )
     #ESPOS/LTSS end for last SP not known - take from above - to be adjusted
 
