@@ -182,7 +182,7 @@ function LIB_FUNC_IS_NVM_PMEM {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-    [[ ${LIB_PLATF_PMEM_MiB:-} -ne 0 ]] && _retval=0
+    [[ ${LIB_PLATF_PMEM_KiB:-} -ne 0 ]] && _retval=0
 
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
     return ${_retval}
@@ -531,9 +531,9 @@ function __get_platform_pmem_details {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-    local -i pmem_decive_memory
+    local -i pmem_device_memory
 
-    if [[ -z ${LIB_PLATF_PMEM_MiB:-} ]]; then
+    if [[ -z ${LIB_PLATF_PMEM_KiB:-} ]]; then
 
         #780335104 pmem0
         while read -r pmem_device ; do
@@ -541,16 +541,16 @@ function __get_platform_pmem_details {
             logTrace "PMEM device <${pmem_device}>"
 
             [[ ${pmem_device} =~ ([0-9]+) ]]
-            pmem_decive_memory=${BASH_REMATCH[1]:-} #780335104
+            pmem_device_memory=${BASH_REMATCH[1]:-} #780335104
 
-            LIB_PLATF_PMEM_MiB+=$(( pmem_decive_memory/1024 ))
+            LIB_PLATF_PMEM_KiB+=${pmem_device_memory}
 
         done <<< "$(grep -Eo '[[:digit:]]+ pmem[[:digit:]]+$' /proc/partitions)"
 
     fi
-    readonly LIB_PLATF_PMEM_MiB
+    readonly LIB_PLATF_PMEM_KiB
 
-    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # LIB_PLATF_PMEM_MiB: ${LIB_PLATF_PMEM_MiB:-}"
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # LIB_PLATF_PMEM_KiB: ${LIB_PLATF_PMEM_KiB:-}"
 
 }
 
@@ -600,7 +600,7 @@ declare -i  LIB_PLATF_CPU_MODELID
 declare -i  LIB_PLATF_CPU_STEPID
 declare -i  LIB_PLATF_RAM_MIB_PHYS
 declare -i  LIB_PLATF_RAM_MiB_AVAILABLE
-declare -i  LIB_PLATF_PMEM_MiB
+declare -i  LIB_PLATF_PMEM_KiB
 
 declare     LIB_PLATF_ARCHITECTURE
 declare -i  LIB_PLATF_CPU_THREADSPERCORE
