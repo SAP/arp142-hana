@@ -507,10 +507,15 @@ function __get_platform_mem_details {
 
     #LIB_PLATF_RAM_MIB_PHYS - so far no reliable way detecting physMEM on all platforms
 
-    if [[ -z ${LIB_PLATF_RAM_MiB_AVAILABLE:-} ]]; then
+    if [[ -z ${LIB_PLATF_RAM_KiB_AVAILABLE:-} ]]; then
 
         #MemTotal in /proc/meminfo - usable memory
-        LIB_PLATF_RAM_MiB_AVAILABLE=$(awk '/^MemTotal:/ {match($0, /[0-9]+/); printf "%.0f", substr($0,RSTART,RLENGTH)/1024 }' /proc/meminfo)
+        LIB_PLATF_RAM_KiB_AVAILABLE=$( grep -m1 -E '^MemTotal:. +' /proc/meminfo )
+
+        [[ ${LIB_PLATF_RAM_KiB_AVAILABLE} =~ ([0-9]+) ]]    # MemTotal:       527591968 kB
+        LIB_PLATF_RAM_KiB_AVAILABLE=${BASH_REMATCH[1]:-}    # 527591968
+
+        LIB_PLATF_RAM_MiB_AVAILABLE=$(( LIB_PLATF_RAM_KiB_AVAILABLE / 1024 ))
 
     fi
 
@@ -522,9 +527,10 @@ function __get_platform_mem_details {
     fi
 
     readonly LIB_PLATF_RAM_MIB_PHYS
-    readonly LIB_PLATF_RAM_MiB_AVAILABLE
+    readonly LIB_PLATF_RAM_KiB_AVAILABLE
+    readonly LIB_PLATF_RAM_MiB_AVAILABLE=$(( LIB_PLATF_RAM_KiB_AVAILABLE / 1024 ))
 
-    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # LIB_PLATF_RAM_MIB_PHYS (${collectedby:-}): ${LIB_PLATF_RAM_MIB_PHYS:-}; LIB_PLATF_RAM_MiB_AVAILABLE ${LIB_PLATF_RAM_MiB_AVAILABLE:-}"
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # LIB_PLATF_RAM_MIB_PHYS (${collectedby:-}): ${LIB_PLATF_RAM_MIB_PHYS:-}; LIB_PLATF_RAM_KiB_AVAILABLE ${LIB_PLATF_RAM_KiB_AVAILABLE:-}"
 }
 
 function __get_platform_pmem_details {
@@ -599,6 +605,7 @@ declare     LIB_PLATF_CPU
 declare -i  LIB_PLATF_CPU_MODELID
 declare -i  LIB_PLATF_CPU_STEPID
 declare -i  LIB_PLATF_RAM_MIB_PHYS
+declare -i  LIB_PLATF_RAM_KiB_AVAILABLE
 declare -i  LIB_PLATF_RAM_MiB_AVAILABLE
 declare -i  LIB_PLATF_PMEM_KiB
 

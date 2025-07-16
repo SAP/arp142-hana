@@ -79,6 +79,7 @@ oneTimeSetUp () {
     # we also fake lscpu - see on top
 
     # shellcheck disable=SC2034
+    declare -i LIB_PLATF_RAM_KiB_AVAILABLE=0
     declare -i LIB_PLATF_POWER_CPU_TOTAL=0
     declare -i LIB_PLATF_CPU_THREADSPERCORE=0
     declare -i LIB_PLATF_RAM_MiB_AVAILABLE=0

@@ -109,6 +109,7 @@ oneTimeSetUp () {
 
     declare -i LIB_PLATF_RAM_MIB_PHYS=1024
     declare -i LIB_PLATF_RAM_MiB_AVAILABLE=1024
+    declare -i LIB_PLATF_RAM_KiB_AVAILABLE=1024
 
     #shellcheck source=./saphana-logger-stubs
     source "${PROGRAM_DIR}/./saphana-logger-stubs"
