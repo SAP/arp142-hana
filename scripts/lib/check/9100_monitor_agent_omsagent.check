@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function check_9100_monitor_agent_omsagent_azure {
+function check_9100_monitor_agent_omsagent {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
@@ -13,14 +13,10 @@ function check_9100_monitor_agent_omsagent_azure {
     # MODIFICATION SECTION<<
 
     #2015553 - SAP on Microsoft Azure: Support prerequisites
+    #Agent could also be installed on any other environment, not only Azure
 
     # PRECONDITIONS
-    if ! LIB_FUNC_IS_CLOUD_MICROSOFT; then
-
-        logCheckSkipped 'Not running on Microsoft Azure. Skipping' "<${FUNCNAME[0]}>"
-        _retval=3
-
-    elif ! rpm -q --quiet omsagent ; then
+    if ! rpm -q --quiet omsagent ; then
 
         logCheckSkipped 'Azure Log Analytics (OMS) agent not installed. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
