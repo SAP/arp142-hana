@@ -89,7 +89,7 @@
 8500_sap_hana_client
 8702_sap_hana_backint_amazon
 8704_sap_hana_backint_gcp
-9100_monitor_agent_omsagent_azure
+9100_monitor_agent_omsagent
 9101_monitor_agent_dependency_azure
 9105_tools_azcopy_azure
 9200_monitor_agent_sapdataprovider_amazon
