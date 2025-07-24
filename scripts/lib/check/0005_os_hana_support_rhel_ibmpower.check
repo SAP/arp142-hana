@@ -11,9 +11,9 @@ function check_0005_os_hana_support_rhel_ibmpower {
 
     #                       'Platform'      'maj'  '0123456789A' (Minor Release)
     local -a _rhel_matrix=(\
-                            'POWER10'       '9'    '0-2-4'       \
+                            'POWER10'       '9'    '0-2-4-6'     \
                             'POWER10'       '8'    '------6-8-A' \
-                            'POWER9'        '9'    '0-2-4'       \
+                            'POWER9'        '9'    '0-2-4-6'     \
                             'POWER9'        '8'    '------6-8-A' \
                             'POWER9'        '7'    '----------'  \
                             )
