@@ -25,6 +25,7 @@ function check_0001_os_support_rhel {
                         # '9.3' 'no support '    'by SAP HANA'    \
 
     local -ar _rhel_all=(\
+                        '9.6'   '30 Nov 2025'   '31 May 2029'    \
                         '9.4'   '30 Nov 2024'   '30 Apr 2028'    \
                         '9.2'   '30 Nov 2023'   '31 May 2027'    \
                         '9.0'   '30 Nov 2022'   '31 May 2026'    \
