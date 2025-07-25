@@ -10,9 +10,10 @@ function check_3301_network_accelerated_azure {
     local -r sapnote='#2015553'
     # MODIFICATION SECTION<<
 
-    #2015553 - SAP on Microsoft Azure: Support prerequisites
-    #https://learn.microsoft.com/en-us/azure/sap/workloads/hana-get-started
-    #https://learn.microsoft.com/en-us/azure/well-architected/sap/design-areas/networking-and-connectivity
+    # 2015553 - SAP on Microsoft Azure: Support prerequisites
+    # https://learn.microsoft.com/en-us/azure/sap/workloads/hana-get-started
+    # https://learn.microsoft.com/en-us/azure/well-architected/sap/design-areas/networking-and-connectivity
+    # https://learn.microsoft.com/en-us/azure/virtual-network/accelerated-networking-mana-overview
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_CLOUD_MICROSOFT; then
@@ -20,20 +21,49 @@ function check_3301_network_accelerated_azure {
         logCheckSkipped 'Not running on Microsoft Azure. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
+    else
+
+        # /sys/class/net/eth0/device/uevent:DRIVER=mana - new
+        # /sys/class/net/eth1/device/uevent:DRIVER=mlx  - old
+        mapfile -t aan_interfaces < <(grep -soHE -m1 'DRIVER=(mana|mlx)' /sys/class/net/**/device/uevent)
+
     fi
 
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-        if grep -qs 'DRIVER=mlx' /sys/class/net/**/device/uevent; then
+        local rx_intf='net/(.+)/device.*DRIVER=(.*)$'         #/sys/class/net/(eth0)/device/uevent:DRIVER=(mana)
+
+        for single_intf in "${aan_interfaces[@]}"; do
+
+            logTrace "Processing <${single_intf}>!"
+
+            if [[ ${single_intf} =~ ${rx_intf} ]]; then
+
+                logTrace "Interface rx.match <${BASH_REMATCH[0]}> <${BASH_REMATCH[1]}> <${BASH_REMATCH[2]}>"
+                # [0] /sys/class/net/eth0/device/uevent:DRIVER=mana
+                # [1] Interface matched                       =eth0
+                # [2] Value matched                           =mana
+
+                if [[ ${BASH_REMATCH[2]} == 'mana' ]]; then
+                    logCheckInfo "modern AAN interface found <interface=${BASH_REMATCH[1]}, driver=${BASH_REMATCH[2]}>"
+                else
+                    logCheckInfo "legacy AAN interface found <interface=${BASH_REMATCH[1]}, driver=${BASH_REMATCH[2]}>"
+                fi
+
+            fi
+
+        done
+
+        if [[ ${#aan_interfaces[@]} -ge 1 ]]; then
 
             logCheckOk "Azure Accelerated Networking enabled as recommended (SAP Note ${sapnote:-})"
             _retval=0
 
         else
 
-            logCheckWarning "Azure Accelerated Networking NOT enabled (SAP Note ${sapnote:-})"
-            _retval=1
+            logCheckError "Azure Accelerated Networking NOT enabled (SAP Note ${sapnote:-})"
+            _retval=2
 
         fi
 
