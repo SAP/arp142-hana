@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+function check_2161_transactional_memory_ldtrk_intel {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local sapnote='#2737837'
+    # MODIFICATION SECTION<<
+
+    #2737837 - SAP HANA and the Intel® Transactional Synchronization Extensions Capability
+
+    #Family 6 Model 143 : Sapphire Rapids
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_INTEL ; then
+
+        logCheckSkipped 'Not running on Intel CPU. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif [[ ${LIB_PLATF_CPU_MODELID:-} -lt 143 ]]; then
+
+        logCheckSkipped 'Not running on Intel CPU with TSXLDTRK support. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        mapfile -t flags < <(grep -m1 -o -e 'rtm' -e 'tsxldtrk' /proc/cpuinfo)
+
+        if [[ ${#flags[@]} -eq 2 ]] ; then
+
+                logCheckOk "Intel transactional memory feature TSXLDTRK is available (SAP Note ${sapnote:-})"
+                _retval=0
+
+        elif [[ ${#flags[@]} -eq 1 ]] && [[ ${flags[0]} == 'tsxldtrk' ]] ; then
+
+            : # only TSXLDTRK is available, but RTM is not
+            logCheckWarning "Intel transactional memory feature TSXLDTRK is available, but required RTM is not (SAP Note ${sapnote:-})"
+            _retval=1
+
+        else
+
+            logCheckWarning "Intel transactional memory feature TSXLDTRK is NOT available (SAP Note ${sapnote:-})"
+            _retval=1
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
