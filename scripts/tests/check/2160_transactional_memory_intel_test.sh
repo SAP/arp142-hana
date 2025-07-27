@@ -12,14 +12,16 @@ LIB_FUNC_IS_VIRT_VMWARE() { { return "${_vmware_rc}" ; } }
 # still to mock for tests
 # OS_VERSION
 declare -i _grep_cpuinfo_rc
-declare -i _grep_cmdline_rc
+declare _grep_cmdline
 
 grep() {
 
      case "$*" in
-        *'cpuinfo')     return "${_grep_cpuinfo_rc}" ;;
+        *'cpuinfo')     # fake grep -qs 'flags.*tsx*' /proc/cpuinfo
+                        return "${_grep_cpuinfo_rc}" ;;
 
-        *'cmdline')     return "${_grep_cmdline_rc}" ;;
+        *'cmdline')     #fake $(grep -osE 'tsx=(on|auto)' /proc/cmdline)
+                        printf "%s\n" "${_grep_cmdline}" ;;
 
         *)              command grep "$@" ;; # shunit2 requires grep
     esac
@@ -72,7 +74,7 @@ test_tsx_not_available_tsxon_required_and_specified() {
     #arrange
     OS_VERSION='8.4'
     _grep_cpuinfo_rc=1
-    _grep_cmdline_rc=0
+    _grep_cmdline='tsx=on'
 
     #act
     check_2160_transactional_memory_intel
@@ -86,7 +88,7 @@ test_tsx_not_available_tsxon_required_not_specified() {
     #arrange
     OS_VERSION='8.4'
     _grep_cpuinfo_rc=1
-    _grep_cmdline_rc=1
+    _grep_cmdline=''
 
     #act
     check_2160_transactional_memory_intel

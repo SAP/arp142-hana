@@ -8,12 +8,15 @@ function check_2160_transactional_memory_intel {
 
     # MODIFICATION SECTION>>
     local sapnote='#2737837'
-    local sapnote_rhel='#2777782'
+    local sapnote_sles='#2684254'
+    local sapnote_rhel='#2777782,3108302'
     local sapnote_vmw='#2937606,3372365'
     # MODIFICATION SECTION<<
 
     #2737837 - SAP HANA and the Intel® Transactional Synchronization Extensions Capability
+    #2684254 - SAP HANA DB: Recommended OS settings for SLES 15 / SLES for SAP Applications 15
     #2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
+    #3108302 - SAP HANA DB: Recommended OS Settings for RHEL 9
     #2937606 - SAP HANA on VMware vSphere 7.0 in production
     #3372365 - SAP HANA on VMware vSphere 8
 
@@ -32,6 +35,18 @@ function check_2160_transactional_memory_intel {
         case "${OS_VERSION}" in
 
             7.* | 8.[0-2] ) : ;;
+
+            *)      tsxon_required=true ;;
+
+        esac
+
+    elif LIB_FUNC_IS_SLES ; then
+
+        sapnote+=",${sapnote_sles}"
+
+        case "${OS_VERSION}" in
+
+            12.* | 15.[0-5] ) : ;;
 
             *)      tsxon_required=true ;;
 
@@ -72,13 +87,16 @@ function check_2160_transactional_memory_intel {
 
             if ${tsxon_required}; then
 
-                if grep -qs 'tsx=on' /proc/cmdline; then
+                local tsx_cmdline
+                tsx_cmdline="$(grep -osE 'tsx=(on|auto)' /proc/cmdline)"
 
-                    logCheckInfo 'Linux kernel cmdline contains required <tsx=on>'
+                if [[ -n ${tsx_cmdline} ]]; then
+
+                    logCheckInfo "Linux kernel cmdline contains required <${tsx_cmdline}>"
 
                 else
 
-                    logCheckWarning 'Linux kernel cmdline does NOT contain required <tsx=on>'
+                    logCheckWarning 'Linux kernel cmdline does NOT contain required <tsx=on|auto>'
 
                 fi
 
