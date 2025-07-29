@@ -8,7 +8,8 @@ function check_0830_sssd_version {
 
     # MODIFICATION SECTION>>
     local sapnote
-    local -ar sles156=( '2.9.3-150600.3.15.1'  '#3560673,SUSE-RU-2025:0007-1' )
+    local -ar sles156=( '2.9.3-150600.3.25.1'  '#2578899,#3560673' )
+    local -ar sles157=( '2.9.3-150700.9.6.2'  '#2578899' )
     local -ar rhel92=( '2.8.2-5.el9_2.5' '#3560703,RHBA-2024:4434' )
     local -ar rhel94=( '2.9.4-6.el9_4' '#3560703,RHSA-2024:2571' )
     # MODIFICATION SECTION<<
@@ -28,6 +29,9 @@ function check_0830_sssd_version {
     # * Wed Mar 13 2024 - 2.9.4-3
     # - Resolves: RHEL-22340 - socket leak
 
+    # 2578899 - SUSE Linux Enterprise Server 15: Installation Note
+    # TID 021945:  Error: pam_limits(sudo:session): invalid line '#001' - skipped
+
     local _goodversion
 
     # PRECONDITIONS
@@ -40,6 +44,7 @@ function check_0830_sssd_version {
         case "${OS_VERSION}" in
 
             15.6)   _goodversion="${sles156[0]}" ; sapnote="${sles156[1]}" ;;
+            15.7)   _goodversion="${sles157[0]}" ; sapnote="${sles157[1]}" ;;
 
             *)      logCheckSkipped 'CHECK not applicable for SLES release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
                     _retval=3
