@@ -510,10 +510,11 @@ function __get_platform_mem_details {
     if [[ -z ${LIB_PLATF_RAM_KiB_AVAILABLE:-} ]]; then
 
         #MemTotal in /proc/meminfo - usable memory
-        LIB_PLATF_RAM_KiB_AVAILABLE=$( grep -m1 -E '^MemTotal:. +' /proc/meminfo )
+        local memtotal
 
-        [[ ${LIB_PLATF_RAM_KiB_AVAILABLE} =~ ([0-9]+) ]]    # MemTotal:       527591968 kB
-        LIB_PLATF_RAM_KiB_AVAILABLE=${BASH_REMATCH[1]:-}    # 527591968
+        memtotal=$( grep -m1 -E '^MemTotal:.+' /proc/meminfo )
+        [[ ${memtotal} =~ ([0-9]+) ]]                           # MemTotal:       527591968 kB
+        LIB_PLATF_RAM_KiB_AVAILABLE=${BASH_REMATCH[1]:-}        # 527591968
 
         LIB_PLATF_RAM_MiB_AVAILABLE=$(( LIB_PLATF_RAM_KiB_AVAILABLE / 1024 ))
 
