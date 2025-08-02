@@ -18,7 +18,7 @@ function check_7030_ha_resource_agent_scaleup_rhel {
                             '8.10'  '0.162.3-5' \
                             '8.8'   '0.162.3-5' \
                             '8.6'   '0.162.3-5' \
-                            '7.9'   '4.1.1-61.el7_9.15' \
+                            '7.9'   '4.1.1-61.el7_9.20' \
                             )
     # MODIFICATION SECTION<<
 
