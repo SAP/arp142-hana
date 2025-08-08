@@ -15,3 +15,6 @@ enable=avoid-nullary-conditions
 
 # "Check for Useless Use Of Cat (UUOC)"
 enable=useless-use-of-cat
+
+# Suggest removing unnecessary comparison negations
+enable=avoid-negated-conditions
