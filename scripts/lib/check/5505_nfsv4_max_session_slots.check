@@ -23,8 +23,6 @@ function check_5505_nfsv4_max_session_slots {
     # https://docs.microsoft.com/en-us/azure/azure-netapp-files/performance-linux-concurrency-session-slots#nfsv41
     # https://docs.aws.amazon.com/sap/latest/sap-hana/fsx-host-scaleup.html#linux-setup-scaleup
 
-    local _max_slots_parameter
-
     # PRECONDITIONS
     if ! grep -qsE 'nfs.+vers=4\.[1-2]' '/proc/mounts'; then
 
@@ -53,8 +51,6 @@ function check_5505_nfsv4_max_session_slots {
         logCheckInfo '---'
 
         local -i _curr_max_slots
-        local _param_normalized
-
 
         _curr_max_slots=$(</sys/module/nfs/parameters/max_session_slots)
 
