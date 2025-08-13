@@ -71,6 +71,7 @@
 4500_ibm-gpfs_version_intel
 5000_io_parameter
 5010_io_scheduler_blockdevices
+5210_io_nvme_parameter_hyperscaler
 5300_pvscsi_hostadapter_vmware
 5301_pvscsi_parameter_vmware
 5505_nfsv4_max_session_slots

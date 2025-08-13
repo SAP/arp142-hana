@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+function check_5210_io_nvme_parameter_hyperscaler {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # '/sys/module/nvme_core/parameters/io_timeout'
+
+    local sapnote
+    # MODIFICATION SECTION>>
+    local sapnote_aws='#1656250'
+    local sapnote_azure='#2015553'
+    local -i _reco_io_timeout=240
+    # MODIFICATION SECTION<<
+
+    # https://www.suse.com/de-de/support/kb/doc/?id=000021813
+
+    # 1656250 - SAP on AWS: Support prerequisites
+    # 2015553 - SAP on Microsoft Azure: Support prerequisites (not included so far!)
+    # https://learn.microsoft.com/en-us/azure/virtual-machines/enable-nvme-interface
+    # https://learn.microsoft.com/en-us/azure/virtual-machines/nvme-linux
+
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_CLOUD_AMAZON && ! LIB_FUNC_IS_CLOUD_MICROSOFT; then
+
+        logCheckSkipped "Not running on an affected hyperscaler. Skipping" "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif [[ ! -f '/sys/module/nvme_core/parameters/io_timeout' ]]; then
+
+        logCheckSkipped "nvme parameter io_timeout is not available. Skipping" "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif LIB_FUNC_IS_CLOUD_AMAZON; then
+
+        sapnote="${sapnote_aws}"
+
+    elif LIB_FUNC_IS_CLOUD_MICROSOFT; then
+
+        sapnote="${sapnote_azure}"
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local -i _curr_io_timeout
+
+        _curr_io_timeout=$(</sys/module/nvme_core/parameters/io_timeout)
+
+        if [[ ${_curr_io_timeout} -lt ${_reco_io_timeout} ]]; then
+
+            logCheckError "nvme parameter io_timeout NOT set as recommended (SAP Note ${sapnote:-}) (is: ${_curr_io_timeout}, should be: >=${_reco_io_timeout})"
+            _retval=2
+
+        else
+
+            logCheckOk "nvme parameter io_timeout set as recommended (SAP Note ${sapnote:-}) (is: ${_curr_io_timeout})"
+            _retval=0
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
