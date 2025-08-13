@@ -22,7 +22,7 @@ function check_5010_io_scheduler_blockdevices {
     local search_pattern
     #local search_pattern_skip_none='/sys/block/**/queue/scheduler'                     #skip none
     local -r search_pattern_skip_first1='/sys/block/{sd[^a],dm,nvme}*/queue/scheduler'     #skip sda = OS
-    local -r search_pattern_azure='/sys/block/sd[^ab]*/queue/scheduler'                    #skip sda = OS and sdb = temp
+    local -r search_pattern_azure='/sys/block/{sd[^ab],nvme}*/queue/scheduler'             #skip sda = OS and sdb = temp
     local -r search_pattern_xen='/sys/block/xvd[^a]*/queue/scheduler'                      #skip xvda = OS
     local -r search_pattern_aws_xen='/sys/block/xvd[^ab]*/queue/scheduler'                 #skip xvda = OS and xvdb = swap
     local -r search_pattern_aws_kvm='/sys/block/nvme*/queue/scheduler'                     #skip none, search nvme
