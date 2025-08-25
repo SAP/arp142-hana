@@ -48,7 +48,7 @@ function check_3120_ip_port_hostagent {
 
             IFS=',' read -r -a product_array <<< "${product_list:-}"
             for element in "${product_array[@]}"; do
-                LIB_FUNC_STRINGCONTAIN "${prod_list_valid}" "${element}" || _retval=1
+                LIB_FUNC_STRINGCONTAIN "${prod_list_valid}" "$(LIB_FUNC_TRIM "${element}")" || _retval=1
             done
 
             if [[ ${_retval} -eq 99 ]]; then
