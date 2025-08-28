@@ -14,18 +14,23 @@ function check_3120_ip_port_hostagent {
 
     #SAP Note 401162 - Linux: Avoiding TCP/IP port conflicts and start problems
 
+    #tweaked by unit-test
+    if [[ -z ${path_to_host_profile:-} ]]; then
+        path_to_host_profile='/usr/sap/hostctrl/exe/host_profile'
+    fi
+
     # PRECONDITIONS
     if ! LIB_FUNC_IS_ROOT ; then
 
         logCheckError "ROOT required - Host Agent configuration file not readable (SAP Note ${sapnote:-})"
         _retval=2
 
-    elif [[ ! -f '/usr/sap/hostctrl/exe/host_profile' ]]; then
+    elif [[ ! -f "${path_to_host_profile}" ]]; then
 
         logCheckSkipped "SAP Host Agent configuration file not found (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif grep -sqE 'reserved_port/enable.*=.*false' '/usr/sap/hostctrl/exe/host_profile'; then
+    elif grep -sqE 'reserved_port/enable.*=.*false' "${path_to_host_profile}"; then
 
         logCheckSkipped "SAP Host Agent ip port reservation disabled (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
         _retval=3
@@ -42,7 +47,7 @@ function check_3120_ip_port_hostagent {
             [[ ${line} == 'reserved_port/product_list'* ]] && { product_list=$(LIB_FUNC_TRIM_LEFT "${line/*=}") ; continue ; }
             [[ ${line} == 'reserved_port/instance_list'* ]] && { instance_list=$(LIB_FUNC_TRIM_LEFT "${line/*=}") ; continue ; }
 
-        done <<< "$(grep -sE 'reserved_port/(product|instance)_list.*' '/usr/sap/hostctrl/exe/host_profile')"
+        done <<< "$(grep -sE 'reserved_port/(product|instance)_list.*' "${path_to_host_profile}")"
 
         if [[ -n ${product_list:-} ]] ; then
 
