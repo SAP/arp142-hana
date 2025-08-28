@@ -20,13 +20,16 @@ function check_0101_supported_instances_azure {
                         'M896ixds_24_v3'    'M896ixds_32_v3'    \
                         'M1792ixds_32_v3'   \
 
+                        'D64s_v6'   'D64ds_v6'  'D96s_v6'   'D96ds_v6'  'D128s_v6' 'D128ds_v6'  \
+
                         'E20ds_v4'  'E32ds_v4'  'E48ds_v4'  'E64ds_v4'  \
                         'E8ds_v5'   'E16ds_v5'  \
                         'E20ds_v5'  'E32ds_v5'  'E48ds_v5'  'E64ds_v5'  'E96ds_v5' \
                         'E64s_v3'   \
                         'E20s_v5'   'E32s_v5'   'E48s_v5'   'E64s_v5'   'E96s_v5'  \
 
-                        'E96s_v6'   'E96ds_v6'  \
+                        'E32s_v6'   'E32ds_v6'  'E48s_v6'   'E48ds_v6'  'E64s_v6'   'E64ds_v6'      \
+                        'E96s_v6'   'E96ds_v6'  'E128s_v6'  'E128ds_v6' 'E192is_v6' 'E192ids_v6'    \
 
                         'M32ls'     'M32ts'     \
                         'M32ms_v2'  'M32dms_v2' \
