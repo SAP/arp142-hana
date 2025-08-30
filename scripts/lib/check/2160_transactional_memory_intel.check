@@ -11,6 +11,7 @@ function check_2160_transactional_memory_intel {
     local sapnote_sles='#2684254'
     local sapnote_rhel='#2777782,3108302'
     local sapnote_vmw='#2937606,3372365'
+    local sapnote_aws='#1656099,2993054'
     # MODIFICATION SECTION<<
 
     #2737837 - SAP HANA and the Intel® Transactional Synchronization Extensions Capability
@@ -19,6 +20,8 @@ function check_2160_transactional_memory_intel {
     #3108302 - SAP HANA DB: Recommended OS Settings for RHEL 9
     #2937606 - SAP HANA on VMware vSphere 7.0 in production
     #3372365 - SAP HANA on VMware vSphere 8
+    #1656099 - SAP Applications on AWS: Supported DB/OS and AWS EC2 products
+    #2993054 - SAP HANA on AWS - Support Prerequisites
 
     local tsxon_required=false
 
@@ -64,6 +67,12 @@ function check_2160_transactional_memory_intel {
             logCheckInfo 'Intel TSX @ VMware by default is disabled due to vulnerability mitigations.'
             logCheckInfo 'TSX must be enabled on VMware Hypervisor and VM level!'
             logCheckInfo 'VMware EVC Mode >= Broadwell required!'
+
+        elif LIB_FUNC_IS_CLOUD_AMAZON; then
+
+            sapnote+=",${sapnote_aws}"
+
+            logCheckInfo 'Intel TSX @ Amazon EC2 is disabled due to vulnerability mitigations and not available at all!'
 
         fi
 
