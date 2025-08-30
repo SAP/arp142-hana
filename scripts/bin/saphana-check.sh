@@ -17,7 +17,7 @@ PROGDATE='2020-DEC-01'
 #------------------------------------------------------------------
 
 function die {
-    [ $# -gt 0 ] && echo "error: $*" >&2
+    [[ $# -gt 0 ]] && echo "error: $*" >&2
     exit 1
 }
 
@@ -335,7 +335,7 @@ function print_counters {
 
     if [[ "${check_count}" -gt 0 ]]; then
         percent_skipped=$((100 * NUMBER_CHECKS_SKIPPED / check_count))
-        if [ "${check_run}" -gt 0 ]; then
+        if [[ "${check_run}" -gt 0 ]]; then
             percent_info=$((100 * NUMBER_CHECKS_INFO / check_count))
             percent_ok=$((100 * NUMBER_CHECKS_OK / check_count))
             percent_warning=$((100 * NUMBER_CHECKS_WARNING / check_count))
