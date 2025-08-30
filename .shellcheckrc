@@ -18,3 +18,6 @@ enable=useless-use-of-cat
 
 # Suggest removing unnecessary comparison negations
 enable=avoid-negated-conditions
+
+# Allows or disallows shellcheck to include the files pointed-to by the source or . statements while checking.
+external-sources=true
