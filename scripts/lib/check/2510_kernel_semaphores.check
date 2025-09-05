@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+
+function check_2510_kernel_semaphores {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # https://www.man7.org/linux/man-pages/man5/proc_sys_kernel.5.html
+
+    # MODIFICATION SECTION>>
+    local -r _sapnote='#2663418,3641298'
+    local    reco_sem='32000 1024000000 500 32000' # since SLES12.2, RHEL8
+    local -r reco_sem_rhel7='1250 256000 100 1024' # RHEL 7 sap-hana profile
+    # MODIFICATION SECTION<<
+
+    # 3641298 - RHEL: 'kernel.sem' is overridden after applying "sap-hana" profile
+    # 2663418 - Semaphore error - e=28 semget No space left on device
+
+    # PRECONDITIONS
+    if LIB_FUNC_IS_RHEL ; then
+
+        case "${OS_VERSION}" in
+
+            7.9 )   reco_sem="${reco_sem_rhel7}" ;;
+
+        esac
+    fi
+
+    #CHECK
+
+    #tweaked by unit-test
+    if [[ -z ${path_to_kernel_sem:-} ]]; then
+        path_to_kernel_sem='/proc/sys/kernel/sem'
+    fi
+
+    #get current value
+    local -r curr_sem="$(<"${path_to_kernel_sem}")"
+    read -r currSEMMSL currSEMMNS currSEMOPM currSEMMNI <<< "${curr_sem}"
+
+    local _has_error=false
+
+    # Split recommended values
+    read -r recoSEMMSL recoSEMMNS recoSEMOPM recoSEMMNI <<< "${reco_sem}"
+
+    # Check each parameter individually - current values must be >= recommended values
+    if [[ "${currSEMMSL}" -lt "${recoSEMMSL}" ]]; then
+
+        logCheckWarning "SEMMSL: is ${currSEMMSL}, must be >= ${recoSEMMSL}"
+        _has_error=true
+
+    fi
+
+    if [[ "${currSEMMNS}" -lt "${recoSEMMNS}" ]]; then
+
+        logCheckWarning "SEMMNS: is ${currSEMMNS}, must be >= ${recoSEMMNS}"
+        _has_error=true
+
+    fi
+
+    if [[ "${currSEMOPM}" -lt "${recoSEMOPM}" ]]; then
+
+        logCheckWarning "SEMOPM: is ${currSEMOPM}, must be >= ${recoSEMOPM}"
+        _has_error=true
+
+    fi
+
+    if [[ "${currSEMMNI}" -lt "${recoSEMMNI}" ]]; then
+
+        logCheckWarning "SEMMNI: is ${currSEMMNI}, must be >= ${recoSEMMNI}"
+        _has_error=true
+
+    fi
+
+    if ${_has_error}; then
+
+        logCheckError "Parameter kernel.sem is NOT set as recommended (SAP Note ${_sapnote:-}) (should be >= ${reco_sem})"
+        _retval=2
+
+    else
+
+        logCheckOk "Parameter kernel.sem is set as recommended (SAP Note ${_sapnote:-}) (is >= ${reco_sem})"
+        _retval=0
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
