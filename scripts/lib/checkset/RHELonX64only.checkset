@@ -49,6 +49,7 @@
 2320_vm_overcommit_memory
 2400_samepage_merging
 2500_kernel_sharedmemory
+2510_kernel_semaphores
 2600_vm_dentry_unused
 2800_memory_ballooning_vmware
 3010_network_parameter
