@@ -27,6 +27,7 @@
 0820_hostname
 0830_sssd_version
 1210_cpu_subnuma_intel
+1220_cpu_numa_topology_intel
 1230_cpu_distribution_virt
 1250_cpu_hyperthreading_intel
 1300_cpu_governor_x64
