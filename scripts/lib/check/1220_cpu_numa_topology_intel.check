@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+
+function check_1220_cpu_numa_topology_intel {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2470289'  # FAQ: SAP HANA Non-Uniform Memory Access (NUMA)
+    local -r min_sockets=8
+    local -r incorrect_numa_pattern="10 20 20 20 20 20 20 20"
+    # MODIFICATION SECTION<<
+
+    # Override for testing
+    local path_to_numa_distance="${path_to_numa_distance:-/sys/devices/system/node/node0/distance}"
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_INTEL ; then
+
+        logCheckSkipped 'Not running on Intel CPU. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif [[ -z ${LIB_PLATF_CPU_SOCKETS:-} ]]; then
+
+        logCheckWarning '# CPU Sockets unknown. Skipping' "<${FUNCNAME[0]}>"
+        _retval=1
+
+    elif [[ ${LIB_PLATF_CPU_SOCKETS} -lt ${min_sockets} ]]; then
+
+        logCheckSkipped "System has less than ${min_sockets} sockets (${LIB_PLATF_CPU_SOCKETS}). Skipping" "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif [[ ! -r "${path_to_numa_distance}" ]]; then
+
+        logCheckSkipped "NUMA distance file not found or not readable: ${path_to_numa_distance}" "<${FUNCNAME[0]}>"
+        _retval=3
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local numa_distance_content
+
+        if ! numa_distance_content=$(<"${path_to_numa_distance}") || [[ -z "${numa_distance_content}" ]]; then
+
+            logCheckError "Failed to read NUMA distance from ${path_to_numa_distance}"
+            _retval=2
+
+        else
+
+            if [[ "${numa_distance_content}" == "${incorrect_numa_pattern}"* ]]; then
+
+                logCheckError "Incorrect NUMA topology detected (SAP Note ${sapnote:-}) (distance: ${numa_distance_content})"
+                _retval=2
+
+            else
+
+                logCheckOk "NUMA topology appears correct (SAP Note ${sapnote:-}) (distance: ${numa_distance_content})"
+                _retval=0
+
+            fi
+
+        fi
+
+    fi
+
+    logTrace "</${BASH_SOURCE[0]}:${FUNCNAME[*]}> _retval=${_retval}"
+    return ${_retval}
+
+}
