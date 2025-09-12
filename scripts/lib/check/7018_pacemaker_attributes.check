@@ -61,12 +61,15 @@ function check_7018_pacemaker_attributes {
 
             logTrace "<${FUNCNAME[0]}> # read <${line}>"
 
-            [[ ${line} != *'nvpair name'* ]] && continue
+            [[ ${line} != *'nvpair'* ]] && continue
+            [[ ${line} != *'name='* ]] && continue
 
-            if [[ ${line} =~ name=\"(.+?)\"[[:space:]]value=\"(.+?)\"[[:space:]] ]]; then
+            if [[ ${line} =~ name=\"(.+?)\"[[:space:]]value=\"([[:digit:]]+?)\" ]]; then
 
                 _parameter=${BASH_REMATCH[1]}
                 _curr_value=${BASH_REMATCH[2]}
+
+                logTrace "<${FUNCNAME[0]}> # <${_parameter}>=<${_curr_value}>"
 
             fi
 
