@@ -24,7 +24,6 @@
 0820_hostname
 0830_sssd_version
 1210_cpu_subnuma_intel
-1220_cpu_numa_topology_intel
 1230_cpu_distribution_virt
 1250_cpu_hyperthreading_intel
 1300_cpu_governor_x64
@@ -42,6 +41,7 @@
 2161_transactional_memory_ldtrk_intel
 2200_numa_balancing
 2210_numad_rhel
+2220_numa_topology_intel
 2230_numa_distribution
 2300_vm_max_map_count
 2305_vm_memory_failure_kill

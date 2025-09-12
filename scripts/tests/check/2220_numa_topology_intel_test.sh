@@ -18,7 +18,7 @@ test_not_intel_cpu() {
     LIB_PLATF_CPU_SOCKETS=8
 
     #act
-    check_1220_cpu_numa_topology_intel
+    check_2220_numa_topology_intel
 
     #assert
     assertEquals "CheckSkip? RC" '3' "$?"
@@ -31,7 +31,7 @@ test_sockets_unknown() {
     unset LIB_PLATF_CPU_SOCKETS
 
     #act
-    check_1220_cpu_numa_topology_intel
+    check_2220_numa_topology_intel
 
     #assert
     assertEquals "CheckWarning? RC" '1' "$?"
@@ -44,7 +44,7 @@ test_less_than_8_sockets() {
     LIB_PLATF_CPU_SOCKETS=4
 
     #act
-    check_1220_cpu_numa_topology_intel
+    check_2220_numa_topology_intel
 
     #assert
     assertEquals "CheckSkip? RC" '3' "$?"
@@ -59,7 +59,7 @@ test_exactly_8_sockets() {
     path_to_numa_distance="${PROGRAM_DIR}/mock_numa_distance"
 
     #act
-    check_1220_cpu_numa_topology_intel
+    check_2220_numa_topology_intel
 
     #assert
     assertEquals "CheckOk? RC" '0' "$?"
@@ -74,7 +74,7 @@ test_more_than_8_sockets() {
     path_to_numa_distance="${PROGRAM_DIR}/mock_numa_distance"
 
     #act
-    check_1220_cpu_numa_topology_intel
+    check_2220_numa_topology_intel
 
     #assert
     assertEquals "CheckOk? RC" '0' "$?"
@@ -88,7 +88,7 @@ test_numa_distance_file_not_found() {
     path_to_numa_distance="${PROGRAM_DIR}/nonexistent_numa_distance"
 
     #act
-    check_1220_cpu_numa_topology_intel
+    check_2220_numa_topology_intel
 
     #assert
     assertEquals "CheckSkip? RC" '3' "$?"
@@ -103,7 +103,7 @@ test_incorrect_numa_pattern_exact_match() {
     path_to_numa_distance="${PROGRAM_DIR}/mock_numa_distance"
 
     #act
-    check_1220_cpu_numa_topology_intel
+    check_2220_numa_topology_intel
 
     #assert
     assertEquals "CheckError? RC" '2' "$?"
@@ -118,7 +118,7 @@ test_incorrect_numa_pattern_12sockets() {
     path_to_numa_distance="${PROGRAM_DIR}/mock_numa_distance"
 
     #act
-    check_1220_cpu_numa_topology_intel
+    check_2220_numa_topology_intel
 
     #assert
     assertEquals "CheckError? RC" '2' "$?"
@@ -133,7 +133,7 @@ test_correct_numa_topology_different_pattern() {
     path_to_numa_distance="${PROGRAM_DIR}/mock_numa_distance"
 
     #act
-    check_1220_cpu_numa_topology_intel
+    check_2220_numa_topology_intel
 
     #assert
     assertEquals "CheckOk? RC" '0' "$?"
@@ -148,7 +148,7 @@ test_correct_numa_topology_different_values() {
     path_to_numa_distance="${PROGRAM_DIR}/mock_numa_distance"
 
     #act
-    check_1220_cpu_numa_topology_intel
+    check_2220_numa_topology_intel
 
     #assert
     assertEquals "CheckOk? RC" '0' "$?"
@@ -164,7 +164,7 @@ test_numa_file_read_error() {
     path_to_numa_distance="${PROGRAM_DIR}/mock_numa_distance_dir"
 
     #act
-    check_1220_cpu_numa_topology_intel
+    check_2220_numa_topology_intel
 
     #assert
     assertEquals "CheckError? RC" '2' "$?"
@@ -179,7 +179,7 @@ test_numa_pattern_single_digit_differences() {
     path_to_numa_distance="${PROGRAM_DIR}/mock_numa_distance"
 
     #act
-    check_1220_cpu_numa_topology_intel
+    check_2220_numa_topology_intel
 
     #assert
     assertEquals "CheckOk? RC" '0' "$?"
@@ -190,8 +190,8 @@ oneTimeSetUp() {
     #shellcheck source=../saphana-logger-stubs
     source "${PROGRAM_DIR}/../saphana-logger-stubs"
 
-    #shellcheck source=../../lib/check/1220_cpu_numa_topology_intel.check
-    source "${PROGRAM_DIR}/../../lib/check/1220_cpu_numa_topology_intel.check"
+    #shellcheck source=../../lib/check/2220_numa_topology_intel.check
+    source "${PROGRAM_DIR}/../../lib/check/2220_numa_topology_intel.check"
 
     export avoidDoubleTearDownExecution=true
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function check_1220_cpu_numa_topology_intel {
+function check_2220_numa_topology_intel {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
