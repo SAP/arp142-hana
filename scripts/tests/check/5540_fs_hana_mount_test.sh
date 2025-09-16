@@ -11,7 +11,7 @@ LIB_FUNC_STRINGCONTAIN() { [[ -z "${1##*"$2"*}" ]] && [[ -z "$2" || -n "$1" ]]; 
 grep() {
     case "$*" in
         *'/proc/mounts'* )
-            printf -- '%s\n' "${hana_mounts[@]}" | command grep "$1" "$2"
+            printf -- '%s\n' "${hana_mounts[@]}" | command grep "$@"
             ;;
         *)
             command grep "$@"
