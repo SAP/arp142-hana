@@ -47,7 +47,8 @@ function check_5505_nfsv4_max_session_slots {
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-        logCheckInfo 'Only applicable for SAP Persistence stored on Netapp NFS4.1+ filesystem with high IO demand!'
+        logCheckInfo 'Only applicable for HANA Persistence stored on Netapp NFS4.1+ filesystem with high IO demand!'
+        logCheckInfo 'OnPrem amount of session slots equals <nconnect> * 64 || fixed value recommended by Hyperscaler'
         logCheckInfo '---'
 
         local -i _curr_max_slots
