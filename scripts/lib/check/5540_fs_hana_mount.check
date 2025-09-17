@@ -8,9 +8,9 @@ function check_5540_fs_hana_mount {
     local -r sapnote='#2972496'
 
     # String declaration
-    local -r fs_list_supported='xfs|GPFS|nfs'
-    local -r fs_list_supported_expiredCertification='ext3|MPFS|OCFS2'
-    local -r fs_list_all_supported='xfs|GPFS|nfs|ext3*|MPFS*|OCFS2*'
+    local -r fs_list_supported='xfs|gpfs|nfs'
+    local -r fs_list_supported_expiredCertification='ext3|mpfs|ocfs2'
+    local -r fs_list_all_supported='xfs|gpfs|nfs|ext3*|mpfs*|ocfs2*'
 
     local _rxHANAmounts='/hana/(data|log|shared).*'
     # MODIFICATION SECTION<<
@@ -40,7 +40,7 @@ function check_5540_fs_hana_mount {
 
         while read -r _mount_point _type _rest; do
             if [[ "$_mount_point" =~ $_rxHANAmounts ]]; then
-                local type_value="$_type"
+                local type_value="${_type,,}"   # force lowercase
                 local current_mount_point="$_mount_point"
 
                 is_supported_fs "$type_value"
