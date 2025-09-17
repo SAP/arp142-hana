@@ -6,22 +6,24 @@ function check_5210_io_nvme_parameter_hyperscaler {
 
     local -i _retval=99
 
-    # '/sys/module/nvme_core/parameters/io_timeout'
-
-    local sapnote
     # MODIFICATION SECTION>>
-    local sapnote_aws='#1656250'
-    local sapnote_azure='#2015553'
-    local -i _reco_io_timeout=240
+    local -r sapnote_aws='#1656250'
+    local -r sapnote_azure='#2015553'
+    local -r -i reco_io_timeout=240
     # MODIFICATION SECTION<<
 
     # https://www.suse.com/de-de/support/kb/doc/?id=000021813
-
     # 1656250 - SAP on AWS: Support prerequisites
-    # 2015553 - SAP on Microsoft Azure: Support prerequisites (not included so far!)
+    # 2015553 - SAP on Microsoft Azure: Support prerequisites
     # https://learn.microsoft.com/en-us/azure/virtual-machines/enable-nvme-interface
     # https://learn.microsoft.com/en-us/azure/virtual-machines/nvme-linux
 
+    #tweaked by unit-test
+    if [[ -z ${path_to_nvme_timeout:-} ]]; then
+        path_to_nvme_timeout='/sys/module/nvme_core/parameters/io_timeout'
+    fi
+
+    local sapnote
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_CLOUD_AMAZON && ! LIB_FUNC_IS_CLOUD_MICROSOFT; then
@@ -29,36 +31,37 @@ function check_5210_io_nvme_parameter_hyperscaler {
         logCheckSkipped "Not running on an affected hyperscaler. Skipping" "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif [[ ! -f '/sys/module/nvme_core/parameters/io_timeout' ]]; then
+    elif [[ ! -f "${path_to_nvme_timeout}" ]]; then
 
         logCheckSkipped "nvme parameter io_timeout is not available. Skipping" "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif LIB_FUNC_IS_CLOUD_AMAZON; then
-
-        sapnote="${sapnote_aws}"
-
-    elif LIB_FUNC_IS_CLOUD_MICROSOFT; then
-
-        sapnote="${sapnote_azure}"
-
-    fi
-
+    else
     # CHECK
-    if [[ ${_retval} -eq 99 ]]; then
 
-        local -i _curr_io_timeout
+        # Determine which cloud platform and set appropriate SAP note
+        if LIB_FUNC_IS_CLOUD_AMAZON; then
+            sapnote="${sapnote_aws}"
+        elif LIB_FUNC_IS_CLOUD_MICROSOFT; then
+            sapnote="${sapnote_azure}"
+        fi
 
-        _curr_io_timeout=$(</sys/module/nvme_core/parameters/io_timeout)
+        # CHECK
+        local -i curr_io_timeout
 
-        if [[ ${_curr_io_timeout} -lt ${_reco_io_timeout} ]]; then
+        if ! curr_io_timeout=$(<"${path_to_nvme_timeout}") || [[ ! ${curr_io_timeout} =~ ^[0-9]+$ ]]; then
 
-            logCheckError "nvme parameter io_timeout NOT set as recommended (SAP Note ${sapnote:-}) (is: ${_curr_io_timeout}, should be: >=${_reco_io_timeout})"
+            logCheckError "Failed to read or parse nvme parameter io_timeout from ${path_to_nvme_timeout}"
+            _retval=2
+
+        elif [[ ${curr_io_timeout} -lt ${reco_io_timeout} ]]; then
+
+            logCheckError "nvme parameter io_timeout NOT set as recommended (SAP Note ${sapnote:-}) (is: ${curr_io_timeout}, should be: >=${reco_io_timeout})"
             _retval=2
 
         else
 
-            logCheckOk "nvme parameter io_timeout set as recommended (SAP Note ${sapnote:-}) (is: ${_curr_io_timeout})"
+            logCheckOk "nvme parameter io_timeout set as recommended (SAP Note ${sapnote:-}) (is: ${curr_io_timeout})"
             _retval=0
 
         fi
