@@ -12,7 +12,8 @@ function check_5540_fs_hana_mount {
     local -r fs_list_supported_expiredCertification='ext3|mpfs|ocfs2'
     local -r fs_list_all_supported='xfs|gpfs|nfs|ext3*|mpfs*|ocfs2*'
 
-    local _rxHANAmounts='/hana/(data|log|shared).*'
+    local _rxHANAmounts
+    _rxHANAmounts='/hana/(data|log|shared).*'
     # MODIFICATION SECTION<<
 
     # SAP Note 2972496 - SAP HANA Filesystem Types
@@ -24,7 +25,7 @@ function check_5540_fs_hana_mount {
     fi
 
     # helper function using LIB_FUNC_STRINGCONTAIN
-    is_supported_fs() { 
+    is_supported_fs() {
         local fs="$1"
         LIB_FUNC_STRINGCONTAIN "${fs_list_supported}" "${fs}" && return 0
         LIB_FUNC_STRINGCONTAIN "${fs_list_supported_expiredCertification}" "${fs}" && return 1
@@ -38,9 +39,7 @@ function check_5540_fs_hana_mount {
         local is_not_supported=false
         local is_expired_cert=false
 
-        # parse /proc/mounts correctly: device mountpoint type ...
-        while read -r _device _mount_point _type _rest; do
-
+        while read -r _mount_point _type _rest; do
             is_supported_fs "${_type,,}"
             case $? in
                 0)
@@ -56,8 +55,7 @@ function check_5540_fs_hana_mount {
                     is_not_supported=true
                     ;;
             esac
-
-        done <<< "$(grep -E "${_rxHANAmounts}" /proc/mounts)"
+        done <<< "$(grep -soE "${_rxHANAmounts}" /proc/mounts)"
 
         if $is_supported && ! $is_not_supported && ! $is_expired_cert; then
             logCheckOk "All HANA mount-point file-system types are supported (SAP Note ${sapnote:-})"
