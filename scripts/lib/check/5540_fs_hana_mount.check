@@ -23,8 +23,8 @@ function check_5540_fs_hana_mount {
         _retval=3
     fi
 
-    # helper function using regex strings
-    is_supported_fs() {
+    # helper function using LIB_FUNC_STRINGCONTAIN
+    is_supported_fs() { 
         local fs="$1"
         LIB_FUNC_STRINGCONTAIN "${fs_list_supported}" "${fs}" && return 0
         LIB_FUNC_STRINGCONTAIN "${fs_list_supported_expiredCertification}" "${fs}" && return 1
@@ -34,40 +34,40 @@ function check_5540_fs_hana_mount {
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-        local -i counter_mount_points_not_supported=0
-        local -i counter_mount_points_supported=0
-        local -i counter_mount_points_supported_expired_certification=0
+        local is_supported=false
+        local is_not_supported=false
+        local is_expired_cert=false
 
-        while read -r _mount_point _type _rest; do
-            if [[ "$_mount_point" =~ $_rxHANAmounts ]]; then
-                local type_value="${_type,,}"   # force lowercase
-                local current_mount_point="$_mount_point"
+        # parse /proc/mounts correctly: device mountpoint type ...
+        while read -r _device _mount_point _type _rest; do
 
-                is_supported_fs "$type_value"
-                case $? in
-                    0)
-                        logCheckOk "File-system type is supported for HANA mount-point <$current_mount_point> (is: $type_value)"
-                        ((counter_mount_points_supported++))
-                        ;;
-                    1)
-                        logCheckWarning "File-system type is supported but part of an expired certification for HANA mount-point <$current_mount_point> (is: $type_value)"
-                        ((counter_mount_points_supported_expired_certification++))
-                        ;;
-                    2)
-                        logCheckError "File-system type is NOT supported for HANA mount-point <$current_mount_point> (is: $type_value, should be: ${fs_list_all_supported})"
-                        ((counter_mount_points_not_supported++))
-                        ;;
-                esac
-            fi
-        done <<< "$(grep -soE "${_rxHANAmounts}" /proc/mounts)"
+            is_supported_fs "${_type,,}"
+            case $? in
+                0)
+                    logCheckOk "File-system type is supported for HANA mount-point <$_mount_point> (is: ${_type,,})"
+                    is_supported=true
+                    ;;
+                1)
+                    logCheckWarning "File-system type is supported but part of an expired certification for HANA mount-point <$_mount_point> (is: ${_type,,})"
+                    is_expired_cert=true
+                    ;;
+                2)
+                    logCheckError "File-system type is NOT supported for HANA mount-point <$_mount_point> (is: ${_type,,}, should be: ${fs_list_all_supported})"
+                    is_not_supported=true
+                    ;;
+            esac
 
-        if [[ $counter_mount_points_supported -gt 0 && $counter_mount_points_not_supported -eq 0 && $counter_mount_points_supported_expired_certification -eq 0 ]]; then
+        done <<< "$(grep -E "${_rxHANAmounts}" /proc/mounts)"
+
+        if $is_supported && ! $is_not_supported && ! $is_expired_cert; then
             logCheckOk "All HANA mount-point file-system types are supported (SAP Note ${sapnote:-})"
             _retval=0
-        elif [[ $counter_mount_points_not_supported -gt 0 ]]; then
+
+        elif $is_not_supported; then
             logCheckError "NOT all HANA mount-point file-system types are supported (SAP Note ${sapnote:-})"
             _retval=2
-        elif [[ $counter_mount_points_supported_expired_certification -gt 0 ]]; then
+
+        elif $is_expired_cert; then
             logCheckWarning "At least one HANA mount-point file-system type is supported but part of an expired certification (SAP Note ${sapnote:-})"
             _retval=1
         fi
