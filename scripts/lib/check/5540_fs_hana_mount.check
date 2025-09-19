@@ -62,6 +62,7 @@ function check_5540_fs_hana_mount {
             esac
         done <<< "$(grep -soE "${_rxHANAmounts}" /proc/mounts)"
 
+
         if $is_supported && ! $is_not_supported && ! $is_expired_cert; then
 
             logCheckOk "All HANA mount-point file-system types are supported (SAP Note ${sapnote:-})"
@@ -83,4 +84,5 @@ function check_5540_fs_hana_mount {
 
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
     return $_retval
+
 }
