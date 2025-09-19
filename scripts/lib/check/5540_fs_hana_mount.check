@@ -28,10 +28,12 @@ function check_5540_fs_hana_mount {
 
     # helper function using LIB_FUNC_STRINGCONTAIN
     is_supported_fs() {
+
         local fs="$1"
         LIB_FUNC_STRINGCONTAIN "${fs_list_supported}" "${fs}" && return 0
         LIB_FUNC_STRINGCONTAIN "${fs_list_supported_expiredCertification}" "${fs}" && return 1
         return 2
+
     }
 
     # CHECK
@@ -43,6 +45,7 @@ function check_5540_fs_hana_mount {
 
         while read -r _mount_point _type _rest; do
             is_supported_fs "${_type,,}"
+
             case $? in
                 0)
                     logCheckOk "File-system type is supported for HANA mount-point <$_mount_point> (is: ${_type,,})"
