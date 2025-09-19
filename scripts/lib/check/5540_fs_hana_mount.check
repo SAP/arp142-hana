@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+
+function check_5540_fs_hana_mount {
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2972496'
+
+    # String declaration
+    local -r fs_list_supported='xfs|gpfs|nfs'
+    local -r fs_list_supported_expiredCertification='ext3|mpfs|ocfs2'
+    local -r fs_list_all_supported='xfs|gpfs|nfs|ext3*|mpfs*|ocfs2*'
+
+    local _rxHANAmounts
+    _rxHANAmounts='/hana/(data|log|shared).*'
+
+    # MODIFICATION SECTION<<
+
+    # SAP Note 2972496 - SAP HANA Filesystem Types
+
+    # PRECONDITIONS
+    if ! grep -qsE "${_rxHANAmounts}" /proc/mounts; then
+
+        logCheckSkipped "No HANA filesystem mounted (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+        _retval=3
+
+    fi
+
+    # helper function using LIB_FUNC_STRINGCONTAIN
+    is_supported_fs() {
+
+        local fs="$1"
+        LIB_FUNC_STRINGCONTAIN "${fs_list_supported}" "${fs}" && return 0
+        LIB_FUNC_STRINGCONTAIN "${fs_list_supported_expiredCertification}" "${fs}" && return 1
+        return 2
+
+    }
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local is_supported=false
+        local is_not_supported=false
+        local is_expired_cert=false
+
+        while read -r _mount_point _type _rest; do
+
+            is_supported_fs "${_type,,}"
+
+            case $? in
+                0)
+                    logCheckOk "File-system type is supported for HANA mount-point <$_mount_point> (is: ${_type,,})"
+                    is_supported=true
+                    ;;
+                1)
+                    logCheckWarning "File-system type is supported but part of an expired certification for HANA mount-point <$_mount_point> (is: ${_type,,})"
+                    is_expired_cert=true
+                    ;;
+                2)
+                    logCheckError "File-system type is NOT supported for HANA mount-point <$_mount_point> (is: ${_type,,}, should be: ${fs_list_all_supported})"
+                    is_not_supported=true
+                    ;;
+            esac
+
+        done <<< "$(grep -soE "${_rxHANAmounts}" /proc/mounts)"
+
+
+        if $is_supported && ! $is_not_supported && ! $is_expired_cert; then
+
+            logCheckOk "All HANA mount-point file-system types are supported (SAP Note ${sapnote:-})"
+            _retval=0
+
+        elif $is_not_supported; then
+
+            logCheckError "NOT all HANA mount-point file-system types are supported (SAP Note ${sapnote:-})"
+            _retval=2
+
+        elif $is_expired_cert; then
+
+            logCheckWarning "At least one HANA mount-point file-system type is supported but part of an expired certification (SAP Note ${sapnote:-})"
+            _retval=1
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return $_retval
+
+}
