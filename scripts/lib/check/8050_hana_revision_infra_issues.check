@@ -10,44 +10,34 @@ function check_8050_hana_revision_infra_issues {
     # array             'SPSP'  'lower bound'    'upper bound'  'SAP Note'  'Description'
     local -a _hana_all=(\
                         '5'     '2.00.056.00'    '2.00.059.06'  '3312868'  'Script hdbenv.sh takes a long time to complete'     \
-                        '6'     '2.00.060.00'    '2.00.065.00'  '3312868'  'Script hdbenv.sh takes a long time to complete'     \
 
                         '5'     '2.00.050.00'    '2.00.059.09'  '3356185'  'Long Critical Phase For Savepoint'     \
-                        '6'     '2.00.060.00'    '2.00.067.02'  '3356185'  'Long Critical Phase For Savepoint'     \
                         '7'     '2.00.070.00'    '2.00.071.00'  '3356185'  'Long Critical Phase For Savepoint'     \
 
                         '5'     '2.00.050.00'    '2.00.059.12'  '3466826'  'Savepoint Slowness With FRO/PMEM'      \
-                        '6'     '2.00.060.00'    '2.00.067.04'  '3466826'  'Savepoint Slowness With FRO/PMEM'      \
                         '7'     '2.00.070.00'    '2.00.077.00'  '3466826'  'Savepoint Slowness With FRO/PMEM'      \
 
                         '5'     '2.00.050.00'    '2.00.059.14'  '3499670'  'DML Statements Adding LOBs Hanging in Thread_State Resource Load Wait'   \
-                        '6'     '2.00.060.00'    '2.00.067.04'  '3499670'  'DML Statements Adding LOBs Hanging in Thread_State Resource Load Wait'   \
                         '7'     '2.00.070.00'    '2.00.079.00'  '3499670'  'DML Statements Adding LOBs Hanging in Thread_State Resource Load Wait'   \
 
                         '5'     '2.00.050.00'    '2.00.059.09'  '2222110'  'Problem with timer thread'  \
-                        '6'     '2.00.060.00'    '2.00.067.02'  '2222110'  'Problem with timer thread'  \
                         '7'     '2.00.070.00'    '2.00.071.00'  '2222110'  'Problem with timer thread'  \
 
                         '7'     '2.00.070.00'    '2.00.076.00'  '3435077'  'Nameserver Hangs (ClockMonitor)'  \
 
                         '5'     '2.00.050.00'    '2.00.059.14'  '3434285'  'Nameserver Unresponsive due to Failing Disk Polling (getDiskInfo)'   \
-                        '6'     '2.00.060.00'    '2.00.067.04'  '3434285'  'Nameserver Unresponsive due to Failing Disk Polling (getDiskInfo)'   \
                         '7'     '2.00.070.00'    '2.00.079.01'  '3434285'  'Nameserver Unresponsive due to Failing Disk Polling (getDiskInfo)'   \
 
                         '5'     '2.00.050.00'    '2.00.059.12'  '2044468'  'Partitioning redo log'   \
-                        '6'     '2.00.060.00'    '2.00.067.04'  '2044468'  'Partitioning redo log'   \
                         '7'     '2.00.070.00'    '2.00.076.00'  '2044468'  'Partitioning redo log'   \
 
                         '5'     '2.00.050.00'    '2.00.059.14'  '3528623'  'Slow in table load/reload due to load trace writing'   \
-                        '6'     '2.00.060.00'    '2.00.067.04'  '3528623'  'Slow in table load/reload due to load trace writing'   \
                         '7'     '2.00.070.00'    '2.00.079.02'  '3528623'  'Slow in table load/reload due to load trace writing'   \
 
                         '5'     '2.00.050.00'    '2.00.059.09'  '3343278'  'Nameserver is Unresponsive due to blocked Asynchronous Requests'   \
-                        '6'     '2.00.060.00'    '2.00.067.02'  '3343278'  'Nameserver is Unresponsive due to blocked Asynchronous Requests'   \
                         '7'     '2.00.070.00'    '2.00.072.00'  '3343278'  'Nameserver is Unresponsive due to blocked Asynchronous Requests'   \
 
                         '5'     '2.00.050.00'    '2.00.059.10'  '3366673'  'landscapeHostConfiguration.py fails with Python runtime (spawn)'   \
-                        '6'     '2.00.060.00'    '2.00.067.03'  '3366673'  'landscapeHostConfiguration.py fails with Python runtime (spawn)'   \
                         '7'     '2.00.070.00'    '2.00.073.00'  '3366673'  'landscapeHostConfiguration.py fails with Python runtime (spawn)'   \
 
                         '7'     '2.00.070.00'    '2.00.079.02'  '3555251'  'Data Volume Encryption / Decryption is Hanging in TouchOldPagesJob' \
