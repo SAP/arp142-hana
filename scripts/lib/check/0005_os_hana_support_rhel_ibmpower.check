@@ -7,7 +7,7 @@ function check_0005_os_hana_support_rhel_ibmpower {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r platform_rx='POWER(10|9|8)'
+    local -r platform_rx='POWER(11|10|9)'
 
     #                       'Platform'      'maj'  '0123456789A' (Minor Release)
     local -a _rhel_matrix=(\
@@ -18,8 +18,10 @@ function check_0005_os_hana_support_rhel_ibmpower {
                             'POWER9'        '7'    '----------'  \
                             )
     local -ar _rhel_matrix_ibmcloud=(\
+                            'POWER11'       '9'    '--2-4-6'        \
                             'POWER10'       '9'    '--2-4'          \
                             'POWER9'        '9'    '--2-4'          \
+                            'POWER11'       '8'    '------6-8-A'    \
                             'POWER10'       '8'    '------6-8-A'    \
                             'POWER9'        '8'    '------6-8-A'    \
                         )
