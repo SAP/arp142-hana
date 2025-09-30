@@ -73,6 +73,9 @@ function check_0106_supported_instances_ibmcloud {
                         'sr2-165x22000' 'sr2-165x24000' 'sr2-165x26000' 'sr2-165x28000' \
                         'sr2-165x30500' \
 
+                        #IBM Power11 Systems
+                        'sr3-6x256'     'sr3-11x512'    'sr3-19x1024'   'sr3-76x6144'   'sr3-229x30500' \
+
                         )
 
     local -r sapnote='#1380654'
