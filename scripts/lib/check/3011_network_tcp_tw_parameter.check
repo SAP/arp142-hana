@@ -10,15 +10,21 @@ function check_3011_network_tcp_tw_parameter {
     local -r sapnote='#2382421'
 
     local -i reco_tcp_tw_reuse=0
-    local -i reco_tcp_tw_recycle=0
+    local -ir reco_tcp_tw_recycle=0
     # MODIFICATION SECTION<<
 
     #2382421 - Optimizing the Network Configuration on HANA- and OS-Level for SPS10 and Higher
     #401162  - Linux: Avoiding TCP/IP port conflicts and start problems
     #2789262 - Connection problems between Windows hosts and HANA database on Linux hosts
 
+    #tcp_tw_recycle was removed from Kernel 4.12
     #Starting from SLES 12 SP4 and SLES 15 GA  *tw_recycle configuration is removed without substitution.
+    #RHEL8 is based on Kernel 4.18 hence, tcp_tw_recycle is not available from RHEL8
     #Starting from SLES 15.2 and RHEL8.1 - default tcp_tw_reuse=2 (safely reuse loopback)
+
+    # Override paths for testing
+    local path_to_tcp_tw_reuse="${path_to_tcp_tw_reuse:-/proc/sys/net/ipv4/tcp_tw_reuse}"
+    local path_to_tcp_tw_recycle="${path_to_tcp_tw_recycle:-/proc/sys/net/ipv4/tcp_tw_recycle}"
 
     local _loopback_opt_available
     _loopback_opt_available=false
@@ -52,11 +58,10 @@ function check_3011_network_tcp_tw_parameter {
     fi
 
     # #CHECK
-    local -i _tcp_tw_reuse
-    local -i _tcp_tw_recycle
 
     ## REUSE
-    _tcp_tw_reuse=$(</proc/sys/net/ipv4/tcp_tw_reuse)
+    local -i _tcp_tw_reuse
+    _tcp_tw_reuse=$(<"${path_to_tcp_tw_reuse}")
 
     if [[ ${_tcp_tw_reuse} -ne ${reco_tcp_tw_reuse} ]]; then
 
@@ -86,12 +91,14 @@ function check_3011_network_tcp_tw_parameter {
     fi
 
     ## RECYCLE - anyway deprectated
-    if [[ ! -f '/proc/sys/net/ipv4/tcp_tw_recycle' ]]; then
+    if [[ ! -f "${path_to_tcp_tw_recycle}" ]]; then
 
         logCheckInfo 'Network kernel parameter net.ipv4.tcp_tw_recycle not available'
 
     else
-        _tcp_tw_recycle=$(</proc/sys/net/ipv4/tcp_tw_recycle)
+
+        local -i _tcp_tw_recycle
+        _tcp_tw_recycle=$(<"${path_to_tcp_tw_recycle}")
 
         if [[ ${_tcp_tw_recycle} -ne ${reco_tcp_tw_recycle} ]]; then
 
@@ -115,7 +122,7 @@ function check_3011_network_tcp_tw_parameter {
 
         logCheckWarning "Network kernel net.ipv4.tcp_tw* parameters NOT set as recommended (SAP Note ${sapnote:-})"
 
-        if [[ ${_tcp_tw_reuse} -ne 0 || ${_tcp_tw_recycle:-} -ne ${reco_tcp_tw_recycle} ]]; then
+        if [[ ${_tcp_tw_reuse} -ne 0 ]]; then
 
             logCheckWarning '---'
             logCheckWarning 'Please note that these settings MUST NOT be applied, if the HANA node'
