@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -u  # treat unset variables as an error
 
-PROGRAM_DIR="$( cd "${BASH_SOURCE[0]%/*}" && pwd )"
+PROGRAM_DIR="${BASH_SOURCE[0]%/*}"
+[[ "$PROGRAM_DIR" == "${BASH_SOURCE[0]}" ]] && PROGRAM_DIR="."
 readonly PROGRAM_DIR
 
 # mock PREREQUISITE functions
@@ -41,21 +42,19 @@ test_all_supported_fs() {
     hana_mounts+=('server:/vol /hana/data xfs rw,noatime')
     hana_mounts+=('server:/vol /hana/data gpfs rw,noatime')
     hana_mounts+=('server:/vol /hana/data nfs rw,noatime')
+    hana_mounts+=('server:/vol /hana/data nfs4 rw,noatime')
     hana_mounts+=('server:/vol /hana/log xfs rw,noatime')
     hana_mounts+=('server:/vol /hana/log gpfs rw,noatime')
     hana_mounts+=('server:/vol /hana/log nfs rw,noatime')
-    hana_mounts+=('server:/vol /hana/shared nfs ro,noexec,nosuid')
-    hana_mounts+=('server:/vol /hana/shared gpfs ro,noexec,nosuid')
-    hana_mounts+=('server:/vol /hana/shared xfs ro,noexec,nosuid')
+    hana_mounts+=('server:/vol /hana/log nfs4 rw,noatime')
     hana_mounts+=('0.0.0.0:/vol /hana/data/OQL xfs rw,noatime')
     hana_mounts+=('0.0.0.0:/vol /hana/data/OQL gpfs rw,noatime')
     hana_mounts+=('0.0.0.0:/vol /hana/data/OQL nfs rw,noatime')
+    hana_mounts+=('0.0.0.0:/vol /hana/data/OQL nfs4 rw,noatime')
     hana_mounts+=('0.0.0.0:/vol /hana/log/OQL xfs rw,noatime')
     hana_mounts+=('0.0.0.0:/vol /hana/log/OQL nfs rw,noatime')
+    hana_mounts+=('0.0.0.0:/vol /hana/log/OQL nfs4 rw,noatime')
     hana_mounts+=('0.0.0.0:/vol /hana/log/OQL gpfs rw,noatime')
-    hana_mounts+=('0.0.0.0:/vol /hana/shared/OQL xfs rw,noatime')
-    hana_mounts+=('0.0.0.0:/vol /hana/shared/OQL nfs rw,noatime')
-    hana_mounts+=('0.0.0.0:/vol /hana/shared/OQL gpfs rw,noatime')
 
     # act
     check_5540_fs_hana_mount
@@ -74,9 +73,6 @@ test_expired_certification_fs() {
     hana_mounts+=('0.0.0.0:/vol /hana/data ext3 rw,noatime')
     hana_mounts+=('0.0.0.0:/vol /hana/data ocfs2 rw,noatime')
     hana_mounts+=('0.0.0.0:/vol /hana/data mpfs rw,noatime')
-    hana_mounts+=('0.0.0.0:/vol /hana/shared ext3 rw,noatime')
-    hana_mounts+=('0.0.0.0:/vol /hana/shared ocfs2 rw,noatime')
-    hana_mounts+=('0.0.0.0:/vol /hana/shared mpfs rw,noatime')
 
     # act
     check_5540_fs_hana_mount
@@ -91,10 +87,8 @@ test_unsupported_fs() {
     hana_mounts=()
     hana_mounts+=('server:/vol /hana/data ext4 rw,noatime')
     hana_mounts+=('server:/vol /hana/log ext4 defaults')
-    hana_mounts+=('server:/vol /hana/shared ext4 ro,noexec,nosuid')
     hana_mounts+=('server:/vol /hana/data btrfs rw,noatime')
     hana_mounts+=('server:/vol /hana/log btrfs defaults')
-    hana_mounts+=('server:/vol /hana/shared btrfs ro,noexec,nosuid')
 
     # act
     check_5540_fs_hana_mount
