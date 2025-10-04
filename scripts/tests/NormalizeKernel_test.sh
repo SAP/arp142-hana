@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -u      # treat unset variables as an error
 
-PROGRAM_DIR="$( cd "${BASH_SOURCE[0]%/*}" && pwd )"
+PROGRAM_DIR="${BASH_SOURCE[0]%/*}"
+[[ "$PROGRAM_DIR" == "${BASH_SOURCE[0]}" ]] && PROGRAM_DIR="."
 readonly PROGRAM_DIR
 
 testNormalizeKernelEqualTo() {

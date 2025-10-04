@@ -4,7 +4,8 @@ set -u      # treat unset variables as an error
 #Useful information
 #http://stackoverflow.com/questions/4023830/how-compare-two-strings-in-dot-separated-version-format-in-bash
 
-PROGRAM_DIR="$( cd "${BASH_SOURCE[0]%/*}" && pwd )"
+PROGRAM_DIR="${BASH_SOURCE[0]%/*}"
+[[ "$PROGRAM_DIR" == "${BASH_SOURCE[0]}" ]] && PROGRAM_DIR="."
 readonly PROGRAM_DIR
 
 testCompareVersionsEqualTo() {
