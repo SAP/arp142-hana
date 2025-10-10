@@ -46,6 +46,10 @@ function check_8050_hana_revision_infra_issues {
 
                         '7'     '2.00.070.00'    '2.00.079.04'  '3608008'  'CPU Spikes and Blocked Savepoints ... on Exhausted TMPFS (NVM-FRO)' \
                         '8'     '2.00.080.00'    '2.00.085.00'  '3608008'  'CPU Spikes and Blocked Savepoints ... on Exhausted TMPFS (NVM-FRO)' \
+
+                        '5'     '2.00.050.00'    '2.00.059.99'  '3665521'  'Unresponsive System due to Memory Reclaim of Huge Alignment Pages' \
+                        '7'     '2.00.070.00'    '2.00.079.06'  '3665521'  'Unresponsive System due to Memory Reclaim of Huge Alignment Pages' \
+                        '8'     '2.00.080.00'    '2.00.087.00'  '3665521'  'Unresponsive System due to Memory Reclaim of Huge Alignment Pages' \
                         )
 
     local -ar _hana_intel=(\
@@ -76,6 +80,7 @@ function check_8050_hana_revision_infra_issues {
     # 3600754 - Slow logreplay performance on HANA 2 SPS08 of redo log created on HANA 2 <= SPS07
     # 3608008 - CPU Spikes and Blocked Savepoints Due to Expensive Fallocate() Syscalls on Exhausted TMPFS (NVM-FRO)
     # 3610237 - Indexserver Crash at PageAccess::LogicalPageControlBlock::notifyPotentialReusable
+    # 3665521 - Unresponsive System due to Memory Reclaim of Huge Alignment Pages
 
     # PRECONDITIONS
     if [[ ${#HANA_SIDS[@]} -eq 0 ]]; then
