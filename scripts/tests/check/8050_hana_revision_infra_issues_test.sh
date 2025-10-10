@@ -98,7 +98,7 @@ test_hana_release_not_affected() {
 
     declare -gA HANA_HA1
     # shellcheck disable=SC2154,SC2034
-    HANA_HA1[release]='2.00.059.99'
+    HANA_HA1[release]='2.00.060.00'
 
     #act
     check_8050_hana_revision_infra_issues
