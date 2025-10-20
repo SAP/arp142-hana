@@ -7,30 +7,50 @@ function check_0011_os_kernel_knownissue_sles {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    # array 'release' 'lower boundary' 'upper boundary' 'SAP Note'
+    # Issue descriptions lookup table
+    declare -rA _issue_descriptions=(
+        ['SAP Note #2814271']='SAP HANA Backup fails on Azure with Checksum Error - affects ALL, not only Azure (bsc#1137959)'
+        ['SUSE bsc#1170457']='NFS: Do not call generic_error_remove_page() while holding locks (bsc#1170457)'
+        ['RETBLEED']='Security vulnerability: Regression in SUSE Linux Enterprise 15 SP3 kernel caused by RETBLEED fixes'
+        ['SUSE TID 000021035']='TSC Clocksource Switching to HPET During High I/O Load'
+        ['SUSE bsc#1203496-PMEM']='SLES 15 SP2/3: HANA PMEM savepoint blocking issue'
+        ['SUSE TID 000021453, retracted']='Database corruption after updating to kernel-default-4.12.14-122.212'
+        ['retracted']='Kernel version retracted by SUSE'
+        ['SAP Note #3577518']='NFS Performance Issues'
+        ['SUSE TID 000020826']='BUG: workqueue leaked lock or atomic: kworker'
+        ['SUSE bsc#1215885']='clocksource - bunch of fixes'
+        ['SUSE bsc#1231923']='block: Avoid leaking hctx->nr_active counter on batched completion (Slow IO)'
+        ['SUSE bsc#1236289']='performance issues caused by very frequent reads of /proc/cpuinfo'
+        ['SUSE bsc#1229891']='net: mana: Implement get_ringparam/set_ringparam for mana'
+        ['SAP Note #3323613']='Azure - Linux OS Crash due to large number of disable/enable requests for VMs using Accelerated Networking'
+        ['SAP Note #1928533, M832ixs_v2 only']='SAP Applications on Microsoft Azure: Supported Products and Azure VM types - M832ixs_v2'
+        ['SAP Note #3415906']='Could Not Query From SYS.M_SERVICE_MEMORY_ (clock_gettime @ IBM Power - hanging HANA callstacks)'
+    )
+
+    # array 'release' 'lower boundary' 'upper boundary' 'Issue ID'
     local -a _sles_all=(\
-                        '12.5' '4.12.14-120.1'          '4.12.14-122.7.0'   '#2814271' \
-                        '12.5' '4.12.14-120.1'          '4.12.14-122.23.0'   '#SUSE bsc#1170457' \
-                        '12.5' '4.12.14-122.127.1'      '4.12.14-122.130.0'  '#RETBLEED' \
-                        '12.5' '4.12.14-122.144.1'      '4.12.14-122.147.1'             '#SUSE TID 000021035' \
-                        '12.5' '4.12.14-120.1'          '4.12.14-122.186.0'  '#SUSE bsc#1203496-PMEM' \
-                        '12.5' '4.12.14-122.212.1'      '4.12.14-122.212.1'  '#SUSE TID 000021453, retracted' \
-                        '15.3' '5.3.18-59.30.1'             '5.3.18-59.30.1'            '#retracted' \
-                        '15.3' '5.3.18-150300.59.81.1'      '5.3.18-150300.59.81.1'     '#retracted' \
-                        '15.3' '5.3.18-150300.59.81.1'      '5.3.18-150300.59.90.0'     '#RETBLEED' \
-                        '15.3' '5.3.18-57.3'                '5.3.18-150300.59.101.0'    '#SUSE bsc#1203496-PMEM' \
-                        '15.3' '5.3.18-150300.59.101.1'     '5.3.18-150300.59.106.1'    '#SUSE TID 000021035' \
-                        '15.3' '5.3.18-150300.59.170.1'     '5.3.18-150300.59.195.0'    '#3577518' \
-                        '15.3' '5.3.18-150300.59.191.1'     '5.3.18-150300.59.191.1'    '#retracted' \
-                        '15.4' '5.14.21-150400.24.21.1'     '5.14.21-150400.24.28.0'    '#SUSE TID 000020826' \
-                        '15.4' '5.14.21-150400.24.33.2'     '5.14.21-150400.24.41.0'    '#SUSE TID 000021035' \
-                        '15.4' '5.14.21-150400.24.49.3'     '5.14.21-150400.24.49.3'    '#retracted' \
-                        '15.4' '5.14.21-150400.24.84.1 '    '5.14.21-150400.24.84.1 '   '#retracted' \
-                        '15.4' '5.14.21-150400.24.88.1 '    '5.14.21-150400.24.108.0'   '#SUSE bsc#1215885' \
-                        '15.4' '5.14.21-150400.22.1'        '5.14.21-150400.24.150.0'   '3577518' \
-                        '15.5' '5.14.21-150500.55.22.1'     '5.14.21-150500.55.22.1'    '#retracted' \
-                        '15.5' '5.14.21-150500.53.2'        '5.14.21-150500.55.44.0'    '#SUSE bsc#1215885' \
-                        '15.5' '5.14.21-150500.53.2'        '5.14.21-150500.55.94.0'    '#3577518' \
+                        '12.5' '4.12.14-120.1'              '4.12.14-122.7.0'           'SAP Note #2814271' \
+                        '12.5' '4.12.14-120.1'              '4.12.14-122.23.0'          'SUSE bsc#1170457' \
+                        '12.5' '4.12.14-122.127.1'          '4.12.14-122.130.0'         'RETBLEED' \
+                        '12.5' '4.12.14-122.144.1'          '4.12.14-122.147.1'         'SUSE TID 000021035' \
+                        '12.5' '4.12.14-120.1'              '4.12.14-122.186.0'         'SUSE bsc#1203496-PMEM' \
+                        '12.5' '4.12.14-122.212.1'          '4.12.14-122.212.1'         'SUSE TID 000021453, retracted' \
+                        '15.3' '5.3.18-59.30.1'             '5.3.18-59.30.1'            'retracted' \
+                        '15.3' '5.3.18-150300.59.81.1'      '5.3.18-150300.59.81.1'     'retracted' \
+                        '15.3' '5.3.18-150300.59.81.1'      '5.3.18-150300.59.90.0'     'RETBLEED' \
+                        '15.3' '5.3.18-57.3'                '5.3.18-150300.59.101.0'    'SUSE bsc#1203496-PMEM' \
+                        '15.3' '5.3.18-150300.59.101.1'     '5.3.18-150300.59.106.1'    'SUSE TID 000021035' \
+                        '15.3' '5.3.18-150300.59.170.1'     '5.3.18-150300.59.195.0'    'SAP Note #3577518' \
+                        '15.3' '5.3.18-150300.59.191.1'     '5.3.18-150300.59.191.1'    'retracted' \
+                        '15.4' '5.14.21-150400.24.21.1'     '5.14.21-150400.24.28.0'    'SUSE TID 000020826' \
+                        '15.4' '5.14.21-150400.24.33.2'     '5.14.21-150400.24.41.0'    'SUSE TID 000021035' \
+                        '15.4' '5.14.21-150400.24.49.3'     '5.14.21-150400.24.49.3'    'retracted' \
+                        '15.4' '5.14.21-150400.24.84.1 '    '5.14.21-150400.24.84.1 '   'retracted' \
+                        '15.4' '5.14.21-150400.24.88.1 '    '5.14.21-150400.24.108.0'   'SUSE bsc#1215885' \
+                        '15.4' '5.14.21-150400.22.1'        '5.14.21-150400.24.150.0'   'SAP Note #3577518' \
+                        '15.5' '5.14.21-150500.55.22.1'     '5.14.21-150500.55.22.1'    'retracted' \
+                        '15.5' '5.14.21-150500.53.2'        '5.14.21-150500.55.44.0'    'SUSE bsc#1215885' \
+                        '15.5' '5.14.21-150500.53.2'        '5.14.21-150500.55.94.0'    'SAP Note #3577518' \
                         '15.5' '5.14.21-150500.55.19.1'     '5.14.21-150500.55.88.0'    'SUSE bsc#1231923' \
                         '15.5' '5.14.21-150500.53.2'        '5.14.21-150500.55.97.0'    'SUSE bsc#1236289' \
                         )
@@ -46,53 +66,17 @@ function check_0011_os_kernel_knownissue_sles {
     local -ar _sles_azure=(\
                         '15.6' '6.4.0-150600.21.3'      '6.4.0-150600.23.30.0'      'SUSE bsc#1229891' \
                         '15.5' '5.14.21-150500.53.2'    '5.14.21-150500.55.88.0'    'SUSE bsc#1229891' \
-                        '15.5' '5.14.21-150500.53.2'    '5.14.21-150500.55.7.0'     '#3323613' \
-                        '15.4' '5.14.21-150400.22.1'    '5.14.21-150400.24.60.0'    '#3323613' \
-                        '15.4' '5.14.21-150400.22.1'    '5.14.21-150400.24.55.0'    '#1928533, M832ixs_v2 only' \
-                        '15.3' '5.3.18-57.3'            '5.3.18-150300.59.118.0'    '#3323613' \
-                        '12.5' '4.12.14-120.1'          '4.12.14-122.156.0'         '#3323613' \
+                        '15.5' '5.14.21-150500.53.2'    '5.14.21-150500.55.7.0'     'SAP Note #3323613' \
+                        '15.4' '5.14.21-150400.22.1'    '5.14.21-150400.24.60.0'    'SAP Note #3323613' \
+                        '15.4' '5.14.21-150400.22.1'    '5.14.21-150400.24.55.0'    'SAP Note #1928533, M832ixs_v2 only' \
+                        '15.3' '5.3.18-57.3'            '5.3.18-150300.59.118.0'    'SAP Note #3323613' \
+                        '12.5' '4.12.14-120.1'          '4.12.14-122.156.0'         'SAP Note #3323613' \
                         )
 
     local -ar _sles_ibmpower=(\
-                        '15.4' '5.14.21-150400.22.1'    '5.14.21-150400.24.11.0'    '#3415906' \
-                        '12.5' '4.12.14-120.1'          '4.12.14-122.116.0'         '#3165100,3159746' \
+                        '15.4' '5.14.21-150400.22.1'    '5.14.21-150400.24.11.0'    'SAP Note #3415906' \
                         )
     # MODIFICATION SECTION<<
-
-    #2814271 - SAP HANA Backup fails on Azure with Checksum Error - affects ALL, not only Azure (bsc#1137959)
-    #3159746 - Hana Revision 6x crashes on Linux kernel 4.12 or 4.18 on IBM Power platform
-    #3165100 - Advices on permanent solutions for the issue in SAP note 3165087
-
-    #bsc#1170457 - NFS: Do not call generic_error_remove_page() while holding locks (bsc#1170457)
-
-    #SUSE TID 000021035   TSC Clocksource Switching to HPET During High I/O Load
-    #bsc#1215885 - clocksource - bunch of fixes
-
-    #SUSE TID 000020826   BUG: workqueue leaked lock or atomic: kworker
-
-    #bsc#1203496 - SLES 15 SP2/3: HANA PMEM savepoint blocking issue (https://bugzilla.suse.com/show_bug.cgi?id=1203496)
-
-    #RETBLEED
-    #SUSE-SU-2022:2719-1
-    #SUSE TID 20704 - Security vulnerability: Regression in SUSE Linux Enterprise 15 SP3 kernel caused by RETBLEED fixes
-
-    #3323613 - Azure - Linux OS Crash due to large number of disable/enable requests for VMs using Accelerated Networking
-    #1928533 - SAP Applications on Microsoft Azure: Supported Products and Azure VM types - M832ixs_v2
-
-    #https://www.suse.com/support/kb/doc/?id=000019587
-
-    #SUSE TID 000021453 - Database corruption after updating to kernel-default-4.12.14-122.212
-
-    #3415906 - Could Not Query From SYS.M_SERVICE_MEMORY_ (clock_gettime @ IBM Power - hanging HANA callstacks)
-    #bsc#1199173 - powerpc/vdso: Fix incorrect CFI in gettimeofday.S
-
-    #bsc#1231847-NFS - 3577518 - NFS Performance Issues
-    #bsc#1231923 block: Avoid leaking hctx->nr_active counter on batched completion (Slow IO) (SUSE-SU-2024:4364-1)
-
-    #bsc#1229891 - d25084e33a37    net: mana: Implement get_ringparam/set_ringparam for mana
-    ##(SUSE-SU-2024:4364-1, SUSE-SU-2024:4318-1)
-
-    #bsc#1236289 - /proc/cpuinfo (SUSE-SU-2025:0833-2)
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_SLES; then
@@ -127,6 +111,9 @@ function check_0011_os_kernel_knownissue_sles {
         local _kernel_lower
         local _kernel_higher
         local _kernel_curr
+        local _issue_id
+        local _descr
+        local _kernel_listed=false
 
         _kernel_curr="${OS_LEVEL}"
         LIB_FUNC_NORMALIZE_KERNELn _kernel_curr
@@ -142,7 +129,7 @@ function check_0011_os_kernel_knownissue_sles {
 
             _kernel_lower="${_sles_all[$i + 1]}"
             _kernel_higher="${_sles_all[$i + 2]}"
-            _sapnote="${_sles_all[$i + 3]}"
+            _issue_id="${_sles_all[$i + 3]}"
 
             LIB_FUNC_NORMALIZE_KERNELn _kernel_higher
 
@@ -157,7 +144,16 @@ function check_0011_os_kernel_knownissue_sles {
                 LIB_FUNC_COMPARE_VERSIONS "${_kernel_curr}" "${_kernel_lower}"
                 if [[ $? -le 1 ]]; then
 
-                    logCheckError "Linux kernel has known serious issues and should be avoided (SAP Note ${_sapnote:-}) (is: ${OS_LEVEL}, should be > ${_kernel_higher})"
+                    _descr="${_issue_descriptions[${_issue_id}]}"
+
+                    if [[ ${_kernel_listed} == false ]]; then
+
+                        logCheckError "Linux kernel has known serious issues and should be avoided (is: ${OS_LEVEL})"
+                        _kernel_listed=true
+
+                    fi
+
+                    logCheckError "- ${_descr} (${_issue_id}) (fixed in > ${_kernel_higher})"
                     _retval=2
 
                 fi
