@@ -7,37 +7,38 @@ function check_0021_os_kernel_knownissues_rhel {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    # array 'release' 'lower boundary' 'upper boundary' 'SAP Note'
+    # Issue descriptions lookup table
+    declare -rA _issue_descriptions=(
+        ['KCS-6740861']='Percpu memory accounts for a large percentage of memory'
+        ['KCS-6981979']='RHEL 8: Slower application Read/Write file IO performance'
+        ['SAP Note #3323613']='Azure - Linux OS Crash due to large number of disable/enable requests for VMs using Accelerated Networking'
+        ['SAP Note #1928533, M832ixs_v2 only']='SAP Applications on Microsoft Azure: Supported Products and Azure VM types - M832ixs_v2'
+        ['SAP Note #3415906']='Could Not Query From SYS.M_SERVICE_MEMORY_ (clock_gettime @ IBM Power - hanging HANA callstacks)'
+        ['RHSA-2022:7110']='[Power 9 / ppc64le] Incorrect Socket(s) & "Core(s) per socket" reported by lscpu command'
+    )
+
+    # array 'release' 'lower boundary' 'upper boundary' 'Issue ID'
     local -a _rhel_all=(\
-                        '9.2'   '5.14.0-284.el9'            '5.14.0-284.40.0'       '#KCS-6740861' \
-                        '8.6'   '4.18.0-372.32.1'           '4.18.0-372.36.0'       '#KCS-6981979' \
-                        '8.6'   '4.18.0-372.el8'            '4.18.0-372.26.0'       '#KCS-6740861' \
+                        '9.2'   '5.14.0-284.el9'            '5.14.0-284.40.0'       'KCS-6740861' \
+                        '8.6'   '4.18.0-372.32.1'           '4.18.0-372.36.0'       'KCS-6981979' \
+                        '8.6'   '4.18.0-372.el8'            '4.18.0-372.26.0'       'KCS-6740861' \
                         )
 
     local -ar _rhel_azure=(\
-                        '9.2' '5.14.0-284.1'                '5.14.0-284.25.0'       '#3323613' \
-                        '9.0' '5.14.0-70.1'                 '5.14.0-70.70.0'        '#3323613' \
-                        '8.8' '4.18.0-477.1'                '4.18.0-477.21.0'       '#3323613' \
-                        '8.6' '4.18.0-372.32.1'             '4.18.0-372.51.0'       '#1928533, M832ixs_v2 only' \
-                        '8.6' '4.18.0-372.1'                '4.18.0-372.64.0'       '#3323613' \
-                        '7.9' '3.10.0-1160.1'               '3.10.0-1160.999'       '#3323613' \
+                        '9.2' '5.14.0-284.1'                '5.14.0-284.25.0'       'SAP Note #3323613' \
+                        '9.0' '5.14.0-70.1'                 '5.14.0-70.70.0'        'SAP Note #3323613' \
+                        '8.8' '4.18.0-477.1'                '4.18.0-477.21.0'       'SAP Note #3323613' \
+                        '8.6' '4.18.0-372.32.1'             '4.18.0-372.51.0'       'SAP Note #1928533, M832ixs_v2 only' \
+                        '8.6' '4.18.0-372.1'                '4.18.0-372.64.0'       'SAP Note #3323613' \
+                        '7.9' '3.10.0-1160.1'               '3.10.0-1160.999'       'SAP Note #3323613' \
                         )
 
     local -ar _rhel_ibmpower=(\
-                        '9.2'   '5.14.0-284.1'              '5.14.0-284.21.0'       '#3415906' \
-                        '9.0'   '5.14.0-70.1'               '5.14.0-70.63.0'        '#3415906' \
+                        '9.2'   '5.14.0-284.1'              '5.14.0-284.21.0'       'SAP Note #3415906' \
+                        '9.0'   '5.14.0-70.1'               '5.14.0-70.63.0'        'SAP Note #3415906' \
                         '8.6'   '4.18.0-372.el8'            '4.18.0-372.32.0'       'RHSA-2022:7110' \
                         )
     # MODIFICATION SECTION<<
-
-    #KCS-6981979 RHEL 8: Slower application Read/Write file IO performance
-    #KCS-6740861 Percpu memory accounts for a large percentage of memory
-    #RHSA-2022:7110 - RH2112820 - [Power 9 / ppc64le] Incorrect Socket(s) & "Core(s) per socket" reported by lscpu command
-    #1928533 - SAP Applications on Microsoft Azure: Supported Products and Azure VM types - M832ixs_v2
-
-    #3323613 - Azure - Linux OS Crash due to large number of disable/enable requests for VMs using Accelerated Networking
-
-    #3415906 - Could Not Query From SYS.M_SERVICE_MEMORY_ (clock_gettime @ IBM Power - hanging HANA callstacks)
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_RHEL; then
@@ -62,6 +63,9 @@ function check_0021_os_kernel_knownissues_rhel {
         local _kernel_lower
         local _kernel_higher
         local kernelversion
+        local _issue_id
+        local _descr
+        local _kernel_listed=false
 
         LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
         kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
@@ -77,7 +81,7 @@ function check_0021_os_kernel_knownissues_rhel {
 
             _kernel_lower="${_rhel_all[$i+1]}"
             _kernel_higher="${_rhel_all[$i+2]}"
-            _sapnote="${_rhel_all[$i+3]}"
+            _issue_id="${_rhel_all[$i+3]}"
 
             LIB_FUNC_NORMALIZE_KERNEL "${_kernel_higher}"
             _kernel_higher="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
@@ -94,7 +98,16 @@ function check_0021_os_kernel_knownissues_rhel {
                 LIB_FUNC_COMPARE_VERSIONS "${kernelversion}" "${_kernel_lower}"
                 if [[ $? -le 1 ]]; then
 
-                    logCheckError "Linux kernel has known serious issues and should be avoided (SAP Note ${_sapnote:-}) (is: ${OS_LEVEL}, should be > ${_kernel_higher}.*)"
+                    _descr="${_issue_descriptions[${_issue_id}]}"
+
+                    if [[ ${_kernel_listed} == false ]]; then
+
+                        logCheckError "Linux kernel has known serious issues and should be avoided (is: ${OS_LEVEL})"
+                        _kernel_listed=true
+
+                    fi
+
+                    logCheckError "- ${_descr} (${_issue_id}) (fixed in > ${_kernel_higher}.*)"
                     _retval=2
 
                 fi
