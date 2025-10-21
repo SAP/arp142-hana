@@ -18,7 +18,7 @@ function check_0005_os_hana_support_rhel_ibmpower {
                             'POWER9'        '7'    '----------'  \
                             )
     local -ar _rhel_matrix_ibmcloud=(\
-                            'POWER11'       '9'    '-------'        \
+                            'POWER11'       '9'    '------6'        \
                             'POWER10'       '9'    '--2-4'          \
                             'POWER9'        '9'    '--2-4'          \
                             'POWER11'       '8'    '-----------'    \
