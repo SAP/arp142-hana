@@ -39,7 +39,7 @@ function check_0003_os_hana_support_rhel_intel {
     local -ar _rhel_9=(\
                         'Microsoft Azure'       '0-2-4-6----'   \
                         'Amazon EC2'            '0-2-4-6----'   \
-                        'IBM Cloud'             '0-2-4------'   \
+                        'IBM Cloud'             '0-2-4-6----'   \
                         'Google GCP'            '0-2-4-6----'   \
                         'Alibaba Cloud ECS'     '-----------'   \
                         'Huawei Cloud'          '-----------'   \
