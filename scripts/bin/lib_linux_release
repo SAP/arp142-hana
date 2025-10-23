@@ -318,7 +318,7 @@ function __lib_func_get_sles4sap {
 
         _baseproduct=$(readlink /etc/products.d/baseproduct)
 
-        [[ ${_baseproduct} == 'SLES_SAP.prod' ]] && lib_release_sles4sap=true
+        [[ ${_baseproduct} == *'SLES_SAP.prod' ]] && lib_release_sles4sap=true
 
     fi
 
