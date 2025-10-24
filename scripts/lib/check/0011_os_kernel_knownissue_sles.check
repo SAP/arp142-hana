@@ -25,6 +25,7 @@ function check_0011_os_kernel_knownissue_sles {
         ['SAP Note #3323613']='Azure - Linux OS Crash due to large number of disable/enable requests for VMs using Accelerated Networking'
         ['SAP Note #1928533, M832ixs_v2 only']='SAP Applications on Microsoft Azure: Supported Products and Azure VM types - M832ixs_v2'
         ['SAP Note #3415906']='Could Not Query From SYS.M_SERVICE_MEMORY_ (clock_gettime @ IBM Power - hanging HANA callstacks)'
+        ['SUSE bsc#1237530']='cpuidle driver in virtualized environments'
     )
 
     # array 'release' 'lower boundary' 'upper boundary' 'Issue ID'
@@ -76,6 +77,14 @@ function check_0011_os_kernel_knownissue_sles {
     local -ar _sles_ibmpower=(\
                         '15.4' '5.14.21-150400.22.1'    '5.14.21-150400.24.11.0'    'SAP Note #3415906' \
                         )
+
+    local -ar _sles_vmware=(\
+                        '15.7' '5.14.21-150500.53.2'    '6.4.0-150700.53.3.0'       'SUSE bsc#1237530' \
+                        '15.6' '6.4.0-150600.21.3'      '6.4.0-150600.23.47.1'      'SUSE bsc#1237530' \
+                        '15.5' '5.14.21-150500.53.2'    '5.14.21-150500.55.100.0'   'SUSE bsc#1237530' \
+                        '15.4' '5.14.21-150400.22.1'    '5.14.21-150400.24.161.0'   'SUSE bsc#1237530' \
+                        '15.3' '5.3.18-57.3'            '5.3.18-150300.59.201.0'    'SUSE bsc#1237530' \
+                        )
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS
@@ -95,6 +104,10 @@ function check_0011_os_kernel_knownissue_sles {
     # elif LIB_FUNC_IS_VIRT_KVM || LIB_FUNC_IS_VIRT_XEN ; then
 
     #     _sles_all+=("${_sles_kvm_or_xen[@]}")
+
+    elif LIB_FUNC_IS_VIRT_VMWARE ; then
+
+        _sles_all+=("${_sles_vmware[@]}")
 
     fi
 
