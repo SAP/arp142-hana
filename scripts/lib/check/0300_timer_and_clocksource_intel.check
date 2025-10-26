@@ -93,18 +93,18 @@ function check_0300_timer_and_clocksource_intel {
                 #evaluate RC
                 if [[ ${_retval} -ne 99 ]]; then
 
+                    logCheckInfo 'HANA2 SPS7+8 should use OS clocksource'
                     logCheckInfo 'HANA2 SPS4+5 will NOT use internal timer and fall back to OS clocksource'
                     logCheckInfo 'Check indexserver trace files for <Fallback to system call for HR timer> messages'
                     logCheckInfo 'The trace message can be suppressed by setting variable <HDB_TIMER=system>'
-                    logCheckInfo 'HANA2 SPS6+7 should use OS clocksource'
 
                     logCheckWarning "OS clocksource is NOT set as recommended as unintended fallback might happen (SAP Note ${sapnote:-}) (is: ${current_clocksource})"
                     _retval=1
 
                 else
 
+                    logCheckInfo 'HANA2 SPS7+8 should use OS clocksource'
                     logCheckInfo 'HANA2 SPS4+5 should use internal timer'
-                    logCheckInfo 'HANA2 SPS6+7 should use OS clocksource'
                     logCheckOk "OS clocksource is set as recommended (SAP Note ${sapnote:-}) (is: ${current_clocksource})"
                     _retval=0
 
@@ -125,10 +125,10 @@ function check_0300_timer_and_clocksource_intel {
             _retval=2
 
         else
+            logCheckInfo 'HANA2 SPS7+8 should use OS clocksource'
             logCheckInfo 'HANA2 SPS4+5 will NOT use internal timer and fall back to OS clocksource'
             logCheckInfo 'Check indexserver trace files for <Fallback to system call for HR timer> messages'
             logCheckInfo 'The trace message can be suppressed by setting variable <HDB_TIMER=system>'
-            logCheckInfo 'HANA2 SPS6+7 should use OS clocksource'
 
             logCheckOk "OS clocksource is set as recommended (SAP Note ${sapnote:-}) (is: ${current_clocksource})"
             _retval=0
