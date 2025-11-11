@@ -33,6 +33,11 @@ function check_0700_sysstat {
             logCheckOk "sysstat-collect.timer is active (SAP Note ${sapnote:-})"
             _retval=0
 
+        elif systemctl is-active sysstat_collect.timer --quiet; then
+
+            logCheckOk "sysstat_collect.timer is active (SAP Note ${sapnote:-})"
+            _retval=0
+
         else
 
             logCheckWarning "sysstat collector is disabled - make sure sar monitoring is active (SAP Note ${sapnote:-})"
