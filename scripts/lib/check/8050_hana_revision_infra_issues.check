@@ -26,6 +26,8 @@ function check_8050_hana_revision_infra_issues {
         ['3608008']='CPU Spikes and Blocked Savepoints ... on Exhausted TMPFS (NVM-FRO)'
         ['3610237']='Indexserver Crash on virtualized Intel Ice Lake hosts'
         ['3665521']='Unresponsive System due to Memory Reclaim of Huge Alignment Pages'
+        ['3669696']='Unresponsive System due to late Memory Reclaim cause of gc_unused_memory_threshold-*'
+        ['3680406']='Optimizing Memory Allocation for SAP HANA Services by Adjusting min_segment_size'
     )
 
     # array             'SPSP'  'lower bound'    'upper bound'  'SAP Note'
@@ -52,8 +54,8 @@ function check_8050_hana_revision_infra_issues {
                         '5'     '2.00.050.00'    '2.00.059.12'  '2044468'   \
                         '7'     '2.00.070.00'    '2.00.076.00'  '2044468'   \
 
-                        '5'     '2.00.050.00'    '2.00.059.14'  '3528623'   \
-                        '7'     '2.00.070.00'    '2.00.079.02'  '3528623'   \
+                        '5'     '2.00.050.00'    '2.00.059.99'  '3528623'   \
+                        '7'     '2.00.070.00'    '2.00.079.01'  '3528623'   \
 
                         '5'     '2.00.050.00'    '2.00.059.09'  '3343278'   \
                         '7'     '2.00.070.00'    '2.00.072.00'  '3343278'   \
@@ -71,6 +73,14 @@ function check_8050_hana_revision_infra_issues {
                         '5'     '2.00.050.00'    '2.00.059.99'  '3665521'   \
                         '7'     '2.00.070.00'    '2.00.079.06'  '3665521'   \
                         '8'     '2.00.080.00'    '2.00.087.00'  '3665521'   \
+
+                        '5'     '2.00.050.00'    '2.00.059.99'  '3669696'   \
+                        '7'     '2.00.070.00'    '2.00.079.07'  '3669696'   \
+                        '8'     '2.00.080.00'    '2.00.087.00'  '3669696'   \
+
+                        '5'     '2.00.050.00'    '2.00.059.99'  '3680406'   \
+                        '7'     '2.00.070.00'    '2.00.079.99'  '3680406'   \
+                        '8'     '2.00.080.00'    '2.00.089.99'  '3680406'   \
                         )
 
     local -ar _hana_intel=(\
