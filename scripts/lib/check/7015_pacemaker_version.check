@@ -8,18 +8,19 @@ function check_7015_pacemaker_version {
 
     # MODIFICATION SECTION>>
     local sapnote='#1552925'
-    local -r sapnote_sles='SUSE KB #000020407'
+    local -r sapnote_sles='SUSE KB #000022179'
 
     local -ar _sles_rpm_matrix=(\
-                                    '15.5'   '2.1.5+20221208.a3f44794f-150500.6.11.1'     \
+                                    '15.5'   '2.1.5+20221208.a3f44794f-150500.6.26.1'     \
+                                    '15.6'   '2.1.7+20231219.0f7f88312-150600.6.12.1'     \
+                                    '15.7'   '2.1.10+20250718.fdf796ebc8-150700.3.3.1'    \
                                 )
 
     # MODIFICATION SECTION<<
 
     #1552925 - Linux: High Availability Cluster Solutions
-    #SUSE-RU-2024:0606-1: critical: Recommended update for pacemaker
-    #https://lists.suse.com/pipermail/sle-updates/2024-February/034368.html
-
+    # https://support.scc.suse.com/s/kb/HA-for-SAP-HANA-pacemaker-sub-daemon-is-unresponsive-to-IPC?language=en_US
+    # https://www.suse.com/support/kb/doc/?id=000022179
 
     local os_rpm_matrix
 
@@ -47,8 +48,6 @@ function check_7015_pacemaker_version {
         local _release
         local _goodversion
         local _fullversion
-        local normalized_goodversion
-        local normalized_fullversion
 
         local _handled=false
         local _is_used=false
@@ -79,16 +78,14 @@ function check_7015_pacemaker_version {
             _goodversion="${os_rpm_matrix[$i+1]}"
 
             #normalize good version
-            LIB_FUNC_NORMALIZE_RPM "${_goodversion}"
-            normalized_goodversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+            LIB_FUNC_NORMALIZE_RPMn _goodversion
 
             _fullversion=$(rpm -q --queryformat "%{VERSION}-%{RELEASE}" pacemaker)
             #normalize full version - e.g. 1.1.24+20210811.f5abda0ee-3.33.10
-            LIB_FUNC_NORMALIZE_RPM "${_fullversion}"
-            normalized_fullversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
+            LIB_FUNC_NORMALIZE_RPMn _fullversion
 
             # returns 0 if equal, 1 if first is higher, 2 if second is higher
-            LIB_FUNC_COMPARE_VERSIONS "${normalized_fullversion}" "${normalized_goodversion}"
+            LIB_FUNC_COMPARE_VERSIONS "${_fullversion}" "${_goodversion}"
             if [[ $? -ne 2 ]]; then
 
                 logCheckOk 'pacemaker version seems to be ok' "(SAP Note ${sapnote:-}) (is: ${_fullversion})"
