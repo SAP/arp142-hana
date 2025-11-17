@@ -13,14 +13,14 @@ function check_5540_fs_hana_mount {
     local -r fs_list_all_supported='xfs|gpfs|nfs|nfs4|ext3*|mpfs*|ocfs2*'
 
     local _rxHANAmounts
-    _rxHANAmounts='/hana/(data|log).*'  #also backup
+    _rxHANAmounts='(?<= )/hana/(data|log).*'  # require a leading space but don't include it in the match (PCRE)
 
     # MODIFICATION SECTION<<
 
     # SAP Note 2972496 - SAP HANA Filesystem Types
 
     # PRECONDITIONS
-    if ! grep -qsE "${_rxHANAmounts}" /proc/mounts; then
+    if ! grep -qsP "${_rxHANAmounts}" /proc/mounts; then
 
         logCheckSkipped "No HANA filesystem mounted (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
         _retval=3
@@ -63,7 +63,7 @@ function check_5540_fs_hana_mount {
                     ;;
             esac
 
-        done <<< "$(grep -soE "${_rxHANAmounts}" /proc/mounts)"
+        done <<< "$(grep -soP "${_rxHANAmounts}" /proc/mounts)"
 
 
         if $is_supported && ! $is_not_supported && ! $is_expired_cert; then

@@ -55,6 +55,8 @@ test_all_supported_fs() {
     hana_mounts+=('0.0.0.0:/vol /hana/log/OQL nfs rw,noatime')
     hana_mounts+=('0.0.0.0:/vol /hana/log/OQL nfs4 rw,noatime')
     hana_mounts+=('0.0.0.0:/vol /hana/log/OQL gpfs rw,noatime')
+    hana_mounts+=('0.0.0.0:/hana/data /hana/data nfs4 rw,relatime,vers=4.1,rsize=262144,wsize=262144')
+    hana_mounts+=('0.0.0.0:/hana/log /hana/log nfs4 rw,relatime,vers=4.1,rsize=262144,wsize=262144')
 
     # act
     check_5540_fs_hana_mount
