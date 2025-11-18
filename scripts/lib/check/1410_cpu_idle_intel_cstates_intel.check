@@ -21,8 +21,23 @@ function check_1410_cpu_idle_intel_cstates_intel {
     local -r sapnote_rhel8='#2777782'  # SAP HANA DB: Recommended OS Settings for RHEL 8
     local -r sapnote_rhel9='#3108302'  # SAP HANA DB: Recommended OS Settings for RHEL 9
 
-    local -ir _reco_latency=70 # =C3
+    # there is no C3 since years - recommend latency <=(C1E)
+    local -ir _reco_latency=10
+    local -i  _latency_c1=2
+    [[ ${LIB_PLATF_CPU_MODELID:-} -gt 85 ]] && _latency_c1=1    #ICX onwards
     # MODIFICATION SECTION<<
+
+    # CPU  | SKL+CLX    ICX  SPR/EMR     GNR    SRF
+    # MODID|      85    106  143/207 173/174    175
+    #
+    # POLL |       0      0        0       0      0
+    # C1   |       2      1        1       1      1
+    # C1E  |      10      4        2       4      2
+    # C3   |       -      -        -       -      -
+    # C6   |     133    170      190     170      -
+    # C6P  |       -      -        -     210      -
+    # C6S  |       -      -        -       -    270
+    # C6SP |       -      -        -       -    310
 
     local sapnote
 
@@ -81,8 +96,7 @@ function check_1410_cpu_idle_intel_cstates_intel {
     #CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-        logCheckInfo 'CPUidle driver <intel_idle>: prefer light sleep cstates in favor of very restrictive cstate=1'
-        logCheckInfo 'CPUidle driver <intel_idle>: CSTATES can be set by various configuration options at the same time !!!, by...'
+        logCheckInfo 'CPUidle driver <intel_idle>: CSTATES can be set by various configuration options at the same time:'
         logCheckInfo ' a) fixed driver max_cstate (not preferred)'
         logCheckInfo ' b) individual cstates for each CPU'
         logCheckInfo ' c) PM QoS framework (cpu_dma_latency/tuned:force_latency)'
@@ -99,6 +113,8 @@ function check_1410_cpu_idle_intel_cstates_intel {
         # b) individual cstates for CPU0
         local _maxCstateName
         local -i _maxCstateLatency
+        local _minDisabledCstateName
+        local -i _minDisabledCstateLatency
         local -i _state_latency
 
         #TEST_VARIABLES only required for UNIT TESTING
@@ -106,23 +122,30 @@ function check_1410_cpu_idle_intel_cstates_intel {
 
             _maxCstateName='NONE'
             _maxCstateLatency=0
+            _minDisabledCstateName='NONE'
+            _minDisabledCstateLatency=999
 
             # determine highest latency and name of enabled cstates
             if [[ -d '/sys/devices/system/cpu/cpu0/cpuidle/state0' ]]; then
 
                 for _cstate in /sys/devices/system/cpu/cpu0/cpuidle/state*/; do
 
-                    [[ "$(<"${_cstate}"/disable)" -ne 0 ]] && continue
-
                     _state_latency="$(<"${_cstate}"/latency)"
 
-                    if [[ ${_state_latency} -gt ${_maxCstateLatency:-} ]]; then
-
-                        _maxCstateName="$(<"${_cstate}"/name)"
-                        _maxCstateLatency=${_state_latency}
-
-                        logTrace "<${FUNCNAME[0]}> # cstate=${_maxCstateName} latency=${_maxCstateLatency}"
-
+                    if [[ "$(<"${_cstate}"/disable)" -eq 0 ]]; then
+                        # Track highest enabled cstate
+                        if [[ ${_state_latency} -gt ${_maxCstateLatency:-} ]]; then
+                            _maxCstateName="$(<"${_cstate}"/name)"
+                            _maxCstateLatency=${_state_latency}
+                            logTrace "<${FUNCNAME[0]}> # enabled cstate=${_maxCstateName} latency=${_maxCstateLatency}"
+                        fi
+                    else
+                        # Track lowest disabled cstate
+                        if [[ ${_state_latency} -lt ${_minDisabledCstateLatency} ]]; then
+                            _minDisabledCstateName="$(<"${_cstate}"/name)"
+                            _minDisabledCstateLatency=${_state_latency}
+                            logTrace "<${FUNCNAME[0]}> # disabled cstate=${_minDisabledCstateName} latency=${_minDisabledCstateLatency}"
+                        fi
                     fi
 
                 done
@@ -132,12 +155,16 @@ function check_1410_cpu_idle_intel_cstates_intel {
         else
             _maxCstateName='TEST'
             _maxCstateLatency="${TEST_maxCstateLatency:-}"
+            _minDisabledCstateName='TEST_DISABLED'
+            _minDisabledCstateLatency=9999
         fi
 
         logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # Driver: maxCstate=${_driverMaxCstate}; CPU0: maxCstate=${_maxCstateName} latency=${_maxCstateLatency}"
+        logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # Driver: maxCstate=${_driverMaxCstate}; CPU0: minDisabledCstate=${_minDisabledCstateName} latency=${_minDisabledCstateLatency}"
 
         # c) PM QoS framework (cpu_dma_latency/tuned:force_latency)
         local -i _maxForceLatency
+        local -ir _NO_LIMIT_LATENCY=2000000000
 
         if LIB_FUNC_IS_ROOT; then #/dev/cpu_dma_latency
 
@@ -146,43 +173,57 @@ function check_1410_cpu_idle_intel_cstates_intel {
         else
 
             logCheckWarning 'ROOT required - PM QoS framework CPU latency could not be evaluated'
-            _maxForceLatency=2000000000
+            _maxForceLatency=${_NO_LIMIT_LATENCY}
 
         fi
 
+        logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # force_latency=${_maxForceLatency}"
+
         # determine active latency
         local _active_latency
+        local _active_cstate_name
         if [[ ${_maxCstateLatency:-} -le ${_maxForceLatency} ]]; then
 
-            logCheckInfo 'CPU cstate latency - limited by <Cstate>'
+            logCheckInfo "CPU cstate latency - limited by <Cstate> ${_maxCstateName:-}"
             _active_latency=${_maxCstateLatency:-}
+            _active_cstate_name=${_maxCstateName:-}
 
         else
 
             logCheckInfo 'CPU cstate latency - limited by <PM QoS>'
             _active_latency=${_maxForceLatency:-}
-
+            _active_cstate_name='PM QoS'
         fi
 
         # assert
 
-        # C1=3, C1E=10, C3=33, C6=133 - allow range 10 < x <= 70
-        if [[ 10 -lt ${_active_latency:-} && ${_active_latency:-} -le ${_reco_latency} ]]; then
+        # SKL+CLX:  POLL=0, C1=2, C1E=10, C3=-, C6=133 - allow range 2 <= x <= 10
+        if [[ ${_active_latency:-} -eq 0 ]]; then
 
-            logCheckOk 'CPU cstate latency set as recommended' "(SAP Note ${sapnote:-}) (is: ${_active_latency:-})"
-            _retval=0
+            logCheckError 'CPU cstates DISABLED' "(SAP Note ${sapnote:-}) (is: C0/POLL, should be: ${_reco_latency})"
+            _retval=2
 
-        elif [[ ${_active_latency:-} -le 10 ]]; then
-            logCheckWarning 'CPU cstate latency set too low - limiting CPU TurboMode features' "(SAP Note ${sapnote:-}) (is: ${_active_latency:-}, should be: ${_reco_latency})"
+        elif [[ ${_active_latency:-} -le ${_latency_c1:-} ]]; then
+
+            if [[ ${_driverMaxCstate} -eq 1 ]]; then
+                logCheckWarning 'CPUidle driver <intel_idle> max_cstate limits latency' "(is: C1)"
+            fi
+
+            if [[ ${_minDisabledCstateName:-} != 'NONE' && ${_minDisabledCstateLatency:-} -ne 999 ]]; then
+                logCheckInfo 'next available but disabled CPU cstate' "(next_disabled: ${_minDisabledCstateName:-}/${_minDisabledCstateLatency:-})"
+            fi
+
+            logCheckWarning 'CPU cstate latency set as recommended (C1), but could be slightly increased to (C1E)' "(SAP Note ${sapnote:-}) (is: ${_active_latency:-}, should be: ${_reco_latency})"
             _retval=1
 
-            if [[ ${_driverMaxCstate} -lt 3 ]]; then
-                logCheckWarning 'CPUidle driver <intel_idle> max_cstate prevents latency control' "(is: ${_driverMaxCstate}, should NOT be set)"
-            fi
+        elif [[ ${_latency_c1:-} -lt ${_active_latency:-} && ${_active_latency:-} -le ${_reco_latency} ]]; then
+
+            logCheckOk 'CPU cstate latency set as recommended' "(SAP Note ${sapnote:-}) (is: ${_active_latency:-}, cstate_name: ${_active_cstate_name:-})"
+            _retval=0
 
         elif [[ ${_active_latency:-} -gt ${_reco_latency:-} ]]; then
 
-            logCheckError 'CPU cstate latency set too high - deeper c-states causing longer wakeup times' "(SAP Note ${sapnote:-}) (is: ${_active_latency:-}, should be: ${_reco_latency})"
+            logCheckError 'CPU cstate latency set too high - deeper c-states causing longer wakeup times' "(SAP Note ${sapnote:-}) (is: ${_active_latency:-}, should be: <=${_reco_latency})"
             _retval=2
 
         fi
