@@ -349,6 +349,40 @@ function _lib_linux_release_main {
 
     __lib_func_get_linux_distrib
 
+    # Apply OS override if global variable is set
+    if [[ -n "${SAPHANA_CHECK_OS_OVERRIDE:-}" ]]; then
+        local _override_os
+        local _override_version
+
+        # Parse format: SLES:15.5 or RHEL:9.2 or OLS:8.6
+        if [[ "${SAPHANA_CHECK_OS_OVERRIDE}" =~ ^(SLES|RHEL|OLS):([0-9]+\.[0-9]+)$ ]]; then
+            _override_os="${BASH_REMATCH[1]}"
+            _override_version="${BASH_REMATCH[2]}"
+
+            case "${_override_os}" in
+                'SLES')
+                    OS_NAME="${lib_release_sles}"
+                    ;;
+                'RHEL')
+                    OS_NAME="${lib_release_rhel}"
+                    ;;
+                'OLS')
+                    OS_NAME="${lib_release_ols}"
+                    ;;
+            esac
+
+            OS_VERSION="${_override_version}"
+            OS_LEVEL=''
+
+            logWarn "Using OS override from --os_override flag: ${OS_NAME} ${OS_VERSION}"
+            logWarn "This override is for testing purposes only and may produce inaccurate results"
+        else
+            logError "Invalid OS override format: '${SAPHANA_CHECK_OS_OVERRIDE}'"
+            logError "Expected format: SLES:15.5 or RHEL:9.2 or OLS:8.6"
+            exit 2
+        fi
+    fi
+
     readonly OS_NAME
     readonly OS_VERSION
     readonly OS_LEVEL

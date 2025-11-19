@@ -55,6 +55,7 @@ DEFINE_boolean  'trace'     false   'enable trace mode (set loglevel=6)' 't'
 DEFINE_boolean  'color'     false   'enable color mode'
 DEFINE_boolean  'timestamp' false   'show timestamp (default for debug/trace)'
 DEFINE_boolean  'skip_os_validation' false 'skip early OS validation checks (for testing/backward compatibility)'
+DEFINE_string   'os_override' '' 'override detected OS for testing (format: SLES:15.5 or RHEL:9.2)'
 # shellcheck disable=SC2034
 IFS='' read -r -d '' FLAGS_HELP <<<"
 USAGE: ${PROGRAM_NAME} [flags]
@@ -108,6 +109,11 @@ function evaluate_cmdline_options {
     [[ ${FLAGS_timestamp:?} -eq ${FLAGS_TRUE} ]] && LOG_TIMESTAMP=0
 
     [[ ${LOG_VERBOSE_LVL} -ge 5 ]] && LOG_TIMESTAMP=0
+
+    # Set OS override as global variable for lib_linux_release to use
+    if [[ -n "${FLAGS_os_override:-}" ]]; then
+        SAPHANA_CHECK_OS_OVERRIDE="${FLAGS_os_override}"
+    fi
 
     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # LOG_VERBOSE_LVL=${LOG_VERBOSE_LVL}"
 }
