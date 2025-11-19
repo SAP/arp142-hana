@@ -54,6 +54,7 @@ DEFINE_boolean  'debug'     false   'enable debug mode (set loglevel=5)' 'd'
 DEFINE_boolean  'trace'     false   'enable trace mode (set loglevel=6)' 't'
 DEFINE_boolean  'color'     false   'enable color mode'
 DEFINE_boolean  'timestamp' false   'show timestamp (default for debug/trace)'
+DEFINE_boolean  'skip_os_validation' false 'skip early OS validation checks (for testing/backward compatibility)'
 # shellcheck disable=SC2034
 IFS='' read -r -d '' FLAGS_HELP <<<"
 USAGE: ${PROGRAM_NAME} [flags]
@@ -363,6 +364,31 @@ function print_counters {
 function main {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    # Early OS validation (unless explicitly skipped)
+    if [[ ${FLAGS_skip_os_validation:?} -eq ${FLAGS_FALSE} ]]; then
+        local -i _os_validation_rc
+        LIB_FUNC_VALIDATE_OS
+        _os_validation_rc=$?
+
+        if [[ ${_os_validation_rc} -eq 2 ]]; then
+            # Unsupported distribution
+            logError "Unsupported Linux distribution: ${OS_NAME}"
+            logError "SAP HANA checks require SLES or RHEL (SAP Note #2235581)"
+            logError "Use --skip_os_validation flag to bypass this check"
+            exit 2
+        elif [[ ${_os_validation_rc} -eq 1 ]]; then
+            # EOL/outdated version
+            logError "Operating system version has reached end of lifetime: ${OS_NAME} ${OS_VERSION}"
+            logError "This version is no longer supported by the vendor (SAP Note #936887)"
+            logError "Please upgrade to a supported version or use --skip_os_validation flag to bypass this check"
+            exit 2
+        fi
+
+        logDebug "OS validation passed: ${OS_NAME} ${OS_VERSION}"
+    else
+        logWarn "OS validation has been skipped via --skip_os_validation flag"
+    fi
 
     local _line_formated
     local -r _line='------------------------------------------------------------------------'

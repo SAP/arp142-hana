@@ -188,6 +188,116 @@ function LIB_FUNC_IS_NVM_PMEM {
     return ${_retval}
 }
 
+# Validates if OS is supported for SAP HANA checks
+# Returns: 0=supported, 1=EOL/outdated version, 2=unsupported distribution
+function LIB_FUNC_VALIDATE_OS {
+
+    local -i _retval=0
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    # Load OS validation configuration if not already loaded
+    if [[ -z "${SUPPORTED_DISTRIBUTIONS:-}" ]]; then
+        local config_file
+        config_file="$( cd "${BASH_SOURCE[0]%/*}" && pwd )/os-validation-config"
+        if [[ -f "${config_file}" ]]; then
+            #shellcheck source=./os-validation-config
+            source "${config_file}" || {
+                logWarn "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # Unable to load os-validation-config, using fallback logic"
+            }
+        fi
+    fi
+
+    # Check for completely unsupported distributions
+    local is_supported=false
+    local pattern
+
+    # Check if distribution is in supported list
+    case "${OS_NAME}" in
+        'Linux SLES'|'Linux RHEL')
+            is_supported=true
+            ;;
+    esac
+
+    if [[ "${is_supported}" == false ]]; then
+
+        logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # Unsupported Linux distribution detected: ${OS_NAME}"
+        _retval=2
+        return ${_retval}
+
+    fi
+
+    # Check for EOL/unsupported versions based on distribution
+    local version_matched=false
+
+    if LIB_FUNC_IS_SLES; then
+        # Check EOL versions first
+        if [[ -n "${SLES_EOL_VERSIONS:-}" ]]; then
+            for pattern in "${SLES_EOL_VERSIONS[@]}"; do
+                # shellcheck disable=SC2053
+                if [[ "${OS_VERSION}" == ${pattern} ]]; then
+                    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # SLES version ${OS_VERSION} has reached end of lifetime"
+                    _retval=1
+                    return ${_retval}
+                fi
+            done
+        fi
+
+        # Check supported versions
+        if [[ -n "${SLES_SUPPORTED_VERSIONS:-}" ]]; then
+            for pattern in "${SLES_SUPPORTED_VERSIONS[@]}"; do
+                # shellcheck disable=SC2053
+                if [[ "${OS_VERSION}" == ${pattern} ]]; then
+                    version_matched=true
+                    _retval=0
+                    break
+                fi
+            done
+        fi
+
+        # Unknown/future version - allow with debug message
+        if [[ "${version_matched}" == false ]]; then
+            logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # SLES version ${OS_VERSION} - validation uncertain"
+            _retval=0
+        fi
+
+    elif LIB_FUNC_IS_RHEL; then
+        # Check EOL versions first
+        if [[ -n "${RHEL_EOL_VERSIONS:-}" ]]; then
+            for pattern in "${RHEL_EOL_VERSIONS[@]}"; do
+                # shellcheck disable=SC2053
+                if [[ "${OS_VERSION}" == ${pattern} ]]; then
+                    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RHEL version ${OS_VERSION} has reached end of lifetime"
+                    _retval=1
+                    return ${_retval}
+                fi
+            done
+        fi
+
+        # Check supported versions
+        if [[ -n "${RHEL_SUPPORTED_VERSIONS:-}" ]]; then
+            for pattern in "${RHEL_SUPPORTED_VERSIONS[@]}"; do
+                # shellcheck disable=SC2053
+                if [[ "${OS_VERSION}" == ${pattern} ]]; then
+                    version_matched=true
+                    _retval=0
+                    break
+                fi
+            done
+        fi
+
+        # Unknown/future version - allow with debug message
+        if [[ "${version_matched}" == false ]]; then
+            logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RHEL version ${OS_VERSION} - validation uncertain"
+            _retval=0
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+}
+
 # Returns 0 on Nutanix AHV, 1 on other
 function LIB_FUNC_IS_NUTANIX_AHV {
 
