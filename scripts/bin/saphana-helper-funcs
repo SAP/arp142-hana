@@ -234,7 +234,8 @@ function LIB_FUNC_VALIDATE_OS {
         # Check EOL versions first
         if [[ -n "${SLES_EOL_VERSIONS:-}" ]]; then
             for pattern in "${SLES_EOL_VERSIONS[@]}"; do
-                if [[ "${OS_VERSION}" == "${pattern}" ]]; then
+                # shellcheck disable=SC2053
+                if [[ "${OS_VERSION}" == ${pattern} ]]; then
                     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # SLES version ${OS_VERSION} has reached end of lifetime"
                     _retval=1
                     return ${_retval}
@@ -245,7 +246,8 @@ function LIB_FUNC_VALIDATE_OS {
         # Check supported versions
         if [[ -n "${SLES_SUPPORTED_VERSIONS:-}" ]]; then
             for pattern in "${SLES_SUPPORTED_VERSIONS[@]}"; do
-                if [[ "${OS_VERSION}" == "${pattern}" ]]; then
+                # shellcheck disable=SC2053
+                if [[ "${OS_VERSION}" == ${pattern} ]]; then
                     version_matched=true
                     _retval=0
                     break
@@ -263,7 +265,8 @@ function LIB_FUNC_VALIDATE_OS {
         # Check EOL versions first
         if [[ -n "${RHEL_EOL_VERSIONS:-}" ]]; then
             for pattern in "${RHEL_EOL_VERSIONS[@]}"; do
-                if [[ "${OS_VERSION}" == "${pattern}" ]]; then
+                # shellcheck disable=SC2053
+                if [[ "${OS_VERSION}" == ${pattern} ]]; then
                     logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RHEL version ${OS_VERSION} has reached end of lifetime"
                     _retval=1
                     return ${_retval}
@@ -274,7 +277,8 @@ function LIB_FUNC_VALIDATE_OS {
         # Check supported versions
         if [[ -n "${RHEL_SUPPORTED_VERSIONS:-}" ]]; then
             for pattern in "${RHEL_SUPPORTED_VERSIONS[@]}"; do
-                if [[ "${OS_VERSION}" == "${pattern}" ]]; then
+                # shellcheck disable=SC2053
+                if [[ "${OS_VERSION}" == ${pattern} ]]; then
                     version_matched=true
                     _retval=0
                     break
