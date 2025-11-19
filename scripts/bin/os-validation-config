@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+# OS Validation Configuration
+# This file defines supported and EOL (End of Life) OS versions for SAP HANA checks
+# Format: Each section defines version patterns for validation
+#
+# References:
+# - SAP Note #2235581: SAP HANA: Supported Operating Systems
+# - SAP Note #936887: End of maintenance for Linux distributions
+
+# SLES Version Support Information
+#  REL   'support end'    'ESPOS end'     'LTSS end'
+# '11.4' '31 Mar 2019'    '31 Mar 2019'   '31 Mar 2022'
+
+# '12.3' '30 Jun 2019'    '30 Jun 2022'   '30 Jun 2022'
+# '12.4' '30 Jun 2020'    '30 Jun 2023'   '30 Jun 2023'
+# '15.0' '31 Dec 2019'    '31 Dec 2022'   '31 Dec 2022'
+# '15.1' '31 Jan 2021'    '31 Jan 2024'   '31 Jan 2024'
+# '15.2' '31 Dec 2021'    '31 Dec 2024'   '31 Dec 2024'
+
+# '12.5' '31 Oct 2024'    '31 Oct 2024'   '31 Oct 2027'
+# '15.3' '31 Dec 2022'    '31 Dec 2025'   '31 Dec 2025'
+# '15.4' '31 Dec 2023'    '31 Dec 2026'   '31 Dec 2026'
+# '15.5' '31 Dec 2024'    '31 Dec 2027'   '31 Dec 2027'
+# '15.6' '31 Dec 2025'    '31 Dec 2028'   '31 Dec 2028'
+# '15.7' '31 Jul 2031'    '31 Jul 2034'   '31 Jul 2034'
+
+# SLES EOL versions (End of Life - no longer supported)
+# Pattern format: Use shell glob patterns (e.g., 11.*, 12.[0-4])
+# shellcheck disable=SC2034
+readonly -a SLES_EOL_VERSIONS=(
+    '11.*'          # SLES 11.x - all versions EOL
+    '12.[0-4]'      # SLES 12.0 through 12.4 - EOL
+    '15.[0-2]'      # SLES 15.0 through 15.2 - EOL
+    '[0-9].*'       # SLES 1-9.x - very old versions
+    '1[0-1].*'      # SLES 10-11.x - very old versions
+)
+
+# SLES supported versions
+# Pattern format: Use shell glob patterns for currently supported versions
+readonly -a SLES_SUPPORTED_VERSIONS=(
+    '12.5'          # SLES 12.5 (minimum supported 12.x)
+    '12.[5-9]'      # SLES 12.5-12.9
+    '15.[3-9]'      # SLES 15.3-15.9
+    '15.[1-9][0-9]' # SLES 15.10 and above
+)
+
+# RHEL Version Support Information
+# 'REL'  'support general end'  'extended support end (E4S)'
+# '6.10' '30 Nov 2020'          '30 Jun 2024'
+# '7.7'  '31 Mar 2020'          '30 Aug 2023'
+# '7.8'  'no support '          'by SAP HANA'
+
+# '8.1'  '28 Apr 2020'          '30 Nov 2023'
+# '8.2'  '05 Nov 2020'          '30 Apr 2024'
+# '8.3'  'no support '          'by SAP HANA'
+# '8.4'  '30 Nov 2021'          '31 May 2025'
+# '8.5'  'no support '          'by SAP HANA'
+# '8.7'  'no support '          'by SAP HANA'
+# '8.9'  'no support '          'by SAP HANA'
+
+# '9.1'  'no support '          'by SAP HANA'
+# '9.3'  'no support '          'by SAP HANA'
+
+# '9.6'   '30 Nov 2025'   '31 May 2029'    \
+# '9.4'   '30 Nov 2024'   '30 Apr 2028'    \
+# '9.2'   '30 Nov 2023'   '31 May 2027'    \
+# '9.0'   '30 Nov 2022'   '31 May 2026'    \
+# '8.10'  '31 May 2029'   '31 May 2032'    \
+# '8.8'   '30 Nov 2023'   '31 May 2027'    \
+# '8.6'   '30 Nov 2022'   '31 May 2026'    \
+# '7.9'   '31 Mar 2021'   '30 Jun 2028'    \
+
+# RHEL EOL versions (End of Life - no longer supported)
+readonly -a RHEL_EOL_VERSIONS=(
+    '[0-6].*'       # RHEL 0-6.x - all versions EOL
+    '7.[0-8]'       # RHEL 7.0 through 7.8 - EOL
+)
+
+# RHEL supported versions
+readonly -a RHEL_SUPPORTED_VERSIONS=(
+    '7.9'           # RHEL 7.9 (minimum supported)
+    '8.[0-9]'       # RHEL 8.0-8.9
+    '8.[1-9][0-9]'  # RHEL 8.10 and above
+    '9.[0-9]'       # RHEL 9.0-9.9
+    '9.[1-9][0-9]'  # RHEL 9.10 and above
+)
