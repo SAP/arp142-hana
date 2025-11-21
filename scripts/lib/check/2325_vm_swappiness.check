@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+function check_2325_vm_swappiness {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#1557506'
+    # MODIFICATION SECTION<<
+
+    # 1557506 - Linux paging improvements
+    # RHEL tuned sap-hana "Optimize for SAP HANA"
+
+    local -i _reco_swappiness=60
+    local -i _reco_swappiness_rhel=10
+
+    # PRECONDITIONS
+    if [[ ! -f '/proc/sys/vm/swappiness' ]]; then
+
+        logCheckSkipped "Parameter vm.swappiness not readable (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif LIB_FUNC_IS_RHEL ; then
+
+        _reco_swappiness=${_reco_swappiness_rhel}
+
+    else
+        #CHECK
+
+        local -i _curr_swappiness
+        _curr_swappiness=$(</proc/sys/vm/swappiness)
+
+        if [[ ${_curr_swappiness} -ne ${_reco_swappiness} ]]; then
+
+            logCheckError "Parameter vm.swappiness NOT set to default as recommended (SAP Note ${sapnote:-}) (is: ${_curr_swappiness}, should be: ${_reco_swappiness})"
+            _retval=2
+
+        else
+            logCheckOk "Parameter vm.swappiness set to default as recommended (SAP Note ${sapnote:-}) (is: ${_curr_swappiness})"
+            _retval=0
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
