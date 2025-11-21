@@ -41,6 +41,7 @@
 2310_vm_min_free_kbytes
 2315_vm_zone_reclaim_mode
 2320_vm_overcommit_memory
+2325_vm_swappiness
 2400_samepage_merging
 2500_kernel_sharedmemory
 2510_kernel_semaphores
