@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+
+function check_2330_swap_space {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#1999997'
+    local -ir minimum_swap_gib=10
+    # MODIFICATION SECTION<<
+
+    # 1999997 - FAQ: SAP HANA Memory
+    # SAP HANA requires swap space to be configured
+
+    #tweaked by unit-test
+    local -r path_to_proc_swaps="${path_to_proc_swaps:-/proc/swaps}"
+
+    # PRECONDITIONS
+    if [[ -z "${mock_proc_swaps_content:-}" && ! -f "${path_to_proc_swaps}" ]]; then
+
+        logCheckError "Swap information not available (SAP Note ${sapnote:-}). ${path_to_proc_swaps} not found"
+        _retval=2
+
+    else
+        # CHECK
+
+        local -i total_swap_kb=0
+        local -i line_count=0
+
+        # Read content into variable (from mock or real file)
+        local proc_swaps_content
+        if [[ -n "${mock_proc_swaps_content:-}" ]]; then
+            proc_swaps_content="${mock_proc_swaps_content}"
+        else
+            proc_swaps_content=$(<"${path_to_proc_swaps}")
+        fi
+
+        while read -r filename _type size _used _priority; do
+
+            # Skip header line
+            [[ "${filename}" == "Filename" ]] && continue
+
+            # Skip empty lines
+            [[ -z "${filename}" ]] && continue
+
+            # Validate that size is numeric
+            if [[ ! "${size}" =~ ^[0-9]+$ ]]; then
+                logCheckError "Invalid swap size data in ${path_to_proc_swaps} (SAP Note ${sapnote:-}) (non-numeric value: ${size})"
+                _retval=2
+                break
+            fi
+
+            total_swap_kb=$(( total_swap_kb + size ))
+            line_count=$(( line_count + 1 ))
+
+        done <<< "${proc_swaps_content}"
+
+        # Only evaluate if no error occurred during parsing
+        if [[ ${_retval} -eq 99 ]]; then
+
+            # Convert KiB to GiB (1 GiB = 1048576 KiB)
+            local -i total_swap_gib=$(( total_swap_kb / 1048576 ))
+
+            if [[ ${line_count} -eq 0 ]]; then
+
+                logCheckError "No swap space configured (SAP Note ${sapnote:-}) (found: 0GiB, required: ${minimum_swap_gib}GiB)"
+                _retval=2
+
+            elif [[ ${total_swap_gib} -lt ${minimum_swap_gib} ]]; then
+
+                logCheckError "Insufficient swap space configured (SAP Note ${sapnote:-}) (found: ${total_swap_gib}GiB, required: ${minimum_swap_gib}GiB)"
+                _retval=2
+
+            else
+
+                logCheckOk "Sufficient swap space configured (SAP Note ${sapnote:-}) (found: ${total_swap_gib}GiB, required: ${minimum_swap_gib}GiB)"
+                _retval=0
+
+            fi
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
