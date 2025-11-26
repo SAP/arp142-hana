@@ -7,13 +7,10 @@ function check_1310_cpu_powersavings_ibmpower {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#2055470'
+    local -r sapnote='#3684765'
     # MODIFICATION SECTION<<
 
-    #2055470 - HANA on POWER Planning and Installation Specifics - Central Note
-    ## HWCCT + IBM Documentation "HANA operations guide"
-    #2684254 - SAP HANA DB: Recommended OS settings for SLES 15 / SLES for SAP Applications 15
-    #2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
+    #3684765 - IBM Power Systems: Recommended IBM EnergyScale settings
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_IBMPOWER ; then
@@ -67,23 +64,23 @@ function check_1310_cpu_powersavings_ibmpower {
 
         fi
 
-        if [[ "${LIB_PLATF_POWER_PLATFORM_BASE:-}" =~ POWER(10|9) ]]; then
+        if [[ "${LIB_PLATF_POWER_PLATFORM_BASE:-}" == 'POWER11' ]]; then
 
-            if [[ "${pwr_system_mode}" =~ ^(0001|0002|0004)$ ]];then
+            if [[ "${pwr_system_mode}" == '0001' ]];then
 
                 logCheckOk "Power Savings Mode set as recommended (SAP Note ${sapnote:-}) (is: ${pwr_system_txt})"
                 _retval=0
 
             else
 
-                logCheckError "Power Savings Mode NOT set as recommended (SAP Note ${sapnote:-}) (is: ${pwr_system_txt}, should be: None, *Perf mode)"
+                logCheckError "Power Savings Mode NOT set as recommended (SAP Note ${sapnote:-}) (is: ${pwr_system_txt}, should be: Maximum Performance)"
                 _retval=2
 
             fi
 
-        else
+        elif [[ "${LIB_PLATF_POWER_PLATFORM_BASE:-}" =~ POWER(10|9) ]]; then
 
-            if [[ "${pwr_system_mode}" =~ ^(0001|0002)$ ]]; then
+            if [[ "${pwr_system_mode}" =~ ^(0001|0002|0004)$ ]];then
 
                 logCheckOk "Power Savings Mode set as recommended (SAP Note ${sapnote:-}) (is: ${pwr_system_txt})"
                 _retval=0

@@ -145,7 +145,7 @@ test_power10_threadspercore_smt4_ok() {
     assertEquals "CheckOk? RC" '0' "$?"
 }
 
-test_power10_threadspercore_warning() {
+test_power10_threadspercore_smt8_warning() {
 
     #arrange
     LIB_PLATF_POWER_PLATFORM_BASE='POWER10'
@@ -160,6 +160,20 @@ test_power10_threadspercore_warning() {
     assertEquals "CheckWarn? RC" '1' "$?"
 }
 
+test_power10_corestotalhigh_covered() {
+
+    #arrange
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER10'
+    LIB_PLATF_CPU_SOCKETS=8
+    LIB_PLATF_CPU_CORESPERSOCKET=14
+    LIB_PLATF_CPU_THREADSPERCORE=4
+
+    #act
+    check_1260_cpu_smthreading_ibmpower
+
+    #assert
+    assertEquals "CheckOk? RC" '0' "$?"
+}
 
 # test_template() {
 

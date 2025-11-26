@@ -24,31 +24,20 @@ function LIB_FUNC_TRANSFORM_POWER_POWERMODE {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-    # P7,P8                                             P9,P10
-    # 0x0001: "Dynamic, Favor Performance"              0x0001: "Maximum Performance"
-    # 0x0002: "None"                                    0x0002: "None"
-    # 0x0003: "Static"                                  0x0003: "Static"
-    # 0x00ff: "Dynamic, Favor Power"                    0x0004: "Dynamic Performance"
-    # default: "Unknown"                                default: "Unknown"
+    # P9,P10,?P11
+    # 0x0001: "Maximum Performance"
+    # 0x0002: "None"
+    # 0x0003: "Static"
+    # 0x0004: "Dynamic Performance"
+    # default: "Unknown"
 
-    if [[ "${LIB_PLATF_POWER_PLATFORM_BASE:-}" =~ POWER(10|9) ]]; then
+    if [[ "${LIB_PLATF_POWER_PLATFORM_BASE:-}" =~ POWER(11|10|9) ]]; then
 
         case "${powermode}" in
             '0001')  : 'Maximum Performance' ;;
             '0002')  : 'None' ;;
             '0003')  : 'Static' ;;
             '0004')  : 'Dynamic Performance' ;;
-            *)       : 'Unknown';;
-        esac
-        powermode="$_"
-
-    elif [[ "${LIB_PLATF_POWER_PLATFORM_BASE:-}" =~ POWER8 ]]; then
-
-        case "${powermode}" in
-            '0001')  : 'Dynamic, Favor Performance' ;;
-            '0002')  : 'None' ;;
-            '0003')  : 'Static' ;;
-            '00ff')  : 'Dynamic, Favor Power' ;;
             *)       : 'Unknown';;
         esac
         powermode="$_"

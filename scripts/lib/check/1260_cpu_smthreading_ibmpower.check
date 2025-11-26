@@ -8,17 +8,17 @@ function check_1260_cpu_smthreading_ibmpower {
 
     # MODIFICATION SECTION>>
     local -r sapnote='#2055470,2188482'
-                                            #lt     #SMT-range
+                                            #ge     #SMT-range
         local -ar _smt_matrix=(\
-                            'POWER10'       '96'    '4'     \
+                            'POWER11'       '0'     '8|4(ScaleOut)'   \
                             'POWER10'       '0'     '4'     \
-                            'POWER9'        '96'    '4-8'   \
-                            'POWER9'        '0'     '4-8'   \
+                            'POWER9'        '96'    '4|8'   \
+                            'POWER9'        '0'     '4|8'   \
                         )
     # MODIFICATION SECTION<<
 
     #2055470 - HANA on POWER Planning and Installation Specifics - Central Note
-    #2188482 - SAP HANA on IBM Power Systems: Supported hardware and features - (Version: 90, Released On: 12.01.2024)
+    #2188482 - SAP HANA on IBM Power Systems: Supported hardware and features - (Version: 97, Released On: 25.11.2025)
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_IBMPOWER ; then
@@ -69,7 +69,7 @@ function check_1260_cpu_smthreading_ibmpower {
 
             if LIB_FUNC_STRINGCONTAIN "${_smt_range}" "${LIB_PLATF_CPU_THREADSPERCORE}"; then
 
-                logCheckOk "Simultaneous Multithreading mode set as recommended (SAP Note ${sapnote:-}) (is: SMT-${LIB_PLATF_CPU_THREADSPERCORE})"
+                logCheckOk "Simultaneous Multithreading mode set as recommended (SAP Note ${sapnote:-}) (is: SMT-${LIB_PLATF_CPU_THREADSPERCORE}, should be: SMT-${_smt_range})"
                 _retval=0
 
             else
@@ -84,7 +84,7 @@ function check_1260_cpu_smthreading_ibmpower {
 
         if ! ${_handled}; then
 
-            logCheckError "POWER platform with total cores not handled by check (SAP Note ${sapnote:-}) (is: ${LIB_PLATF_POWER_PLATFORM_BASE}-SMT${LIB_PLATF_CPU_THREADSPERCORE})"
+            logCheckError "POWER platform NOT handled by check (SAP Note ${sapnote:-}) (is: ${LIB_PLATF_POWER_PLATFORM_BASE}-SMT${LIB_PLATF_CPU_THREADSPERCORE})"
             _retval=2
         fi
 
