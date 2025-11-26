@@ -9,6 +9,8 @@ function check_0120_supported_powersystems_ibmpower {
     # MODIFICATION SECTION>>
     # array             'System ID' 'System'
     local -ar _power_systems=(\
+                        #POWER11
+                        '9080-HEU'  'E1180' \
                         #POWER10
                         '9080-HEX'  'E1080' \
                         '9043-MRX'  'E1050' \
@@ -32,7 +34,7 @@ function check_0120_supported_powersystems_ibmpower {
     local -r sapnote='#2188482'
     # MODIFICATION SECTION<<
 
-    #2188482 - SAP HANA on IBM Power Systems: Allowed Hardware
+    #2188482 - SAP HANA on IBM Power Systems: Supported hardware and features
     #https://www.sap.com/dmc/exp/2014-09-02-hana-hardware/enEN/#/solutions?filters=power
 
     # PRECONDITIONS
