@@ -14,6 +14,7 @@ function check_1400_cpu_idle_driver_intel {
     local -r sapnote_rhel9='#3108302'   # SAP HANA DB: Recommended OS Settings for RHEL 9
     local -r sapnote_kvm_sles='#3430656' # SAP HANA on SUSE KVM Virtualization
     local -r sapnote_kvm_rhel='#2599726' # SAP HANA on Red Hat Virtualization
+    local -r sapnote_vmware='#2161991'   # VMware vSphere configuration guidelines
     # MODIFICATION SECTION<<
 
     local sapnote
@@ -65,6 +66,7 @@ function check_1400_cpu_idle_driver_intel {
         elif LIB_FUNC_IS_VIRT_VMWARE; then
 
             expected_driver='none'
+            sapnote="${sapnote_vmware}"
 
         fi
     fi
