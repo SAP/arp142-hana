@@ -8,7 +8,7 @@ function check_8500_sap_hana_client {
 
     # MODIFICATION SECTION>>
     local -r sapnote='#2941449'
-    local -r hanaclient_version_exp='2.26.18'
+    local -r hanaclient_version_exp='2.26.26'
     # MODIFICATION SECTION<<
 
     #2941449 - SAP HANA Client 2.0 Releases
