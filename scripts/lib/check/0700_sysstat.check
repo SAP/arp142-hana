@@ -19,23 +19,18 @@ function check_0700_sysstat {
     else
         #CHECK
 
-        #finally all ends up with this file - /etc/cron.d/sysstat
-        #RHEL creates this file, SLES is creating a link to /etc/sysstat/sysstat.cron (SLES12+ dynamically by systemd sysstat.service)
         #newer releases RHEL8.1 use systemd timer units replacing cronjobs
+        #on older systems it ends up with this file - /etc/cron.d/sysstat
+        #RHEL creates this file, SLES is creating a link to /etc/sysstat/sysstat.cron (SLES12+ dynamically by systemd sysstat.service)
 
-        if [[ -e '/etc/cron.d/sysstat' ]]; then
+        if systemctl is-active sysstat_collect.timer sysstat-collect.timer --quiet; then
+
+            logCheckOk "sysstat*collect.timer is active (SAP Note ${sapnote:-})"
+            _retval=0
+
+        elif [[ -e '/etc/cron.d/sysstat' ]]; then
 
             logCheckOk "sysstat cron is enabled (SAP Note ${sapnote:-})"
-            _retval=0
-
-        elif systemctl is-active sysstat-collect.timer --quiet; then
-
-            logCheckOk "sysstat-collect.timer is active (SAP Note ${sapnote:-})"
-            _retval=0
-
-        elif systemctl is-active sysstat_collect.timer --quiet; then
-
-            logCheckOk "sysstat_collect.timer is active (SAP Note ${sapnote:-})"
             _retval=0
 
         else
