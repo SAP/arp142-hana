@@ -6,13 +6,25 @@ Linux OS checks for SAP HANA environments - SLES,RHEL for Intel x64 and IBM Powe
 
 ## FAQ
 Q: Does it work on all linux versions - independend from distributions, kernel, filesystem, hana version?  
-A: Yes, checks themselves will verify if they are applicable for environment. However, checks are not complete, eg. filesystems/HANA specifics are not included so far.
+A: The tool supports SLES (12.5+) and RHEL (7.9+) on Intel x64 and IBM Power architectures. Early OS validation will block execution on unsupported distributions (Ubuntu, Debian, CentOS, Fedora) and end-of-life OS versions. Individual checks verify if they are applicable for the environment. However, checks are not complete, eg. filesystems/HANA specifics are not included so far.
 
 Q: Does it change anything on the system?  
 A: No, scripts only read data. Nothing is changed or written.
 
 Q: Are there any restrictions attention should be paid to?  
 A: Some checks require root permission in order to read certain kernel parameter values. The check suite itself could run as non-root user, but root required checks would be skipped.
+
+Q: What happens if I run this on an unsupported OS?  
+A: By default, the tool performs early OS validation and will exit with an error if run on unsupported distributions or end-of-life versions (SAP Notes #2235581, #936887). You can bypass this validation using `--skip_os_validation` flag for testing purposes.
+
+## Recent Enhancements
+
+### New Features
+- **Early OS Validation**: Automatically blocks execution on unsupported distributions (Ubuntu, Debian, CentOS, Fedora) and end-of-life OS versions
+- **OS Override Capability**: New `--os_override` flag allows testing checks against different OS versions without system changes
+
+### Platform Support
+- **IBM Power11**: Added support for new S1122, E1150, and E1180 systems on IBM Cloud
 
 ## How to run
 
@@ -70,9 +82,26 @@ flags:
   -t,--[no]trace:  enable trace mode (set loglevel=6) (default: false)
   --[no]color:  enable color mode (default: false)
   --[no]timestamp:  show timestamp (default for debug/trace) (default: false)
+  --[no]skip_os_validation:  skip early OS validation checks (for testing/backward compatibility) (default: false)
+  --os_override:  override detected OS for testing (format: SLES:15.5 or RHEL:9.2) (default: '')
   -h,--help:  show this help (default: false)
 
 ```
+
+
+#### --os_override    (override detected OS for testing)
+```
+  ./saphana-check.sh --os_override SLES:15.5
+  ./saphana-check.sh --os_override RHEL:9.2
+```
+> Allows testing checks against different OS versions without requiring actual system changes. Format: `<OS_NAME>:<OS_VERSION>` where OS_NAME is SLES, RHEL, or OLS. Warning messages are displayed when override is active.
+
+
+#### --skip_os_validation    (skip early OS validation)
+```
+  ./saphana-check.sh --skip_os_validation
+```
+> Bypasses the early OS validation that blocks execution on unsupported distributions (Ubuntu, Debian, CentOS) or end-of-life OS versions. Useful for testing or backward compatibility scenarios.
 
 
 ## Contribute
