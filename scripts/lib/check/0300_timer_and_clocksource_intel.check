@@ -25,11 +25,15 @@ function check_0300_timer_and_clocksource_intel {
         logCheckSkipped 'Running Hyper-V virtualized. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
+    elif LIB_FUNC_IS_CLOUD_AMAZON ; then
+        :
+        # keep tsc - https://repost.aws/knowledge-center/manage-ec2-linux-clock-source
+
     elif LIB_FUNC_IS_CLOUD_GOOGLE && LIB_FUNC_IS_VIRT_KVM; then
         reco_clocksource=${reco_clock_gcp_vm}
 
     elif LIB_FUNC_IS_VIRT_KVM; then
-            reco_clocksource=${reco_kvm_clock}
+        reco_clocksource=${reco_kvm_clock}
     fi
 
     # CHECK
