@@ -27,9 +27,9 @@ function check_0002_os_hana_support_sles_intel {
     local -ar _sles_15=(\
                         'Microsoft Azure'       '-1234567'   \
                         'Amazon EC2'            '-1234567'   \
-                        'IBM Cloud'             '-123456-'   \
+                        'IBM Cloud'             '-1234567'   \
                         'Google GCP'            '-1234567'   \
-                        'Alibaba Cloud ECS'     '-12-----'   \
+                        'Alibaba Cloud ECS'     '-123456-'   \
                         'Huawei Cloud'          '-12345--'   \
                         ''                      '-1234567'   \          #all others, e.g. TDI, Bare-Metal
                         )
