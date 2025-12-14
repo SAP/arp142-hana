@@ -13,7 +13,9 @@ function check_0106_supported_instances_ibmcloud {
     # MODIFICATION SECTION>>
     # array             'Instance Type'
     local -ar _ibm_vpc_vm=(\
+                        'bx3d-176x880'                                                              \
                         'mx2-8x64'      'mx2-16x128'        'mx2-32x256'        'mx2-48x384'        \
+                        'mx3d-176x1760'                                                             \
                         'ux2d-8x224'    'ux2d-16x448'       'ux2d-36x1008'      'ux2d-48x1344'      \
                         'ux2d-72x2016'  'ux2d-100x2800'     'ux2d-200x5600'                         \
                         'vx2d-16x224'   'vx2d-44x616'       'vx2d-88x1232'                          \
