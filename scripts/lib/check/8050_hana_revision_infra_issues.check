@@ -29,6 +29,8 @@ function check_8050_hana_revision_infra_issues {
         ['3669696']='Unresponsive System due to late Memory Reclaim cause of gc_unused_memory_threshold-*'
         ['3680406']='Optimizing Memory Allocation for SAP HANA Services by Adjusting min_segment_size'
         ['3678935']='System CPU Consumption is Very High and the Performance is Poor due to sslmaxprotocolversion=tls13'
+        ['3689045']='Configured File I/O Throughput Limit Not Enforced'
+        ['3693972']='Unexpected Nameserver Stop and Restart After Takeover due to Topology Timestamp Difference'
     )
 
     # array             'SPSP'  'lower bound'    'upper bound'  'SAP Note'
@@ -72,12 +74,12 @@ function check_8050_hana_revision_infra_issues {
                         '8'     '2.00.080.00'    '2.00.085.00'  '3608008'   \
 
                         '5'     '2.00.050.00'    '2.00.059.99'  '3665521'   \
-                        '7'     '2.00.070.00'    '2.00.079.06'  '3665521'   \
-                        '8'     '2.00.080.00'    '2.00.087.00'  '3665521'   \
+                        '7'     '2.00.070.00'    '2.00.079.99'  '3665521'   \
+                        '8'     '2.00.080.00'    '2.00.089.99'  '3665521'   \
 
                         '5'     '2.00.050.00'    '2.00.059.99'  '3669696'   \
-                        '7'     '2.00.070.00'    '2.00.079.07'  '3669696'   \
-                        '8'     '2.00.080.00'    '2.00.087.00'  '3669696'   \
+                        '7'     '2.00.070.00'    '2.00.079.99'  '3669696'   \
+                        '8'     '2.00.080.00'    '2.00.089.99'  '3669696'   \
 
                         '5'     '2.00.050.00'    '2.00.059.99'  '3680406'   \
                         '7'     '2.00.070.00'    '2.00.079.99'  '3680406'   \
@@ -86,6 +88,13 @@ function check_8050_hana_revision_infra_issues {
                         '5'     '2.00.050.00'    '2.00.059.99'  '3678935'   \
                         '7'     '2.00.070.00'    '2.00.079.99'  '3678935'   \
                         '8'     '2.00.080.00'    '2.00.089.99'  '3678935'   \
+
+                        '7'     '2.00.070.00'    '2.00.079.07'  '3689045'   \
+                        '8'     '2.00.080.00'    '2.00.088.00'  '3689045'   \
+
+                        '5'     '2.00.059.18'    '2.00.059.99'  '3693972'   \
+                        '7'     '2.00.079.05'    '2.00.079.99'  '3693972'   \
+                        '8'     '2.00.086.00'    '2.00.089.99'  '3693972'   \
                         )
 
     local -ar _hana_intel=(\
@@ -162,7 +171,7 @@ function check_8050_hana_revision_infra_issues {
 
                         fi
 
-                        logCheckWarning "    - ${_descr} (SAP Note ${sapnote:-})(fixed in > ${_hana_upper:-})"
+                        logCheckWarning "- ${_descr} (SAP Note ${sapnote:-})(fixed in > ${_hana_upper:-})"
                         _retval=1
 
                     fi
