@@ -31,6 +31,7 @@ function check_0104_supported_instances_gcp {
     local -ar _google_bm=(\
                         'o2-ultramem-672-metal' 'o2-ultramem-896-metal' \
                         'x4-megamem-960-metal'  'x4-megamem-1440-metal' 'x4-megamem-1920-metal' \
+                        'x4-480-6t-metal'       'x4-480-8t-metal'       'x4-960-12t-metal' \
                         'c3-highmem-192-metal'  'c4-highmem-288-metal'  \
                         )
 
