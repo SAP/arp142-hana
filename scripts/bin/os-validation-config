@@ -30,7 +30,7 @@
 readonly -a SLES_EOL_VERSIONS=(
     '11.*'          # SLES 11.x - all versions EOL
     '12.[0-4]'      # SLES 12.0 through 12.4 - EOL
-    '15.[0-2]'      # SLES 15.0 through 15.2 - EOL
+    '15.[0-3]'      # SLES 15.0 through 15.3 - EOL
     '[0-9].*'       # SLES 1-9.x - very old versions
     '1[0-1].*'      # SLES 10-11.x - very old versions
 )
@@ -39,9 +39,7 @@ readonly -a SLES_EOL_VERSIONS=(
 # Pattern format: Use shell glob patterns for currently supported versions
 readonly -a SLES_SUPPORTED_VERSIONS=(
     '12.5'          # SLES 12.5 (minimum supported 12.x)
-    '12.[5-9]'      # SLES 12.5-12.9
-    '15.[3-9]'      # SLES 15.3-15.9
-    '15.[1-9][0-9]' # SLES 15.10 and above
+    '15.[4-9]'      # SLES 15.4-15.9
 )
 
 # RHEL Version Support Information
@@ -74,13 +72,13 @@ readonly -a SLES_SUPPORTED_VERSIONS=(
 readonly -a RHEL_EOL_VERSIONS=(
     '[0-6].*'       # RHEL 0-6.x - all versions EOL
     '7.[0-8]'       # RHEL 7.0 through 7.8 - EOL
+    '8.[0-5]'       # RHEL 8.0 through 8.5 - EOL
 )
 
 # RHEL supported versions
 readonly -a RHEL_SUPPORTED_VERSIONS=(
     '7.9'           # RHEL 7.9 (minimum supported)
-    '8.[0-9]'       # RHEL 8.0-8.9
-    '8.[1-9][0-9]'  # RHEL 8.10 and above
+    '8.[6-9]'       # RHEL 8.6-8.9
+    '8.1[0-9]'      # RHEL 8.10 and above
     '9.[0-9]'       # RHEL 9.0-9.9
-    '9.[1-9][0-9]'  # RHEL 9.10 and above
 )
