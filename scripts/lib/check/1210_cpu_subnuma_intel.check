@@ -43,18 +43,17 @@ function check_1210_cpu_subnuma_intel {
     elif LIB_FUNC_IS_SLES ; then
         case "${OS_VERSION}" in
 
-                15.*)    sapnote="${sapnote_sles15}" ;;
-
-                *)      sapnote="${sapnote_sles12}" ;;
+                15.*)   : "${sapnote_sles15}" ;;
+                *)      : "${sapnote_sles12}" ;;
 
         esac
+        sapnote="$_"
 
     elif LIB_FUNC_IS_RHEL ; then
         case "${OS_VERSION}" in
 
                 8.*)    : "${sapnote_rhel8}" ;;
                 9.*)    : "${sapnote_rhel9}" ;;
-
                 *)      : "${sapnote_rhel7}" ;;
 
         esac
@@ -68,19 +67,42 @@ function check_1210_cpu_subnuma_intel {
     #CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-        if [[ ${LIB_PLATF_CPU_NUMANODES} -gt ${LIB_PLATF_CPU_SOCKETS} ]]; then
+        # Check 1: NUMA nodes < CPU sockets (always an error)
+        if [[ ${LIB_PLATF_CPU_NUMANODES} -lt ${LIB_PLATF_CPU_SOCKETS} ]]; then
 
-            logCheckError "Intel's <SubNUMA/CoD> NOT disabled (SAP Note ${sapnote:-})"
-            _retval=2
-
-        elif [[ ${LIB_PLATF_CPU_NUMANODES} -lt ${LIB_PLATF_CPU_SOCKETS} ]]; then
-            #e.g. cmdline numa=off, NUMA switched off by BIOS interleave enabled
+            # e.g. cmdline numa=off, NUMA switched off by BIOS interleave enabled
             logCheckError "NUMA optimizations disabled. NUMA nodes < CPU Sockets (SAP Note ${sapnote:-}) (is: ${LIB_PLATF_CPU_NUMANODES}, must be: ${LIB_PLATF_CPU_SOCKETS})"
             _retval=2
 
-        else
-            logCheckOk "Intel's <SubNUMA/CoD> is disabled (SAP Note ${sapnote:-})"
+        # Check 2: Skylake and newer (>= model 85) - SNC-2 can be enabled or not
+        elif [[ ${LIB_PLATF_CPU_MODELID:-} -ge 85 ]]; then
+
+            if [[ ${LIB_PLATF_CPU_NUMANODES} -gt ${LIB_PLATF_CPU_SOCKETS} ]]; then
+
+                logCheckOk "Intel's <SubNUMA (SNC-2)> is enabled (SAP Note ${sapnote:-})"
+
+            else
+
+                logCheckOk "Intel's <SubNUMA (SNC-2)> is NOT enabled (SAP Note ${sapnote:-})"
+
+            fi
             _retval=0
+
+        # Check 3: Broadwell, Haswell and older - SubNUMA/CoD must be disabled
+        else
+
+            if [[ ${LIB_PLATF_CPU_NUMANODES} -gt ${LIB_PLATF_CPU_SOCKETS} ]]; then
+
+                logCheckError "Intel's <ClusterOnDie (CoD)> NOT disabled (SAP Note ${sapnote:-})"
+                _retval=2
+
+            else
+
+                logCheckOk "Intel's <ClusterOnDie (CoD)> is disabled (SAP Note ${sapnote:-})"
+                _retval=0
+
+            fi
+
         fi
 
     fi
