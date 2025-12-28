@@ -91,7 +91,15 @@ jobs:
           cp rpmbuild/RPMS/noarch/saphana-checks-${VERSION_RELEASE_COMMIT}.noarch.rpm build/
           rpm -Kv build/saphana-checks-${VERSION_RELEASE_COMMIT}.noarch.rpm > build/saphana-checks-${VERSION_RELEASE_COMMIT}.noarch.rpm.digest
 
-      - name: create zipped tarball
+      - name: create xz tarball
+        run: |
+          echo "[INFO] VERSION_RELEASE_COMMIT> $VERSION_RELEASE_COMMIT"
+          sudo tar -cJf build/saphana-checks-${VERSION_RELEASE_COMMIT}.tar.xz --directory=./build/opt/sap saphana-checks
+          sha256sum build/saphana-checks-${VERSION_RELEASE_COMMIT}.tar.xz > build/saphana-checks-${VERSION_RELEASE_COMMIT}.tar.xz.sha256
+          ls -l build/
+          tar -tvf build/saphana-checks-${VERSION_RELEASE_COMMIT}.tar.xz
+
+      - name: create gzip tarball
         run: |
           echo "[INFO] VERSION_RELEASE_COMMIT> $VERSION_RELEASE_COMMIT"
           sudo tar -czf build/saphana-checks-${VERSION_RELEASE_COMMIT}.tgz --directory=./build/opt/sap saphana-checks
@@ -105,6 +113,7 @@ jobs:
           RELEASE_NOTES='https://github.com/SAP/arp142-hana/milestone/xx?closed=1'
           gh release create ${{ github.ref_name }} --draft --prerelease --title "$RELEASE_TITLE" --notes "$RELEASE_NOTES"
           gh release upload --clobber ${{ github.ref_name }} build/saphana-checks-*.rpm*
+          gh release upload --clobber ${{ github.ref_name }} build/saphana-checks-*.tar.xz*
           gh release upload --clobber ${{ github.ref_name }} build/saphana-checks-*.tgz*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
