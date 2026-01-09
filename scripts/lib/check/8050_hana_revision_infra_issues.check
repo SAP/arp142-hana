@@ -25,12 +25,14 @@ function check_8050_hana_revision_infra_issues {
         ['3600754']='Slow logreplay performance on HANA 2 SPS08 of redo log created on HANA 2 <= SPS07'
         ['3608008']='CPU Spikes and Blocked Savepoints ... on Exhausted TMPFS (NVM-FRO)'
         ['3610237']='Indexserver Crash on virtualized Intel Ice Lake hosts'
+        ['3632493']='Shared Memory Allocation Failure on System Replication Secondary'
         ['3665521']='Unresponsive System due to Memory Reclaim of Huge Alignment Pages'
         ['3669696']='Unresponsive System due to late Memory Reclaim cause of gc_unused_memory_threshold-*'
         ['3680406']='Optimizing Memory Allocation for SAP HANA Services by Adjusting min_segment_size'
         ['3678935']='System CPU Consumption is Very High and the Performance is Poor due to sslmaxprotocolversion=tls13'
         ['3689045']='Configured File I/O Throughput Limit Not Enforced'
         ['3693972']='Unexpected Nameserver Stop and Restart After Takeover due to Topology Timestamp Difference'
+        ['issue346745']='optimized_small_page_write_max_unused_chunk_in_io_size = 524288'
     )
 
     # array             'SPSP'  'lower bound'    'upper bound'  'SAP Note'
@@ -73,6 +75,9 @@ function check_8050_hana_revision_infra_issues {
                         '7'     '2.00.070.00'    '2.00.079.04'  '3608008'   \
                         '8'     '2.00.080.00'    '2.00.085.00'  '3608008'   \
 
+                        '7'     '2.00.070.00'    '2.00.079.08'  '3632493'   \
+                        '8'     '2.00.080.00'    '2.00.089.00'  '3632493'   \
+
                         '5'     '2.00.050.00'    '2.00.059.99'  '3665521'   \
                         '7'     '2.00.070.00'    '2.00.079.99'  '3665521'   \
                         '8'     '2.00.080.00'    '2.00.089.99'  '3665521'   \
@@ -86,8 +91,8 @@ function check_8050_hana_revision_infra_issues {
                         '8'     '2.00.080.00'    '2.00.089.99'  '3680406'   \
 
                         '5'     '2.00.050.00'    '2.00.059.99'  '3678935'   \
-                        '7'     '2.00.070.00'    '2.00.079.99'  '3678935'   \
-                        '8'     '2.00.080.00'    '2.00.089.99'  '3678935'   \
+                        '7'     '2.00.070.00'    '2.00.079.07'  '3678935'   \
+                        '8'     '2.00.080.00'    '2.00.088.00'  '3678935'   \
 
                         '7'     '2.00.070.00'    '2.00.079.07'  '3689045'   \
                         '8'     '2.00.080.00'    '2.00.088.00'  '3689045'   \
@@ -95,6 +100,9 @@ function check_8050_hana_revision_infra_issues {
                         '5'     '2.00.059.18'    '2.00.059.99'  '3693972'   \
                         '7'     '2.00.079.05'    '2.00.079.99'  '3693972'   \
                         '8'     '2.00.086.00'    '2.00.089.99'  '3693972'   \
+
+                        '7'     '2.00.070.00'    '2.00.079.05'  'issue346745'   \
+                        '8'     '2.00.080.00'    '2.00.086.00'  'issue346745'   \
                         )
 
     local -ar _hana_intel=(\
