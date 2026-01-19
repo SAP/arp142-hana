@@ -31,6 +31,8 @@ function check_0102_supported_instances_amazon {
                         'x1e.32xlarge'   \
                         'x2idn.16xlarge'  'x2idn.24xlarge' 'x2idn.32xlarge' \
                         'x2iedn.24xlarge' 'x2iedn.32xlarge' \
+                        'x8i.12xlarge'  'x8i.16xlarge'  'x8i.24xlarge'  'x8i.32xlarge'  \
+                        'x8i.48xlarge'  'x8i.64xlarge'  'x8i.96xlarge'  \
                         )
 
     # array             'Instance Type'
