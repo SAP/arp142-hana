@@ -28,8 +28,9 @@ function check_8050_hana_revision_infra_issues {
         ['3632493']='Shared Memory Allocation Failure on System Replication Secondary'
         ['3665521']='Unresponsive System due to Memory Reclaim of Huge Alignment Pages'
         ['3669696']='Unresponsive System due to late Memory Reclaim cause of gc_unused_memory_threshold-*'
-        ['3680406']='Optimizing Memory Allocation for SAP HANA Services by Adjusting min_segment_size'
         ['3678935']='System CPU Consumption is Very High and the Performance is Poor due to sslmaxprotocolversion=tls13'
+        ['3680406']='Optimizing Memory Allocation for SAP HANA Services by Adjusting min_segment_size'
+        ['3687338']='Huge Block Allocator (HBA) Lock Contention During Asynchronous Garbage Collection (GC)'
         ['3689045']='Configured File I/O Throughput Limit Not Enforced'
         ['3693972']='Unexpected Nameserver Stop and Restart After Takeover due to Topology Timestamp Difference'
         ['issue346745']='optimized_small_page_write_max_unused_chunk_in_io_size = 524288'
@@ -89,6 +90,9 @@ function check_8050_hana_revision_infra_issues {
                         '5'     '2.00.050.00'    '2.00.059.99'  '3680406'   \
                         '7'     '2.00.070.00'    '2.00.079.99'  '3680406'   \
                         '8'     '2.00.080.00'    '2.00.089.99'  '3680406'   \
+
+                        '7'     '2.00.070.00'    '2.00.079.03'  '3687338'   \
+                        '8'     '2.00.080.00'    '2.00.084.00'  '3687338'   \
 
                         '5'     '2.00.050.00'    '2.00.059.99'  '3678935'   \
                         '7'     '2.00.070.00'    '2.00.079.07'  '3678935'   \
