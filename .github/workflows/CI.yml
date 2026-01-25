@@ -62,7 +62,7 @@ jobs:
       # Run bashunit tests
       - name: Run unit tests (bashunit)
         run: |
-          bash ./bashunit \"./*.bashunit.sh\"
+          bash ./bashunit ./*.bashunit.sh
         working-directory: ./scripts/tests
 
       # Runs a set of commands using the runners shell - requires pip install bashate - install @ self-hosted
