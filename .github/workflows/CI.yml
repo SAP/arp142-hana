@@ -51,13 +51,19 @@ jobs:
           shopt -s globstar; shellcheck scripts/**/*.check
 
       # Runs a set of commands using the runners shell
-      - name: Run unit tests
+      - name: Run unit tests (shunit2)
         run: |
           ./test_runner
           ./test_runner -t "$(echo ./check/*_test.sh)"
         working-directory: ./scripts/tests
         env:
           SHUNIT_COLOR: always
+
+      # Run bashunit tests
+      - name: Run unit tests (bashunit)
+        run: |
+          bash ./bashunit ./*.bashunit.sh
+        working-directory: ./scripts/tests
 
       # Runs a set of commands using the runners shell - requires pip install bashate - install @ self-hosted
       - name: Code format checking - bashate
