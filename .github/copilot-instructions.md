@@ -65,20 +65,57 @@ Use these helper functions for platform-specific logic:
 ### Adding New Checks
 1. Create `scripts/lib/check/NNNN_description.check` following the pattern above
 2. Add the check ID to relevant checksets in `scripts/lib/checkset/`
-3. Create unit test in `scripts/tests/check/NNNN_description_test.sh`
+3. Create unit test in `scripts/tests/check/NNNN_description.bashunit.sh`
 4. Test with: `./saphana-check.sh -c NNNN`
 
 ### Testing Framework
-- **Unit tests**: Uses shunit2 framework in `scripts/tests/`
-- **Test runner**: `scripts/tests/test_runner` executes all tests
+- **Unit tests**: Uses bashunit framework in `scripts/tests/`
+- **Test runner**: `scripts/tests/bashunit` executes all bashunit tests (`*.bashunit.sh`)
+- **Legacy tests**: `scripts/tests/test_runner` executes shunit2 tests (`*_test.sh`)
 - **Mocking**: Tests use `saphana-logger-stubs` for logging functions
-- **CI**: Tests run in GitHub Actions with `SHUNIT_COLOR=always`
+- **CI**: Tests run in GitHub Actions for both frameworks
 
 ### Running Tests
 ```bash
 cd scripts/tests
-./test_runner                              # All tests
-./test_runner -t "check/*_test.sh"        # Only check tests
+bash ./bashunit ./*.bashunit.sh            # All bashunit tests
+bash ./bashunit ./check/*.bashunit.sh      # Only check tests
+```
+
+### bashunit Test Pattern
+Tests use bashunit conventions with snake_case function names prefixed with `test_`:
+```bash
+#!/usr/bin/env bash
+#------------------------------------------------------------------
+# bashunit migration notes:
+# 1. PROGRAM_DIR not readonly - bashunit runs all tests in same session
+# 2. Guard check skips if already loaded to avoid readonly variable conflicts
+#------------------------------------------------------------------
+set -u
+
+if [[ -z "${PROGRAM_DIR:-}" ]]; then
+    PROGRAM_DIR="${BASH_SOURCE[0]%/*}"
+    [[ "$PROGRAM_DIR" == "${BASH_SOURCE[0]}" ]] && PROGRAM_DIR="."
+fi
+
+function test_example_case() {
+    # Test logic here
+    if [[ "$result" != "$expected" ]]; then
+        bashunit::fail "Expected '$expected' but got '$result'"
+    fi
+}
+
+function set_up_before_script() {
+    # Disable errexit - bashunit enables it but sourced files may return non-zero
+    set +eE
+
+    # Skip if already loaded (bashunit runs all tests in same session)
+    [[ -n "${HANA_HELPER_PROGVERSION:-}" ]] && return 0
+
+    # Setup: source required libraries
+    source "${PROGRAM_DIR}/saphana-logger-stubs"
+    source "${PROGRAM_DIR}/../bin/saphana-helper-funcs"
+}
 ```
 
 ### Code Quality Standards
