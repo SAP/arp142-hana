@@ -46,40 +46,40 @@ function check_2510_kernel_semaphores {
     # Check each parameter individually - current values must be >= recommended values
     if [[ "${currSEMMSL}" -lt "${recoSEMMSL}" ]]; then
 
-        logCheckWarning "SEMMSL: is ${currSEMMSL}, must be >= ${recoSEMMSL}"
+        logCheckWarning "SEMMSL - is: ${currSEMMSL}, must be: >= ${recoSEMMSL}"
         _has_error=true
 
     fi
 
     if [[ "${currSEMMNS}" -lt "${recoSEMMNS}" ]]; then
 
-        logCheckWarning "SEMMNS: is ${currSEMMNS}, must be >= ${recoSEMMNS}"
+        logCheckWarning "SEMMNS - is: ${currSEMMNS}, must be: >= ${recoSEMMNS}"
         _has_error=true
 
     fi
 
     if [[ "${currSEMOPM}" -lt "${recoSEMOPM}" ]]; then
 
-        logCheckWarning "SEMOPM: is ${currSEMOPM}, must be >= ${recoSEMOPM}"
+        logCheckWarning "SEMOPM - is: ${currSEMOPM}, must be: >= ${recoSEMOPM}"
         _has_error=true
 
     fi
 
     if [[ "${currSEMMNI}" -lt "${recoSEMMNI}" ]]; then
 
-        logCheckWarning "SEMMNI: is ${currSEMMNI}, must be >= ${recoSEMMNI}"
+        logCheckWarning "SEMMNI - is: ${currSEMMNI}, must be: >= ${recoSEMMNI}"
         _has_error=true
 
     fi
 
     if ${_has_error}; then
 
-        logCheckError "Parameter kernel.sem is NOT set as recommended (SAP Note ${_sapnote:-}) (should be >= ${reco_sem})"
+        logCheckError "Parameter kernel.sem is NOT set as recommended (SAP Note ${_sapnote:-}) (should be: >= ${reco_sem})"
         _retval=2
 
     else
 
-        logCheckOk "Parameter kernel.sem is set as recommended (SAP Note ${_sapnote:-}) (is >= ${reco_sem})"
+        logCheckOk "Parameter kernel.sem is set as recommended (SAP Note ${_sapnote:-}) (is: >= ${reco_sem})"
         _retval=0
 
     fi
