@@ -39,6 +39,7 @@
 1700_irqbalance_service
 2000_transparent_hugepages
 2001_persistent_hugepages
+2010_transparent_hugepages_defrag
 2160_transactional_memory_intel
 2161_transactional_memory_ldtrk_intel
 2200_numa_balancing

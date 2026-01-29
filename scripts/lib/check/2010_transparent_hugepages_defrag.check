@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+
+function check_2010_transparent_hugepages_defrag {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2131662'     # Transparent Huge Pages (THP) on SAP HANA Servers
+
+    #                              file                                                         recommended_value
+    local -ar _thp_defrag_parameter=(\
+                                    '/sys/kernel/mm/transparent_hugepage/defrag'                'never' \
+                                    '/sys/kernel/mm/transparent_hugepage/khugepaged/defrag'     '0'     \
+    )
+    # MODIFICATION SECTION<<
+
+    # PRECONDITIONS
+    if [[ ! -f '/sys/kernel/mm/transparent_hugepage/enabled' ]]; then
+
+        logCheckSkipped "Transparent Hugepages not configurable (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif [[ ! -f '/sys/kernel/mm/transparent_hugepage/defrag' ]]; then
+
+        logCheckSkipped "Transparent Hugepages defrag not configurable (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+
+        # Check if THP is enabled (not set to [never])
+        local _thp_enabled
+        _thp_enabled=$(</sys/kernel/mm/transparent_hugepage/enabled)
+        _thp_enabled=${_thp_enabled//*[/[}
+        _thp_enabled=${_thp_enabled//]*/]}
+
+        if [[ "${_thp_enabled}" == '[never]' ]]; then
+
+            logCheckSkipped "Transparent Hugepages are disabled, defrag check not applicable (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+            _retval=3
+
+        fi
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local _curr_value
+        local _reco_value
+        local _parameter
+
+        # i+=2 --> every 2nd item
+        for ((i=0; i < ${#_thp_defrag_parameter[@]}; i+=2)); do
+
+            _parameter=${_thp_defrag_parameter[$i]}
+            _reco_value=${_thp_defrag_parameter[$i+1]}
+
+            logTrace "<${FUNCNAME[0]}> # '${_parameter}'>"
+
+            if [[ ! -f "${_parameter}" ]]; then
+
+                logCheckInfo "Transparent Hugepages defrag parameter ${_parameter} not available"
+                continue
+
+            fi
+
+            _curr_value=$(<"${_parameter}")
+            # extract active setting from format like: always defer defer+madvise madvise [never]
+            if [[ "${_curr_value}" == *'['* ]]; then
+                _curr_value=${_curr_value//*[/}
+                _curr_value=${_curr_value//]*/}
+            fi
+
+            if [[ "${_curr_value}" == "${_reco_value}" ]]; then
+
+                logCheckOk "THP defrag parameter ${_parameter} set as recommended (is: ${_curr_value})"
+
+            else
+
+                logCheckError "THP defrag parameter ${_parameter} NOT set as recommended (is: ${_curr_value}, should be: ${_reco_value})"
+                _retval=2
+
+            fi
+
+        done
+
+        if [[ ${_retval} -eq 99 ]]; then
+
+            logCheckOk "All Transparent Hugepages defrag parameters set as recommended (SAP Note ${sapnote:-})"
+            _retval=0
+
+        else
+
+            logCheckError "NOT all Transparent Hugepages defrag parameters set as recommended (SAP Note ${sapnote:-})"
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
