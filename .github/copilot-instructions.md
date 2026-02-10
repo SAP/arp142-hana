@@ -82,15 +82,10 @@ bash ./bashunit ./*.bashunit.sh            # All bashunit tests
 bash ./bashunit ./check/*.bashunit.sh      # Only check tests
 ```
 
-### bashunit Test Pattern
-Tests use bashunit conventions with snake_case function names prefixed with `test_`:
+### bashunit Test Pattern for Check Functions
+Tests for check functions use bashunit conventions. **CRITICAL**: Use a test-specific guard variable, NOT `HANA_HELPER_PROGVERSION`:
 ```bash
 #!/usr/bin/env bash
-#------------------------------------------------------------------
-# bashunit migration notes:
-# 1. PROGRAM_DIR not readonly - bashunit runs all tests in same session
-# 2. Guard check skips if already loaded to avoid readonly variable conflicts
-#------------------------------------------------------------------
 set -u
 
 if [[ -z "${PROGRAM_DIR:-}" ]]; then
@@ -98,25 +93,40 @@ if [[ -z "${PROGRAM_DIR:-}" ]]; then
     [[ "$PROGRAM_DIR" == "${BASH_SOURCE[0]}" ]] && PROGRAM_DIR="."
 fi
 
-function test_example_case() {
-    # Test logic here
-    if [[ "$result" != "$expected" ]]; then
-        bashunit::fail "Expected '$expected' but got '$result'"
-    fi
-}
+# CRITICAL: Use test-specific guard! Do NOT use HANA_HELPER_PROGVERSION
+[[ -n "${_NNNN_check_name_test_loaded:-}" ]] && return 0
+_NNNN_check_name_test_loaded=true
+
+# Mock variables for testing
+TEST_SOME_VALUE=''
+
+# Mock functions (do NOT source saphana-helper-funcs)
+LIB_FUNC_IS_RHEL() { return 1; }
+LIB_FUNC_IS_SLES() { return 0; }
 
 function set_up_before_script() {
-    # Disable errexit - bashunit enables it but sourced files may return non-zero
     set +eE
+    source "${PROGRAM_DIR}/../saphana-logger-stubs"
+    source "${PROGRAM_DIR}/../../lib/check/NNNN_check_name.check"
+}
 
-    # Skip if already loaded (bashunit runs all tests in same session)
-    [[ -n "${HANA_HELPER_PROGVERSION:-}" ]] && return 0
+function set_up() {
+    TEST_SOME_VALUE=''
+    LIB_FUNC_IS_RHEL() { return 1; }
+}
 
-    # Setup: source required libraries
-    source "${PROGRAM_DIR}/saphana-logger-stubs"
-    source "${PROGRAM_DIR}/../bin/saphana-helper-funcs"
+function test_example_case() {
+    TEST_SOME_VALUE='expected'
+    check_NNNN_check_name
+    if [[ $? -ne 0 ]]; then
+        bashunit::fail "Expected RC=0"
+    fi
 }
 ```
+
+**Why test-specific guards matter**: bashunit runs all test files in the same session. Using `HANA_HELPER_PROGVERSION` as a guard causes subsequent test files to skip loading their check functions, breaking those tests.
+
+See `scripts/tests/check/README.md` and `scripts/tests/check/_TEMPLATE.bashunit.sh.template` for detailed guidance.
 
 ### Code Quality Standards
 - **ShellCheck**: Configured via `.shellcheckrc` with specific rules enabled
