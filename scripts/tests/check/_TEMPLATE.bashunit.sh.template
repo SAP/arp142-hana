@@ -2,7 +2,7 @@
 #------------------------------------------------------------------
 # bashunit test template for check functions
 #
-# Usage: cp _TEMPLATE.bashunit.sh NNNN_check_name.bashunit.sh
+# Usage: cp _TEMPLATE.bashunit.sh.template NNNN_check_name.bashunit.sh
 #        Then replace NNNN_check_name with your actual check name
 #------------------------------------------------------------------
 set -u  # treat unset variables as an error

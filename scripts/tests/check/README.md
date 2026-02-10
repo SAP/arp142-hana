@@ -4,9 +4,9 @@ This directory contains bashunit tests for individual check functions.
 
 ## Creating a New Test File
 
-Use the template file `_TEMPLATE.bashunit.sh` as a starting point:
+Use the template file `_TEMPLATE.bashunit.sh.template` as a starting point:
 ```bash
-cp _TEMPLATE.bashunit.sh NNNN_check_name.bashunit.sh
+cp _TEMPLATE.bashunit.sh.template NNNN_check_name.bashunit.sh
 ```
 
 ## Critical Rules

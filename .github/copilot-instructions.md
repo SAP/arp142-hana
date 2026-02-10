@@ -126,7 +126,7 @@ function test_example_case() {
 
 **Why test-specific guards matter**: bashunit runs all test files in the same session. Using `HANA_HELPER_PROGVERSION` as a guard causes subsequent test files to skip loading their check functions, breaking those tests.
 
-See `scripts/tests/check/README.md` and `scripts/tests/check/_TEMPLATE.bashunit.sh` for detailed guidance.
+See `scripts/tests/check/README.md` and `scripts/tests/check/_TEMPLATE.bashunit.sh.template` for detailed guidance.
 
 ### Code Quality Standards
 - **ShellCheck**: Configured via `.shellcheckrc` with specific rules enabled
