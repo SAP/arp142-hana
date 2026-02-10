@@ -22,15 +22,22 @@ function check_2325_vm_swappiness {
         logCheckSkipped "Parameter vm.swappiness not readable (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif LIB_FUNC_IS_RHEL ; then
+    elif LIB_FUNC_IS_RHEL; then
 
         _reco_swappiness=${_reco_swappiness_rhel}
 
-    else
-        #CHECK
+    fi
 
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        # TEST_VARIABLES only required for UNIT TESTING
         local -i _curr_swappiness
-        _curr_swappiness=$(</proc/sys/vm/swappiness)
+        if [[ -z ${TEST_VM_SWAPPINESS:-} ]]; then
+            _curr_swappiness=$(</proc/sys/vm/swappiness)
+        else
+            _curr_swappiness="${TEST_VM_SWAPPINESS}"
+        fi
 
         if [[ ${_curr_swappiness} -ne ${_reco_swappiness} ]]; then
 
