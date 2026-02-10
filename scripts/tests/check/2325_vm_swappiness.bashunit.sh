@@ -11,11 +11,15 @@ if [[ -z "${PROGRAM_DIR:-}" ]]; then
     [[ "$PROGRAM_DIR" == "${BASH_SOURCE[0]}" ]] && PROGRAM_DIR="."
 fi
 
+# Guard to avoid reloading
+[[ -n "${_2325_vm_swappiness_test_loaded:-}" ]] && return 0
+_2325_vm_swappiness_test_loaded=true
+
 # Mock variables
 TEST_VM_SWAPPINESS=''
 SWAPPINESS_FILE_EXISTS=1
 
-# Mock functions - defaults can be overridden in individual tests
+# Mock functions
 LIB_FUNC_IS_RHEL() { return 1; }
 LIB_FUNC_IS_SLES() { return 0; }
 
@@ -23,12 +27,10 @@ function set_up_before_script() {
     # Disable errexit - bashunit enables it but sourced files may return non-zero
     set +eE
 
-    # Skip if already loaded (bashunit runs all tests in same session)
-    [[ -n "${HANA_HELPER_PROGVERSION:-}" ]] && return 0
-
-    # Setup: source required libraries
+    #shellcheck source=../saphana-logger-stubs
     source "${PROGRAM_DIR}/../saphana-logger-stubs"
-    source "${PROGRAM_DIR}/../../bin/saphana-helper-funcs"
+
+    #shellcheck source=../../lib/check/2325_vm_swappiness.check
     source "${PROGRAM_DIR}/../../lib/check/2325_vm_swappiness.check"
 }
 
@@ -37,7 +39,7 @@ function set_up() {
     TEST_VM_SWAPPINESS=''
     SWAPPINESS_FILE_EXISTS=1
 
-    # Reset functions to default
+    # Reset mock functions to default (not RHEL, is SLES)
     LIB_FUNC_IS_RHEL() { return 1; }
     LIB_FUNC_IS_SLES() { return 0; }
 }
