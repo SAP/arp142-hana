@@ -11,13 +11,9 @@
 #  REL   'support end'    'ESPOS end'     'LTSS end'
 # '11.4' '31 Mar 2019'    '31 Mar 2019'   '31 Mar 2022'
 
-# '12.3' '30 Jun 2019'    '30 Jun 2022'   '30 Jun 2022'
 # '12.4' '30 Jun 2020'    '30 Jun 2023'   '30 Jun 2023'
-# '15.0' '31 Dec 2019'    '31 Dec 2022'   '31 Dec 2022'
-# '15.1' '31 Jan 2021'    '31 Jan 2024'   '31 Jan 2024'
-# '15.2' '31 Dec 2021'    '31 Dec 2024'   '31 Dec 2024'
-
 # '12.5' '31 Oct 2024'    '31 Oct 2024'   '31 Oct 2027'
+
 # '15.3' '31 Dec 2022'    '31 Dec 2025'   '31 Dec 2025'
 # '15.4' '31 Dec 2023'    '31 Dec 2026'   '31 Dec 2026'
 # '15.5' '31 Dec 2024'    '31 Dec 2027'   '31 Dec 2027'
@@ -48,9 +44,6 @@ readonly -a SLES_SUPPORTED_VERSIONS=(
 # '7.7'  '31 Mar 2020'          '30 Aug 2023'
 # '7.8'  'no support '          'by SAP HANA'
 
-# '8.1'  '28 Apr 2020'          '30 Nov 2023'
-# '8.2'  '05 Nov 2020'          '30 Apr 2024'
-# '8.3'  'no support '          'by SAP HANA'
 # '8.4'  '30 Nov 2021'          '31 May 2025'
 # '8.5'  'no support '          'by SAP HANA'
 # '8.7'  'no support '          'by SAP HANA'
@@ -59,15 +52,15 @@ readonly -a SLES_SUPPORTED_VERSIONS=(
 # '9.1'  'no support '          'by SAP HANA'
 # '9.3'  'no support '          'by SAP HANA'
 
-# '9.6'   '30 Nov 2025'   '31 May 2029'    \
-# '9.4'   '30 Nov 2024'   '30 Apr 2028'    \
-# '9.2'   '30 Nov 2023'   '31 May 2027'    \
-# '9.0'   '30 Nov 2022'   '31 May 2026'    \
-# '8.10'  '31 May 2029'   '31 May 2032'    \
-# '8.8'   '30 Nov 2023'   '31 May 2027'    \
-# '8.6'   '30 Nov 2022'   '31 May 2026'    \
-# '7.9'   '31 Mar 2021'   '30 Jun 2028'    \
 # '10.0'  '30 Nov 2025'   '31 May 2029'
+# '9.6'   '30 Nov 2025'   '31 May 2029'
+# '9.4'   '30 Nov 2024'   '30 Apr 2028'
+# '9.2'   '30 Nov 2023'   '31 May 2027'
+# '9.0'   '30 Nov 2022'   '31 May 2026'
+# '8.10'  '31 May 2029'   '31 May 2032'
+# '8.8'   '30 Nov 2023'   '31 May 2027'
+# '8.6'   '30 Nov 2022'   '31 May 2026'
+# '7.9'   '31 Mar 2021'   '30 Jun 2028'
 
 # RHEL EOL versions (End of Life - no longer supported)
 readonly -a RHEL_EOL_VERSIONS=(
@@ -80,7 +73,7 @@ readonly -a RHEL_EOL_VERSIONS=(
 readonly -a RHEL_SUPPORTED_VERSIONS=(
     '7.9'           # RHEL 7.9 (minimum supported)
     '8.[6-9]'       # RHEL 8.6-8.9
-    '8.1[0-9]'      # RHEL 8.10 and above
-    '9.[0-9]'       # RHEL 9.0-9.9
+    '8.10'          # RHEL 8.10 and above
+    '9.[0-6]'       # RHEL 9.0-9.6
     '10.0'          # RHEL 10.0
 )

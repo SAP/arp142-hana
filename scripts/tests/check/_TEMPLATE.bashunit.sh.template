@@ -55,10 +55,11 @@ function test_precondition_not_met() {
 
     #act
     check_NNNN_check_name
+    local rc=$?
 
     #assert
-    if [[ $? -ne 3 ]]; then
-        bashunit::fail "Expected RC=3 (skipped) when precondition not met"
+    if [[ ${rc} -ne 3 ]]; then
+        bashunit::fail "Expected RC=3 (skipped) when precondition not met, got RC=${rc}"
     fi
 }
 
