@@ -85,7 +85,7 @@ declare -a CHECKFILELIST=()
 
 NUMBER_CHECKS=0
 NUMBER_CHECKS_SKIPPED=0
-NUMBER_CHECKS_INFO=0
+NUMBER_CHECKS_UNPROCESSED=0
 NUMBER_CHECKS_OK=0
 NUMBER_CHECKS_WARNING=0
 NUMBER_CHECKS_ERROR=0
@@ -144,7 +144,7 @@ function update_check_counters {
         ;;
 
     99)
-        ((NUMBER_CHECKS_INFO++))
+        ((NUMBER_CHECKS_UNPROCESSED++))
         ;;
 
     *)
@@ -293,6 +293,11 @@ function run_checklist {
                 RC_CHECK=$?
             fi
 
+        # Detect unprocessed checks (RC=99 means check logic never reached a conclusion)
+        if [[ ${RC_CHECK} -eq 99 ]]; then
+            logWarn "Check ${checkfileshort} returned RC=99 (unprocessed). Check logic may have a bug - ensure all code paths set a return value."
+        fi
+
         update_check_counters ${RC_CHECK}
 
     done
@@ -332,18 +337,18 @@ function print_counters {
     local -i check_run
     local -i check_count
     local percent_skipped=0
-    local percent_info=0
+    local percent_unprocessed=0
     local percent_ok=0
     local percent_warning=0
     local percent_error=0
 
-    check_run=$((NUMBER_CHECKS_INFO + NUMBER_CHECKS_OK + NUMBER_CHECKS_WARNING + NUMBER_CHECKS_ERROR))
+    check_run=$((NUMBER_CHECKS_UNPROCESSED + NUMBER_CHECKS_OK + NUMBER_CHECKS_WARNING + NUMBER_CHECKS_ERROR))
     check_count=$((NUMBER_CHECKS_SKIPPED + check_run))
 
     if [[ "${check_count}" -gt 0 ]]; then
         percent_skipped=$((100 * NUMBER_CHECKS_SKIPPED / check_count))
         if [[ "${check_run}" -gt 0 ]]; then
-            percent_info=$((100 * NUMBER_CHECKS_INFO / check_count))
+            percent_unprocessed=$((100 * NUMBER_CHECKS_UNPROCESSED / check_count))
             percent_ok=$((100 * NUMBER_CHECKS_OK / check_count))
             percent_warning=$((100 * NUMBER_CHECKS_WARNING / check_count))
             percent_error=$((100 * NUMBER_CHECKS_ERROR / check_count))
@@ -352,15 +357,20 @@ function print_counters {
 
     local _line_formated
 
-    printf -v _line_formated '%-7s|%6s |%8s |%5s |%8s |%5s |%6s' 'Status' 'Error' 'Warning' 'OK' 'Skipped' 'Info' 'Total'
+    printf -v _line_formated '%-7s|%6s |%8s |%5s |%8s |%7s |%6s' 'Status' 'Error' 'Warning' 'OK' 'Skipped' 'Unproc' 'Total'
     logNotify "## ${_line_formated}"
 
-    printf -v _line_formated '%-7s|%6s |%8s |%5s |%8s |%5s |%6s' '%' $percent_error $percent_warning $percent_ok $percent_skipped $percent_info '100'
+    printf -v _line_formated '%-7s|%6s |%8s |%5s |%8s |%7s |%6s' '%' $percent_error $percent_warning $percent_ok $percent_skipped $percent_unprocessed '100'
     logNotify "## ${_line_formated}"
 
     # shellcheck disable=SC2086
-    printf -v _line_formated '%-7s|%6s |%8s |%5s |%8s |%5s |%6s' '#' $NUMBER_CHECKS_ERROR $NUMBER_CHECKS_WARNING $NUMBER_CHECKS_OK $NUMBER_CHECKS_SKIPPED $NUMBER_CHECKS_INFO $check_count
+    printf -v _line_formated '%-7s|%6s |%8s |%5s |%8s |%7s |%6s' '#' $NUMBER_CHECKS_ERROR $NUMBER_CHECKS_WARNING $NUMBER_CHECKS_OK $NUMBER_CHECKS_SKIPPED $NUMBER_CHECKS_UNPROCESSED $check_count
     logNotify "## ${_line_formated}"
+
+    # Warn if any checks were unprocessed
+    if [[ ${NUMBER_CHECKS_UNPROCESSED} -gt 0 ]]; then
+        logWarn "${NUMBER_CHECKS_UNPROCESSED} check(s) returned RC=99 (unprocessed). This indicates a bug in check logic."
+    fi
 
 }
 

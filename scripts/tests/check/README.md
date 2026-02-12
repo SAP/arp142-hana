@@ -9,7 +9,47 @@ Use the template file `_TEMPLATE.bashunit.sh.template` as a starting point:
 cp _TEMPLATE.bashunit.sh.template NNNN_check_name.bashunit.sh
 ```
 
+## Test Coverage Report
+
+Run the coverage report to see which checks are missing tests:
+```bash
+bash ../check-coverage-report.sh              # Full report
+bash ../check-coverage-report.sh --untested-only  # Only list untested checks
+```
+
 ## Critical Rules
+
+### 0. ALWAYS Test for RC=99 (Unprocessed Check)
+
+**RC=99 means "check logic never reached a conclusion"** - this is a BUG!
+
+The 2325_vm_swappiness bug was caused by check logic that silently skipped RHEL systems,
+returning the default RC=99 instead of properly executing the check.
+
+**Every test MUST verify the check was actually processed:**
+```bash
+# Helper function (included in template)
+assert_check_processed() {
+    local rc=$1
+    local context="${2:-}"
+    if [[ ${rc} -eq 99 ]]; then
+        bashunit::fail "RC=99 (unprocessed) - check logic did not reach a conclusion${context:+ in }${context}"
+    fi
+}
+
+# Usage in tests
+function test_rhel_check_executes() {
+    LIB_FUNC_IS_RHEL() { return 0; }
+    check_NNNN_check_name
+    local rc=$?
+    
+    # CRITICAL: Always check this first!
+    assert_check_processed ${rc} "RHEL"
+}
+```
+
+**Runtime Detection:** The main script (`saphana-check.sh`) now logs warnings when checks return RC=99
+and displays an "Unproc" (unprocessed) counter in the summary.
 
 ### 1. Use a Test-Specific Guard Variable
 
@@ -116,10 +156,44 @@ function test_something() {
     
     # act
     check_NNNN_check
+    local rc=$?
     
-    # assert
-    if [[ $? -ne 0 ]]; then
+    # assert - ALWAYS check RC != 99 first!
+    assert_check_processed ${rc}
+    if [[ ${rc} -ne 0 ]]; then
         bashunit::fail "Expected RC=0"
     fi
 }
 ```
+
+## Mandatory Tests for Dual-Platform Checks
+
+If your check supports both SLES and RHEL, you MUST include tests for both platforms:
+
+```bash
+function test_sles_check_executes() {
+    LIB_FUNC_IS_RHEL() { return 1; }
+    LIB_FUNC_IS_SLES() { return 0; }
+    TEST_VALUE='sles_value'
+    
+    check_NNNN_check
+    local rc=$?
+    
+    assert_check_processed ${rc} "SLES"
+    # Additional assertions...
+}
+
+function test_rhel_check_executes() {
+    LIB_FUNC_IS_RHEL() { return 0; }
+    LIB_FUNC_IS_SLES() { return 1; }
+    TEST_VALUE='rhel_value'
+    
+    check_NNNN_check
+    local rc=$?
+    
+    assert_check_processed ${rc} "RHEL"
+    # Additional assertions...
+}
+```
+
+This ensures both code paths are exercised and prevents silent failures like the 2325_vm_swappiness bug.
