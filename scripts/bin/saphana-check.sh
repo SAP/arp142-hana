@@ -389,9 +389,13 @@ function main {
             logError "This version is no longer supported by the vendor (SAP Note #936887)"
             logError "Please upgrade to a supported version or use --skip_os_validation flag to bypass this check"
             exit 2
+        elif [[ ${_os_validation_rc} -eq 3 ]]; then
+            # Unknown/uncertain version - warn but continue
+            logWarn "OS version ${OS_NAME} ${OS_VERSION} is not in the validation list"
+            logWarn "Check results may be incomplete or inaccurate for this version"
+        else
+            logDebug "OS validation passed: ${OS_NAME} ${OS_VERSION}"
         fi
-
-        logDebug "OS validation passed: ${OS_NAME} ${OS_VERSION}"
     else
         logWarn "OS validation has been skipped via --skip_os_validation flag"
     fi
