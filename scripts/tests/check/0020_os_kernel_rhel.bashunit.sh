@@ -72,6 +72,36 @@ function test_rhel_supported_kernel_ok() {
     fi
 }
 
+function test_rhel10_supported_kernel_ok() {
+
+    #arrange
+    OS_VERSION='10.0'
+    COMPARE_VERSIONS_RC=1
+
+    #act
+    check_0020_os_kernel_rhel
+
+    #assert
+    if [[ $? -ne 0 ]]; then
+        bashunit::fail "Expected RC=0 (ok) for RHEL 10.0 supported kernel"
+    fi
+}
+
+function test_rhel10_supported_kernel_tolow() {
+
+    #arrange
+    OS_VERSION='10.0'
+    COMPARE_VERSIONS_RC=2
+
+    #act
+    check_0020_os_kernel_rhel
+
+    #assert
+    if [[ $? -ne 2 ]]; then
+        bashunit::fail "Expected RC=2 (error) for RHEL 10.0 kernel too low"
+    fi
+}
+
 
 function set_up_before_script() {
 

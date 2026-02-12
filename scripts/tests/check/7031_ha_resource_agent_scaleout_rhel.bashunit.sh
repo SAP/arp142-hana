@@ -87,6 +87,22 @@ function test_rpm_old() {
     fi
 }
 
+function test_rhel10_rpm_ok() {
+    #arrange
+    rpm_rc=0
+    OS_VERSION='10.0'
+    compare_version_rc=1
+
+    #act
+    check_7031_ha_resource_agent_scaleout_rhel
+    local rc=$?
+
+    #assert
+    if [[ "$rc" != '0' ]]; then
+        bashunit::fail "Expected CheckOk RC=0 for RHEL 10.0 but got RC=$rc"
+    fi
+}
+
 function set_up_before_script() {
     set +eE
 

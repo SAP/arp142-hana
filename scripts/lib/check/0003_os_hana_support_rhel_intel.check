@@ -46,6 +46,17 @@ function check_0003_os_hana_support_rhel_intel {
                         ''                      '0-2-4-6----'   \          #all others, e.g. TDI, Bare-Metal
                         )
 
+    # array             'Platform'              '0123456789A' (Minor Release)
+    local -ar _rhel_10=(\
+                        'Microsoft Azure'       '-----------'   \
+                        'Amazon EC2'            '-----------'   \
+                        'IBM Cloud'             '-----------'   \
+                        'Google GCP'            '-----------'   \
+                        'Alibaba Cloud ECS'     '-----------'   \
+                        'Huawei Cloud'          '-----------'   \
+                        ''                      '0----------'   \          #all others, e.g. TDI, Bare-Metal
+                        )
+
     local -r sapnote='#2235581'
     # MODIFICATION SECTION<<
 
@@ -74,6 +85,8 @@ function check_0003_os_hana_support_rhel_intel {
         8.* )   _rhel_matrix+=("${_rhel_8[@]}") ;;
 
         9.* )   _rhel_matrix+=("${_rhel_9[@]}") ;;
+
+        10.* )   _rhel_matrix+=("${_rhel_10[@]}") ;;
 
         *)
             logCheckError "RHEL version is NOT supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"

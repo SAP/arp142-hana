@@ -13,6 +13,8 @@ function check_0020_os_kernel_rhel {
     # MODIFICATION SECTION>>
         #       array       'rel' 'goodnormalized_kernel'   'SAP Note'
     local -ar _rhel_intel=(\
+                        '10.0'  '6.12.0-55.30.1.el10'   '#3562919'  \
+
                         '9.6'   '5.14.0-570.55.1.el9'   '#3576554,3108302'  \
                         '9.4'   '5.14.0-427.98.1.el9'   '#3108302'  \
                         '9.2'   '5.14.0-284.101.1.el9'  '#3108302,>1year'   \
@@ -26,6 +28,8 @@ function check_0020_os_kernel_rhel {
                         )
 
     local -ar _rhel_ibmpower=(\
+                        '10.0'  '6.12.0-55.30.1.el10'   '#3562919'  \
+
                         '9.6'   '5.14.0-570.55.1.el9'   '#3576554,3108302'  \
                         '9.4'   '5.14.0-427.10.1.el9'   '#3108302'  \
                         '9.2'   '5.14.0-284.101.1.el9'  '#3108302,>1year'   \
@@ -43,6 +47,7 @@ function check_0020_os_kernel_rhel {
     #2292690 - SAP HANA DB: Recommended OS settings for RHEL 7
     #2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
     #3108302 - SAP HANA DB: Recommended OS Settings for RHEL 9
+    #3562919 - SAP HANA DB: Recommended OS Settings for RHEL 10
 
     #1880960 - Lenovo Systems Solution for SAP HANA Platform Edition FW/OS/Driver Maintenance
     #2533550 - Lenovo Systems Solution for SAP HANA Platform Edition FW/OS/Driver Maintenance (SR950)

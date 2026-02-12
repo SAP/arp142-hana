@@ -67,6 +67,7 @@ readonly -a SLES_SUPPORTED_VERSIONS=(
 # '8.8'   '30 Nov 2023'   '31 May 2027'    \
 # '8.6'   '30 Nov 2022'   '31 May 2026'    \
 # '7.9'   '31 Mar 2021'   '30 Jun 2028'    \
+# '10.0'  '30 Nov 2025'   '31 May 2029'
 
 # RHEL EOL versions (End of Life - no longer supported)
 readonly -a RHEL_EOL_VERSIONS=(
@@ -81,4 +82,5 @@ readonly -a RHEL_SUPPORTED_VERSIONS=(
     '8.[6-9]'       # RHEL 8.6-8.9
     '8.1[0-9]'      # RHEL 8.10 and above
     '9.[0-9]'       # RHEL 9.0-9.9
+    '10.0'          # RHEL 10.0
 )

@@ -10,6 +10,7 @@ function check_0500_selinux_rhel {
     local -r sapnote_rhel7='#2292690'   # 2292690 - SAP HANA DB: Recommended OS settings for RHEL 7
     local -r sapnote_rhel8='#2777782'   # 2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
     local -r sapnote_rhel9='#3108302'   # 3108302 - SAP HANA DB: Recommended OS Settings for RHEL 9
+    local -r sapnote_rhel10='#3562919'  # 3562919 - SAP HANA DB: Recommended OS Settings for RHEL 10
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS
@@ -26,6 +27,7 @@ function check_0500_selinux_rhel {
             7.*)    sapnote="${sapnote_rhel7}" ;;
             8.*)    sapnote="${sapnote_rhel8}" ;;
             9.*)    sapnote="${sapnote_rhel9}" ;;
+            10.*)   sapnote="${sapnote_rhel10}" ;;
 
             *)
                     logCheckWarning 'CHECK does not support RHEL release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"

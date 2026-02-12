@@ -143,10 +143,10 @@ function test_validate_os_future_versions() {
     fi
 
     OS_NAME='Linux RHEL'
-    OS_VERSION='10.0'
+    OS_VERSION='10.9'
     LIB_FUNC_VALIDATE_OS
     if [[ $? -ne 0 ]]; then
-        bashunit::fail "RHEL 10.0 (future) should be allowed"
+        bashunit::fail "RHEL 10.9 (future) should be allowed"
     fi
 }
 

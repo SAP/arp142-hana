@@ -75,6 +75,20 @@ function test_rhel_not_handled() {
     fi
 }
 
+function test_rhel10_supported() {
+
+    #arrange
+    OS_VERSION='10.0'
+
+    #act
+    check_0001_os_support_rhel
+
+    #assert
+    if [[ $? -ne 0 ]]; then
+        bashunit::fail "Expected RC=0 (ok) for RHEL 10.0 supported"
+    fi
+}
+
 
 function set_up_before_script() {
 

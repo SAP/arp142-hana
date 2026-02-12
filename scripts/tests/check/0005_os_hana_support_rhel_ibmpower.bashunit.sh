@@ -131,6 +131,38 @@ function test_power10_rhel_supported() {
     fi
 }
 
+function test_power11_rhel10_supported() {
+
+    #arrange
+    LIB_PLATF_ARCHITECTURE='ppc64le'
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER11'
+    OS_VERSION='10.0'
+
+    #act
+    check_0005_os_hana_support_rhel_ibmpower
+
+    #assert
+    if [[ $? -ne 0 ]]; then
+        bashunit::fail "Expected RC=0 (ok) for POWER11 RHEL 10.0 supported"
+    fi
+}
+
+function test_power11_rhel9_not_supported() {
+
+    #arrange
+    LIB_PLATF_ARCHITECTURE='ppc64le'
+    LIB_PLATF_POWER_PLATFORM_BASE='POWER11'
+    OS_VERSION='9.4'
+
+    #act
+    check_0005_os_hana_support_rhel_ibmpower
+
+    #assert
+    if [[ $? -ne 2 ]]; then
+        bashunit::fail "Expected RC=2 (error) for POWER11 RHEL 9.x not supported"
+    fi
+}
+
 function test_powerX_not_supported() {
 
     #arrange
