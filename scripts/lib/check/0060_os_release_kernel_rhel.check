@@ -12,6 +12,8 @@ function check_0060_os_release_kernel_rhel {
     # MODIFICATION SECTION>>
     # array 'expected kernelversion' - must not have *.el suffix
     local -ar _rel_kernel_matrix=(\
+                                        '10.0'  '6.12.0-55'     \
+
                                         '9.6'   '5.14.0-570'    \
                                         '9.4'   '5.14.0-427'    \
                                         '9.2'   '5.14.0-284'    \

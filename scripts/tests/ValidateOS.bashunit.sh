@@ -133,20 +133,20 @@ function test_validate_os_unsupported_distribution() {
 }
 
 function test_validate_os_future_versions() {
-    # Test future/unknown versions - should allow with warning
+    # Test future/unknown versions - should return uncertain (code 3)
 
     OS_NAME='Linux SLES'
-    OS_VERSION='16.0'
+    OS_VERSION='16.9'
     LIB_FUNC_VALIDATE_OS
-    if [[ $? -ne 0 ]]; then
-        bashunit::fail "SLES 16.0 (future) should be allowed"
+    if [[ $? -ne 3 ]]; then
+        bashunit::fail "SLES 16.0 (future) should return uncertain (code 3)"
     fi
 
     OS_NAME='Linux RHEL'
-    OS_VERSION='10.0'
+    OS_VERSION='10.9'
     LIB_FUNC_VALIDATE_OS
-    if [[ $? -ne 0 ]]; then
-        bashunit::fail "RHEL 10.0 (future) should be allowed"
+    if [[ $? -ne 3 ]]; then
+        bashunit::fail "RHEL 10.0 (future) should return uncertain (code 3)"
     fi
 }
 

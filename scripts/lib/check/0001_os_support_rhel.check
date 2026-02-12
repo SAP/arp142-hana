@@ -9,22 +9,15 @@ function check_0001_os_support_rhel {
     # MODIFICATION SECTION>>
     # array 'REL'   'support general end'  'extended support end (E4S)'
 
-                        # '6.10'  '30 Nov 2020'   '30 Jun 2024'  \
-                        # '7.7' '31 Mar 2020'    '30 Aug 2023'    \
-                        # '7.8' 'no support '    'by SAP HANA'    \
-
-                        # '8.1' '28 Apr 2020'    '30 Nov 2023'    \
-                        # '8.2' '05 Nov 2020'    '30 Apr 2024'    \
-                        # '8.3' 'no support '    'by SAP HANA'    \
-                        # '8.4' '30 Nov 2021'    '31 May 2025'    \
-                        # '8.5' 'no support '    'by SAP HANA'    \
                         # '8.7' 'no support '    'by SAP HANA'    \
                         # '8.9' 'no support '    'by SAP HANA'    \
 
                         # '9.1' 'no support '    'by SAP HANA'    \
                         # '9.3' 'no support '    'by SAP HANA'    \
+                        # '9.5' 'no support '    'by SAP HANA'    \
 
     local -ar _rhel_all=(\
+                        '10.0'  '30 Nov 2025'   '31 May 2029'    \
                         '9.6'   '30 Nov 2025'   '31 May 2029'    \
                         '9.4'   '30 Nov 2024'   '30 Apr 2028'    \
                         '9.2'   '30 Nov 2023'   '31 May 2027'    \
@@ -55,8 +48,7 @@ function check_0001_os_support_rhel {
                 logCheckError "RHEL version has reached Red Hat's general support end and must be upgraded (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
                 _retval=2 ;;
 
-        7.9 | 8.* | 9.* )  : ;;
-
+        7.9 | 8.* | 9.* | 10.* )  : ;;
         *)
             logCheckError "RHEL version is not supported by SAP HANA (SAP Note #2235581) (is: ${OS_VERSION})"
             _retval=2 ;;

@@ -11,6 +11,7 @@ function check_7030_ha_resource_agent_scaleup_rhel {
     local -r _rpm_package='resource-agents-sap-hana'
 
     local -ar _rpm_versions=(\
+                            '10.0'  '0.162.3-5.el10' \
                             '9.6'   '0.162.3-5.el9' \
                             '9.4'   '0.162.3-5.el9' \
                             '9.2'   '0.162.3-5.el9' \

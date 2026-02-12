@@ -19,6 +19,7 @@ function check_0410_glibc_ibmpower {
     local -ar rhel90=( '2.34-28.el9_0.6' '#3108302,3318049' )
     local -ar rhel92=( '2.34-60.el9_2.15' '#3108302' )
     local -ar rhel96=( '2.34-168.el9_6.20' '#3108302' )
+    local -ar rhel100=( '2.39-46.el10_0.4' '#3562919' )
     # MODIFICATION SECTION<<
 
     #2205917 - SAP HANA DB: Recommended OS settings for SLES 12
@@ -26,6 +27,7 @@ function check_0410_glibc_ibmpower {
     #2292690 - SAP HANA DB: Recommended OS settings for RHEL 7
     #2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
     #3108302 - SAP HANA DB: Recommended OS Settings for RHEL 9
+    #3562919 - SAP HANA DB: Recommended OS Settings for RHEL 10
     #3318049 - Indexserver Crashes When Running on RHEL 9.x
 
     local _goodversion
@@ -63,12 +65,11 @@ function check_0410_glibc_ibmpower {
                         _retval=1
                         ;;
 
-            9.[2-5] )   _goodversion="${rhel92[0]}" ; sapnote="${rhel92[1]}"
-                        ;;
+            9.[2-5] )   _goodversion="${rhel92[0]}" ; sapnote="${rhel92[1]}" ;;
 
-            9.* )       _goodversion="${rhel96[0]}" ; sapnote="${rhel96[1]}"
-                        ;;
+            9.* )       _goodversion="${rhel96[0]}" ; sapnote="${rhel96[1]}" ;;
 
+            10.* )      _goodversion="${rhel100[0]}" ; sapnote="${rhel100[1]}" ;;
 
             *)          logCheckWarning 'CHECK does not support RHEL release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
                         _retval=1 ;;
