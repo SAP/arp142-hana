@@ -10,10 +10,10 @@ function check_0450_tunedprofiles-saphana_rhel {
     # https://access.redhat.com/downloads/content/tuned-profiles-sap-hana/noarch/package-latest
 
     # MODIFICATION SECTION>>
-    local -ar rhel79=( '2.11.0-12.el7_9.0'  '#2292690' )
-    local -ar rhel86=( '2.20.0-1.el8_6.2'   '#2777782' )
-    local -ar rhel88=( '2.20.0-2.el8_8.1'   '#2777782' )
-    local -ar rhel8A=( '2.22.1-5.el8'       '#2777782' )
+    local -ar rhel79=( '2.11.0-13.el7_9.0'  '#2292690' )
+    local -ar rhel86=( '2.20.0-1.el8_6.3'   '#2777782' )
+    local -ar rhel88=( '2.20.0-2.el8_8.2'   '#2777782' )
+    local -ar rhel8A=( '2.22.1-6.el8'       '#2777782' )
     local -ar rhel90=( '2.24.0-1.el9'       '#3108302' )
     local -ar rhel92=( '2.24.0-1.el9'       '#3108302' )
     local -ar rhel94=( '2.24.0-1.el9'       '#3108302' )
