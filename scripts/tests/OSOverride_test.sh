@@ -17,21 +17,21 @@ testOSOverride_SLES_Valid() {
         source "${PROGRAM_DIR}/../bin/lib_linux_release" 2>&1 >/dev/null
         echo "${OS_NAME}|${OS_VERSION}"
     )
-    
+
     local os_name="${result%%|*}"
     local os_version="${result##*|}"
-    
+
     assertEquals "OS_NAME should be Linux SLES" 'Linux SLES' "${os_name}"
     assertEquals "OS_VERSION should be 15.5" '15.5' "${os_version}"
-    
+
     unset SAPHANA_CHECK_OS_OVERRIDE
 }
 
 testOSOverride_RHEL_Valid() {
     # Test valid RHEL override
-    
+
     export SAPHANA_CHECK_OS_OVERRIDE='RHEL:9.2'
-    
+
     # Test in subshell to avoid affecting global state
     local result
     result=$(

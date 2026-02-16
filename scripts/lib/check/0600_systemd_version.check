@@ -7,14 +7,13 @@ function check_0600_systemd_version {
     local -i _retval=99
 
     # <1y old package or concrete newer version listed in any note
-    # https://scc.suse.com/packages?name=SUSE%20Linux%20Enterprise%20Server&version=15.3&arch=x86_64&query=systemd
+    # https://scc.suse.com/packages?name=SUSE%20Linux%20Enterprise%20Server&version=15.4&arch=x86_64&query=systemd
     # https://packagehub.suse.com/packages/systemd/
 
     # https://access.redhat.com/downloads/content/systemd/x86_64/package-latest
 
     # MODIFICATION SECTION>>
     local -ar sles12x=( '228-157.69.1' '#2205917' )
-    local -ar sles153=( '246.16-150300.7.60.1' '#2684254' )
     local -ar sles154=( '249.17-150400.8.43.1' '#2684254' )
     local -ar sles156=( '254.13-150600.4.15.1' '#2684254' )
     local -ar rhel7=( '219-78.el7_9.11' '#2292690' )
@@ -39,7 +38,6 @@ function check_0600_systemd_version {
 
             12.*)   _goodversion="${sles12x[0]}" ; sapnote="${sles12x[1]}" ;;
 
-            15.3)       _goodversion="${sles153[0]}" ; sapnote="${sles153[1]}" ;;
             15.[4-5] )  _goodversion="${sles154[0]}" ; sapnote="${sles154[1]}" ;;
             15.* )      _goodversion="${sles156[0]}" ; sapnote="${sles156[1]}" ;;
 

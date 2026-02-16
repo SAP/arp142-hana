@@ -156,7 +156,7 @@ test_environment_not_handled() {
     #arrange
     LIB_PLATF_ARCHITECTURE='ppc64le'
     LIB_PLATF_POWER_PLATFORM_BASE='POWER90'
-    OS_VERSION='15.3'
+    OS_VERSION='15.7'
 
     #act
     check_0004_os_hana_support_sles_ibmpower

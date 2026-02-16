@@ -35,7 +35,7 @@ test_sles_not_supported() {
 test_sles_supported_kernel_tolow() {
 
     #arrange
-    OS_VERSION='15.3'
+    OS_VERSION='15.7'
     COMPARE_VERSIONS_RC=2
 
     #act
@@ -48,7 +48,7 @@ test_sles_supported_kernel_tolow() {
 test_sles_supported_kernel_ok() {
 
     #arrange
-    OS_VERSION='15.3'
+    OS_VERSION='15.7'
     COMPARE_VERSIONS_RC=1
 
     #act

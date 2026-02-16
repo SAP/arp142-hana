@@ -13,7 +13,6 @@ function check_7010_corosync_version {
 
     local -ar _sles_rpm_matrix=(\
                                     '12.*'   '2.3.6-9.19.1'     \
-                                    '15.3'   '2.4.5-12.3.1'     \
                                     '15.4'   '2.4.5-12.7.1'     \
                                 )
 

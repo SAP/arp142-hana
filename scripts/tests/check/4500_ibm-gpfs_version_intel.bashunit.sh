@@ -12,7 +12,7 @@ if [[ -z "${PROGRAM_DIR:-}" ]]; then
 fi
 
 # Mock variables
-OS_VERSION='15.3'                   #doesn't matter
+OS_VERSION='12.5'                   #doesn't matter
 LIB_FUNC_NORMALIZE_RPM_RETURN=''    #doesn't matter
 declare -i compare_version_rc=0
 declare -i rpm_rc=0
