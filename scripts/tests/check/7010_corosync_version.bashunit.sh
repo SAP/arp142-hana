@@ -91,7 +91,7 @@ function test_rpm_ok_sles12all() {
 function test_rpm_ok_sles152() {
     #arrange
     rpm_rc=0
-    OS_VERSION='15.3'       #test against 15.3
+    OS_VERSION='15.4'       #test against 15.4
     compare_version_rc=1
 
     #act
@@ -107,7 +107,7 @@ function test_rpm_ok_sles152() {
 function test_rpm_old_but_not_used() {
     #arrange
     rpm_rc=0
-    OS_VERSION='15.3'
+    OS_VERSION='15.4'
     compare_version_rc=2
     isused_rc=1
 
@@ -124,7 +124,7 @@ function test_rpm_old_but_not_used() {
 function test_rpm_old_and_used() {
     #arrange
     rpm_rc=0
-    OS_VERSION='15.3'
+    OS_VERSION='15.4'
     compare_version_rc=2
     isused_rc=0
 

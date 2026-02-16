@@ -10,7 +10,7 @@ function check_7020_ha_resource_agents_sles {
     local sapnote='#1552925'
 
     # https://scc.suse.com/packages?name=SUSE%20Linux%20Enterprise%20Server%20for%20SAP%20Applications&version=12.5&arch=x86_64&query=SAPHanaSR&module=
-    # https://scc.suse.com/packages?name=SUSE%20Linux%20Enterprise%20Server%20for%20SAP%20Applications&version=15.3&arch=x86_64&query=SAPHanaSR&module=
+    # https://scc.suse.com/packages?name=SUSE%20Linux%20Enterprise%20Server%20for%20SAP%20Applications&version=15.4&arch=x86_64&query=SAPHanaSR&module=
 
     local -ar _rpms_sles12=(
         'SAPHanaSR'             '0.162.5-3.45.1'

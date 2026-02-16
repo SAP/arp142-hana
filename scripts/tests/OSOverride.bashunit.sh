@@ -170,7 +170,6 @@ function test_os_override_valid_formats_various() {
 
     local -a valid_overrides=(
         'SLES:12.5'
-        'SLES:15.3'
         'SLES:15.10'
         'RHEL:7.9'
         'RHEL:8.0'

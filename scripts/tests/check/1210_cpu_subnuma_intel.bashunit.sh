@@ -119,7 +119,7 @@ function test_numa_disabled_sles() {
     LIB_PLATF_CPU_NUMANODES=1
     LIB_PLATF_CPU_SOCKETS=2
     LIB_PLATF_CPU_MODELID=85
-    OS_VERSION='15.3'
+    OS_VERSION='15.7'
 
     #act
     check_1210_cpu_subnuma_intel
@@ -193,7 +193,7 @@ function test_cascadelake_snc2_enabled_ok() {
     LIB_PLATF_CPU_NUMANODES=16
     LIB_PLATF_CPU_SOCKETS=8
     LIB_PLATF_CPU_MODELID=85
-    OS_VERSION='15.3'
+    OS_VERSION='15.7'
 
     #act
     check_1210_cpu_subnuma_intel
