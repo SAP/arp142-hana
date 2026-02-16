@@ -8,11 +8,10 @@ function check_4500_ibm-gpfs_version_intel {
 
     # MODIFICATION SECTION>>
     local -r sapnote='#2908360,#2533844,#1880960'
-    # local -r _goodversion50='5.0.5.14'
     local -r _goodversion51='5.1.0.2'       #supported only on RHEL 7.7, starting with RHEL 8.1 and SLES 15 SP0
     local -r _goodversion51nn='5.1.9.12'    #SLES15.3,15.4 and RHEL9.2
     local -r _goodversion52='5.2.2.1'       #SLES15.5 and RHEL8.8
-    local -r _goodversion52n='5.2.3.3'      #SLES15.5 and RHEL8.8
+    local -r _goodversion52n='5.2.3.4'      #SLES15.5 and RHEL8.8
     # MODIFICATION SECTION<<
 
     #2908360 - Spectrum Scale Software Lenovo ESD Platform
@@ -39,23 +38,27 @@ function check_4500_ibm-gpfs_version_intel {
 
         case "${OS_VERSION}" in
 
-            8.8 | 8.10 )            _goodversion=${_goodversion52} ;;
-            7.* | 8.* | 9.[0-3] )   _goodversion=${_goodversion51nn} ;;
-            9.[4-5] )               _goodversion=${_goodversion52} ;;
-            * )                     _goodversion=${_goodversion52n} ;;
+            8.8 | 8.10 )            : ${_goodversion52} ;;
+            7.* | 8.* | 9.[0-3] )   : ${_goodversion51nn} ;;
+            9.[4-5] )               : ${_goodversion52} ;;
+            * )                     : ${_goodversion52n} ;;
 
         esac
+
+        _goodversion="$_"
 
     elif LIB_FUNC_IS_SLES; then
 
         case "${OS_VERSION}" in
 
-            12.5 )                  _goodversion=${_goodversion51} ;;
-            15.[2-4])               _goodversion=${_goodversion51nn} ;;
-            15.[5-6])               _goodversion=${_goodversion52} ;;
-            *)                      _goodversion=${_goodversion52n} ;;
+            12.5 )                  : ${_goodversion51} ;;
+            15.4 )                  : ${_goodversion51nn} ;;
+            15.[5-6])               : ${_goodversion52} ;;
+            *)                      : ${_goodversion52n} ;;
 
         esac
+
+        _goodversion="$_"
     fi
 
     # CHECK
@@ -70,6 +73,7 @@ function check_4500_ibm-gpfs_version_intel {
         case ${_fullversion} in
 
             5.0.*)      logCheckError 'Support for IBM GPFS v5.0.x ended on April 30, 2022 !!!' ;;
+            5.1.*)      logCheckError 'Support for IBM GPFS v5.1.x ended on Sept 30, 2025 !!!' ;;
 
         esac
 
