@@ -33,7 +33,7 @@ function check_8050_hana_revision_infra_issues {
         ['3687338']='Huge Block Allocator (HBA) Lock Contention During Asynchronous Garbage Collection (GC)'
         ['3689045']='Configured File I/O Throughput Limit Not Enforced'
         ['3693972']='Unexpected Nameserver Stop and Restart After Takeover due to Topology Timestamp Difference'
-        ['issue346745']='optimized_small_page_write_max_unused_chunk_in_io_size = 524288'
+        ['3716078']='Long Running Savepoints To Flush Many Small Pages To Disk'
         ['issue348679']='landscapeHostConfiguration.py reports "unkown" status after "partial" and before "starting"'
     )
 
@@ -106,8 +106,8 @@ function check_8050_hana_revision_infra_issues {
                         '7'     '2.00.079.05'    '2.00.079.99'  '3693972'   \
                         '8'     '2.00.086.00'    '2.00.089.99'  '3693972'   \
 
-                        '7'     '2.00.070.00'    '2.00.079.05'  'issue346745'   \
-                        '8'     '2.00.080.00'    '2.00.086.00'  'issue346745'   \
+                        '7'     '2.00.070.00'    '2.00.079.05'  '3716078'   \
+                        '8'     '2.00.080.00'    '2.00.086.00'  '3716078'   \
 
                         '7'     '2.00.079.03'    '2.00.079.08'  'issue348679'   \
                         '8'     '2.00.083.00'    '2.00.089.00'  'issue348679'   \
