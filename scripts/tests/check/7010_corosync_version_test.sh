@@ -72,11 +72,11 @@ test_rpm_ok_sles12all() {
     assertEquals "CheckOk? RC" '0' "$?"
 }
 
-test_rpm_ok_sles152() {
+test_rpm_ok_sles154() {
 
     #arrange
     rpm_rc=0
-    OS_VERSION='15.7'       #test against 15.7
+    OS_VERSION='15.4'       #test against 15.4
     compare_version_rc=1
 
     #act
@@ -90,7 +90,7 @@ test_rpm_old_but_not_used() {
 
     #arrange
     rpm_rc=0
-    OS_VERSION='15.7'
+    OS_VERSION='15.4'
     compare_version_rc=2
     isused_rc=1
 
@@ -105,7 +105,7 @@ test_rpm_old_and_used() {
 
     #arrange
     rpm_rc=0
-    OS_VERSION='15.7'
+    OS_VERSION='15.4'
     compare_version_rc=2
     isused_rc=0
 

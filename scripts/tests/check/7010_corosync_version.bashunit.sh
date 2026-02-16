@@ -88,7 +88,7 @@ function test_rpm_ok_sles12all() {
     fi
 }
 
-function test_rpm_ok_sles152() {
+function test_rpm_ok_sles154() {
     #arrange
     rpm_rc=0
     OS_VERSION='15.4'       #test against 15.4
