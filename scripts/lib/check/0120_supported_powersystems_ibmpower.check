@@ -11,6 +11,11 @@ function check_0120_supported_powersystems_ibmpower {
     local -ar _power_systems=(\
                         #POWER11
                         '9080-HEU'  'E1180' \
+                        '9043-MRU'  'E1150' \
+                        '9824-42A'  'S1124' \
+                        '9856-42H'  'L1124' \
+                        '9824-22A'  'S1122' \
+                        '9856-22H'  'L1122' \
                         #POWER10
                         '9080-HEX'  'E1080' \
                         '9043-MRX'  'E1050' \
