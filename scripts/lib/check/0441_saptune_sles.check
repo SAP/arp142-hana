@@ -7,13 +7,13 @@ function check_0441_saptune_sles {
     local -i _retval=99
 
     # https://scc.suse.com/packages?name=SUSE%20Linux%20Enterprise%20Server%20for%20SAP%20Applications&version=12.5&arch=x86_64&query=saptune
-    # https://scc.suse.com/packages?name=SUSE%20Linux%20Enterprise%20Server%20for%20SAP%20Applications&version=15.5&arch=x86_64&query=saptune
+    # https://scc.suse.com/packages?name=SUSE%20Linux%20Enterprise%20Server%20for%20SAP%20Applications&version=15.4&arch=x86_64&query=saptune
 
     # MODIFICATION SECTION>>
     local -r sapnote='#1275776'         #1275776 - Linux: Preparing SLES for SAP environments
 
     local -r sles125='3.2.1'
-    local -r sles15x='3.2.1'
+    local -r sles15x='3.2.2'
     # MODIFICATION SECTION<<
 
     local _goodversion
