@@ -11,7 +11,7 @@ function check_7021_ha_resource_agent_angi_sles {
     # MODIFICATION SECTION>>
     local -r sapnote='#1552925'
 
-    local -r sles15x='1.2.12'
+    local -r sles15x='1.3.0'
     # MODIFICATION SECTION<<
 
     # 1552925 - Linux: High Availability Cluster Solutions
