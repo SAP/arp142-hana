@@ -21,7 +21,25 @@ LIB_PLATF_CPU_STEPID=''
 # Mock functions
 LIB_FUNC_IS_INTEL() { return 0 ; }
 LIB_FUNC_IS_BARE_METAL() { return 0 ; }
+LIB_FUNC_IS_CLOUD_AMAZON() { return 1 ; }
+LIB_FUNC_IS_CLOUD_MICROSOFT() { return 1 ; }
+LIB_FUNC_IS_CLOUD_GOOGLE() { return 1 ; }
+LIB_FUNC_IS_CLOUD_IBM() { return 1 ; }
 
+
+function test_precondition_hyperscaler_skip() {
+
+    #arrange
+    LIB_FUNC_IS_CLOUD_AMAZON() { return 0 ; }
+
+    #act
+    check_1250_cpu_hyperthreading_intel
+
+    #assert
+    if [[ $? -ne 3 ]]; then
+        bashunit::fail "Expected RC=3 (skipped) for hyperscaler cloud"
+    fi
+}
 
 function test_precondition_cpusockets_unknown() {
 
@@ -246,5 +264,13 @@ function set_up() {
     LIB_PLATF_NAME=
     LIB_PLATF_CPU_MODELID=
     LIB_PLATF_CPU_STEPID=
+
+    # Reset mock functions
+    LIB_FUNC_IS_INTEL() { return 0 ; }
+    LIB_FUNC_IS_BARE_METAL() { return 0 ; }
+    LIB_FUNC_IS_CLOUD_AMAZON() { return 1 ; }
+    LIB_FUNC_IS_CLOUD_MICROSOFT() { return 1 ; }
+    LIB_FUNC_IS_CLOUD_GOOGLE() { return 1 ; }
+    LIB_FUNC_IS_CLOUD_IBM() { return 1 ; }
 
 }

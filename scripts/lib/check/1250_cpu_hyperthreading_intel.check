@@ -23,6 +23,11 @@ function check_1250_cpu_hyperthreading_intel {
         logCheckSkipped 'Running virtualized. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
+    elif LIB_FUNC_IS_CLOUD_AMAZON || LIB_FUNC_IS_CLOUD_MICROSOFT || LIB_FUNC_IS_CLOUD_GOOGLE || LIB_FUNC_IS_CLOUD_IBM ; then
+
+        logCheckSkipped 'Running on hyperscaler cloud. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
     elif [[ -z ${LIB_PLATF_CPU_SOCKETS:-} ]]; then
 
         logCheckWarning '# CPU Sockets unknown. Skipping' "<${FUNCNAME[0]}>"
@@ -38,9 +43,11 @@ function check_1250_cpu_hyperthreading_intel {
     #EXCEPTIONS - https://en.wikichip.org/wiki/intel/cpuid
     #Family 6 Model 85 Stepping x: SKL Skylake 4, CLX Cascade Lake 5-7, CPX Cooper Lake 8-11+
     #Family 6 Model 106/108 : ICX Ice Lake
-    #Family 6 Model 143 : Sapphire Rapids
-    #Family 6 Model 173 : Granite Rapids
-    #Family 6 Model 175 : Sierra Forest
+    #Family 6 Model 143 : SPR Sapphire Rapids
+    #Family 6 Model 207 : EMR Emerald Rapids
+    #Family 6 Model 173/174 : GNR Granite Rapids
+    #Family 6 Model 175 : SRF Sierra Forest
+    #Family 6 Model 221 : Clearwater Forest
 
     local rx_sdflex='Superdome Flex$'
     local rx_css3200='Compute Scale-up Server 3200'
