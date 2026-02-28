@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function check_3021_network_memory_minmid {
+function check_3021_tcp_window_minmid {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
@@ -25,6 +25,11 @@ function check_3021_network_memory_minmid {
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS
+
+    # Override paths for testing
+    local path_to_tcp_rmem="${path_to_tcp_rmem:-/proc/sys/net/ipv4/tcp_rmem}"
+    local path_to_tcp_wmem="${path_to_tcp_wmem:-/proc/sys/net/ipv4/tcp_wmem}"
+
     LIB_FUNC_NORMALIZE_KERNEL "${OS_LEVEL}"
     kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
 
@@ -52,8 +57,8 @@ function check_3021_network_memory_minmid {
     local ipv4_tcp_rmem
     local ipv4_tcp_wmem
 
-    ipv4_tcp_rmem=$(</proc/sys/net/ipv4/tcp_rmem)           # 4096    87380   6291456
-    ipv4_tcp_wmem=$(</proc/sys/net/ipv4/tcp_wmem)           # 4096    16384   4194304
+    ipv4_tcp_rmem=$(<"${path_to_tcp_rmem}")           # 4096    87380   6291456
+    ipv4_tcp_wmem=$(<"${path_to_tcp_wmem}")           # 4096    16384   4194304
 
     ipv4_tcp_rmem="${ipv4_tcp_rmem%[[:space:]]*}"           # 4096    87380
     ipv4_tcp_wmem="${ipv4_tcp_wmem%[[:space:]]*}"           # 4096    16384

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function check_3020_network_memory_max {
+function check_3020_tcp_window_scaling {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
@@ -16,21 +16,38 @@ function check_3020_network_memory_max {
     # MODIFICATION SECTION<<
 
     # 2382421 - Optimizing the Network Configuration on HANA- and OS-Level for SPS10 and Higher
-
-    # PRECONDITIONS
+    # https://www.rfc-editor.org/info/rfc7323
 
     # #CHECK
+
+    # Override paths for testing
+    local path_to_tcp_window_scaling="${path_to_tcp_window_scaling:-/proc/sys/net/ipv4/tcp_window_scaling}"
+    local path_to_tcp_rmem="${path_to_tcp_rmem:-/proc/sys/net/ipv4/tcp_rmem}"
+    local path_to_tcp_wmem="${path_to_tcp_wmem:-/proc/sys/net/ipv4/tcp_wmem}"
+    local path_to_rmem_max="${path_to_rmem_max:-/proc/sys/net/core/rmem_max}"
+    local path_to_wmem_max="${path_to_wmem_max:-/proc/sys/net/core/wmem_max}"
+
+    # tcp_window_scaling must be enabled for large tcp buffer sizes to be effective
+    local -i ipv4_tcp_window_scaling
+    ipv4_tcp_window_scaling=$(<"${path_to_tcp_window_scaling}")
+
+    if [[ ${ipv4_tcp_window_scaling} -ne 1 ]]; then
+        logCheckError 'net.ipv4.tcp_window_scaling is NOT enabled - required for large TCP buffer sizes (is: 0, must be: 1)'
+        _retval=2
+    else
+        logCheckOk 'net.ipv4.tcp_window_scaling is enabled - required for large TCP buffer sizes (is: 1)'
+    fi
 
     local ipv4_tcp_rmem_all
     local ipv4_tcp_wmem_all
 
-    ipv4_tcp_rmem_all=$(</proc/sys/net/ipv4/tcp_rmem)                # 4096    87380   6291456
-    ipv4_tcp_wmem_all=$(</proc/sys/net/ipv4/tcp_wmem)                # 4096    16384   4194304
+    ipv4_tcp_rmem_all=$(<"${path_to_tcp_rmem}")                # 4096    87380   6291456
+    ipv4_tcp_wmem_all=$(<"${path_to_tcp_wmem}")                # 4096    16384   4194304
 
     local -i core_rmem_max
-    core_rmem_max=$(</proc/sys/net/core/rmem_max)              # 212992
+    core_rmem_max=$(<"${path_to_rmem_max}")              # 212992
     local -i core_wmem_max
-    core_wmem_max=$(</proc/sys/net/core/wmem_max)              # 212992
+    core_wmem_max=$(<"${path_to_wmem_max}")              # 212992
 
     logTrace "<${FUNCNAME[0]}> # net_core_rmem_max <${core_rmem_max}>; net_ipv4_tcp_rmem <${ipv4_tcp_rmem_all}>"
     logTrace "<${FUNCNAME[0]}> # net_core_wmem_max <${core_wmem_max}>; net_ipv4_tcp_wmem <${ipv4_tcp_wmem_all}>"
@@ -85,12 +102,12 @@ function check_3020_network_memory_max {
 
     if [[ ${_retval} -eq 99 ]]; then
 
-        logCheckOk 'Network socket buffers set as recommended (SAP Note '"${sapnote:-})"
+        logCheckOk 'TCP Window scaling parameters set as recommended (SAP Note '"${sapnote:-})"
         _retval=0
 
     else
 
-        logCheckError 'Network socket buffers NOT set as recommended (SAP Note '"${sapnote:-})"
+        logCheckError 'TCP Window scaling parameters NOT set as recommended (SAP Note '"${sapnote:-})"
         _retval=2
 
     fi
