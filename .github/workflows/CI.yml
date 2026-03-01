@@ -50,15 +50,6 @@ jobs:
         run: |
           shopt -s globstar; shellcheck scripts/**/*.check
 
-      # Runs a set of commands using the runners shell
-      - name: Run unit tests (shunit2)
-        run: |
-          ./test_runner
-          ./test_runner -t "$(echo ./check/*_test.sh)"
-        working-directory: ./scripts/tests
-        env:
-          SHUNIT_COLOR: always
-
       # Run bashunit tests
       - name: Run unit tests (bashunit)
         run: |
@@ -78,5 +69,4 @@ jobs:
         run: |
           ./shfmt --indent 4 -ci -sr -kp --diff scripts/bin || true
           shopt -s globstar; ./shfmt --indent 4 -ci -sr -kp --diff scripts/**/*.check || true
-          shopt -s globstar; ./shfmt --indent 4 -ci -sr -kp --diff scripts/tests/**/*_test.sh || true
 
