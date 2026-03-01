@@ -71,9 +71,8 @@ Use these helper functions for platform-specific logic:
 ### Testing Framework
 - **Unit tests**: Uses bashunit framework in `scripts/tests/`
 - **Test runner**: `scripts/tests/bashunit` executes all bashunit tests (`*.bashunit.sh`)
-- **Legacy tests**: `scripts/tests/test_runner` executes shunit2 tests (`*_test.sh`)
 - **Mocking**: Tests use `saphana-logger-stubs` for logging functions
-- **CI**: Tests run in GitHub Actions for both frameworks
+- **CI**: Tests run in GitHub Actions
 
 ### Running Tests
 ```bash

@@ -16,12 +16,6 @@ SPDX-FileCopyrightText = "2008-2018 Kate Ward. All Rights Reserved."
 SPDX-License-Identifier = "Apache-2.0"
 
 [[annotations]]
-path = ["tests/shunit2", "tests/test_runner", "tests/versions"]
-precedence = "aggregate"
-SPDX-FileCopyrightText = "2008-2020 Kate Ward. All Rights Reserved."
-SPDX-License-Identifier = "Apache-2.0"
-
-[[annotations]]
 path = "tests/bashunit"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2023 TypedDevs. All Rights Reserved."
