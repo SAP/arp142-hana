@@ -1,0 +1,121 @@
+#!/usr/bin/env bash
+
+function check_5550_io_writeaccelerator_azure {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2015553'
+    # MODIFICATION SECTION<<
+
+    # https://learn.microsoft.com/en-us/azure/virtual-machines/how-to-enable-write-accelerator
+    # 2015553 - SAP on Microsoft Azure: Support prerequisites
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_CLOUD_MICROSOFT; then
+
+        logCheckSkipped 'Not running on Microsoft Azure. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+
+        #tweaked by unit-test
+        if [[ -z "${_imds_disks_response:-}" ]]; then
+            _imds_disks_response=$(curl -sf -m 10 -H "Metadata:true" --noproxy "*" \
+                "http://169.254.169.254/metadata/instance/compute/storageProfile/dataDisks?api-version=2025-04-07&format=json")
+        fi
+
+        if [[ -z "${_imds_disks_response:-}" ]]; then
+
+            logCheckWarning "Azure IMDS data disk information not available (SAP Note ${sapnote:-})"
+            _retval=1
+
+        fi
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local _flat
+        _flat=$(printf '%s' "${_imds_disks_response}" | tr -d '\n\r\t ')
+        # Remove outer brackets [ ]
+        _flat="${_flat#\[}"
+        _flat="${_flat%\]}"
+        # Split JSON objects into separate lines
+        _flat="${_flat//\},\{/$'}\n{'}"
+
+        local _has_premium=false
+        local -i _count_premium=0
+        local -i _count_premiumV2=0
+        local _has_wa=false
+
+        local _disk_entry
+        while IFS= read -r _disk_entry; do
+
+            [[ -z "${_disk_entry}" ]] && continue
+
+            local _lun='' _wa='' _sat=''
+
+            # Extract lun (string or number)
+            if [[ "${_disk_entry}" =~ \"lun\":\"?([0-9]+)\"? ]]; then
+                _lun="${BASH_REMATCH[1]}"
+            fi
+
+            # Extract writeAcceleratorEnabled (boolean or string)
+            if [[ "${_disk_entry}" =~ \"writeAcceleratorEnabled\":\"?(true|false)\"? ]]; then
+                _wa="${BASH_REMATCH[1]}"
+            fi
+
+            # Extract storageAccountType (first occurrence)
+            if [[ "${_disk_entry}" =~ \"storageAccountType\":\"([^\"]+)\" ]]; then
+                _sat="${BASH_REMATCH[1]}"
+            fi
+
+            logTrace "<${FUNCNAME[0]}> # LUN=${_lun} storageAccountType=${_sat} writeAcceleratorEnabled=${_wa}"
+
+            # PremiumV2_LRS disks (v2 disks do not support Write Accelerator, so they are not relevant for this check, but track anyway)
+            [[ "${_sat}" == 'PremiumV2_LRS' ]] && ((_count_premiumV2+=1))
+
+            # Only check Premium_LRS disks (Premium SSD v1)
+            [[ "${_sat}" != 'Premium_LRS' ]] && continue
+
+            _has_premium=true
+            ((_count_premium+=1))
+
+            if [[ "${_wa}" == 'true' ]]; then
+                _has_wa=true
+            fi
+
+        done <<< "${_flat}"
+
+        [[ ${_count_premium} -gt 0 ]] && logCheckInfo "Azure Premium SSD v1 data disk(s) found (count=${_count_premium})"
+        [[ ${_count_premiumV2} -gt 0 ]] && logCheckInfo "Azure Premium SSD v2 data disk(s) found (count=${_count_premiumV2})"
+
+        if ! ${_has_premium}; then
+
+            logCheckSkipped "No Premium SSD v1 data disks found (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+            _retval=3
+
+        elif ! ${_has_wa}; then
+
+            logCheckWarning 'Premium SSD v1 used for SAP HANA log volumes must have Write Accelerator enabled'
+            logCheckWarning "No Premium SSD v1 data disk has Write Accelerator enabled (SAP Note ${sapnote:-})"
+            _retval=1
+
+        else
+
+            logCheckInfo 'Verify manually that the Write Accelerator enabled disk is mapped to /hana/log'
+            logCheckOk "At least one Premium SSD v1 data disk has Write Accelerator enabled (SAP Note ${sapnote:-})"
+            _retval=0
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
