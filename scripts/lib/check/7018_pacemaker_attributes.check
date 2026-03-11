@@ -22,8 +22,11 @@ function check_7018_pacemaker_attributes {
     #SUSE KB #000021075 - Resource Stickiness parameter created during cluster bootstrap
     #Red Hat KB #4849731 - Why does pacemaker stop the Slave of a SAPHana resource when pengine reports "Pre-allocation failed"?
 
+    #tweaked by unit-test
+    local path_to_pacemaker_config="${path_to_pacemaker_config:-/etc/sysconfig/pacemaker}"
+
     # PRECONDITIONS
-    if [[ ! -r '/etc/sysconfig/pacemaker' ]]; then
+    if [[ ! -r "${path_to_pacemaker_config}" ]]; then
 
         logCheckSkipped 'pacemaker not installed' "(SAP Note ${sapnote:-}). Skipping <${FUNCNAME[0]}>"
         _retval=3
