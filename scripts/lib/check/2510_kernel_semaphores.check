@@ -30,9 +30,7 @@ function check_2510_kernel_semaphores {
     #CHECK
 
     #tweaked by unit-test
-    if [[ -z ${path_to_kernel_sem:-} ]]; then
-        path_to_kernel_sem='/proc/sys/kernel/sem'
-    fi
+    local path_to_kernel_sem="${path_to_kernel_sem:-/proc/sys/kernel/sem}"
 
     #get current value
     local -r curr_sem="$(<"${path_to_kernel_sem}")"

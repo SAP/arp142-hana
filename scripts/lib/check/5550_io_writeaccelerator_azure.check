@@ -22,10 +22,8 @@ function check_5550_io_writeaccelerator_azure {
     else
 
         #tweaked by unit-test
-        if [[ -z "${_imds_disks_response:-}" ]]; then
-            _imds_disks_response=$(curl -sf -m 10 -H "Metadata:true" --noproxy "*" \
-                "http://169.254.169.254/metadata/instance/compute/storageProfile/dataDisks?api-version=2025-04-07&format=json")
-        fi
+        local _imds_disks_response="${_imds_disks_response:-$(curl -sf -m 10 -H "Metadata:true" --noproxy "*" \
+            "http://169.254.169.254/metadata/instance/compute/storageProfile/dataDisks?api-version=2025-04-07&format=json")}"
 
         if [[ -z "${_imds_disks_response:-}" ]]; then
 

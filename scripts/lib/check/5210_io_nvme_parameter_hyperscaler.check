@@ -19,9 +19,7 @@ function check_5210_io_nvme_parameter_hyperscaler {
     # https://learn.microsoft.com/en-us/azure/virtual-machines/nvme-linux
 
     #tweaked by unit-test
-    if [[ -z ${path_to_nvme_timeout:-} ]]; then
-        path_to_nvme_timeout='/sys/module/nvme_core/parameters/io_timeout'
-    fi
+    local path_to_nvme_timeout="${path_to_nvme_timeout:-/sys/module/nvme_core/parameters/io_timeout}"
 
     local sapnote
 
