@@ -29,9 +29,7 @@ function check_2310_vm_min_free_kbytes {
     local -i _kmax_mfkbytes=${_kmax_mfkbytes_new}
 
     #tweaked by unit-test
-    if [[ -z ${path_to_min_free_kbytes:-} ]]; then
-        path_to_min_free_kbytes='/proc/sys/vm/min_free_kbytes'
-    fi
+    local path_to_min_free_kbytes="${path_to_min_free_kbytes:-/proc/sys/vm/min_free_kbytes}"
 
     if [[ ! -f "${path_to_min_free_kbytes}" ]]; then
 

@@ -15,9 +15,7 @@ function check_3120_ip_port_hostagent {
     #SAP Note 401162 - Linux: Avoiding TCP/IP port conflicts and start problems
 
     #tweaked by unit-test
-    if [[ -z ${path_to_host_profile:-} ]]; then
-        path_to_host_profile='/usr/sap/hostctrl/exe/host_profile'
-    fi
+    local path_to_host_profile="${path_to_host_profile:-/usr/sap/hostctrl/exe/host_profile}"
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_ROOT ; then

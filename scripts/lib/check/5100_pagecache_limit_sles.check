@@ -11,9 +11,7 @@ function check_5100_pagecache_limit_sles {
     # MODIFICATION SECTION<<
 
     #tweaked by unit-test
-    if [[ -z ${path_to_pgcache_limit_mb:-} ]]; then
-        path_to_pgcache_limit_mb='/proc/sys/vm/pagecache_limit_mb'
-    fi
+    local path_to_pgcache_limit_mb="${path_to_pgcache_limit_mb:-/proc/sys/vm/pagecache_limit_mb}"
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_SLES ; then

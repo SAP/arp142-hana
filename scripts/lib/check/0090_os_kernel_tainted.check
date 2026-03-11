@@ -13,9 +13,7 @@ function check_0090_os_kernel_tainted {
     #784391 - SAP support terms and 3rd-party Linux kernel drivers
 
     #tweaked by unit-test
-    if [[ -z ${path_to_kernel_tainted:-} ]]; then
-        path_to_kernel_tainted='/proc/sys/kernel/tainted'
-    fi
+    local path_to_kernel_tainted="${path_to_kernel_tainted:-/proc/sys/kernel/tainted}"
 
     # PRECONDITIONS
 
