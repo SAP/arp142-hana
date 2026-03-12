@@ -25,7 +25,7 @@ function check_3301_network_accelerated_azure {
 
         # /sys/class/net/eth0/device/uevent:DRIVER=mana - new
         # /sys/class/net/eth1/device/uevent:DRIVER=mlx  - old
-        mapfile -t aan_interfaces < <(grep -soHE -m1 'DRIVER=(mana|mlx)' /sys/class/net/**/device/uevent)
+        mapfile -t all_interfaces < <(grep -soHE -m1 'DRIVER=(hv_netvsc|mana|mlx)' /sys/class/net/**/device/uevent)
 
     fi
 
@@ -33,8 +33,10 @@ function check_3301_network_accelerated_azure {
     if [[ ${_retval} -eq 99 ]]; then
 
         local rx_intf='net/(.+)/device.*DRIVER=(.*)$'         #/sys/class/net/(eth0)/device/uevent:DRIVER=(mana)
+        local -i _count_AAN=0
+        local -i _count_nonAAN=0
 
-        for single_intf in "${aan_interfaces[@]}"; do
+        for single_intf in "${all_interfaces[@]}"; do
 
             logTrace "Processing <${single_intf}>!"
 
@@ -46,23 +48,39 @@ function check_3301_network_accelerated_azure {
                 # [2] Value matched                           =mana
 
                 if [[ ${BASH_REMATCH[2]} == 'mana' ]]; then
+
                     logCheckInfo "modern AAN interface found <interface=${BASH_REMATCH[1]}, driver=${BASH_REMATCH[2]}>"
-                else
+                    ((_count_AAN+=1))
+
+                elif [[ ${BASH_REMATCH[2]} == 'mlx' ]]; then
+
                     logCheckInfo "legacy AAN interface found <interface=${BASH_REMATCH[1]}, driver=${BASH_REMATCH[2]}>"
+                    ((_count_AAN+=1))
+
+                else
+
+                    logCheckInfo "non-accelerated interface found <interface=${BASH_REMATCH[1]}, driver=${BASH_REMATCH[2]}>"
+                    ((_count_nonAAN+=1))
+
                 fi
 
             fi
 
         done
 
-        if [[ ${#aan_interfaces[@]} -ge 1 ]]; then
+        if [[ ${_count_AAN} -gt 0 ]] && [[ ${_count_AAN} -eq ${_count_nonAAN} ]]; then
 
             logCheckOk "Azure Accelerated Networking enabled as recommended (SAP Note ${sapnote:-})"
             _retval=0
 
-        else
+        elif [[ ${_count_AAN} -eq 0 ]]; then
 
             logCheckError "Azure Accelerated Networking NOT enabled (SAP Note ${sapnote:-})"
+            _retval=2
+
+        else
+
+            logCheckError "Azure Accelerated Networking NOT enabled for all interfaces (SAP Note ${sapnote:-})"
             _retval=2
 
         fi

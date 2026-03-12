@@ -42,52 +42,107 @@ function test_0interface_error() {
     fi
 }
 
-function test_1interface_ok() {
+function test_1pair_ok() {
 
     #arrange
     if_aan=()
-    if_aan+=('/sys/class/net/eth0/device/uevent:DRIVER=mana')
+    if_aan+=('/sys/class/net/eth0/device/uevent:DRIVER=hv_netvsc')
+    if_aan+=('/sys/class/net/eth1/device/uevent:DRIVER=mana')
 
     #act
     check_3301_network_accelerated_azure
 
     #assert
     if [[ $? -ne 0 ]]; then
-        bashunit::fail "Expected RC=0 (ok) for 1 interface"
+        bashunit::fail "Expected RC=0 (ok) for 1 AAN + 1 synthetic pair"
     fi
 }
 
-function test_2interfaces_ok() {
+function test_2pairs_ok() {
 
     #arrange
     if_aan=()
-    if_aan+=('/sys/class/net/eth0/device/uevent:DRIVER=mana')
-    if_aan+=('/sys/class/net/eth1/device/uevent:DRIVER=mlx')
+    if_aan+=('/sys/class/net/eth0/device/uevent:DRIVER=hv_netvsc')
+    if_aan+=('/sys/class/net/eth1/device/uevent:DRIVER=mana')
+    if_aan+=('/sys/class/net/eth2/device/uevent:DRIVER=hv_netvsc')
+    if_aan+=('/sys/class/net/eth3/device/uevent:DRIVER=mlx')
 
     #act
     check_3301_network_accelerated_azure
 
     #assert
     if [[ $? -ne 0 ]]; then
-        bashunit::fail "Expected RC=0 (ok) for 2 interfaces"
+        bashunit::fail "Expected RC=0 (ok) for 2 AAN + 2 synthetic pairs"
     fi
 }
 
-function test_4interfaces_ok() {
+function test_4pairs_ok() {
 
     #arrange
     if_aan=()
-    if_aan+=('/sys/class/net/eth0/device/uevent:DRIVER=mana')
-    if_aan+=('/sys/class/net/eth1/device/uevent:DRIVER=mlx')
-    if_aan+=('/sys/class/net/eth2/device/uevent:DRIVER=mlx')
-    if_aan+=('/sys/class/net/eth4/device/uevent:DRIVER=mana')
+    if_aan+=('/sys/class/net/eth0/device/uevent:DRIVER=hv_netvsc')
+    if_aan+=('/sys/class/net/eth1/device/uevent:DRIVER=mana')
+    if_aan+=('/sys/class/net/eth2/device/uevent:DRIVER=hv_netvsc')
+    if_aan+=('/sys/class/net/eth3/device/uevent:DRIVER=mlx')
+    if_aan+=('/sys/class/net/eth4/device/uevent:DRIVER=hv_netvsc')
+    if_aan+=('/sys/class/net/eth5/device/uevent:DRIVER=mlx')
+    if_aan+=('/sys/class/net/eth6/device/uevent:DRIVER=hv_netvsc')
+    if_aan+=('/sys/class/net/eth7/device/uevent:DRIVER=mana')
 
     #act
     check_3301_network_accelerated_azure
 
     #assert
     if [[ $? -ne 0 ]]; then
-        bashunit::fail "Expected RC=0 (ok) for 4 interfaces"
+        bashunit::fail "Expected RC=0 (ok) for 4 AAN + 4 synthetic pairs"
+    fi
+}
+
+function test_only_synthetic_error() {
+
+    #arrange
+    if_aan=()
+    if_aan+=('/sys/class/net/eth0/device/uevent:DRIVER=hv_netvsc')
+    if_aan+=('/sys/class/net/eth1/device/uevent:DRIVER=hv_netvsc')
+
+    #act
+    check_3301_network_accelerated_azure
+
+    #assert
+    if [[ $? -ne 2 ]]; then
+        bashunit::fail "Expected RC=2 (error) for only synthetic interfaces"
+    fi
+}
+
+function test_partial_aan_error() {
+
+    #arrange
+    if_aan=()
+    if_aan+=('/sys/class/net/eth0/device/uevent:DRIVER=hv_netvsc')
+    if_aan+=('/sys/class/net/eth1/device/uevent:DRIVER=mana')
+    if_aan+=('/sys/class/net/eth2/device/uevent:DRIVER=hv_netvsc')
+
+    #act
+    check_3301_network_accelerated_azure
+
+    #assert
+    if [[ $? -ne 2 ]]; then
+        bashunit::fail "Expected RC=2 (error) for partial AAN enablement"
+    fi
+}
+
+function test_not_azure_skip() {
+
+    #arrange
+    if_aan=()
+    LIB_FUNC_IS_CLOUD_MICROSOFT() { return 1 ; }
+
+    #act
+    check_3301_network_accelerated_azure
+
+    #assert
+    if [[ $? -ne 3 ]]; then
+        bashunit::fail "Expected RC=3 (skip) for non-Azure"
     fi
 }
 
@@ -113,5 +168,6 @@ function set_up() {
 
     # Reset mock variables
     if_aan=()
+    LIB_FUNC_IS_CLOUD_MICROSOFT() { return 0 ; }
 
 }
