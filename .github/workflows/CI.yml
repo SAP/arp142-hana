@@ -53,9 +53,17 @@ jobs:
       # Run bashunit tests
       - name: Run unit tests (bashunit)
         run: |
-          bash ./bashunit --output tap ./*.bashunit.sh
-          bash ./bashunit --output tap ./check/*.bashunit.sh
+          bash ./bashunit --log-junit test-results-global.xml ./*.bashunit.sh
+          bash ./bashunit --log-junit test-results-checks.xml ./check/*.bashunit.sh
         working-directory: ./scripts/tests
+
+      - name: Upload JUnit XML results
+        uses: actions/upload-artifact@v6
+        with:
+          name: test-results
+          path: |
+            test-results-global.xml
+            test-results-checks.xml
 
       # Runs a set of commands using the runners shell - requires pip install bashate - install @ self-hosted
       - name: Code format checking - bashate
