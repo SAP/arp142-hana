@@ -62,8 +62,8 @@ jobs:
         with:
           name: test-results
           path: |
-            test-results-global.xml
-            test-results-checks.xml
+            **/tests/test-results-global.xml
+            **/tests/test-results-checks.xml
 
       # Runs a set of commands using the runners shell - requires pip install bashate - install @ self-hosted
       - name: Code format checking - bashate
