@@ -26,6 +26,7 @@ function check_0011_os_kernel_knownissue_sles {
         ['SAP Note #1928533, M832ixs_v2 only']='SAP Applications on Microsoft Azure: Supported Products and Azure VM types - M832ixs_v2'
         ['SAP Note #3415906']='Could Not Query From SYS.M_SERVICE_MEMORY_ (clock_gettime @ IBM Power - hanging HANA callstacks)'
         ['SUSE bsc#1237530']='cpuidle driver in virtualized environments'
+        ['SUSE TID 000022286']='SAP HANA swap and system hangs with THP on multi-NUMA node systems'
     )
 
     # array 'release' 'lower boundary' 'upper boundary' 'Issue ID'
@@ -47,6 +48,9 @@ function check_0011_os_kernel_knownissue_sles {
                         '15.5' '5.14.21-150500.53.2'        '5.14.21-150500.55.94.0'    'SAP Note #3577518' \
                         '15.5' '5.14.21-150500.55.19.1'     '5.14.21-150500.55.88.0'    'SUSE bsc#1231923' \
                         '15.5' '5.14.21-150500.53.2'        '5.14.21-150500.55.97.0'    'SUSE bsc#1236289' \
+                        '15.5' '5.14.21-150500.53.2'        '5.14.21-150500.55.136.0'   'SUSE TID 000022286' \
+                        '15.6' '6.4.0-150600.23.33.1'       '6.4.0-150600.23.87.0'      'SUSE TID 000022286' \
+                        '15.7' '6.4.0-150700.51.1'          '6.4.0-150700.53.31.0'      'SUSE TID 000022286' \
                         )
 
     # local -ar _sles_4sap=(\
