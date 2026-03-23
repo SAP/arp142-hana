@@ -188,7 +188,7 @@ function test_power10_maximum_performance_ok() {
     fi
 }
 
-function test_power10_none_ok() {
+function test_power10_none_error() {
 
     #arrange
     LIB_PLATF_POWER_PLATFORM_BASE='POWER10'
@@ -198,12 +198,12 @@ function test_power10_none_ok() {
     check_1310_cpu_powersavings_ibmpower
 
     #assert
-    if [[ $? -ne 0 ]]; then
-        bashunit::fail "Expected RC=0 (ok) for POWER10 None mode"
+    if [[ $? -ne 2 ]]; then
+        bashunit::fail "Expected RC=2 (error) for POWER10 None mode"
     fi
 }
 
-function test_power10_dynamic_performance_ok() {
+function test_power10_dynamic_performance_error() {
 
     #arrange
     LIB_PLATF_POWER_PLATFORM_BASE='POWER10'
@@ -213,8 +213,8 @@ function test_power10_dynamic_performance_ok() {
     check_1310_cpu_powersavings_ibmpower
 
     #assert
-    if [[ $? -ne 0 ]]; then
-        bashunit::fail "Expected RC=0 (ok) for POWER10 Dynamic Performance"
+    if [[ $? -ne 2 ]]; then
+        bashunit::fail "Expected RC=2 (error) for POWER10 Dynamic Performance"
     fi
 }
 
@@ -282,7 +282,7 @@ function test_power9_maximum_performance_ok() {
     fi
 }
 
-function test_power9_none_ok() {
+function test_power9_none_error() {
 
     #arrange
     LIB_PLATF_POWER_PLATFORM_BASE='POWER9'
@@ -292,12 +292,12 @@ function test_power9_none_ok() {
     check_1310_cpu_powersavings_ibmpower
 
     #assert
-    if [[ $? -ne 0 ]]; then
-        bashunit::fail "Expected RC=0 (ok) for POWER9 None mode"
+    if [[ $? -ne 2 ]]; then
+        bashunit::fail "Expected RC=2 (error) for POWER9 None mode"
     fi
 }
 
-function test_power9_dynamic_performance_ok() {
+function test_power9_dynamic_performance_error() {
 
     #arrange
     LIB_PLATF_POWER_PLATFORM_BASE='POWER9'
@@ -307,8 +307,8 @@ function test_power9_dynamic_performance_ok() {
     check_1310_cpu_powersavings_ibmpower
 
     #assert
-    if [[ $? -ne 0 ]]; then
-        bashunit::fail "Expected RC=0 (ok) for POWER9 Dynamic Performance"
+    if [[ $? -ne 2 ]]; then
+        bashunit::fail "Expected RC=2 (error) for POWER9 Dynamic Performance"
     fi
 }
 
@@ -371,8 +371,8 @@ function test_real_world_mixed_mode_power10() {
     check_1310_cpu_powersavings_ibmpower
 
     #assert
-    if [[ $? -ne 0 ]]; then
-        bashunit::fail "Expected RC=0 (ok) for POWER10 mixed mode"
+    if [[ $? -ne 2 ]]; then
+        bashunit::fail "Expected RC=2 (error) for POWER10 mixed mode"
     fi
 }
 
@@ -386,8 +386,8 @@ function test_real_world_mixed_mode_power9() {
     check_1310_cpu_powersavings_ibmpower
 
     #assert
-    if [[ $? -ne 0 ]]; then
-        bashunit::fail "Expected RC=0 (ok) for POWER9 mixed mode"
+    if [[ $? -ne 2 ]]; then
+        bashunit::fail "Expected RC=2 (error) for POWER9 mixed mode"
     fi
 }
 
