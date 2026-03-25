@@ -23,6 +23,7 @@ function test_string_contain() {
         LIB_FUNC_STRINGCONTAIN "${_test[0]}" "${_test[1]}"
         if [[ $? -ne 0 ]]; then
             bashunit::fail "StringContains failure test#$i"
+            return
         fi
         ((i++))
 
@@ -31,6 +32,8 @@ function test_string_contain() {
     echo "My string":str
     echo "POWER8":POWER8
 	EOF
+
+    assert_true true
 }
 
 function test_string_does_not_contain() {
@@ -45,6 +48,7 @@ function test_string_does_not_contain() {
         LIB_FUNC_STRINGCONTAIN "${_test[0]}" "${_test[1]}"
         if [[ $? -eq 0 ]]; then
             bashunit::fail "StringDoesNoContains failure test#$i"
+            return
         fi
         ((i++))
 
@@ -53,6 +57,8 @@ function test_string_does_not_contain() {
     echo "My string":My string2
     echo "POWER8":Power8
 	EOF
+
+    assert_true true
 }
 
 function set_up_before_script() {

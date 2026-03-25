@@ -74,6 +74,7 @@ function test_pacemaker_not_installed() {
     if [[ "$rc" != '3' ]]; then
         bashunit::fail "Expected CheckSkipped RC=3 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_pacemaker_not_active() {
@@ -88,6 +89,7 @@ function test_pacemaker_not_active() {
     if [[ "$rc" != '3' ]]; then
         bashunit::fail "Expected CheckSkipped RC=3 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_cibadmin_not_installed() {
@@ -102,6 +104,7 @@ function test_cibadmin_not_installed() {
     if [[ "$rc" != '3' ]]; then
         bashunit::fail "Expected CheckSkipped RC=3 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_attributes_ok() {
@@ -117,6 +120,7 @@ function test_attributes_ok() {
     if [[ "$rc" != '0' ]]; then
         bashunit::fail "Expected CheckOk RC=0 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_attributes_wrong() {
@@ -132,6 +136,7 @@ function test_attributes_wrong() {
     if [[ "$rc" != '1' ]]; then
         bashunit::fail "Expected CheckWarning RC=1 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_attributes_missing() {
@@ -146,4 +151,5 @@ function test_attributes_missing() {
     if [[ "$rc" != '2' ]]; then
         bashunit::fail "Expected CheckError RC=2 but got RC=$rc"
     fi
+    assert_true true
 }

@@ -24,6 +24,7 @@ function test_compare_versions_equal_to() {
         LIB_FUNC_COMPARE_VERSIONS "${_test[0]}" "${_test[1]}"
         if [[ $? -ne 0 ]]; then
             bashunit::fail "EqualTo failure test#$i"
+            return
         fi
         ((i++))
     done <<- EOF
@@ -39,6 +40,8 @@ function test_compare_versions_equal_to() {
     2.11.3-17.95.2  2.11.3-17.95.2
     2.19-38.2       2.19-38.2
 EOF
+
+    assert_true true
 }
 
 function test_compare_versions_less_than() {
@@ -48,43 +51,52 @@ function test_compare_versions_less_than() {
     LIB_FUNC_COMPARE_VERSIONS '2.1' '2.2'
     if [[ $? -ne 2 ]]; then
         bashunit::fail "LessThan failure test#$i"
+        return
     fi
     ((i++))
 
     LIB_FUNC_COMPARE_VERSIONS '4.08' '4.08.01'
     if [[ $? -ne 2 ]]; then
         bashunit::fail "LessThan failure test#$i"
+        return
     fi
     ((i++))
 
     LIB_FUNC_COMPARE_VERSIONS '4.08.01' '4.08.02'
     if [[ $? -ne 2 ]]; then
         bashunit::fail "LessThan failure test#$i"
+        return
     fi
     ((i++))
 
     LIB_FUNC_COMPARE_VERSIONS '3.2' '3.2.1.9.8144'
     if [[ $? -ne 2 ]]; then
         bashunit::fail "LessThan failure test#$i"
+        return
     fi
     ((i++))
 
     LIB_FUNC_COMPARE_VERSIONS '1.2' '2.1'
     if [[ $? -ne 2 ]]; then
         bashunit::fail "LessThan failure test#$i"
+        return
     fi
     ((i++))
 
     LIB_FUNC_COMPARE_VERSIONS '2.11.3-17.56.2' '2.11.3-17.95.2'
     if [[ $? -ne 2 ]]; then
         bashunit::fail "LessThan failure test#$i"
+        return
     fi
     ((i++))
 
     LIB_FUNC_COMPARE_VERSIONS '2.11.3-17.95.2' '2.19-38.2'
     if [[ $? -ne 2 ]]; then
         bashunit::fail "LessThan failure test#$i"
+        return
     fi
+
+    assert_true true
 
 }
 
@@ -98,6 +110,7 @@ function test_compare_versions_greater_than() {
         LIB_FUNC_COMPARE_VERSIONS "${_test[0]}" "${_test[1]}"
         if [[ $? -ne 1 ]]; then
             bashunit::fail "GreaterThan failure test#$i"
+            return
         fi
         ((i++))
     done <<- EOF
@@ -108,6 +121,8 @@ function test_compare_versions_greater_than() {
     2.19-38.2       2.11.3-17.95.2
     3.0.101-0.47.71-1   3.0.101-0.47.71
 EOF
+
+    assert_true true
 }
 
 function test_compare_versions_should_fail() {
@@ -118,19 +133,24 @@ function test_compare_versions_should_fail() {
     _rc=$?
     if [[ ${_rc} -eq 0 ]] || [[ ${_rc} -eq 1 ]]; then
         bashunit::fail 'test[1]: testing the tester failed'
+        return
     fi
 
     LIB_FUNC_COMPARE_VERSIONS '2' '2'
     _rc=$?
     if [[ ${_rc} -eq 1 ]] || [[ ${_rc} -eq 2 ]]; then
         bashunit::fail 'test[2]: testing the tester failed'
+        return
     fi
 
     LIB_FUNC_COMPARE_VERSIONS '2' '1'
     _rc=$?
     if [[ ${_rc} -eq 0 ]] || [[ ${_rc} -eq 2 ]]; then
         bashunit::fail 'test[3]: testing the tester failed'
+        return
     fi
+
+    assert_true true
 }
 
 function set_up_before_script() {

@@ -22,6 +22,7 @@ function test_compare_toobig_numbers_equal_to() {
         LIB_COMPARE_TOOBIG_NUMBERS "${_test[0]}" "${_test[1]}"
         if [[ $? -ne 0 ]]; then
             bashunit::fail "EqualTo failure test#$i"
+            return
         fi
         ((i++))
     done <<- EOF
@@ -29,6 +30,8 @@ function test_compare_toobig_numbers_equal_to() {
     9223372036854775807     9223372036854775807
     18446744073709551615    18446744073709551615
 EOF
+
+    assert_true true
 }
 
 function test_compare_toobig_numbers_less_than() {
@@ -41,6 +44,7 @@ function test_compare_toobig_numbers_less_than() {
         LIB_COMPARE_TOOBIG_NUMBERS "${_test[0]}" "${_test[1]}"
         if [[ $? -ne 2 ]]; then
             bashunit::fail "LessThan failure test#$i"
+            return
         fi
         ((i++))
     done <<- EOF
@@ -50,6 +54,8 @@ function test_compare_toobig_numbers_less_than() {
     922337203685477580         922337203685477581
     18446744073709551615       18446744073709551616
 EOF
+
+    assert_true true
 }
 
 function test_compare_toobig_numbers_greater_than() {
@@ -62,6 +68,7 @@ function test_compare_toobig_numbers_greater_than() {
         LIB_COMPARE_TOOBIG_NUMBERS "${_test[0]}" "${_test[1]}"
         if [[ $? -ne 1 ]]; then
             bashunit::fail "GreaterThan failure test#$i"
+            return
         fi
         ((i++))
     done <<- EOF
@@ -71,6 +78,8 @@ function test_compare_toobig_numbers_greater_than() {
     922337203685477581      922337203685477580
     18446744073709551616    18446744073709551615
 EOF
+
+    assert_true true
 }
 
 function test_compare_toobig_numbers_should_fail() {
@@ -81,19 +90,24 @@ function test_compare_toobig_numbers_should_fail() {
     _rc=$?
     if [[ ${_rc} -eq 0 ]] || [[ ${_rc} -eq 1 ]]; then
         bashunit::fail 'test[1]: testing the tester failed'
+        return
     fi
 
     LIB_COMPARE_TOOBIG_NUMBERS '2' '2'
     _rc=$?
     if [[ ${_rc} -eq 1 ]] || [[ ${_rc} -eq 2 ]]; then
         bashunit::fail 'test[2]: testing the tester failed'
+        return
     fi
 
     LIB_COMPARE_TOOBIG_NUMBERS '2' '1'
     _rc=$?
     if [[ ${_rc} -eq 0 ]] || [[ ${_rc} -eq 2 ]]; then
         bashunit::fail 'test[3]: testing the tester failed'
+        return
     fi
+
+    assert_true true
 }
 
 function set_up_before_script() {

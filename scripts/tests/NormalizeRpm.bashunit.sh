@@ -23,9 +23,7 @@ function test_normalize_rpm_equal_to() {
         rpmversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
 
         # printf "test[$i]: expected <%s> normalized <%s>\n" "${_test[1]}" "${rpmversion}"
-        if [[ "${_test[1]}" != "${rpmversion}" ]]; then
-            bashunit::fail "EqualTo failure test#$i: expected '${_test[1]}' but got '${rpmversion}'"
-        fi
+        assert_equals "${_test[1]}" "${rpmversion}"
         ((i++))
 
     done <<- EOF
@@ -49,9 +47,7 @@ function test_normalize_rpm_should_fail() {
     rpmversion="${LIB_FUNC_NORMALIZE_RPM_RETURN}"
 
     # printf "test[1]: orig <%s> normalized <%s>\n"  '2.17-157.el7_3.5' "${rpmversion}"
-    if [[ '2.17-157.el7_3.5' == "${rpmversion}" ]]; then
-        bashunit::fail 'test[1]: testing the tester failed'
-    fi
+    assert_not_equals '2.17-157.el7_3.5' "${rpmversion}"
 }
 
 function set_up_before_script() {

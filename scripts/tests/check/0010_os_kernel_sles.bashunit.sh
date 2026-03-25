@@ -39,6 +39,7 @@ function test_sles_not_supported() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for unsupported SLES"
     fi
+    assert_true true
 }
 
 function test_sles_supported_kernel_tolow() {
@@ -54,6 +55,7 @@ function test_sles_supported_kernel_tolow() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for kernel too low"
     fi
+    assert_true true
 }
 
 function test_sles_supported_kernel_ok() {
@@ -69,6 +71,7 @@ function test_sles_supported_kernel_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for supported kernel"
     fi
+    assert_true true
 }
 
 

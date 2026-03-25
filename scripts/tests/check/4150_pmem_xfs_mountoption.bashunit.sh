@@ -43,6 +43,7 @@ function test_pmem_xfs_not_mounted() {
     if [[ $? -ne 3 ]]; then
         bashunit::fail "Expected RC=3 (skipped) for pmem xfs not mounted"
     fi
+    assert_true true
 }
 
 function test_pmem_xfs_ok_dax_always() {
@@ -58,6 +59,7 @@ function test_pmem_xfs_ok_dax_always() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for dax=always"
     fi
+    assert_true true
 }
 
 function test_pmem_xfs_warn_dax_legacy() {
@@ -74,6 +76,7 @@ function test_pmem_xfs_warn_dax_legacy() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for legacy dax"
     fi
+    assert_true true
 }
 
 function test_pmem_xfs_wrong_no_dax() {
@@ -89,6 +92,7 @@ function test_pmem_xfs_wrong_no_dax() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for no dax"
     fi
+    assert_true true
 }
 
 function test_pmem_xfs_wrong_dax_inode() {
@@ -104,6 +108,7 @@ function test_pmem_xfs_wrong_dax_inode() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for dax=inode"
     fi
+    assert_true true
 }
 
 function test_pmem_xfs_wrong_dax_never() {
@@ -119,6 +124,7 @@ function test_pmem_xfs_wrong_dax_never() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for dax=never"
     fi
+    assert_true true
 }
 
 function test_pmem_xfs_wrong_dax_all() {
@@ -136,6 +142,7 @@ function test_pmem_xfs_wrong_dax_all() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for all wrong dax settings"
     fi
+    assert_true true
 }
 
 

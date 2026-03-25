@@ -35,6 +35,7 @@ function test_precondition_cpusockets_unknown() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for unknown sockets"
     fi
+    assert_true true
 }
 
 function test_precondition_cpucores_unknown() {
@@ -50,6 +51,7 @@ function test_precondition_cpucores_unknown() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for unknown cores"
     fi
+    assert_true true
 }
 
 function test_precondition_cputhreads_unknown() {
@@ -66,6 +68,7 @@ function test_precondition_cputhreads_unknown() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for unknown threads"
     fi
+    assert_true true
 }
 
 function test_powerX_nothandled_error() {
@@ -83,6 +86,7 @@ function test_powerX_nothandled_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for unhandled POWER"
     fi
+    assert_true true
 }
 
 function test_power9_corestotallow_smt4_ok() {
@@ -100,6 +104,7 @@ function test_power9_corestotallow_smt4_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for POWER9 low cores SMT4"
     fi
+    assert_true true
 }
 
 function test_power9_corestotalhigh_smt4_ok() {
@@ -117,6 +122,7 @@ function test_power9_corestotalhigh_smt4_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for POWER9 high cores SMT4"
     fi
+    assert_true true
 }
 
 function test_power9_corestotallow_smt8_ok() {
@@ -134,6 +140,7 @@ function test_power9_corestotallow_smt8_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for POWER9 low cores SMT8"
     fi
+    assert_true true
 }
 
 function test_power9_corestotalhigh_smt8_ok() {
@@ -151,6 +158,7 @@ function test_power9_corestotalhigh_smt8_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for POWER9 high cores SMT8"
     fi
+    assert_true true
 }
 
 function test_power10_threadspercore_smt4_ok() {
@@ -168,6 +176,7 @@ function test_power10_threadspercore_smt4_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for POWER10 SMT4"
     fi
+    assert_true true
 }
 
 function test_power10_threadspercore_smt8_warning() {
@@ -185,6 +194,7 @@ function test_power10_threadspercore_smt8_warning() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for POWER10 SMT8"
     fi
+    assert_true true
 }
 
 function test_power10_corestotalhigh_covered() {
@@ -202,6 +212,7 @@ function test_power10_corestotalhigh_covered() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for POWER10 high cores"
     fi
+    assert_true true
 }
 
 

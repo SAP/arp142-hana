@@ -39,6 +39,7 @@ function test_precondition_hyperscaler_skip() {
     if [[ $? -ne 3 ]]; then
         bashunit::fail "Expected RC=3 (skipped) for hyperscaler cloud"
     fi
+    assert_true true
 }
 
 function test_precondition_cpusockets_unknown() {
@@ -53,6 +54,7 @@ function test_precondition_cpusockets_unknown() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for unknown sockets"
     fi
+    assert_true true
 }
 
 function test_precondition_cputhreads_unknown() {
@@ -68,6 +70,7 @@ function test_precondition_cputhreads_unknown() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for unknown threads"
     fi
+    assert_true true
 }
 
 function test_socket8_HToff_warning() {
@@ -83,6 +86,7 @@ function test_socket8_HToff_warning() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for 8 sockets HT off"
     fi
+    assert_true true
 }
 
 function test_socket8_HTon_ok() {
@@ -98,6 +102,7 @@ function test_socket8_HTon_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for 8 sockets HT on"
     fi
+    assert_true true
 }
 
 function test_socket16_HTon_error() {
@@ -113,6 +118,7 @@ function test_socket16_HTon_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for 16 sockets HT on"
     fi
+    assert_true true
 }
 
 function test_socket16_HToff_ok() {
@@ -128,6 +134,7 @@ function test_socket16_HToff_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for 16 sockets HT off"
     fi
+    assert_true true
 }
 
 function test_SDFlex_SKL_socket12_HToff_warning() {
@@ -146,6 +153,7 @@ function test_SDFlex_SKL_socket12_HToff_warning() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for SDFlex SKL 12 sockets HT off"
     fi
+    assert_true true
 }
 
 function test_SDFlex_CLX_socket12_HTon_ok() {
@@ -164,6 +172,7 @@ function test_SDFlex_CLX_socket12_HTon_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for SDFlex CLX 12 sockets HT on"
     fi
+    assert_true true
 }
 
 function test_SDFlex_SKL_socket20_HToff_ok() {
@@ -182,6 +191,7 @@ function test_SDFlex_SKL_socket20_HToff_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for SDFlex SKL 20 sockets HT off"
     fi
+    assert_true true
 }
 
 function test_SDFlex_CLX_socket20_HTon_error() {
@@ -200,6 +210,7 @@ function test_SDFlex_CLX_socket20_HTon_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for SDFlex CLX 20 sockets HT on"
     fi
+    assert_true true
 }
 
 function test_SDFlex_nonSKL_socket12_HTon_error() {
@@ -218,6 +229,7 @@ function test_SDFlex_nonSKL_socket12_HTon_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for SDFlex non-SKL 12 sockets HT on"
     fi
+    assert_true true
 }
 
 function test_SDFlex_nonSKL_socket12_HToff_ok() {
@@ -236,6 +248,7 @@ function test_SDFlex_nonSKL_socket12_HToff_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for SDFlex non-SKL 12 sockets HT off"
     fi
+    assert_true true
 }
 
 

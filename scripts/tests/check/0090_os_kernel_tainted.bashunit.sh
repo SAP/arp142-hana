@@ -27,6 +27,7 @@ function test_kernel_tainted_set0_untainted_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for untainted kernel"
     fi
+    assert_true true
 }
 
 function test_kernel_tainted_set1_tainted_error() {
@@ -41,6 +42,7 @@ function test_kernel_tainted_set1_tainted_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for tainted kernel (flag 1)"
     fi
+    assert_true true
 }
 
 function test_kernel_tainted_set8_tainted_warning() {
@@ -55,6 +57,7 @@ function test_kernel_tainted_set8_tainted_warning() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for tainted kernel (flag 8)"
     fi
+    assert_true true
 }
 
 function test_kernel_tainted_set_non_listed_tainted_warning() {
@@ -69,6 +72,7 @@ function test_kernel_tainted_set_non_listed_tainted_warning() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for tainted kernel (non-listed flag)"
     fi
+    assert_true true
 }
 
 function test_kernel_tainted_set15_tainted_error() {
@@ -83,6 +87,7 @@ function test_kernel_tainted_set15_tainted_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for tainted kernel (flag 15)"
     fi
+    assert_true true
 }
 
 

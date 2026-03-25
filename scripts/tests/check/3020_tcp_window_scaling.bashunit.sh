@@ -81,6 +81,7 @@ function test_all_values_correct() {
     if [[ ${rc} -ne 0 ]]; then
         bashunit::fail "Expected RC=0 for all correct values, got RC=${rc}"
     fi
+    assert_true true
 }
 
 #------------------------------------------------------------------
@@ -103,6 +104,7 @@ function test_window_scaling_disabled() {
     if [[ ${rc} -ne 2 ]]; then
         bashunit::fail "Expected RC=2 for window_scaling disabled, got RC=${rc}"
     fi
+    assert_true true
 }
 
 #------------------------------------------------------------------
@@ -125,6 +127,7 @@ function test_tcp_rmem_max_too_low() {
     if [[ ${rc} -ne 2 ]]; then
         bashunit::fail "Expected RC=2 for tcp_rmem max too low, got RC=${rc}"
     fi
+    assert_true true
 }
 
 #------------------------------------------------------------------
@@ -147,6 +150,7 @@ function test_tcp_wmem_max_too_low() {
     if [[ ${rc} -ne 2 ]]; then
         bashunit::fail "Expected RC=2 for tcp_wmem max too low, got RC=${rc}"
     fi
+    assert_true true
 }
 
 #------------------------------------------------------------------
@@ -169,6 +173,7 @@ function test_core_rmem_max_too_low() {
     if [[ ${rc} -ne 2 ]]; then
         bashunit::fail "Expected RC=2 for core rmem_max too low, got RC=${rc}"
     fi
+    assert_true true
 }
 
 #------------------------------------------------------------------
@@ -191,6 +196,7 @@ function test_core_wmem_max_too_low() {
     if [[ ${rc} -ne 2 ]]; then
         bashunit::fail "Expected RC=2 for core wmem_max too low, got RC=${rc}"
     fi
+    assert_true true
 }
 
 #------------------------------------------------------------------
@@ -213,4 +219,5 @@ function test_values_higher_than_recommended() {
     if [[ ${rc} -ne 0 ]]; then
         bashunit::fail "Expected RC=0 for values higher than recommended, got RC=${rc}"
     fi
+    assert_true true
 }

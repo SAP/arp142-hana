@@ -45,6 +45,7 @@ function test_sles_kernel_with_issue() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for kernel with known issue"
     fi
+    assert_true true
 }
 
 function test_sles_kernel_no_issue() {
@@ -62,6 +63,7 @@ function test_sles_kernel_no_issue() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for kernel without issue"
     fi
+    assert_true true
 }
 
 function test_sles_not_applicable() {
@@ -78,6 +80,7 @@ function test_sles_not_applicable() {
     if [[ $? -ne 3 ]]; then
         bashunit::fail "Expected RC=3 (skipped) for non-SLES"
     fi
+    assert_true true
 }
 
 

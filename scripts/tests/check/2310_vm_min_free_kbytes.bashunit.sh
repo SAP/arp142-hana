@@ -42,6 +42,7 @@ function test_mfkb_not_configurable() {
     if [[ $? -ne 3 ]]; then
         bashunit::fail "Expected RC=3 (skipped) for min_free_kbytes not configurable"
     fi
+    assert_true true
 }
 
 function test_mfkb_less_minimum() {
@@ -58,6 +59,7 @@ function test_mfkb_less_minimum() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for min_free_kbytes less than minimum"
     fi
+    assert_true true
 }
 
 function test_mfkb_more_maximum() {
@@ -74,6 +76,7 @@ function test_mfkb_more_maximum() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for min_free_kbytes more than maximum"
     fi
+    assert_true true
 }
 
 function test_mfkb_minimum_mem128G_ok() {
@@ -90,6 +93,7 @@ function test_mfkb_minimum_mem128G_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for min_free_kbytes minimum mem 128G"
     fi
+    assert_true true
 }
 
 function test_mfkb_oldlimit_mem259G_ok() {
@@ -107,6 +111,7 @@ function test_mfkb_oldlimit_mem259G_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for old limit mem 259G"
     fi
+    assert_true true
 }
 
 function test_mfkb_oldlimit_mem259G_toolow() {
@@ -124,6 +129,7 @@ function test_mfkb_oldlimit_mem259G_toolow() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for old limit mem 259G too low"
     fi
+    assert_true true
 }
 
 function test_mfkb_oldlimit_mem4139G_ok() {
@@ -141,6 +147,7 @@ function test_mfkb_oldlimit_mem4139G_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for old limit mem 4139G"
     fi
+    assert_true true
 }
 
 function test_mfkb_newlimit_mem259G_ok() {
@@ -158,6 +165,7 @@ function test_mfkb_newlimit_mem259G_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for new limit mem 259G"
     fi
+    assert_true true
 }
 
 function test_mfkb_newlimit_mem259G_toolow() {
@@ -175,6 +183,7 @@ function test_mfkb_newlimit_mem259G_toolow() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for new limit mem 259G too low"
     fi
+    assert_true true
 }
 
 function test_mfkb_newlimit_mem4139G_ok() {
@@ -192,6 +201,7 @@ function test_mfkb_newlimit_mem4139G_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for new limit mem 4139G"
     fi
+    assert_true true
 }
 
 function test_mfkb_newlimit_mem4139G_toolow() {
@@ -209,6 +219,7 @@ function test_mfkb_newlimit_mem4139G_toolow() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for new limit mem 4139G too low"
     fi
+    assert_true true
 }
 
 

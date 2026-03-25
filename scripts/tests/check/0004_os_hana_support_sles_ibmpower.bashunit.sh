@@ -37,6 +37,7 @@ function test_power7_bigendian_sles_not_supported() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for POWER7 big endian"
     fi
+    assert_true true
 }
 
 function test_power9_bigendian_not_supported() {
@@ -52,6 +53,7 @@ function test_power9_bigendian_not_supported() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for POWER9 big endian"
     fi
+    assert_true true
 }
 
 function test_power7_littleendian_sles_not_supported() {
@@ -68,6 +70,7 @@ function test_power7_littleendian_sles_not_supported() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for POWER7 little endian"
     fi
+    assert_true true
 }
 
 function test_power8_littleendian_sles_not_supported() {
@@ -84,6 +87,7 @@ function test_power8_littleendian_sles_not_supported() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for POWER8"
     fi
+    assert_true true
 }
 
 function test_power9_littleendian_sles_not_supported() {
@@ -100,6 +104,7 @@ function test_power9_littleendian_sles_not_supported() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for POWER9 unsupported SLES"
     fi
+    assert_true true
 }
 
 function test_power9_littleendian_sles_supported() {
@@ -116,6 +121,7 @@ function test_power9_littleendian_sles_supported() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for POWER9 supported SLES"
     fi
+    assert_true true
 }
 
 function test_power10_littleendian_sles_not_supported() {
@@ -132,6 +138,7 @@ function test_power10_littleendian_sles_not_supported() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for POWER10 unsupported SLES"
     fi
+    assert_true true
 }
 
 function test_power10_littleendian_sles_supported() {
@@ -148,6 +155,7 @@ function test_power10_littleendian_sles_supported() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for POWER10 supported SLES"
     fi
+    assert_true true
 }
 
 function test_powerX_not_supported() {
@@ -162,6 +170,7 @@ function test_powerX_not_supported() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for unsupported POWER generation"
     fi
+    assert_true true
 }
 
 function test_architecture_not_supported() {
@@ -177,6 +186,7 @@ function test_architecture_not_supported() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for unsupported architecture"
     fi
+    assert_true true
 }
 
 function test_environment_not_handled() {
@@ -193,6 +203,7 @@ function test_environment_not_handled() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for unhandled environment"
     fi
+    assert_true true
 }
 
 function test_sles_not_handled() {
@@ -209,6 +220,7 @@ function test_sles_not_handled() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for unhandled SLES version"
     fi
+    assert_true true
 }
 
 function test_ibmcloud_power9_littleendian_sles_not_supported() {
@@ -226,6 +238,7 @@ function test_ibmcloud_power9_littleendian_sles_not_supported() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for IBM Cloud POWER9 unsupported"
     fi
+    assert_true true
 }
 
 function test_ibmcloud_power9_littleendian_sles_supported() {
@@ -243,6 +256,7 @@ function test_ibmcloud_power9_littleendian_sles_supported() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for IBM Cloud POWER9 supported"
     fi
+    assert_true true
 }
 
 function test_ibmcloud_power10_littleendian_sles_not_supported() {
@@ -260,6 +274,7 @@ function test_ibmcloud_power10_littleendian_sles_not_supported() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for IBM Cloud POWER10 unsupported"
     fi
+    assert_true true
 }
 
 function test_ibmcloud_power10_littleendian_sles_supported() {
@@ -277,6 +292,7 @@ function test_ibmcloud_power10_littleendian_sles_supported() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for IBM Cloud POWER10 supported"
     fi
+    assert_true true
 }
 
 

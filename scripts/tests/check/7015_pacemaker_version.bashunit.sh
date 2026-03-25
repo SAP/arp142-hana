@@ -61,6 +61,7 @@ function test_pacemaker_not_installed() {
     if [[ "$rc" != '3' ]]; then
         bashunit::fail "Expected CheckSkipped RC=3 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_rhel_os_not_applicable() {
@@ -77,6 +78,7 @@ function test_rhel_os_not_applicable() {
     if [[ "$rc" != '3' ]]; then
         bashunit::fail "Expected CheckSkipped RC=3 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_sles_version_not_handled() {
@@ -94,6 +96,7 @@ function test_sles_version_not_handled() {
     if [[ "$rc" != '3' ]]; then
         bashunit::fail "Expected CheckSkipped RC=3 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_sles15_5_version_ok_enabled_and_active() {
@@ -113,6 +116,7 @@ function test_sles15_5_version_ok_enabled_and_active() {
     if [[ "$rc" != '0' ]]; then
         bashunit::fail "Expected CheckOk RC=0 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_sles15_6_version_ok_not_used() {
@@ -132,6 +136,7 @@ function test_sles15_6_version_ok_not_used() {
     if [[ "$rc" != '0' ]]; then
         bashunit::fail "Expected CheckOk RC=0 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_sles15_7_version_ok_equal() {
@@ -151,6 +156,7 @@ function test_sles15_7_version_ok_equal() {
     if [[ "$rc" != '0' ]]; then
         bashunit::fail "Expected CheckOk RC=0 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_sles15_5_version_old_pacemaker_enabled() {
@@ -170,6 +176,7 @@ function test_sles15_5_version_old_pacemaker_enabled() {
     if [[ "$rc" != '2' ]]; then
         bashunit::fail "Expected CheckError RC=2 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_sles15_6_version_old_pacemaker_active() {
@@ -189,6 +196,7 @@ function test_sles15_6_version_old_pacemaker_active() {
     if [[ "$rc" != '2' ]]; then
         bashunit::fail "Expected CheckError RC=2 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_sles15_7_version_old_pacemaker_not_used() {
@@ -208,6 +216,7 @@ function test_sles15_7_version_old_pacemaker_not_used() {
     if [[ "$rc" != '1' ]]; then
         bashunit::fail "Expected CheckWarning RC=1 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_sles15_5_version_old_both_enabled_and_active() {
@@ -227,6 +236,7 @@ function test_sles15_5_version_old_both_enabled_and_active() {
     if [[ "$rc" != '2' ]]; then
         bashunit::fail "Expected CheckError RC=2 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function set_up_before_script() {

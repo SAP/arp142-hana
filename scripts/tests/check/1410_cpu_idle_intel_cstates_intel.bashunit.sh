@@ -46,6 +46,7 @@ function test_latency_cstate_high_cstatelatency_too_high33() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for C-state latency too high"
     fi
+    assert_true true
 }
 
 function test_latency_cstate_high_forcelatency_too_high() {
@@ -63,6 +64,7 @@ function test_latency_cstate_high_forcelatency_too_high() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for force latency too high"
     fi
+    assert_true true
 }
 
 function test_latency_cstate_high_cstatelatency_correct10() {
@@ -80,6 +82,7 @@ function test_latency_cstate_high_cstatelatency_correct10() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for C-state latency 10"
     fi
+    assert_true true
 }
 
 function test_latency_cstate_high_forcelatency_correct3() {
@@ -97,6 +100,7 @@ function test_latency_cstate_high_forcelatency_correct3() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for force latency 3"
     fi
+    assert_true true
 }
 
 function test_latency_cstate_too_low_cstatelatency_too_low() {
@@ -114,6 +118,7 @@ function test_latency_cstate_too_low_cstatelatency_too_low() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for low C-state latency"
     fi
+    assert_true true
 }
 
 function test_latency_cstate_latency_exactly1_should_warn() {
@@ -131,6 +136,7 @@ function test_latency_cstate_latency_exactly1_should_warn() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for latency exactly 1"
     fi
+    assert_true true
 }
 
 function test_latency_cstate_latency_exactlyC1_should_warn() {
@@ -148,6 +154,7 @@ function test_latency_cstate_latency_exactlyC1_should_warn() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for latency exactly C1"
     fi
+    assert_true true
 }
 
 # OS VERSION TESTS
@@ -166,6 +173,7 @@ function test_sles15_supported() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for SLES 15"
     fi
+    assert_true true
 }
 
 function test_sles_unsupported_version() {
@@ -183,6 +191,7 @@ function test_sles_unsupported_version() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for unsupported SLES version"
     fi
+    assert_true true
 }
 
 # ROOT PERMISSION TESTS
@@ -206,6 +215,7 @@ function test_non_root_warning() {
     if [[ $rc -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for non-root"
     fi
+    assert_true true
 }
 
 # DRIVER MAX CSTATE WARNING
@@ -224,6 +234,7 @@ function test_driver_maxcstate_warning() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for driver max_cstate 0"
     fi
+    assert_true true
 }
 
 # EDGE CASES
@@ -242,6 +253,7 @@ function test_latency_zero_should_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for latency zero"
     fi
+    assert_true true
 }
 
 function test_force_latency_limits_cstate() {
@@ -259,6 +271,7 @@ function test_force_latency_limits_cstate() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for force latency limiting C-state"
     fi
+    assert_true true
 }
 
 

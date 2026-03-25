@@ -31,6 +31,7 @@ function test_kernel_azure_not_supported() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for Azure kernel"
     fi
+    assert_true true
 }
 
 function test_kernel_default_supported() {
@@ -45,6 +46,7 @@ function test_kernel_default_supported() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for default kernel"
     fi
+    assert_true true
 }
 
 

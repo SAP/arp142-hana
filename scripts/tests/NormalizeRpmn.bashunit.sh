@@ -23,9 +23,7 @@ function test_normalize_rpm_equal_to() {
         LIB_FUNC_NORMALIZE_RPMn kut
 
         # printf "test[$i]: expected <%s> normalized <%s>\n" "${_test[1]}" "${kut}"
-        if [[ "${_test[1]}" != "${kut}" ]]; then
-            bashunit::fail "EqualTo failure test#$i: expected '${_test[1]}' but got '${kut}'"
-        fi
+        assert_equals "${_test[1]}" "${kut}"
         ((i++))
 
     done <<- EOF
@@ -49,9 +47,7 @@ function test_normalize_rpm_should_fail() {
     LIB_FUNC_NORMALIZE_RPMn kut
 
     # printf "test[1]: orig <%s> normalized <%s>\n"  '2.17-157.el7_3.5' "${kut}"
-    if [[ '2.17-157.el7_3.5' == "${kut}" ]]; then
-        bashunit::fail 'test[1]: testing the tester failed'
-    fi
+    assert_not_equals '2.17-157.el7_3.5' "${kut}"
 }
 
 function set_up_before_script() {

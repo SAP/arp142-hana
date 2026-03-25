@@ -36,6 +36,7 @@ function test_VM_not_supported() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for unsupported VM"
     fi
+    assert_true true
 }
 
 function test_VM_supported() {
@@ -51,6 +52,7 @@ function test_VM_supported() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for supported VM"
     fi
+    assert_true true
 }
 
 function test_VM_supported_uppercase() {
@@ -66,6 +68,7 @@ function test_VM_supported_uppercase() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for supported VM (uppercase)"
     fi
+    assert_true true
 }
 
 function test_BareMetal_not_supported() {
@@ -81,6 +84,7 @@ function test_BareMetal_not_supported() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for unsupported BareMetal"
     fi
+    assert_true true
 }
 
 function test_BareMetal_supported() {
@@ -96,6 +100,7 @@ function test_BareMetal_supported() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for supported BareMetal"
     fi
+    assert_true true
 }
 
 

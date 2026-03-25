@@ -40,6 +40,7 @@ function test_rhel_not_supported() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for unsupported RHEL"
     fi
+    assert_true true
 }
 
 function test_rhel_supported_kernel_tolow() {
@@ -55,6 +56,7 @@ function test_rhel_supported_kernel_tolow() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for kernel too low"
     fi
+    assert_true true
 }
 
 function test_rhel_supported_kernel_ok() {
@@ -70,6 +72,7 @@ function test_rhel_supported_kernel_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for supported kernel"
     fi
+    assert_true true
 }
 
 function test_rhel10_supported_kernel_ok() {
@@ -85,6 +88,7 @@ function test_rhel10_supported_kernel_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for RHEL 10.0 supported kernel"
     fi
+    assert_true true
 }
 
 function test_rhel10_supported_kernel_tolow() {
@@ -100,6 +104,7 @@ function test_rhel10_supported_kernel_tolow() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for RHEL 10.0 kernel too low"
     fi
+    assert_true true
 }
 
 

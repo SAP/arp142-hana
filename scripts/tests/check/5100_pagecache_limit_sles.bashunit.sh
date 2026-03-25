@@ -36,6 +36,7 @@ function test_pgc_limit_not_configurable() {
     if [[ "$rc" != '3' ]]; then
         bashunit::fail "Expected CheckSkip RC=3 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_pgc_limit_ok_zero() {
@@ -52,6 +53,7 @@ function test_pgc_limit_ok_zero() {
     if [[ "$rc" != '0' ]]; then
         bashunit::fail "Expected CheckOk RC=0 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_pgc_limit_sles4sap_ok_256G() {
@@ -69,6 +71,7 @@ function test_pgc_limit_sles4sap_ok_256G() {
     if [[ "$rc" != '1' ]]; then
         bashunit::fail "Expected CheckWarning RC=1 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_pgc_limit_sles4sap_ok_512G() {
@@ -86,6 +89,7 @@ function test_pgc_limit_sles4sap_ok_512G() {
     if [[ "$rc" != '1' ]]; then
         bashunit::fail "Expected CheckWarning RC=1 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_pgc_limit_sles4sap_wrong_256G() {
@@ -103,6 +107,7 @@ function test_pgc_limit_sles4sap_wrong_256G() {
     if [[ "$rc" != '2' ]]; then
         bashunit::fail "Expected CheckError RC=2 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_pgc_limit_sles_ok_256G_but_not_supported() {
@@ -120,6 +125,7 @@ function test_pgc_limit_sles_ok_256G_but_not_supported() {
     if [[ "$rc" != '2' ]]; then
         bashunit::fail "Expected CheckError RC=2 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_pgc_limit_sles_ok_512G_but_not_supported() {
@@ -137,6 +143,7 @@ function test_pgc_limit_sles_ok_512G_but_not_supported() {
     if [[ "$rc" != '2' ]]; then
         bashunit::fail "Expected CheckError RC=2 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_pgc_limit_sles_wrong_256G_also_not_supported() {
@@ -154,6 +161,7 @@ function test_pgc_limit_sles_wrong_256G_also_not_supported() {
     if [[ "$rc" != '2' ]]; then
         bashunit::fail "Expected CheckError RC=2 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function set_up_before_script() {

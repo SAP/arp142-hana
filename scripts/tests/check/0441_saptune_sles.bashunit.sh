@@ -55,6 +55,7 @@ function test_saptune_not_installed() {
     if [[ $? -ne 3 ]]; then
         bashunit::fail "Expected RC=3 (skipped) for saptune not installed"
     fi
+    assert_true true
 }
 
 function test_saptune_ok() {
@@ -70,6 +71,7 @@ function test_saptune_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for saptune ok"
     fi
+    assert_true true
 }
 
 function test_saptuneV3_old_but_not_used() {
@@ -86,6 +88,7 @@ function test_saptuneV3_old_but_not_used() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for saptune V3 old but not used"
     fi
+    assert_true true
 }
 
 function test_saptuneV_3old_and_used() {
@@ -102,6 +105,7 @@ function test_saptuneV_3old_and_used() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for saptune V3 old and used"
     fi
+    assert_true true
 }
 
 function test_saptuneV2_old_but_not_used() {
@@ -118,6 +122,7 @@ function test_saptuneV2_old_but_not_used() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for saptune V2 old but not used"
     fi
+    assert_true true
 }
 
 function test_saptuneV2_old_and_used() {
@@ -133,6 +138,7 @@ function test_saptuneV2_old_and_used() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for saptune V2 old and used"
     fi
+    assert_true true
 }
 
 

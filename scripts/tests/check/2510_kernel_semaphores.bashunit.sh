@@ -31,6 +31,7 @@ function test_recommended_values() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for recommended values"
     fi
+    assert_true true
 }
 
 function test_semmsl_too_low() {
@@ -46,6 +47,7 @@ function test_semmsl_too_low() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for SEMMSL too low"
     fi
+    assert_true true
 }
 
 function test_semmns_too_low() {
@@ -61,6 +63,7 @@ function test_semmns_too_low() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for SEMMNS too low"
     fi
+    assert_true true
 }
 
 function test_semopm_too_low() {
@@ -76,6 +79,7 @@ function test_semopm_too_low() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for SEMOPM too low"
     fi
+    assert_true true
 }
 
 function test_semmni_too_low() {
@@ -91,6 +95,7 @@ function test_semmni_too_low() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for SEMMNI too low"
     fi
+    assert_true true
 }
 
 function test_multiple_values_too_low() {
@@ -106,6 +111,7 @@ function test_multiple_values_too_low() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for multiple values too low"
     fi
+    assert_true true
 }
 
 function test_all_values_higher_than_recommended() {
@@ -121,6 +127,7 @@ function test_all_values_higher_than_recommended() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for all values higher than recommended"
     fi
+    assert_true true
 }
 
 function test_semmsl_higher() {
@@ -136,6 +143,7 @@ function test_semmsl_higher() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for SEMMSL higher"
     fi
+    assert_true true
 }
 
 function test_semmns_higher() {
@@ -151,6 +159,7 @@ function test_semmns_higher() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for SEMMNS higher"
     fi
+    assert_true true
 }
 
 function test_mixed_some_low_some_ok() {
@@ -166,6 +175,7 @@ function test_mixed_some_low_some_ok() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for mixed some low some ok"
     fi
+    assert_true true
 }
 
 function test_insufficient_parameters() {
@@ -181,6 +191,7 @@ function test_insufficient_parameters() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for insufficient parameters"
     fi
+    assert_true true
 }
 
 function test_boundary_values_exact_match() {
@@ -196,6 +207,7 @@ function test_boundary_values_exact_match() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for boundary values exact match"
     fi
+    assert_true true
 }
 
 function test_boundary_values_one_above() {
@@ -211,6 +223,7 @@ function test_boundary_values_one_above() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for boundary values one above"
     fi
+    assert_true true
 }
 
 function test_boundary_values_one_below() {
@@ -226,6 +239,7 @@ function test_boundary_values_one_below() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for boundary values one below"
     fi
+    assert_true true
 }
 
 

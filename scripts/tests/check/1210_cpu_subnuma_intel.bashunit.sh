@@ -45,6 +45,7 @@ function test_precondition_not_intel() {
     if [[ $? -ne 3 ]]; then
         bashunit::fail "Expected RC=3 (skipped) for non-Intel"
     fi
+    assert_true true
 }
 
 function test_precondition_virtualized() {
@@ -59,6 +60,7 @@ function test_precondition_virtualized() {
     if [[ $? -ne 3 ]]; then
         bashunit::fail "Expected RC=3 (skipped) for virtualized"
     fi
+    assert_true true
 }
 
 function test_precondition_numanodes_unknown() {
@@ -73,6 +75,7 @@ function test_precondition_numanodes_unknown() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for unknown NUMA nodes"
     fi
+    assert_true true
 }
 
 function test_precondition_cpusockets_unknown() {
@@ -88,6 +91,7 @@ function test_precondition_cpusockets_unknown() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for unknown CPU sockets"
     fi
+    assert_true true
 }
 
 function test_precondition_unsupported_os() {
@@ -107,6 +111,7 @@ function test_precondition_unsupported_os() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for unsupported OS"
     fi
+    assert_true true
 }
 
 # ==============================================================================
@@ -128,6 +133,7 @@ function test_numa_disabled_sles() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for NUMA disabled on SLES"
     fi
+    assert_true true
 }
 
 function test_numa_disabled_rhel() {
@@ -147,6 +153,7 @@ function test_numa_disabled_rhel() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for NUMA disabled on RHEL"
     fi
+    assert_true true
 }
 
 # ==============================================================================
@@ -168,6 +175,7 @@ function test_skylake_snc2_enabled_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for Skylake with SNC-2 enabled"
     fi
+    assert_true true
 }
 
 function test_skylake_snc2_not_enabled_ok() {
@@ -185,6 +193,7 @@ function test_skylake_snc2_not_enabled_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for Skylake without SNC-2"
     fi
+    assert_true true
 }
 
 function test_cascadelake_snc2_enabled_ok() {
@@ -202,6 +211,7 @@ function test_cascadelake_snc2_enabled_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for Cascade Lake with SNC-2"
     fi
+    assert_true true
 }
 
 function test_icelake_snc2_not_enabled_ok() {
@@ -219,6 +229,7 @@ function test_icelake_snc2_not_enabled_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for Ice Lake without SNC-2"
     fi
+    assert_true true
 }
 
 # ==============================================================================
@@ -240,6 +251,7 @@ function test_broadwell_cod_disabled_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for Broadwell with CoD disabled"
     fi
+    assert_true true
 }
 
 function test_broadwell_cod_not_disabled_error() {
@@ -257,6 +269,7 @@ function test_broadwell_cod_not_disabled_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for Broadwell with CoD enabled"
     fi
+    assert_true true
 }
 
 function test_haswell_cod_disabled_ok() {
@@ -274,6 +287,7 @@ function test_haswell_cod_disabled_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for Haswell with CoD disabled"
     fi
+    assert_true true
 }
 
 function test_haswell_cod_not_disabled_error() {
@@ -291,6 +305,7 @@ function test_haswell_cod_not_disabled_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for Haswell with CoD enabled"
     fi
+    assert_true true
 }
 
 function test_ivybridge_cod_disabled_ok() {
@@ -308,6 +323,7 @@ function test_ivybridge_cod_disabled_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for Ivy Bridge with CoD disabled"
     fi
+    assert_true true
 }
 
 function test_ivybridge_cod_not_disabled_error() {
@@ -325,6 +341,7 @@ function test_ivybridge_cod_not_disabled_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for Ivy Bridge with CoD enabled"
     fi
+    assert_true true
 }
 
 # ==============================================================================
@@ -348,6 +365,7 @@ function test_rhel7_note_assignment() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for RHEL 7"
     fi
+    assert_true true
 }
 
 function test_rhel8_note_assignment() {
@@ -367,6 +385,7 @@ function test_rhel8_note_assignment() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for RHEL 8"
     fi
+    assert_true true
 }
 
 function test_rhel9_note_assignment() {
@@ -386,6 +405,7 @@ function test_rhel9_note_assignment() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for RHEL 9"
     fi
+    assert_true true
 }
 
 # ==============================================================================
@@ -407,6 +427,7 @@ function test_sles12_note_assignment() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for SLES 12"
     fi
+    assert_true true
 }
 
 function test_sles15_note_assignment() {
@@ -424,6 +445,7 @@ function test_sles15_note_assignment() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for SLES 15"
     fi
+    assert_true true
 }
 
 

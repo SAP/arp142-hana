@@ -42,6 +42,7 @@ function test_no_hana_mounts() {
     if [[ "$rc" != '3' ]]; then
         bashunit::fail "Expected CheckSkipped RC=3 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_all_supported_fs() {
@@ -74,6 +75,7 @@ function test_all_supported_fs() {
     if [[ "$rc" != '0' ]]; then
         bashunit::fail "Expected CheckOk RC=0 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_expired_certification_fs() {
@@ -94,6 +96,7 @@ function test_expired_certification_fs() {
     if [[ "$rc" != '1' ]]; then
         bashunit::fail "Expected CheckWarn RC=1 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_unsupported_fs() {
@@ -112,6 +115,7 @@ function test_unsupported_fs() {
     if [[ "$rc" != '2' ]]; then
         bashunit::fail "Expected CheckError RC=2 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function set_up_before_script() {

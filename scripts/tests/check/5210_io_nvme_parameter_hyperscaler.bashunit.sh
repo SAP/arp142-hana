@@ -35,6 +35,7 @@ function test_not_on_hyperscaler() {
     if [[ "$rc" != '3' ]]; then
         bashunit::fail "Expected CheckSkip RC=3 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_on_amazon_cloud() {
@@ -52,6 +53,7 @@ function test_on_amazon_cloud() {
     if [[ "$rc" != '0' ]]; then
         bashunit::fail "Expected CheckOk RC=0 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_on_microsoft_cloud() {
@@ -69,6 +71,7 @@ function test_on_microsoft_cloud() {
     if [[ "$rc" != '0' ]]; then
         bashunit::fail "Expected CheckOk RC=0 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_nvme_timeout_file_not_found() {
@@ -85,6 +88,7 @@ function test_nvme_timeout_file_not_found() {
     if [[ "$rc" != '3' ]]; then
         bashunit::fail "Expected CheckSkip RC=3 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_recommended_value_exact_match() {
@@ -102,6 +106,7 @@ function test_recommended_value_exact_match() {
     if [[ "$rc" != '0' ]]; then
         bashunit::fail "Expected CheckOk RC=0 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_value_higher_than_recommended() {
@@ -119,6 +124,7 @@ function test_value_higher_than_recommended() {
     if [[ "$rc" != '0' ]]; then
         bashunit::fail "Expected CheckOk RC=0 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_value_lower_than_recommended() {
@@ -136,6 +142,7 @@ function test_value_lower_than_recommended() {
     if [[ "$rc" != '2' ]]; then
         bashunit::fail "Expected CheckError RC=2 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_boundary_value_one_below() {
@@ -153,6 +160,7 @@ function test_boundary_value_one_below() {
     if [[ "$rc" != '2' ]]; then
         bashunit::fail "Expected CheckError RC=2 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_boundary_value_one_above() {
@@ -170,6 +178,7 @@ function test_boundary_value_one_above() {
     if [[ "$rc" != '0' ]]; then
         bashunit::fail "Expected CheckOk RC=0 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_empty_file() {
@@ -187,6 +196,7 @@ function test_empty_file() {
     if [[ "$rc" != '2' ]]; then
         bashunit::fail "Expected CheckError RC=2 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_zero_value() {
@@ -204,6 +214,7 @@ function test_zero_value() {
     if [[ "$rc" != '2' ]]; then
         bashunit::fail "Expected CheckError RC=2 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_value_with_whitespace() {
@@ -221,6 +232,7 @@ function test_value_with_whitespace() {
     if [[ "$rc" != '0' ]]; then
         bashunit::fail "Expected CheckOk RC=0 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_very_large_value() {
@@ -238,6 +250,7 @@ function test_very_large_value() {
     if [[ "$rc" != '0' ]]; then
         bashunit::fail "Expected CheckOk RC=0 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_microsoft_cloud_with_low_value() {
@@ -255,6 +268,7 @@ function test_microsoft_cloud_with_low_value() {
     if [[ "$rc" != '2' ]]; then
         bashunit::fail "Expected CheckError RC=2 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function set_up_before_script() {

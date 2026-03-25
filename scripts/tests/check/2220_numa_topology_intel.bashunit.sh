@@ -33,6 +33,7 @@ function test_not_intel_cpu() {
     if [[ $? -ne 3 ]]; then
         bashunit::fail "Expected RC=3 (skipped) for not Intel CPU"
     fi
+    assert_true true
 }
 
 function test_sockets_unknown() {
@@ -48,6 +49,7 @@ function test_sockets_unknown() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for sockets unknown"
     fi
+    assert_true true
 }
 
 function test_less_than_8_sockets() {
@@ -63,6 +65,7 @@ function test_less_than_8_sockets() {
     if [[ $? -ne 3 ]]; then
         bashunit::fail "Expected RC=3 (skipped) for less than 8 sockets"
     fi
+    assert_true true
 }
 
 function test_exactly_8_sockets() {
@@ -80,6 +83,7 @@ function test_exactly_8_sockets() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for exactly 8 sockets"
     fi
+    assert_true true
 }
 
 function test_more_than_8_sockets() {
@@ -97,6 +101,7 @@ function test_more_than_8_sockets() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for more than 8 sockets"
     fi
+    assert_true true
 }
 
 function test_numa_distance_file_not_found() {
@@ -113,6 +118,7 @@ function test_numa_distance_file_not_found() {
     if [[ $? -ne 3 ]]; then
         bashunit::fail "Expected RC=3 (skipped) for NUMA distance file not found"
     fi
+    assert_true true
 }
 
 function test_incorrect_numa_pattern_exact_match() {
@@ -130,6 +136,7 @@ function test_incorrect_numa_pattern_exact_match() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for incorrect NUMA pattern"
     fi
+    assert_true true
 }
 
 function test_incorrect_numa_pattern_12sockets() {
@@ -147,6 +154,7 @@ function test_incorrect_numa_pattern_12sockets() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for incorrect NUMA pattern 12 sockets"
     fi
+    assert_true true
 }
 
 function test_correct_numa_topology_different_pattern() {
@@ -164,6 +172,7 @@ function test_correct_numa_topology_different_pattern() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for correct NUMA topology different pattern"
     fi
+    assert_true true
 }
 
 function test_correct_numa_topology_different_values() {
@@ -181,6 +190,7 @@ function test_correct_numa_topology_different_values() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for correct NUMA topology different values"
     fi
+    assert_true true
 }
 
 function test_numa_file_read_error() {
@@ -199,6 +209,7 @@ function test_numa_file_read_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for NUMA file read error"
     fi
+    assert_true true
 }
 
 function test_numa_pattern_single_digit_differences() {
@@ -216,6 +227,7 @@ function test_numa_pattern_single_digit_differences() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for NUMA pattern single digit differences"
     fi
+    assert_true true
 }
 
 

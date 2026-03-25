@@ -58,6 +58,7 @@ function test_precondition_not_ibmpower_skipped() {
     if [[ $? -ne 3 ]]; then
         bashunit::fail "Expected RC=3 (skipped) for non-IBM Power"
     fi
+    assert_true true
 }
 
 function test_precondition_powermode_unknown() {
@@ -73,6 +74,7 @@ function test_precondition_powermode_unknown() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for unknown power mode"
     fi
+    assert_true true
 }
 
 # ========================================
@@ -92,6 +94,7 @@ function test_power11_maximum_performance_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for POWER11 maximum performance"
     fi
+    assert_true true
 }
 
 function test_power11_maximum_performance_system_diff_partition_ok() {
@@ -107,6 +110,7 @@ function test_power11_maximum_performance_system_diff_partition_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for POWER11 system diff partition"
     fi
+    assert_true true
 }
 
 function test_power11_none_error() {
@@ -122,6 +126,7 @@ function test_power11_none_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for POWER11 None mode"
     fi
+    assert_true true
 }
 
 function test_power11_static_error() {
@@ -137,6 +142,7 @@ function test_power11_static_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for POWER11 Static mode"
     fi
+    assert_true true
 }
 
 function test_power11_dynamic_performance_error() {
@@ -152,6 +158,7 @@ function test_power11_dynamic_performance_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for POWER11 Dynamic Performance"
     fi
+    assert_true true
 }
 
 function test_power11_unknown_mode_error() {
@@ -167,6 +174,7 @@ function test_power11_unknown_mode_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for POWER11 unknown mode"
     fi
+    assert_true true
 }
 
 # ========================================
@@ -186,6 +194,7 @@ function test_power10_maximum_performance_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for POWER10 maximum performance"
     fi
+    assert_true true
 }
 
 function test_power10_none_error() {
@@ -201,6 +210,7 @@ function test_power10_none_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for POWER10 None mode"
     fi
+    assert_true true
 }
 
 function test_power10_dynamic_performance_error() {
@@ -216,6 +226,7 @@ function test_power10_dynamic_performance_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for POWER10 Dynamic Performance"
     fi
+    assert_true true
 }
 
 function test_power10_static_error() {
@@ -231,6 +242,7 @@ function test_power10_static_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for POWER10 Static mode"
     fi
+    assert_true true
 }
 
 function test_power10_unknown_mode_error() {
@@ -246,6 +258,7 @@ function test_power10_unknown_mode_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for POWER10 unknown mode"
     fi
+    assert_true true
 }
 
 function test_power10_system_partition_mode_diff_ok() {
@@ -261,6 +274,7 @@ function test_power10_system_partition_mode_diff_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for POWER10 system/partition diff"
     fi
+    assert_true true
 }
 
 # ========================================
@@ -280,6 +294,7 @@ function test_power9_maximum_performance_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for POWER9 maximum performance"
     fi
+    assert_true true
 }
 
 function test_power9_none_error() {
@@ -295,6 +310,7 @@ function test_power9_none_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for POWER9 None mode"
     fi
+    assert_true true
 }
 
 function test_power9_dynamic_performance_error() {
@@ -310,6 +326,7 @@ function test_power9_dynamic_performance_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for POWER9 Dynamic Performance"
     fi
+    assert_true true
 }
 
 function test_power9_static_error() {
@@ -325,6 +342,7 @@ function test_power9_static_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for POWER9 Static mode"
     fi
+    assert_true true
 }
 
 function test_power9_unknown_mode_error() {
@@ -340,6 +358,7 @@ function test_power9_unknown_mode_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for POWER9 unknown mode"
     fi
+    assert_true true
 }
 
 function test_power9_system_partition_mode_diff_ok() {
@@ -355,6 +374,7 @@ function test_power9_system_partition_mode_diff_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for POWER9 system/partition diff"
     fi
+    assert_true true
 }
 
 # ========================================
@@ -374,6 +394,7 @@ function test_real_world_mixed_mode_power10() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for POWER10 mixed mode"
     fi
+    assert_true true
 }
 
 function test_real_world_mixed_mode_power9() {
@@ -389,6 +410,7 @@ function test_real_world_mixed_mode_power9() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for POWER9 mixed mode"
     fi
+    assert_true true
 }
 
 function test_system_mode_invalid_partition_valid_power10() {
@@ -404,6 +426,7 @@ function test_system_mode_invalid_partition_valid_power10() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for POWER10 invalid system mode"
     fi
+    assert_true true
 }
 
 function test_system_mode_valid_partition_invalid_power11() {
@@ -419,6 +442,7 @@ function test_system_mode_valid_partition_invalid_power11() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for POWER11 valid system mode"
     fi
+    assert_true true
 }
 
 

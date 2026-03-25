@@ -49,6 +49,7 @@ function test_1scheduler_ok() {
     if [[ "$rc" != '0' ]]; then
         bashunit::fail "Expected CheckOk RC=0 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_1scheduler_wrong() {
@@ -64,6 +65,7 @@ function test_1scheduler_wrong() {
     if [[ "$rc" != '1' ]]; then
         bashunit::fail "Expected CheckWarning RC=1 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_2scheduler_both_ok() {
@@ -80,6 +82,7 @@ function test_2scheduler_both_ok() {
     if [[ "$rc" != '0' ]]; then
         bashunit::fail "Expected CheckOk RC=0 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_2scheduler_both_wrong() {
@@ -96,6 +99,7 @@ function test_2scheduler_both_wrong() {
     if [[ "$rc" != '1' ]]; then
         bashunit::fail "Expected CheckWarning RC=1 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_2scheduler_1_wrong() {
@@ -112,6 +116,7 @@ function test_2scheduler_1_wrong() {
     if [[ "$rc" != '1' ]]; then
         bashunit::fail "Expected CheckWarning RC=1 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_4scheduler_all_ok() {
@@ -130,6 +135,7 @@ function test_4scheduler_all_ok() {
     if [[ "$rc" != '0' ]]; then
         bashunit::fail "Expected CheckOk RC=0 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_4scheduler_1_wrong() {
@@ -148,6 +154,7 @@ function test_4scheduler_1_wrong() {
     if [[ "$rc" != '1' ]]; then
         bashunit::fail "Expected CheckWarning RC=1 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function set_up_before_script() {

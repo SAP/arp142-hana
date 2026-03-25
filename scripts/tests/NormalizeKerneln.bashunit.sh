@@ -22,9 +22,7 @@ function test_normalize_kernel_equal_to() {
         LIB_FUNC_NORMALIZE_KERNELn kut
 
         #printf "test[$i]: norm <%s> <%s>\n"  "${_test[1]}" "${kut}"
-        if [[ "${_test[1]}" != "${kut}" ]]; then
-            bashunit::fail "EqualTo failure test#$i: expected '${_test[1]}' but got '${kut}'"
-        fi
+        assert_equals "${_test[1]}" "${kut}"
         ((i++))
 
     done <<-EOF
@@ -48,9 +46,7 @@ function test_normalize_kernel_should_fail() {
     LIB_FUNC_NORMALIZE_KERNELn kut
 
     #printf "test[1]: norm <%s> <%s>\n"  '3.0.101-0.47.71-default2' "${kut}"
-    if [[ '3.0.101-0.47.71.1' == "${kut}" ]]; then
-        bashunit::fail 'test[1]: testing the tester failed'
-    fi
+    assert_not_equals '3.0.101-0.47.71.1' "${kut}"
 }
 
 function set_up_before_script() {

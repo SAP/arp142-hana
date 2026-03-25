@@ -40,6 +40,7 @@ function test_0interface_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for 0 interfaces"
     fi
+    assert_true true
 }
 
 function test_1interface_warning() {
@@ -55,6 +56,7 @@ function test_1interface_warning() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for 1 interface"
     fi
+    assert_true true
 }
 
 function test_2interfaces_ok() {
@@ -71,6 +73,7 @@ function test_2interfaces_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for 2 interfaces"
     fi
+    assert_true true
 }
 
 function test_4interfaces_ok() {
@@ -89,6 +92,7 @@ function test_4interfaces_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for 4 interfaces"
     fi
+    assert_true true
 }
 
 

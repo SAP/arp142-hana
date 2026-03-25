@@ -47,6 +47,7 @@ function test_sapconf_not_installed() {
     if [[ $? -ne 3 ]]; then
         bashunit::fail "Expected RC=3 (skipped) for sapconf not installed"
     fi
+    assert_true true
 }
 
 function test_sapconf_ok() {
@@ -62,6 +63,7 @@ function test_sapconf_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for sapconf ok"
     fi
+    assert_true true
 }
 
 function test_sapconf_old_but_not_used() {
@@ -78,6 +80,7 @@ function test_sapconf_old_but_not_used() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for sapconf old but not used"
     fi
+    assert_true true
 }
 
 function test_sapconf_old_and_used() {
@@ -94,6 +97,7 @@ function test_sapconf_old_and_used() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for sapconf old and used"
     fi
+    assert_true true
 }
 
 

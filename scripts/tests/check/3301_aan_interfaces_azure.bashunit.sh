@@ -40,6 +40,7 @@ function test_0interface_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for 0 interfaces"
     fi
+    assert_true true
 }
 
 function test_1pair_ok() {
@@ -56,6 +57,7 @@ function test_1pair_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for 1 AAN + 1 synthetic pair"
     fi
+    assert_true true
 }
 
 function test_2pairs_ok() {
@@ -74,6 +76,7 @@ function test_2pairs_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for 2 AAN + 2 synthetic pairs"
     fi
+    assert_true true
 }
 
 function test_4pairs_ok() {
@@ -96,6 +99,7 @@ function test_4pairs_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for 4 AAN + 4 synthetic pairs"
     fi
+    assert_true true
 }
 
 function test_only_synthetic_error() {
@@ -112,6 +116,7 @@ function test_only_synthetic_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for only synthetic interfaces"
     fi
+    assert_true true
 }
 
 function test_partial_aan_error() {
@@ -129,6 +134,7 @@ function test_partial_aan_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for partial AAN enablement"
     fi
+    assert_true true
 }
 
 function test_not_azure_skip() {
@@ -144,6 +150,7 @@ function test_not_azure_skip() {
     if [[ $? -ne 3 ]]; then
         bashunit::fail "Expected RC=3 (skip) for non-Azure"
     fi
+    assert_true true
 }
 
 

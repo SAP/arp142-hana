@@ -35,9 +35,7 @@ function test_ibmcloud_power_instance_name_equal_to() {
         inst_name="${RETURN_IBMCLOUD_POWER_INSTANCE_NAME}"
 
         # printf "test[$i]: expected <%s> created <%s>\n" "${_test[3]}" "${inst_name}"
-        if [[ "${_test[3]}" != "${inst_name}" ]]; then
-            bashunit::fail "EqualTo failure test#$i: expected '${_test[3]}' but got '${inst_name}'"
-        fi
+        assert_equals "${_test[3]}" "${inst_name}"
         ((i++))
 
     done <<- EOF
@@ -68,9 +66,7 @@ function test_ibmcloud_power_instance_name_should_fail() {
     inst_name="${RETURN_IBMCLOUD_POWER_INSTANCE_NAME}"
 
     # printf "test[1]: expected <%s> created <%s>\n"  'bh1-16x2000' "${inst_name}"
-    if [[ 'bh1-16x2000' == "${inst_name}" ]]; then
-        bashunit::fail 'test[1]: testing the tester failed'
-    fi
+    assert_not_equals 'bh1-16x2000' "${inst_name}"
 }
 
 function set_up_before_script() {

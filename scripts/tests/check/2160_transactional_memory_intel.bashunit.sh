@@ -50,6 +50,7 @@ function test_tsx_available() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for TSX available"
     fi
+    assert_true true
 }
 
 function test_tsx_available_vmware() {
@@ -66,6 +67,7 @@ function test_tsx_available_vmware() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for TSX available on VMware"
     fi
+    assert_true true
 }
 
 function test_tsx_not_available_tsxon_not_required() {
@@ -81,6 +83,7 @@ function test_tsx_not_available_tsxon_not_required() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for TSX not available, tsx=on not required"
     fi
+    assert_true true
 }
 
 function test_tsx_not_available_tsxon_required_and_specified() {
@@ -97,6 +100,7 @@ function test_tsx_not_available_tsxon_required_and_specified() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for TSX not available, tsx=on required and specified"
     fi
+    assert_true true
 }
 
 function test_tsx_not_available_tsxon_required_not_specified() {
@@ -113,6 +117,7 @@ function test_tsx_not_available_tsxon_required_not_specified() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for TSX not available, tsx=on required not specified"
     fi
+    assert_true true
 }
 
 

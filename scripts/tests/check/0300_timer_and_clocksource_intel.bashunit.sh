@@ -55,6 +55,7 @@ function test_all_cpu_flags_available_and_correct_clocksource() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for all flags and correct clocksource"
     fi
+    assert_true true
 }
 
 function test_all_cpu_flags_available_and_wrong_clocksource() {
@@ -75,6 +76,7 @@ function test_all_cpu_flags_available_and_wrong_clocksource() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for wrong clocksource"
     fi
+    assert_true true
 }
 
 function test_missing_rdtscp_but_correct_clocksource() {
@@ -94,6 +96,7 @@ function test_missing_rdtscp_but_correct_clocksource() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for missing rdtscp"
     fi
+    assert_true true
 }
 
 function test_missing_rdtscp_and_wrong_clocksource() {
@@ -113,6 +116,7 @@ function test_missing_rdtscp_and_wrong_clocksource() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for missing rdtscp and wrong clocksource"
     fi
+    assert_true true
 }
 
 function test_missing_constant_tsc() {
@@ -133,6 +137,7 @@ function test_missing_constant_tsc() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for missing constant_tsc"
     fi
+    assert_true true
 }
 
 function test_missing_nonstop_tsc() {
@@ -153,6 +158,7 @@ function test_missing_nonstop_tsc() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for missing nonstop_tsc"
     fi
+    assert_true true
 }
 
 

@@ -23,19 +23,24 @@ function test_validate_os_sles_supported() {
     LIB_FUNC_VALIDATE_OS
     if [[ $? -ne 0 ]]; then
         bashunit::fail "SLES 15.5 should be supported"
+        return
     fi
 
     OS_VERSION='15.7'
     LIB_FUNC_VALIDATE_OS
     if [[ $? -ne 0 ]]; then
         bashunit::fail "SLES 15.7 should be supported"
+        return
     fi
 
     OS_VERSION='12.5'
     LIB_FUNC_VALIDATE_OS
     if [[ $? -ne 0 ]]; then
         bashunit::fail "SLES 12.5 should be supported"
+        return
     fi
+
+    assert_true true
 }
 
 function test_validate_os_sles_eol() {
@@ -46,19 +51,24 @@ function test_validate_os_sles_eol() {
     LIB_FUNC_VALIDATE_OS
     if [[ $? -ne 1 ]]; then
         bashunit::fail "SLES 11.4 should return EOL (code 1)"
+        return
     fi
 
     OS_VERSION='12.4'
     LIB_FUNC_VALIDATE_OS
     if [[ $? -ne 1 ]]; then
         bashunit::fail "SLES 12.4 should return EOL (code 1)"
+        return
     fi
 
     OS_VERSION='15.2'
     LIB_FUNC_VALIDATE_OS
     if [[ $? -ne 1 ]]; then
         bashunit::fail "SLES 15.2 should return EOL (code 1)"
+        return
     fi
+
+    assert_true true
 }
 
 function test_validate_os_rhel_supported() {
@@ -69,19 +79,24 @@ function test_validate_os_rhel_supported() {
     LIB_FUNC_VALIDATE_OS
     if [[ $? -ne 0 ]]; then
         bashunit::fail "RHEL 9.2 should be supported"
+        return
     fi
 
     OS_VERSION='8.6'
     LIB_FUNC_VALIDATE_OS
     if [[ $? -ne 0 ]]; then
         bashunit::fail "RHEL 8.6 should be supported"
+        return
     fi
 
     OS_VERSION='7.9'
     LIB_FUNC_VALIDATE_OS
     if [[ $? -ne 0 ]]; then
         bashunit::fail "RHEL 7.9 should be supported"
+        return
     fi
+
+    assert_true true
 }
 
 function test_validate_os_rhel_eol() {
@@ -92,13 +107,17 @@ function test_validate_os_rhel_eol() {
     LIB_FUNC_VALIDATE_OS
     if [[ $? -ne 1 ]]; then
         bashunit::fail "RHEL 7.8 should return EOL (code 1)"
+        return
     fi
 
     OS_VERSION='6.10'
     LIB_FUNC_VALIDATE_OS
     if [[ $? -ne 1 ]]; then
         bashunit::fail "RHEL 6.10 should return EOL (code 1)"
+        return
     fi
+
+    assert_true true
 }
 
 function test_validate_os_unsupported_distribution() {
@@ -108,6 +127,7 @@ function test_validate_os_unsupported_distribution() {
     LIB_FUNC_VALIDATE_OS
     if [[ $? -ne 2 ]]; then
         bashunit::fail "OLS should be unsupported (code 2)"
+        return
     fi
 
     OS_NAME='Linux Ubuntu'
@@ -115,6 +135,7 @@ function test_validate_os_unsupported_distribution() {
     LIB_FUNC_VALIDATE_OS
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Ubuntu should be unsupported (code 2)"
+        return
     fi
 
     OS_NAME='Linux CentOS'
@@ -122,6 +143,7 @@ function test_validate_os_unsupported_distribution() {
     LIB_FUNC_VALIDATE_OS
     if [[ $? -ne 2 ]]; then
         bashunit::fail "CentOS should be unsupported (code 2)"
+        return
     fi
 
     OS_NAME='Linux UNKNOWN'
@@ -129,7 +151,10 @@ function test_validate_os_unsupported_distribution() {
     LIB_FUNC_VALIDATE_OS
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Linux UNKNOWN should be unsupported (code 2)"
+        return
     fi
+
+    assert_true true
 }
 
 function test_validate_os_future_versions() {
@@ -140,6 +165,7 @@ function test_validate_os_future_versions() {
     LIB_FUNC_VALIDATE_OS
     if [[ $? -ne 3 ]]; then
         bashunit::fail "SLES 16.9 (future) should return uncertain (code 3)"
+        return
     fi
 
     OS_NAME='Linux RHEL'
@@ -147,7 +173,10 @@ function test_validate_os_future_versions() {
     LIB_FUNC_VALIDATE_OS
     if [[ $? -ne 3 ]]; then
         bashunit::fail "RHEL 10.9 (future) should return uncertain (code 3)"
+        return
     fi
+
+    assert_true true
 }
 
 

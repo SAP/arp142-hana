@@ -37,6 +37,7 @@ function test_rpm_not_installed() {
     if [[ "$rc" != '3' ]]; then
         bashunit::fail "Expected CheckSkipped RC=3 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_rpm_ok() {
@@ -53,6 +54,7 @@ function test_rpm_ok() {
     if [[ "$rc" != '0' ]]; then
         bashunit::fail "Expected CheckOk RC=0 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_rpm_old() {
@@ -69,6 +71,7 @@ function test_rpm_old() {
     if [[ "$rc" != '1' ]]; then
         bashunit::fail "Expected CheckWarning RC=1 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function set_up_before_script() {
