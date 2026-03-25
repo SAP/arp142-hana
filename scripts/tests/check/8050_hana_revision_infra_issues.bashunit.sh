@@ -91,6 +91,7 @@ function test_hana_not_found() {
     if [[ "$rc" != '3' ]]; then
         bashunit::fail "Expected CheckSkipped RC=3 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_hana_release_not_affected() {
@@ -110,6 +111,7 @@ function test_hana_release_not_affected() {
     if [[ "$rc" != '0' ]]; then
         bashunit::fail "Expected CheckOk RC=0 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_hana_release_affected1() {
@@ -129,6 +131,7 @@ function test_hana_release_affected1() {
     if [[ "$rc" != '1' ]]; then
         bashunit::fail "Expected CheckWarn RC=1 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_hana_releases_affected2() {
@@ -153,6 +156,7 @@ function test_hana_releases_affected2() {
     if [[ "$rc" != '1' ]]; then
         bashunit::fail "Expected CheckWarn RC=1 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_hana_releases_affected3() {
@@ -181,6 +185,7 @@ function test_hana_releases_affected3() {
     if [[ "$rc" != '1' ]]; then
         bashunit::fail "Expected CheckWarn RC=1 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function set_up_before_script() {

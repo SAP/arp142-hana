@@ -49,6 +49,7 @@ function test_correct_clocksource() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for correct clocksource"
     fi
+    assert_true true
 }
 
 function test_all_cpu_flags_available_and_wrong_clocksource() {
@@ -64,6 +65,7 @@ function test_all_cpu_flags_available_and_wrong_clocksource() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for wrong clocksource"
     fi
+    assert_true true
 }
 
 

@@ -48,6 +48,7 @@ function test_1numa_with_node_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for 1 NUMA with node ok"
     fi
+    assert_true true
 }
 
 function test_2numa_with_numa0_empty_ignore() {
@@ -68,6 +69,7 @@ function test_2numa_with_numa0_empty_ignore() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for 2 NUMA with numa0 empty ignored"
     fi
+    assert_true true
 }
 
 function test_numa_different_number() {
@@ -87,6 +89,7 @@ function test_numa_different_number() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for NUMA different number"
     fi
+    assert_true true
 }
 
 function test_2numa_with_numa_nodes_not_matching() {
@@ -107,6 +110,7 @@ function test_2numa_with_numa_nodes_not_matching() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for NUMA nodes not matching"
     fi
+    assert_true true
 }
 
 function test_2numa_with_both_nodes_ok() {
@@ -127,6 +131,7 @@ function test_2numa_with_both_nodes_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for 2 NUMA with both nodes ok"
     fi
+    assert_true true
 }
 
 function test_2numa_with_numa0_memory_but_no_cpu() {
@@ -147,6 +152,7 @@ function test_2numa_with_numa0_memory_but_no_cpu() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for NUMA0 memory but no CPU"
     fi
+    assert_true true
 }
 
 function test_2numa_with_numa0_cpu_but_no_memory() {
@@ -167,6 +173,7 @@ function test_2numa_with_numa0_cpu_but_no_memory() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for NUMA0 CPU but no memory"
     fi
+    assert_true true
 }
 
 function test_2numa_with_numa0_multiple_cpu_ranges_simple() {
@@ -187,6 +194,7 @@ function test_2numa_with_numa0_multiple_cpu_ranges_simple() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for multiple CPU ranges simple"
     fi
+    assert_true true
 }
 
 function test_2numa_with_numa0_multiple_cpu_ranges_complicated() {
@@ -207,6 +215,7 @@ function test_2numa_with_numa0_multiple_cpu_ranges_complicated() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for multiple CPU ranges complicated"
     fi
+    assert_true true
 }
 
 function test_2numa_with_numa0_ratio_lt_margin() {
@@ -227,6 +236,7 @@ function test_2numa_with_numa0_ratio_lt_margin() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for ratio lt margin"
     fi
+    assert_true true
 }
 
 function test_2numa_with_numa0_ratio_gt_margin() {
@@ -247,6 +257,7 @@ function test_2numa_with_numa0_ratio_gt_margin() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for ratio gt margin"
     fi
+    assert_true true
 }
 
 function test_2numa_with_both_ratio_out_margin() {
@@ -267,6 +278,7 @@ function test_2numa_with_both_ratio_out_margin() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for both ratio out margin"
     fi
+    assert_true true
 }
 
 

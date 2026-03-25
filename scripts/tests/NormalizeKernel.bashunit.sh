@@ -23,9 +23,7 @@ function test_normalize_kernel_equal_to() {
         kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
 
         #printf "test[$i]: norm <%s> <%s>\n"  "${_test[1]}" "${kernelversion}"
-        if [[ "${_test[1]}" != "${kernelversion}" ]]; then
-            bashunit::fail "EqualTo failure test#$i: expected '${_test[1]}' but got '${kernelversion}'"
-        fi
+        assert_equals "${_test[1]}" "${kernelversion}"
         ((i++))
 
     done <<- EOF
@@ -49,9 +47,7 @@ function test_normalize_kernel_should_fail() {
     kernelversion="${LIB_FUNC_NORMALIZE_KERNEL_RETURN}"
 
     #printf "test[1]: norm <%s> <%s>\n"  '3.0.101-0.47.71-default2' "${kernelversion}"
-    if [[ '3.0.101-0.47.71.1' == "${kernelversion}" ]]; then
-        bashunit::fail 'test[1]: testing the tester failed'
-    fi
+    assert_not_equals '3.0.101-0.47.71.1' "${kernelversion}"
 }
 
 function set_up_before_script() {

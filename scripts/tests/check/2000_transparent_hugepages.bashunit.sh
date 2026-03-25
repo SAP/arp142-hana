@@ -47,6 +47,7 @@ function test_thp_not_configurable() {
     if [[ $? -ne 3 ]]; then
         bashunit::fail "Expected RC=3 (skipped) when THP not configurable"
     fi
+    assert_true true
 }
 
 function test_thp_sles15sp5_madvise_ok() {
@@ -65,6 +66,7 @@ function test_thp_sles15sp5_madvise_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for SLES 15.5 with madvise"
     fi
+    assert_true true
 }
 
 function test_thp_sles15sp5_never_warning() {
@@ -83,6 +85,7 @@ function test_thp_sles15sp5_never_warning() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for SLES 15.5 with never"
     fi
+    assert_true true
 }
 
 function test_thp_sles15sp5_always_error() {
@@ -101,6 +104,7 @@ function test_thp_sles15sp5_always_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for SLES 15.5 with always"
     fi
+    assert_true true
 }
 
 function test_thp_sles12_never_ok() {
@@ -119,6 +123,7 @@ function test_thp_sles12_never_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for SLES 12.5 with never"
     fi
+    assert_true true
 }
 
 function test_thp_sles12_madvise_error() {
@@ -137,6 +142,7 @@ function test_thp_sles12_madvise_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for SLES 12.5 with madvise"
     fi
+    assert_true true
 }
 
 function test_thp_sles15sp4_never_ok() {
@@ -155,6 +161,7 @@ function test_thp_sles15sp4_never_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for SLES 15.4 with never"
     fi
+    assert_true true
 }
 
 function test_thp_rhel92_madvise_ok() {
@@ -173,6 +180,7 @@ function test_thp_rhel92_madvise_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for RHEL 9.2 with madvise"
     fi
+    assert_true true
 }
 
 function test_thp_rhel92_never_warning() {
@@ -191,6 +199,7 @@ function test_thp_rhel92_never_warning() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for RHEL 9.2 with never"
     fi
+    assert_true true
 }
 
 function test_thp_rhel8_never_ok() {
@@ -209,6 +218,7 @@ function test_thp_rhel8_never_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for RHEL 8.8 with never"
     fi
+    assert_true true
 }
 
 function test_thp_rhel8_madvise_error() {
@@ -227,6 +237,7 @@ function test_thp_rhel8_madvise_error() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for RHEL 8.8 with madvise"
     fi
+    assert_true true
 }
 
 function test_thp_rhel91_never_ok() {
@@ -245,6 +256,7 @@ function test_thp_rhel91_never_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for RHEL 9.1 with never"
     fi
+    assert_true true
 }
 
 function set_up_before_script() {

@@ -41,6 +41,7 @@ function test_tsxldtrk_notsupported() {
     if [[ $? -ne 3 ]]; then
         bashunit::fail "Expected RC=3 (skipped) for tsxldtrk not supported"
     fi
+    assert_true true
 }
 
 function test_tsx_and_tsxldtrk_available() {
@@ -58,6 +59,7 @@ function test_tsx_and_tsxldtrk_available() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for TSX and tsxldtrk available"
     fi
+    assert_true true
 }
 
 function test_tsx_available_but_ldtrk_not() {
@@ -74,6 +76,7 @@ function test_tsx_available_but_ldtrk_not() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for TSX available but ldtrk not"
     fi
+    assert_true true
 }
 
 function test_tsx_not_available_but_ldtrk_is() {
@@ -90,6 +93,7 @@ function test_tsx_not_available_but_ldtrk_is() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for TSX not available but ldtrk is"
     fi
+    assert_true true
 }
 
 

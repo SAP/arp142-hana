@@ -42,6 +42,7 @@ function test_1numa_with_node_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for 1 NUMA with node"
     fi
+    assert_true true
 }
 
 function test_2numa_with_numa0_empty_ignore() {
@@ -58,6 +59,7 @@ function test_2numa_with_numa0_empty_ignore() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for 2 NUMA with empty node0"
     fi
+    assert_true true
 }
 
 function test_2numa_with_both_nodes_same_cpu() {
@@ -74,6 +76,7 @@ function test_2numa_with_both_nodes_same_cpu() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for 2 NUMA with same CPU count"
     fi
+    assert_true true
 }
 
 function test_2numa_with_numa0_multiple_cpu_ranges_simple() {
@@ -90,6 +93,7 @@ function test_2numa_with_numa0_multiple_cpu_ranges_simple() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for 2 NUMA with multiple CPU ranges"
     fi
+    assert_true true
 }
 
 function test_2numa_with_numa0_multiple_cpu_ranges_complicated() {
@@ -106,6 +110,7 @@ function test_2numa_with_numa0_multiple_cpu_ranges_complicated() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for complicated CPU ranges"
     fi
+    assert_true true
 }
 
 function test_numa_ignore_nodes_with_no_cpus() {
@@ -124,6 +129,7 @@ function test_numa_ignore_nodes_with_no_cpus() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) ignoring nodes with no CPUs"
     fi
+    assert_true true
 }
 
 function test_2numa_with_both_out_margin() {
@@ -140,6 +146,7 @@ function test_2numa_with_both_out_margin() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for imbalanced CPUs"
     fi
+    assert_true true
 }
 
 function test_3numa_with_numa0_lt_margin() {
@@ -157,6 +164,7 @@ function test_3numa_with_numa0_lt_margin() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for NUMA0 below margin"
     fi
+    assert_true true
 }
 
 function test_3numa_with_numa0_gt_margin() {
@@ -174,6 +182,7 @@ function test_3numa_with_numa0_gt_margin() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for NUMA0 above margin"
     fi
+    assert_true true
 }
 
 

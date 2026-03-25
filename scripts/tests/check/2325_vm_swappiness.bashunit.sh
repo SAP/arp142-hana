@@ -62,6 +62,7 @@ function test_swappiness_file_not_readable() {
     if [[ $? -ne 3 ]]; then
         bashunit::fail "Expected return code 3 (skipped) when file not readable, got $?"
     fi
+    assert_true true
 }
 
 # Test: SLES with correct swappiness value (60)
@@ -76,6 +77,7 @@ function test_sles_swappiness_correct() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected return code 0 (OK) for SLES with swappiness=60, got $?"
     fi
+    assert_true true
 }
 
 # Test: SLES with incorrect swappiness value
@@ -90,6 +92,7 @@ function test_sles_swappiness_incorrect() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected return code 2 (ERROR) for SLES with swappiness=10, got $?"
     fi
+    assert_true true
 }
 
 # Test: RHEL with correct swappiness value (10)
@@ -104,6 +107,7 @@ function test_rhel_swappiness_correct() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected return code 0 (OK) for RHEL with swappiness=10, got $?"
     fi
+    assert_true true
 }
 
 # Test: RHEL with incorrect swappiness value
@@ -118,6 +122,7 @@ function test_rhel_swappiness_incorrect() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected return code 2 (ERROR) for RHEL with swappiness=60, got $?"
     fi
+    assert_true true
 }
 
 # Test: Edge case - swappiness=0 on SLES (should fail)
@@ -132,6 +137,7 @@ function test_swappiness_zero() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected return code 2 (ERROR) for swappiness=0 on SLES, got $?"
     fi
+    assert_true true
 }
 
 # Test: Edge case - swappiness=0 on RHEL (should also fail)
@@ -146,6 +152,7 @@ function test_rhel_swappiness_zero() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected return code 2 (ERROR) for swappiness=0 on RHEL, got $?"
     fi
+    assert_true true
 }
 
 # Test: SLES with swappiness=1 (should fail)
@@ -160,6 +167,7 @@ function test_sles_swappiness_one() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected return code 2 (ERROR) for SLES with swappiness=1, got $?"
     fi
+    assert_true true
 }
 
 # Test: RHEL with swappiness=9 (should fail - too low)
@@ -174,5 +182,6 @@ function test_rhel_swappiness_nine() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected return code 2 (ERROR) for RHEL with swappiness=9, got $?"
     fi
+    assert_true true
 }
 

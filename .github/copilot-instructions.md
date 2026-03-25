@@ -120,8 +120,11 @@ function test_example_case() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0"
     fi
+    assert_true true
 }
 ```
+
+**IMPORTANT — Risky test prevention**: bashunit 0.34.1+ flags tests as "risky" when no assertion is registered. Since `bashunit::fail` only counts when it fires (on failure), every test function must end with `assert_true true` to register a passing assertion on the happy path.
 
 **Why test-specific guards matter**: bashunit runs all test files in the same session. Using `HANA_HELPER_PROGVERSION` as a guard causes subsequent test files to skip loading their check functions, breaking those tests.
 

@@ -41,6 +41,7 @@ function test_1if_with_mtu_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for 1 interface with correct MTU"
     fi
+    assert_true true
 }
 
 function test_2if_with_loopback_ignore() {
@@ -57,6 +58,7 @@ function test_2if_with_loopback_ignore() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for loopback ignored"
     fi
+    assert_true true
 }
 
 function test_4if_with_eth1_mtu_toolow() {
@@ -75,6 +77,7 @@ function test_4if_with_eth1_mtu_toolow() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for MTU too low"
     fi
+    assert_true true
 }
 
 function test_3if_with_eth1_mtu_tohigh() {
@@ -92,6 +95,7 @@ function test_3if_with_eth1_mtu_tohigh() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for MTU too high"
     fi
+    assert_true true
 }
 
 function test_4if_with_mtu_ok() {
@@ -110,6 +114,7 @@ function test_4if_with_mtu_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for 4 interfaces with correct MTU"
     fi
+    assert_true true
 }
 
 function test_2if_with_wrong_output_not_processed() {
@@ -126,6 +131,7 @@ function test_2if_with_wrong_output_not_processed() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for wrong output not processed"
     fi
+    assert_true true
 }
 
 

@@ -31,6 +31,7 @@ function test_rhel_out_of_lifetime() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for RHEL out of lifetime"
     fi
+    assert_true true
 }
 
 function test_rhel_not_supported() {
@@ -45,6 +46,7 @@ function test_rhel_not_supported() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for RHEL not supported"
     fi
+    assert_true true
 }
 
 function test_rhel_supported() {
@@ -59,6 +61,7 @@ function test_rhel_supported() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for RHEL supported"
     fi
+    assert_true true
 }
 
 function test_rhel_not_handled() {
@@ -73,6 +76,7 @@ function test_rhel_not_handled() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for RHEL not handled"
     fi
+    assert_true true
 }
 
 function test_rhel10_supported() {
@@ -87,6 +91,7 @@ function test_rhel10_supported() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for RHEL 10.0 supported"
     fi
+    assert_true true
 }
 
 

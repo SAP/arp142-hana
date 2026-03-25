@@ -19,7 +19,24 @@ bash ../check-coverage-report.sh --untested-only  # Only list untested checks
 
 ## Critical Rules
 
-### 0. ALWAYS Test for RC=99 (Unprocessed Check)
+### 0. End Every Test with `assert_true true`
+
+bashunit 0.34.1+ flags tests as **"risky"** when no assertion is registered during a test run.
+Since `bashunit::fail` only increments the assertion counter when it fires (i.e., on failure),
+tests that pass without hitting `bashunit::fail` have zero assertions and get flagged as risky.
+
+**Fix:** Add `assert_true true` at the end of every `test_*` function:
+```bash
+function test_example() {
+    check_NNNN_check_name
+    if [[ $? -ne 0 ]]; then
+        bashunit::fail "Expected RC=0 (ok) for example scenario"
+    fi
+    assert_true true  # Registers a passing assertion to prevent risky flag
+}
+```
+
+### 1. ALWAYS Test for RC=99 (Unprocessed Check)
 
 **RC=99 means "check logic never reached a conclusion"** - this is a BUG!
 
@@ -45,13 +62,14 @@ function test_rhel_check_executes() {
     
     # CRITICAL: Always check this first!
     assert_check_processed ${rc} "RHEL"
+    assert_true true
 }
 ```
 
 **Runtime Detection:** The main script (`saphana-check.sh`) now logs warnings when checks return RC=99
 and displays an "Unproc" (unprocessed) counter in the summary.
 
-### 1. Use a Test-Specific Guard Variable
+### 2. Use a Test-Specific Guard Variable
 
 **WRONG** - This will break other tests:
 ```bash
@@ -66,7 +84,7 @@ _NNNN_check_name_test_loaded=true
 
 The `HANA_HELPER_PROGVERSION` variable is set globally by `saphana-helper-funcs`. If you use it as your guard, subsequent test files won't load their check functions because the guard will trigger an early return.
 
-### 2. Don't Source `saphana-helper-funcs`
+### 3. Don't Source `saphana-helper-funcs`
 
 Most tests don't need to source `saphana-helper-funcs` because:
 - The functions you need (`LIB_FUNC_IS_RHEL`, `LIB_FUNC_IS_SLES`, etc.) should be mocked anyway
@@ -78,7 +96,7 @@ source "${PROGRAM_DIR}/../saphana-logger-stubs"
 source "${PROGRAM_DIR}/../../lib/check/NNNN_check_name.check"
 ```
 
-### 3. Define Mock Functions at Script Level
+### 4. Define Mock Functions at Script Level
 
 Define your mock functions at the top of the file, outside any function:
 ```bash
@@ -89,7 +107,7 @@ LIB_FUNC_IS_SLES() { return 0; }
 
 Then reset them in `set_up()` if individual tests need different behavior.
 
-### 4. Use TEST_ Variables for Mocking File Reads
+### 5. Use TEST_ Variables for Mocking File Reads
 
 If your check reads from `/proc` or other system files, add a `TEST_` variable pattern in the check itself:
 ```bash
@@ -163,6 +181,7 @@ function test_something() {
     if [[ ${rc} -ne 0 ]]; then
         bashunit::fail "Expected RC=0"
     fi
+    assert_true true
 }
 ```
 
@@ -181,6 +200,7 @@ function test_sles_check_executes() {
     
     assert_check_processed ${rc} "SLES"
     # Additional assertions...
+    assert_true true
 }
 
 function test_rhel_check_executes() {
@@ -193,6 +213,7 @@ function test_rhel_check_executes() {
     
     assert_check_processed ${rc} "RHEL"
     # Additional assertions...
+    assert_true true
 }
 ```
 

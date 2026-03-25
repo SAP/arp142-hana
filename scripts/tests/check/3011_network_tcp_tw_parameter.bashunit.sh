@@ -62,6 +62,7 @@ function test_sles_12_4_correct_values() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for SLES 12.4 correct values"
     fi
+    assert_true true
 }
 
 function test_sles_12_4_wrong_reuse_value() {
@@ -82,6 +83,7 @@ function test_sles_12_4_wrong_reuse_value() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for SLES 12.4 wrong reuse value"
     fi
+    assert_true true
 }
 
 function test_sles_12_4_wrong_recycle_value() {
@@ -102,6 +104,7 @@ function test_sles_12_4_wrong_recycle_value() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for SLES 12.4 wrong recycle value"
     fi
+    assert_true true
 }
 
 function test_sles_15_2_correct_values() {
@@ -122,6 +125,7 @@ function test_sles_15_2_correct_values() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for SLES 15.2 correct values"
     fi
+    assert_true true
 }
 
 function test_sles_15_2_wrong_reuse_value() {
@@ -142,6 +146,7 @@ function test_sles_15_2_wrong_reuse_value() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for SLES 15.2 wrong reuse value"
     fi
+    assert_true true
 }
 
 function test_sles_15_2_reuse_value_1() {
@@ -162,6 +167,7 @@ function test_sles_15_2_reuse_value_1() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for SLES 15.2 reuse value 1"
     fi
+    assert_true true
 }
 
 function test_rhel_7_9_correct_values() {
@@ -182,6 +188,7 @@ function test_rhel_7_9_correct_values() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for RHEL 7.9 correct values"
     fi
+    assert_true true
 }
 
 function test_rhel_8_0_correct_values() {
@@ -202,6 +209,7 @@ function test_rhel_8_0_correct_values() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for RHEL 8.0 correct values"
     fi
+    assert_true true
 }
 
 function test_rhel_8_1_correct_values() {
@@ -222,6 +230,7 @@ function test_rhel_8_1_correct_values() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for RHEL 8.1 correct values"
     fi
+    assert_true true
 }
 
 function test_rhel_8_1_wrong_reuse_value() {
@@ -242,6 +251,7 @@ function test_rhel_8_1_wrong_reuse_value() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for RHEL 8.1 wrong reuse value"
     fi
+    assert_true true
 }
 
 function test_tcp_tw_recycle_not_available() {
@@ -261,6 +271,7 @@ function test_tcp_tw_recycle_not_available() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for tcp_tw_recycle not available"
     fi
+    assert_true true
 }
 
 function test_both_parameters_wrong() {
@@ -281,6 +292,7 @@ function test_both_parameters_wrong() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for both parameters wrong"
     fi
+    assert_true true
 }
 
 function test_sles_15_1_boundary() {
@@ -301,6 +313,7 @@ function test_sles_15_1_boundary() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for SLES 15.1 boundary"
     fi
+    assert_true true
 }
 
 function test_rhel_9_0_correct_values() {
@@ -321,6 +334,7 @@ function test_rhel_9_0_correct_values() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for RHEL 9.0 correct values"
     fi
+    assert_true true
 }
 
 

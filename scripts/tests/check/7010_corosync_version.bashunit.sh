@@ -40,6 +40,7 @@ function test_rpm_not_installed() {
     if [[ "$rc" != '3' ]]; then
         bashunit::fail "Expected CheckSkipped RC=3 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_OS_not_applicable() {
@@ -55,6 +56,7 @@ function test_OS_not_applicable() {
     if [[ "$rc" != '3' ]]; then
         bashunit::fail "Expected CheckSkipped RC=3 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_OS_not_listed() {
@@ -70,6 +72,7 @@ function test_OS_not_listed() {
     if [[ "$rc" != '3' ]]; then
         bashunit::fail "Expected CheckSkipped RC=3 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_rpm_ok_sles12all() {
@@ -86,6 +89,7 @@ function test_rpm_ok_sles12all() {
     if [[ "$rc" != '0' ]]; then
         bashunit::fail "Expected CheckOk RC=0 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_rpm_ok_sles154() {
@@ -102,6 +106,7 @@ function test_rpm_ok_sles154() {
     if [[ "$rc" != '0' ]]; then
         bashunit::fail "Expected CheckOk RC=0 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_rpm_old_but_not_used() {
@@ -119,6 +124,7 @@ function test_rpm_old_but_not_used() {
     if [[ "$rc" != '1' ]]; then
         bashunit::fail "Expected CheckWarning RC=1 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_rpm_old_and_used() {
@@ -136,6 +142,7 @@ function test_rpm_old_and_used() {
     if [[ "$rc" != '2' ]]; then
         bashunit::fail "Expected CheckError RC=2 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function set_up_before_script() {

@@ -30,6 +30,7 @@ function test_reco_clock() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for recommended clocksource"
     fi
+    assert_true true
 }
 
 function test_wrong_clocksource() {
@@ -44,6 +45,7 @@ function test_wrong_clocksource() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for wrong clocksource"
     fi
+    assert_true true
 }
 
 

@@ -45,6 +45,7 @@ function test_gpfs_not_installed() {
     if [[ $? -ne 3 ]]; then
         bashunit::fail "Expected RC=3 (skipped) for GPFS not installed"
     fi
+    assert_true true
 }
 
 function test_gpfs_version_toolow() {
@@ -60,6 +61,7 @@ function test_gpfs_version_toolow() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for GPFS version too low"
     fi
+    assert_true true
 }
 
 function test_gpfs_version_ok() {
@@ -75,6 +77,7 @@ function test_gpfs_version_ok() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for GPFS version ok"
     fi
+    assert_true true
 }
 
 

@@ -38,6 +38,7 @@ function test_not_on_azure() {
     if [[ "$rc" != '3' ]]; then
         bashunit::fail "Expected CheckSkipped RC=3 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_imds_not_available() {
@@ -53,6 +54,7 @@ function test_imds_not_available() {
     if [[ "$rc" != '1' ]]; then
         bashunit::fail "Expected CheckWarning RC=1 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_no_premium_disks() {
@@ -69,6 +71,7 @@ function test_no_premium_disks() {
     if [[ "$rc" != '3' ]]; then
         bashunit::fail "Expected CheckSkipped RC=3 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_premium_wa_enabled() {
@@ -84,6 +87,7 @@ function test_premium_wa_enabled() {
     if [[ "$rc" != '0' ]]; then
         bashunit::fail "Expected CheckOk RC=0 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_premium_wa_disabled() {
@@ -99,6 +103,7 @@ function test_premium_wa_disabled() {
     if [[ "$rc" != '1' ]]; then
         bashunit::fail "Expected CheckWarning RC=1 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_multiple_disks_all_wa_enabled() {
@@ -114,6 +119,7 @@ function test_multiple_disks_all_wa_enabled() {
     if [[ "$rc" != '0' ]]; then
         bashunit::fail "Expected CheckOk RC=0 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_multiple_disks_one_wa_enabled_one_disabled() {
@@ -130,6 +136,7 @@ function test_multiple_disks_one_wa_enabled_one_disabled() {
     if [[ "$rc" != '0' ]]; then
         bashunit::fail "Expected CheckOk RC=0 but got RC=$rc - at least one WA enabled"
     fi
+    assert_true true
 }
 
 function test_multiple_disks_none_wa_enabled() {
@@ -146,6 +153,7 @@ function test_multiple_disks_none_wa_enabled() {
     if [[ "$rc" != '1' ]]; then
         bashunit::fail "Expected CheckWarning RC=1 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_mixed_disk_types_premium_wa_enabled() {
@@ -162,6 +170,7 @@ function test_mixed_disk_types_premium_wa_enabled() {
     if [[ "$rc" != '0' ]]; then
         bashunit::fail "Expected CheckOk RC=0 but got RC=$rc - PremiumV2_LRS/UltraSSD should be ignored"
     fi
+    assert_true true
 }
 
 function test_premium_wa_field_absent() {
@@ -178,6 +187,7 @@ function test_premium_wa_field_absent() {
     if [[ "$rc" != '1' ]]; then
         bashunit::fail "Expected CheckWarning RC=1 but got RC=$rc - absent writeAcceleratorEnabled should be treated as not enabled"
     fi
+    assert_true true
 }
 
 function test_real_world_premiumv2_and_premium_wa_disabled() {
@@ -194,6 +204,7 @@ function test_real_world_premiumv2_and_premium_wa_disabled() {
     if [[ "$rc" != '1' ]]; then
         bashunit::fail "Expected CheckWarning RC=1 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function set_up_before_script() {

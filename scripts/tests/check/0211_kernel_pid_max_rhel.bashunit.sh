@@ -44,6 +44,7 @@ function test_systemd_not_installed() {
     if [[ $? -ne 3 ]]; then
         bashunit::fail "Expected RC=3 (skipped) for systemd not installed"
     fi
+    assert_true true
 }
 
 function test_systemd_too_low() {
@@ -59,6 +60,7 @@ function test_systemd_too_low() {
     if [[ $? -ne 3 ]]; then
         bashunit::fail "Expected RC=3 (skipped) for systemd version too low"
     fi
+    assert_true true
 }
 
 function test_all_settings_correct() {
@@ -76,6 +78,7 @@ function test_all_settings_correct() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for all settings correct"
     fi
+    assert_true true
 }
 
 function test_pidmax_too_low() {
@@ -93,6 +96,7 @@ function test_pidmax_too_low() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for pid_max too low"
     fi
+    assert_true true
 }
 
 function test_threadsmax_too_low() {
@@ -110,6 +114,7 @@ function test_threadsmax_too_low() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for threads-max too low"
     fi
+    assert_true true
 }
 
 function test_both_too_low() {
@@ -127,6 +132,7 @@ function test_both_too_low() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for both too low"
     fi
+    assert_true true
 }
 
 

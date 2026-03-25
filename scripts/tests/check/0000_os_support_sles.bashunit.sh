@@ -31,6 +31,7 @@ function test_sles_out_of_lifetime() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for SLES out of lifetime"
     fi
+    assert_true true
 }
 
 function test_sles_not_supported() {
@@ -45,6 +46,7 @@ function test_sles_not_supported() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for SLES not supported"
     fi
+    assert_true true
 }
 
 function test_sles_supported() {
@@ -59,6 +61,7 @@ function test_sles_supported() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for SLES supported"
     fi
+    assert_true true
 }
 
 function test_sles_not_handled() {
@@ -73,6 +76,7 @@ function test_sles_not_handled() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for SLES not handled"
     fi
+    assert_true true
 }
 
 

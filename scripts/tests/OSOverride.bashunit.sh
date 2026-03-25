@@ -27,12 +27,8 @@ function test_os_override_sles_valid() {
     local os_name="${result%%|*}"
     local os_version="${result##*|}"
 
-    if [[ "${os_name}" != 'Linux SLES' ]]; then
-        bashunit::fail "OS_NAME should be 'Linux SLES' but got '${os_name}'"
-    fi
-    if [[ "${os_version}" != '15.5' ]]; then
-        bashunit::fail "OS_VERSION should be '15.5' but got '${os_version}'"
-    fi
+    assert_equals 'Linux SLES' "${os_name}"
+    assert_equals '15.5' "${os_version}"
 
     unset SAPHANA_CHECK_OS_OVERRIDE
 }
@@ -53,12 +49,8 @@ function test_os_override_rhel_valid() {
     local os_name="${result%%|*}"
     local os_version="${result##*|}"
 
-    if [[ "${os_name}" != 'Linux RHEL' ]]; then
-        bashunit::fail "OS_NAME should be 'Linux RHEL' but got '${os_name}'"
-    fi
-    if [[ "${os_version}" != '9.2' ]]; then
-        bashunit::fail "OS_VERSION should be '9.2' but got '${os_version}'"
-    fi
+    assert_equals 'Linux RHEL' "${os_name}"
+    assert_equals '9.2' "${os_version}"
 
     unset SAPHANA_CHECK_OS_OVERRIDE
 }
@@ -79,12 +71,8 @@ function test_os_override_ols_valid() {
     local os_name="${result%%|*}"
     local os_version="${result##*|}"
 
-    if [[ "${os_name}" != 'Linux OLS' ]]; then
-        bashunit::fail "OS_NAME should be 'Linux OLS' but got '${os_name}'"
-    fi
-    if [[ "${os_version}" != '8.6' ]]; then
-        bashunit::fail "OS_VERSION should be '8.6' but got '${os_version}'"
-    fi
+    assert_equals 'Linux OLS' "${os_name}"
+    assert_equals '8.6' "${os_version}"
 
     unset SAPHANA_CHECK_OS_OVERRIDE
 }
@@ -101,9 +89,7 @@ function test_os_override_invalid_format_missing_colon() {
         source "${PROGRAM_DIR}/../bin/lib_linux_release" 2>/dev/null
     ) || _rc=$?
 
-    if [[ ${_rc} -ne 2 ]]; then
-        bashunit::fail "Invalid format should exit with code 2 but got ${_rc}"
-    fi
+    assert_equals 2 "${_rc}"
 
     unset SAPHANA_CHECK_OS_OVERRIDE
 }
@@ -120,9 +106,7 @@ function test_os_override_invalid_format_wrong_distribution() {
         source "${PROGRAM_DIR}/../bin/lib_linux_release" 2>/dev/null
     ) || _rc=$?
 
-    if [[ ${_rc} -ne 2 ]]; then
-        bashunit::fail "Invalid distribution should exit with code 2 but got ${_rc}"
-    fi
+    assert_equals 2 "${_rc}"
 
     unset SAPHANA_CHECK_OS_OVERRIDE
 }
@@ -139,9 +123,7 @@ function test_os_override_invalid_format_bad_version() {
         source "${PROGRAM_DIR}/../bin/lib_linux_release" 2>/dev/null
     ) || _rc=$?
 
-    if [[ ${_rc} -ne 2 ]]; then
-        bashunit::fail "Invalid version format should exit with code 2 but got ${_rc}"
-    fi
+    assert_equals 2 "${_rc}"
 
     unset SAPHANA_CHECK_OS_OVERRIDE
 }
@@ -158,9 +140,7 @@ function test_os_override_invalid_format_extra_fields() {
         source "${PROGRAM_DIR}/../bin/lib_linux_release" 2>/dev/null
     ) || _rc=$?
 
-    if [[ ${_rc} -ne 2 ]]; then
-        bashunit::fail "Extra fields should exit with code 2 but got ${_rc}"
-    fi
+    assert_equals 2 "${_rc}"
 
     unset SAPHANA_CHECK_OS_OVERRIDE
 }
@@ -189,9 +169,7 @@ function test_os_override_valid_formats_various() {
             source "${PROGRAM_DIR}/../bin/lib_linux_release" 2>/dev/null
         ) || _rc=$?
 
-        if [[ ${_rc} -ne 0 ]]; then
-            bashunit::fail "Override ${override} should be valid but got exit code ${_rc}"
-        fi
+        assert_equals 0 "${_rc}"
     done
 
     unset SAPHANA_CHECK_OS_OVERRIDE
@@ -213,9 +191,7 @@ function test_os_override_no_override() {
         [[ -n "${OS_VERSION}" ]] || exit 1
     ) || _rc=$?
 
-    if [[ ${_rc} -ne 0 ]]; then
-        bashunit::fail "Without override, normal detection should work but got exit code ${_rc}"
-    fi
+    assert_equals 0 "${_rc}"
 }
 
 function set_up_before_script() {

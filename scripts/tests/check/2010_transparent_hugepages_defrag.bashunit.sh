@@ -25,6 +25,7 @@ function test_thp_defrag_not_configurable() {
     if [[ $? -ne 3 ]]; then
         bashunit::fail "Expected RC=3 (skipped) when THP defrag not configurable"
     fi
+    assert_true true
 }
 
 function test_thp_disabled_skip_defrag_check() {
@@ -42,6 +43,7 @@ function test_thp_disabled_skip_defrag_check() {
     if [[ $? -ne 3 ]]; then
         bashunit::fail "Expected RC=3 (skipped) when THP is disabled"
     fi
+    assert_true true
 }
 
 function test_thp_defrag_all_ok_never_and_0() {
@@ -59,6 +61,7 @@ function test_thp_defrag_all_ok_never_and_0() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) when all parameters are correct"
     fi
+    assert_true true
 }
 
 function test_thp_defrag_first_wrong_always() {
@@ -76,6 +79,7 @@ function test_thp_defrag_first_wrong_always() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) when THP defrag is not never"
     fi
+    assert_true true
 }
 
 function test_thp_defrag_first_wrong_madvise() {
@@ -93,6 +97,7 @@ function test_thp_defrag_first_wrong_madvise() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) when THP defrag is madvise"
     fi
+    assert_true true
 }
 
 function test_thp_defrag_second_wrong_1() {
@@ -110,6 +115,7 @@ function test_thp_defrag_second_wrong_1() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) when khugepaged defrag is 1"
     fi
+    assert_true true
 }
 
 function test_thp_defrag_both_wrong() {
@@ -127,6 +133,7 @@ function test_thp_defrag_both_wrong() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) when both parameters are wrong"
     fi
+    assert_true true
 }
 
 function test_thp_defrag_khugepaged_not_available() {
@@ -145,6 +152,7 @@ function test_thp_defrag_khugepaged_not_available() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) when khugepaged not available but THP defrag is correct"
     fi
+    assert_true true
 }
 
 function set_up_before_script() {

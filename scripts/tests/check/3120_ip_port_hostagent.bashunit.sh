@@ -39,6 +39,7 @@ function test_not_root_user() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for not root user"
     fi
+    assert_true true
 }
 
 function test_host_profile_not_found() {
@@ -53,6 +54,7 @@ function test_host_profile_not_found() {
     if [[ $? -ne 3 ]]; then
         bashunit::fail "Expected RC=3 (skipped) for host profile not found"
     fi
+    assert_true true
 }
 
 function test_reserved_port_disabled() {
@@ -67,6 +69,7 @@ function test_reserved_port_disabled() {
     if [[ $? -ne 3 ]]; then
         bashunit::fail "Expected RC=3 (skipped) for reserved port disabled"
     fi
+    assert_true true
 }
 
 function test_valid_configuration() {
@@ -85,6 +88,7 @@ function test_valid_configuration() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for valid configuration"
     fi
+    assert_true true
 }
 
 function test_invalid_product_list() {
@@ -103,6 +107,7 @@ function test_invalid_product_list() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for invalid product list"
     fi
+    assert_true true
 }
 
 function test_missing_product_list() {
@@ -120,6 +125,7 @@ function test_missing_product_list() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for missing product list"
     fi
+    assert_true true
 }
 
 function test_missing_instance_list() {
@@ -137,6 +143,7 @@ function test_missing_instance_list() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for missing instance list"
     fi
+    assert_true true
 }
 
 function test_empty_product_list() {
@@ -155,6 +162,7 @@ function test_empty_product_list() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for empty product list"
     fi
+    assert_true true
 }
 
 function test_all_valid_products() {
@@ -173,6 +181,7 @@ function test_all_valid_products() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for all valid products"
     fi
+    assert_true true
 }
 
 function test_mixed_valid_invalid_products() {
@@ -191,6 +200,7 @@ function test_mixed_valid_invalid_products() {
     if [[ $? -ne 1 ]]; then
         bashunit::fail "Expected RC=1 (warning) for mixed valid/invalid products"
     fi
+    assert_true true
 }
 
 function test_whitespace_in_product_list() {
@@ -209,6 +219,7 @@ function test_whitespace_in_product_list() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for whitespace in product list"
     fi
+    assert_true true
 }
 
 

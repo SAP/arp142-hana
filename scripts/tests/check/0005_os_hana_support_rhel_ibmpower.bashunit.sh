@@ -35,6 +35,7 @@ function test_bigendian_not_supported() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for big endian"
     fi
+    assert_true true
 }
 
 function test_power7_not_supported() {
@@ -50,6 +51,7 @@ function test_power7_not_supported() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for POWER7"
     fi
+    assert_true true
 }
 
 function test_power8_not_supported() {
@@ -65,6 +67,7 @@ function test_power8_not_supported() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for POWER8"
     fi
+    assert_true true
 }
 
 function test_power9_rhel_not_supported() {
@@ -81,6 +84,7 @@ function test_power9_rhel_not_supported() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for POWER9 unsupported RHEL"
     fi
+    assert_true true
 }
 
 function test_power9_rhel_supported() {
@@ -97,6 +101,7 @@ function test_power9_rhel_supported() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for POWER9 supported RHEL"
     fi
+    assert_true true
 }
 
 function test_power10_rhel_not_supported() {
@@ -113,6 +118,7 @@ function test_power10_rhel_not_supported() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for POWER10 unsupported RHEL"
     fi
+    assert_true true
 }
 
 function test_power10_rhel_supported() {
@@ -129,6 +135,7 @@ function test_power10_rhel_supported() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for POWER10 supported RHEL"
     fi
+    assert_true true
 }
 
 function test_power11_rhel10_supported() {
@@ -145,6 +152,7 @@ function test_power11_rhel10_supported() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for POWER11 RHEL 10.0 supported"
     fi
+    assert_true true
 }
 
 function test_power11_rhel9_not_supported() {
@@ -161,6 +169,7 @@ function test_power11_rhel9_not_supported() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for POWER11 RHEL 9.x not supported"
     fi
+    assert_true true
 }
 
 function test_powerX_not_supported() {
@@ -176,6 +185,7 @@ function test_powerX_not_supported() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for unsupported POWER generation"
     fi
+    assert_true true
 }
 
 function test_architecture_not_supported() {
@@ -191,6 +201,7 @@ function test_architecture_not_supported() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for unsupported architecture"
     fi
+    assert_true true
 }
 
 function test_environment_not_handled() {
@@ -207,6 +218,7 @@ function test_environment_not_handled() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for unhandled environment"
     fi
+    assert_true true
 }
 
 function test_rhel_not_handled() {
@@ -223,6 +235,7 @@ function test_rhel_not_handled() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for unhandled RHEL version"
     fi
+    assert_true true
 }
 
 function test_ibmcloud_power9_rhel_not_supported() {
@@ -240,6 +253,7 @@ function test_ibmcloud_power9_rhel_not_supported() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for IBM Cloud POWER9 unsupported"
     fi
+    assert_true true
 }
 
 function test_ibmcloud_power9_rhel_supported() {
@@ -257,6 +271,7 @@ function test_ibmcloud_power9_rhel_supported() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for IBM Cloud POWER9 supported"
     fi
+    assert_true true
 }
 
 function test_ibmcloud_power10_rhel_not_supported() {
@@ -274,6 +289,7 @@ function test_ibmcloud_power10_rhel_not_supported() {
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for IBM Cloud POWER10 unsupported"
     fi
+    assert_true true
 }
 
 function test_ibmcloud_power10_rhel_supported() {
@@ -291,6 +307,7 @@ function test_ibmcloud_power10_rhel_supported() {
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for IBM Cloud POWER10 supported"
     fi
+    assert_true true
 }
 
 

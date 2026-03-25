@@ -46,6 +46,7 @@ function test_nfs_not_mounted() {
     if [[ "$rc" != '3' ]]; then
         bashunit::fail "Expected CheckSkipped RC=3 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_nfs_ok() {
@@ -65,6 +66,7 @@ function test_nfs_ok() {
     if [[ "$rc" != '0' ]]; then
         bashunit::fail "Expected CheckOk RC=0 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_nfs_nconnect_hanalog_wrong() {
@@ -80,6 +82,7 @@ function test_nfs_nconnect_hanalog_wrong() {
     if [[ "$rc" != '1' ]]; then
         bashunit::fail "Expected CheckWarn RC=1 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_nfs_nconnect_hanadata_wrong() {
@@ -95,6 +98,7 @@ function test_nfs_nconnect_hanadata_wrong() {
     if [[ "$rc" != '1' ]]; then
         bashunit::fail "Expected CheckWarn RC=1 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_nfs_wrong_all() {
@@ -112,6 +116,7 @@ function test_nfs_wrong_all() {
     if [[ "$rc" != '1' ]]; then
         bashunit::fail "Expected CheckWarn RC=1 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function test_nfs_nconnect_not_supported() {
@@ -130,6 +135,7 @@ function test_nfs_nconnect_not_supported() {
     if [[ "$rc" != '2' ]]; then
         bashunit::fail "Expected CheckError RC=2 but got RC=$rc"
     fi
+    assert_true true
 }
 
 function set_up_before_script() {

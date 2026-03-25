@@ -85,6 +85,7 @@ function test_modern_kernel_correct_values() {
     if [[ ${rc} -ne 0 ]]; then
         bashunit::fail "Expected RC=0 for modern kernel with correct values, got RC=${rc}"
     fi
+    assert_true true
 }
 
 #------------------------------------------------------------------
@@ -106,6 +107,7 @@ function test_older_kernel_correct_values() {
     if [[ ${rc} -ne 0 ]]; then
         bashunit::fail "Expected RC=0 for older kernel with correct values, got RC=${rc}"
     fi
+    assert_true true
 }
 
 #------------------------------------------------------------------
@@ -127,6 +129,7 @@ function test_wrong_rmem_minmid() {
     if [[ ${rc} -ne 1 ]]; then
         bashunit::fail "Expected RC=1 for wrong rmem MIN/MID, got RC=${rc}"
     fi
+    assert_true true
 }
 
 #------------------------------------------------------------------
@@ -148,6 +151,7 @@ function test_wrong_wmem_minmid() {
     if [[ ${rc} -ne 1 ]]; then
         bashunit::fail "Expected RC=1 for wrong wmem MIN/MID, got RC=${rc}"
     fi
+    assert_true true
 }
 
 #------------------------------------------------------------------
@@ -169,6 +173,7 @@ function test_ibmpower_old_kernel_correct_values() {
     if [[ ${rc} -ne 0 ]]; then
         bashunit::fail "Expected RC=0 for IBM Power old kernel with 64K page values, got RC=${rc}"
     fi
+    assert_true true
 }
 
 #------------------------------------------------------------------
@@ -190,6 +195,7 @@ function test_ibmpower_modern_kernel_correct_values() {
     if [[ ${rc} -ne 0 ]]; then
         bashunit::fail "Expected RC=0 for IBM Power modern kernel with standard values, got RC=${rc}"
     fi
+    assert_true true
 }
 
 #------------------------------------------------------------------
@@ -211,4 +217,5 @@ function test_both_minmid_wrong() {
     if [[ ${rc} -ne 1 ]]; then
         bashunit::fail "Expected RC=1 for both MIN/MID wrong, got RC=${rc}"
     fi
+    assert_true true
 }
