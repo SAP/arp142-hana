@@ -75,13 +75,13 @@ function check_5550_io_writeaccelerator_azure {
             logTrace "<${FUNCNAME[0]}> # LUN=${_lun} storageAccountType=${_sat} writeAcceleratorEnabled=${_wa}"
 
             # PremiumV2_LRS disks (v2 disks do not support Write Accelerator, so they are not relevant for this check, but track anyway)
-            [[ "${_sat}" == 'PremiumV2_LRS' ]] && ((_count_premiumV2+=1))
+            [[ "${_sat}" == 'PremiumV2_LRS' ]] && _count_premiumV2+=1
 
             # Only check Premium_LRS disks (Premium SSD v1)
             [[ "${_sat}" != 'Premium_LRS' ]] && continue
 
             _has_premium=true
-            ((_count_premium+=1))
+            _count_premium+=1
 
             if [[ "${_wa}" == 'true' ]]; then
                 _has_wa=true

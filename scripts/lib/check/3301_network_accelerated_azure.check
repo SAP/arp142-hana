@@ -50,17 +50,17 @@ function check_3301_network_accelerated_azure {
                 if [[ ${BASH_REMATCH[2]} == 'mana' ]]; then
 
                     logCheckInfo "modern AAN interface found <interface=${BASH_REMATCH[1]}, driver=${BASH_REMATCH[2]}>"
-                    ((_count_AAN+=1))
+                    _count_AAN+=1
 
                 elif [[ ${BASH_REMATCH[2]} == 'mlx' ]]; then
 
                     logCheckInfo "legacy AAN interface found <interface=${BASH_REMATCH[1]}, driver=${BASH_REMATCH[2]}>"
-                    ((_count_AAN+=1))
+                    _count_AAN+=1
 
                 else
 
                     logCheckInfo "non-accelerated interface found <interface=${BASH_REMATCH[1]}, driver=${BASH_REMATCH[2]}>"
-                    ((_count_nonAAN+=1))
+                    _count_nonAAN+=1
 
                 fi
 
