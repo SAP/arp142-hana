@@ -10,14 +10,13 @@ function check_0102_supported_instances_amazon {
     # "curl -s -m 10 http://169.254.169.254/latest/meta-data/instance-type"
 
     # MODIFICATION SECTION>>
-    # array             'Instance Type'
-    local -ar _amazon_vm=(\
-                        'r4.8xlarge'    'r4.16xlarge'   \
-                        'r5.8xlarge'    'r5.12xlarge'   'r5.16xlarge'   'r5.24xlarge'  \
-                        'r5b.24xlarge'  \
-                        'r6i.2xlarge'   'r6i.4xlarge'   'r6i.8xlarge'   \
+    # Current generation - array 'Instance Type'
+    local -ar _amazon_vm_current=(\
+                        'r5.8xlarge'    'r5.12xlarge'   'r5.16xlarge'   'r5.24xlarge'   \
+                        'r5b.8xlarge'   'r5b.12xlarge'  'r5b.16xlarge'  'r5b.24xlarge'  \
+                        'r6i.8xlarge'   \
                         'r6i.12xlarge'  'r6i.16xlarge'  'r6i.24xlarge'  'r6i.32xlarge'  \
-                        'r7i.2xlarge'   'r7i.4xlarge'   'r7i.8xlarge'   \
+                        'r7i.8xlarge'   \
                         'r7i.12xlarge'  'r7i.16xlarge'  'r7i.24xlarge'  'r7i.48xlarge'  \
                         'r8i.12xlarge'  'r8i.16xlarge'  'r8i.24xlarge'  'r8i.32xlarge'  \
                         'r8i.48xlarge'  'r8i.96xlarge'  \
@@ -25,18 +24,25 @@ function check_0102_supported_instances_amazon {
                         'u-6tb1.56xlarge'   'u-6tb1.112xlarge'  \
                         'u-18tb1.112xlarge' 'u-24tb1.112xlarge' \
                         'u7i-6tb.112xlarge' 'u7i-8tb.112xlarge'     \
-                        'u7i-12tb.224xlarge'    'u7in-16tb.224xlarge'   'u7in-24tb.224xlarge' \
+                        'u7i-12tb.224xlarge'    'u7in-12tb.224xlarge'   \
+                        'u7in-16tb.224xlarge'   'u7in-24tb.224xlarge'   \
                         'u7inh-32tb.480xlarge'  \
                         'x1.16xlarge'   'x1.32xlarge'   \
-                        'x1e.32xlarge'   \
+                        'x1e.32xlarge'  \
                         'x2idn.16xlarge'  'x2idn.24xlarge' 'x2idn.32xlarge' \
                         'x2iedn.24xlarge' 'x2iedn.32xlarge' \
                         'x8i.12xlarge'  'x8i.16xlarge'  'x8i.24xlarge'  'x8i.32xlarge'  \
                         'x8i.48xlarge'  'x8i.64xlarge'  'x8i.96xlarge'  \
                         )
 
-    # array             'Instance Type'
-    local -ar _amazon_bm=(\
+    # Previous generation - array 'Instance Type'
+    local -ar _amazon_vm_previous=(\
+                        'r3.2xlarge'    'r3.4xlarge'    'r3.8xlarge'    \
+                        'r4.8xlarge'    'r4.16xlarge'   \
+                        )
+
+    # Current generation - array 'Instance Type' (Bare Metal)
+    local -ar _amazon_bm_current=(\
                         'r5.metal'      'r5b.metal'     \
                         'u-6tb1.metal'  \
                         'u-9tb1.metal'  \
@@ -45,14 +51,18 @@ function check_0102_supported_instances_amazon {
                         'u-24tb1.metal' \
                         )
 
+    # Previous generation - array 'Instance Type' (Bare Metal)
+    local -ar _amazon_bm_previous=()
+
     local -r sapnote='#1380654,1656099'
     # MODIFICATION SECTION<<
 
     #1380654 - SAP support in IaaS environments
     #1656099 - SAP Applications on AWS: Supported DB/OS and AWS EC2 products
     #https://www.sap.com/dmc/exp/2014-09-02-hana-hardware/enEN/#/solutions?filters=iaas;ve:23
+    #https://docs.aws.amazon.com/sap/latest/general/sap-hana-aws-ec2.html
 
-    local -a _amazon_cert_instances
+    local cert_type
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_CLOUD_AMAZON; then
@@ -61,16 +71,20 @@ function check_0102_supported_instances_amazon {
         _retval=3
 
     elif LIB_FUNC_IS_VIRT_KVM || LIB_FUNC_IS_VIRT_XEN ; then
-        _amazon_cert_instances+=("${_amazon_vm[@]}")
+        cert_type='vm'
 
     else
-        _amazon_cert_instances+=("${_amazon_bm[@]}")
+        cert_type='bm'
     fi
 
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-        for instance in "${_amazon_cert_instances[@]}"; do
+        # Check current generation first
+        local cert_current="_amazon_${cert_type}_current[@]"
+
+        #use indirection ${!xxx}
+        for instance in "${!cert_current}"; do
 
             logTrace "<${FUNCNAME[0]}> # ${instance}>"
 
@@ -81,10 +95,33 @@ function check_0102_supported_instances_amazon {
 
         done
 
-        if [[ ${_retval} -ne 0 ]] ; then
+        # Check previous generation if not found in current
+        if [[ ${_retval} -eq 99 ]]; then
+
+            local cert_previous="_amazon_${cert_type}_previous[@]"
+
+            for instance in "${!cert_previous}"; do
+
+                logTrace "<${FUNCNAME[0]}> # ${instance}>"
+
+                [[ "${LIB_PLATF_NAME}" != "${instance}" ]] && continue
+
+                _retval=1
+                break
+
+            done
+
+        fi
+
+        if [[ ${_retval} -eq 99 ]] ; then
 
             logCheckError "Amazon EC2 instance type is NOT supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${LIB_PLATF_NAME})"
             _retval=2
+
+        elif [[ ${_retval} -eq 1 ]] ; then
+
+            logCheckWarning "Amazon EC2 instance type is a previous generation certified for SAP HANA - consider migrating (SAP Note ${sapnote:-}) (is: ${LIB_PLATF_NAME})"
+            _retval=1
 
         else
 

@@ -30,7 +30,7 @@ LIB_FUNC_IS_VIRT_XEN() {
 function test_VM_not_supported() {
 
     #arrange
-    LIB_PLATF_NAME='r3.8xlarge'
+    LIB_PLATF_NAME='t2.micro'
     TEST_LIB_FUNC_IS_VIRT_KVM=0
 
     #act
@@ -39,6 +39,38 @@ function test_VM_not_supported() {
     #assert
     if [[ $? -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) for unsupported VM"
+    fi
+    assert_true true
+}
+
+function test_VM_previous_generation() {
+
+    #arrange
+    LIB_PLATF_NAME='r3.8xlarge'
+    TEST_LIB_FUNC_IS_VIRT_KVM=0
+
+    #act
+    check_0102_supported_instances_amazon
+
+    #assert
+    if [[ $? -ne 1 ]]; then
+        bashunit::fail "Expected RC=1 (warning) for previous generation VM"
+    fi
+    assert_true true
+}
+
+function test_VM_previous_generation_r4() {
+
+    #arrange
+    LIB_PLATF_NAME='r4.16xlarge'
+    TEST_LIB_FUNC_IS_VIRT_KVM=0
+
+    #act
+    check_0102_supported_instances_amazon
+
+    #assert
+    if [[ $? -ne 1 ]]; then
+        bashunit::fail "Expected RC=1 (warning) for previous generation VM r4"
     fi
     assert_true true
 }
