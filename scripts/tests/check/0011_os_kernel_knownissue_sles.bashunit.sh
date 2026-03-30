@@ -20,6 +20,7 @@ IS_SLES_RC=0
 # Mock functions
 LIB_FUNC_IS_SLES() { return $IS_SLES_RC ; }
 LIB_FUNC_IS_CLOUD_MICROSOFT() { return 1 ; }
+LIB_FUNC_IS_CLOUD_GOOGLE() { return 1 ; }
 LIB_FUNC_IS_IBMPOWER() { return 1 ; }
 LIB_FUNC_IS_VIRT_VMWARE() { return 1 ; }
 LIB_FUNC_NORMALIZE_KERNELn() { : ; }
