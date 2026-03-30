@@ -15,6 +15,7 @@ function check_0021_os_kernel_knownissues_rhel {
         ['SAP Note #1928533, M832ixs_v2 only']='SAP Applications on Microsoft Azure: Supported Products and Azure VM types - M832ixs_v2'
         ['SAP Note #3415906']='Could Not Query From SYS.M_SERVICE_MEMORY_ (clock_gettime @ IBM Power - hanging HANA callstacks)'
         ['RHSA-2022:7110']='[Power 9 / ppc64le] Incorrect Socket(s) & "Core(s) per socket" reported by lscpu command'
+        ['GCP x4,c3,c4']='https://docs.cloud.google.com/sap/docs/certifications-sap-hana#hana-cert-table-oss'
     )
 
     # array 'release' 'lower boundary' 'upper boundary' 'Issue ID'
@@ -33,6 +34,10 @@ function check_0021_os_kernel_knownissues_rhel {
                         '7.9' '3.10.0-1160.1'               '3.10.0-1160.999'       'SAP Note #3323613' \
                         )
 
+    local -ar _rhel_gcp=(\
+                        '8.10' '4.18.0-553.33.1'            '4.18.0-553.58.0'       'GCP x4,c3,c4' \
+                        )
+
     local -ar _rhel_ibmpower=(\
                         '9.2'   '5.14.0-284.1'              '5.14.0-284.21.0'       'SAP Note #3415906' \
                         '9.0'   '5.14.0-70.1'               '5.14.0-70.63.0'        'SAP Note #3415906' \
@@ -49,6 +54,10 @@ function check_0021_os_kernel_knownissues_rhel {
     elif LIB_FUNC_IS_CLOUD_MICROSOFT; then
 
         _rhel_all+=("${_rhel_azure[@]}")
+
+    elif LIB_FUNC_IS_CLOUD_GOOGLE; then
+
+        _rhel_all+=("${_rhel_gcp[@]}")
 
     elif LIB_FUNC_IS_IBMPOWER; then
 
