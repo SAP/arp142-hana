@@ -27,6 +27,7 @@ function check_0011_os_kernel_knownissue_sles {
         ['SAP Note #3415906']='Could Not Query From SYS.M_SERVICE_MEMORY_ (clock_gettime @ IBM Power - hanging HANA callstacks)'
         ['SUSE bsc#1237530']='cpuidle driver in virtualized environments'
         ['SUSE TID 000022286']='SAP HANA swap and system hangs with THP on multi-NUMA node systems'
+        ['GCP x4,c3,c4']='https://docs.cloud.google.com/sap/docs/certifications-sap-hana#hana-cert-table-oss'
     )
 
     # array 'release' 'lower boundary' 'upper boundary' 'Issue ID'
@@ -67,7 +68,13 @@ function check_0011_os_kernel_knownissue_sles {
                         '15.5' '5.14.21-150500.53.2'    '5.14.21-150500.55.7.0'     'SAP Note #3323613' \
                         '15.4' '5.14.21-150400.22.1'    '5.14.21-150400.24.60.0'    'SAP Note #3323613' \
                         '15.4' '5.14.21-150400.22.1'    '5.14.21-150400.24.55.0'    'SAP Note #1928533, M832ixs_v2 only' \
-                        '12.5' '4.12.14-120.1'          '4.12.14-122.156.0'         'SAP Note #3323613' \
+                        )
+
+    local -ar _sles_gcp=(\
+                        '15.7' '6.4.0-150700.51.1'      '6.4.0-150700.53.3.0'       'GCP x4,c3,c4' \
+                        '15.6' '6.4.0-150600.21.3'      '6.4.0-150600.23.38.0'      'GCP x4,c3,c4' \
+                        '15.5' '5.14.21-150500.53.2'    '5.14.21-150500.55.94.0'    'GCP x4,c3,c4' \
+                        '15.4' '5.14.21-150400.22.1'    '5.14.21-150400.24.161.0'   'GCP x4,c3,c4' \
                         )
 
     local -ar _sles_ibmpower=(\
@@ -91,6 +98,10 @@ function check_0011_os_kernel_knownissue_sles {
     elif LIB_FUNC_IS_CLOUD_MICROSOFT; then
 
         _sles_all+=("${_sles_azure[@]}")
+
+    elif LIB_FUNC_IS_CLOUD_GOOGLE; then
+
+        _sles_all+=("${_sles_gcp[@]}")
 
     elif LIB_FUNC_IS_IBMPOWER; then
 
