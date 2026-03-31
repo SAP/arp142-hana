@@ -20,20 +20,20 @@ function check_0004_os_hana_support_sles_ibmpower {
                         )
 
     local -ar _sles_matrix_ibmcloud=(\
-                            'POWER11'       '15'    '------6-'  \
-                            'POWER10'       '15'    '----456-'  \
+                            'POWER11'       '15'    '------67'  \
+                            'POWER10'       '15'    '----4567'  \
                             'POWER9'        '15'    '----456-'  \
                             'POWER11'       '12'    '------'    \
                             'POWER10'       '12'    '------'    \
                             'POWER9'        '12'    '-----5'    \
                         )
 
-    local -r sapnote='#2235581,#2055470'
+    local -r sapnote='#2235581,#2188482'
     local _site='onprem'
     # MODIFICATION SECTION<<
 
     #2235581 - SAP HANA: Supported Operating Systems
-    #2055470 - HANA on POWER Planning and Installation Specifics - Central Note
+    #2188482 - SAP HANA on IBM Power Systems: Supported hardware and features
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_IBMPOWER ; then
