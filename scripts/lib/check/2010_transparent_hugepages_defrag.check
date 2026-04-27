@@ -9,10 +9,21 @@ function check_2010_transparent_hugepages_defrag {
     # MODIFICATION SECTION>>
     local -r sapnote='#2131662'     # Transparent Huge Pages (THP) on SAP HANA Servers
 
-    #                              file                                                         recommended_value
+    #                              file                                                         reco_unfixed    reco_fixed
     local -ar _thp_defrag_parameter=(\
-                                    '/sys/kernel/mm/transparent_hugepage/defrag'                'never' \
-                                    '/sys/kernel/mm/transparent_hugepage/khugepaged/defrag'     '0'     \
+                                    '/sys/kernel/mm/transparent_hugepage/defrag'                'never'         'madvise'   \
+                                    '/sys/kernel/mm/transparent_hugepage/khugepaged/defrag'     '0'             '1'         \
+    )
+
+    # SLES kernel versions with THP defrag fix - defrag defaults (madvise/1) are recommended
+    # Versions >= _sles_fixed_from contain the fix from the start (no kernel check needed)
+    # Older versions require at least the listed kernel version
+    local -r  _sles_fixed_from='15.8'
+    #                              OS_VERSION   fixed_kernel_version
+    local -ar _sles_fixed_kernels=(\
+                                    '15.5'      '5.14.21-150500.55.136.1'   \
+                                    '15.6'      '6.4.0-150600.23.87.1'      \
+                                    '15.7'      '6.4.0-150700.53.31.1'      \
     )
     # MODIFICATION SECTION<<
 
@@ -44,6 +55,47 @@ function check_2010_transparent_hugepages_defrag {
 
     fi
 
+    # Check if running on SLES with a fixed kernel - defaults (madvise/1) are recommended
+    local -i _kernel_fixed=0
+    if [[ ${_retval} -eq 99 ]] && LIB_FUNC_IS_SLES ; then
+
+        # SLES versions >= _sles_fixed_from contain the fix from the start
+        LIB_FUNC_COMPARE_VERSIONS "${OS_VERSION}" "${_sles_fixed_from}"
+        if [[ $? -ne 2 ]]; then
+            _kernel_fixed=1
+            logCheckInfo "SLES ${OS_VERSION} includes THP defrag fix (SAP Note ${sapnote:-})"
+        else
+
+            local _kernel_curr
+            local _kernel_fixed_ver
+            local _release
+
+            _kernel_curr="${OS_LEVEL}"
+            LIB_FUNC_NORMALIZE_KERNELn _kernel_curr
+
+            # i+=2 --> every 2nd item
+            for ((i=0; i < ${#_sles_fixed_kernels[@]}; i+=2)); do
+
+                _release="${_sles_fixed_kernels[$i]}"
+                [[ "${OS_VERSION}" != "${_release}"* ]] && continue
+
+                _kernel_fixed_ver="${_sles_fixed_kernels[$i+1]}"
+                LIB_FUNC_NORMALIZE_KERNELn _kernel_fixed_ver
+
+                # returns 0 if equal, 1 if first is higher, 2 if second is higher
+                LIB_FUNC_COMPARE_VERSIONS "${_kernel_curr}" "${_kernel_fixed_ver}"
+                if [[ $? -ne 2 ]]; then
+                    _kernel_fixed=1
+                    logCheckInfo "Kernel includes THP defrag fix (SAP Note ${sapnote:-}) (is: ${OS_LEVEL}, fixed: >=${_sles_fixed_kernels[$i+1]})"
+                fi
+                break
+
+            done
+
+        fi
+
+    fi
+
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
@@ -51,11 +103,16 @@ function check_2010_transparent_hugepages_defrag {
         local _reco_value
         local _parameter
 
-        # i+=2 --> every 2nd item
-        for ((i=0; i < ${#_thp_defrag_parameter[@]}; i+=2)); do
+        # i+=3 --> every 3rd item (file, reco_unfixed, reco_fixed)
+        for ((i=0; i < ${#_thp_defrag_parameter[@]}; i+=3)); do
 
             _parameter=${_thp_defrag_parameter[$i]}
-            _reco_value=${_thp_defrag_parameter[$i+1]}
+
+            if [[ ${_kernel_fixed} -eq 1 ]]; then
+                _reco_value=${_thp_defrag_parameter[$i+2]}
+            else
+                _reco_value=${_thp_defrag_parameter[$i+1]}
+            fi
 
             logTrace "<${FUNCNAME[0]}> # '${_parameter}'>"
 
