@@ -111,8 +111,6 @@ function test_rhel10_rpm_ok() {
 function set_up_before_script() {
     set +eE
 
-    [[ -n "${HANA_HELPER_PROGVERSION:-}" ]] && return 0
-
     #shellcheck source=../saphana-logger-stubs
     source "${PROGRAM_DIR}/../saphana-logger-stubs"
 
