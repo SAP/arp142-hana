@@ -12,7 +12,7 @@ function check_0800_sap_host_agent {
     local -r sapnote_deprecated='#2130510'
     local -r hostagent_kernel_deprecated='721'
 
-    local -r sapnote_latest='#3703852'
+    local -r sapnote_latest='#3734858'
     local -r hostagent_version_expected='722.71.0'
     # MODIFICATION SECTION<<
 
