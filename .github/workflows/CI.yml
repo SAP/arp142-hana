@@ -11,6 +11,11 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+# Minimal required permissions (hardened: default GITHUB_TOKEN is read-only)
+permissions:
+  contents: read  # for actions/checkout
+  actions: write  # for actions/upload-artifact
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "lint"
