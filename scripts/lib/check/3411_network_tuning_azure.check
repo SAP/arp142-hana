@@ -1,0 +1,116 @@
+#!/usr/bin/env bash
+
+function check_3411_network_tuning_azure {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2015553'
+
+    local -r reco_tcp_congestion_control='bbr'
+    local -r reco_default_qdisc='fq'
+    local -ir reco_tcp_frto=0
+    local -ir reco_netdev_budget=1000
+    # MODIFICATION SECTION<<
+
+    # 2015553 - SAP on Microsoft Azure: Support prerequisites
+    # https://learn.microsoft.com/en-us/azure/virtual-network/virtual-network-optimize-network-bandwidth
+    # https://github.com/mabicca/azure-linux-tuning/tree/main/azure-nic-setup/bash
+
+    # Override paths for testing
+    local path_to_tcp_congestion_control="${path_to_tcp_congestion_control:-/proc/sys/net/ipv4/tcp_congestion_control}"
+    local path_to_default_qdisc="${path_to_default_qdisc:-/proc/sys/net/core/default_qdisc}"
+    local path_to_tcp_frto="${path_to_tcp_frto:-/proc/sys/net/ipv4/tcp_frto}"
+    local path_to_netdev_budget="${path_to_netdev_budget:-/proc/sys/net/core/netdev_budget}"
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_CLOUD_MICROSOFT; then
+
+        logCheckSkipped 'Not running on Microsoft Azure. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        # tcp_congestion_control
+        local _tcp_congestion_control
+        _tcp_congestion_control=$(<"${path_to_tcp_congestion_control}")
+
+        if [[ "${_tcp_congestion_control}" == "${reco_tcp_congestion_control}" ]]; then
+
+            logCheckOk "net.ipv4.tcp_congestion_control set as recommended (is: ${_tcp_congestion_control})"
+
+        else
+
+            logCheckWarning "net.ipv4.tcp_congestion_control NOT set as recommended (is: ${_tcp_congestion_control}, should be: ${reco_tcp_congestion_control})"
+            _retval=1
+
+        fi
+
+        # default_qdisc
+        local _default_qdisc
+        _default_qdisc=$(<"${path_to_default_qdisc}")
+
+        if [[ "${_default_qdisc}" == "${reco_default_qdisc}" ]]; then
+
+            logCheckOk "net.core.default_qdisc set as recommended (is: ${_default_qdisc})"
+
+        else
+
+            logCheckWarning "net.core.default_qdisc NOT set as recommended (is: ${_default_qdisc}, should be: ${reco_default_qdisc})"
+            _retval=1
+
+        fi
+
+        # netdev_budget
+        local -i _netdev_budget
+        _netdev_budget=$(<"${path_to_netdev_budget}")
+
+        if [[ ${_netdev_budget} -ge ${reco_netdev_budget} ]]; then
+
+            logCheckOk "net.core.netdev_budget set as recommended (is: ${_netdev_budget})"
+
+        else
+
+            logCheckWarning "net.core.netdev_budget NOT set as recommended (is: ${_netdev_budget}, should be: >= ${reco_netdev_budget})"
+            _retval=1
+
+        fi
+
+        # tcp_frto
+        local -i _tcp_frto
+        _tcp_frto=$(<"${path_to_tcp_frto}")
+
+        if [[ ${_tcp_frto} -eq ${reco_tcp_frto} ]]; then
+
+            logCheckOk "net.ipv4.tcp_frto set as recommended (is: ${_tcp_frto})"
+
+        else
+
+            logCheckWarning "net.ipv4.tcp_frto NOT set as recommended (is: ${_tcp_frto}, should be: ${reco_tcp_frto})"
+            _retval=1
+
+        fi
+
+    fi
+
+    # FINAL RESULT
+    if [[ ${_retval} -eq 99 ]]; then
+
+        logCheckOk "Azure network tuning parameters set as recommended (SAP Note ${sapnote:-})"
+        _retval=0
+
+    elif [[ ${_retval} -eq 1 ]]; then
+
+        logCheckWarning "NOT all Azure network tuning parameters set as recommended (SAP Note ${sapnote:-})"
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}

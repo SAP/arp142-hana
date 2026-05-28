@@ -1,0 +1,107 @@
+#!/usr/bin/env bash
+
+function check_3412_network_ringbuffer_azure {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2015553'
+
+    local -ir reco_ring_rx=1024
+    local -ir reco_ring_tx=1024
+    # MODIFICATION SECTION<<
+
+    # 2015553 - SAP on Microsoft Azure: Support prerequisites
+    # https://learn.microsoft.com/en-us/azure/virtual-network/virtual-network-optimize-network-bandwidth
+    # https://github.com/mabicca/azure-linux-tuning/tree/main/azure-nic-setup/bash
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_CLOUD_MICROSOFT; then
+
+        logCheckSkipped 'Not running on Microsoft Azure. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    fi
+
+    # CHECK - ring buffers
+    if [[ ${_retval} -eq 99 ]]; then
+
+        # Get all accelerated and synthetic interfaces
+        mapfile -t _all_interfaces < <(grep -soHE -m1 'DRIVER=(hv_netvsc|mana|mlx)' /sys/class/net/**/device/uevent)
+
+        local _rx_intf='net/(.+)/device.*DRIVER=(.*)$'
+        local -i _ring_issues=0
+
+        for _single_intf in "${_all_interfaces[@]}"; do
+
+            if [[ ${_single_intf} =~ ${_rx_intf} ]]; then
+
+                local _intf_name="${BASH_REMATCH[1]}"
+                local _intf_driver="${BASH_REMATCH[2]}"
+
+                # Get current ring buffer settings via ethtool
+                local _ethtool_output
+                _ethtool_output=$(ethtool -g "${_intf_name}" 2>/dev/null) || continue
+
+                # Parse current RX and TX ring sizes from "Current hardware settings" section
+                local -i _curr_rx=0
+                local -i _curr_tx=0
+                local -i _in_current=0
+                local _line
+
+                while IFS= read -r _line; do
+
+                    if [[ "${_line}" == *'Current hardware settings'* ]]; then
+                        _in_current=1
+                    elif [[ ${_in_current} -eq 1 ]]; then
+                        if [[ "${_line}" =~ ^RX:[[:space:]]*([0-9]+) ]]; then
+                            _curr_rx=${BASH_REMATCH[1]}
+                        elif [[ "${_line}" =~ ^TX:[[:space:]]*([0-9]+) ]]; then
+                            _curr_tx=${BASH_REMATCH[1]}
+                        elif [[ -z "${_line}" ]]; then
+                            break
+                        fi
+                    fi
+
+                done <<< "${_ethtool_output}"
+
+                if [[ ${_curr_rx} -ge ${reco_ring_rx} ]] && [[ ${_curr_tx} -ge ${reco_ring_tx} ]]; then
+
+                    logCheckOk "Ring buffer for ${_intf_name} (${_intf_driver}) set as recommended (RX: ${_curr_rx}, TX: ${_curr_tx})"
+
+                else
+
+                    logCheckWarning "Ring buffer for ${_intf_name} (${_intf_driver}) NOT set as recommended (RX: ${_curr_rx}/${reco_ring_rx}, TX: ${_curr_tx}/${reco_ring_tx})"
+                    _ring_issues+=1
+
+                fi
+
+            fi
+
+        done
+
+        if [[ ${_ring_issues} -gt 0 ]]; then
+
+            logCheckWarning "NOT all Azure ring buffers set as recommended (SAP Note ${sapnote:-})"
+            _retval=1
+
+        elif [[ ${#_all_interfaces[@]} -eq 0 ]]; then
+
+            logCheckWarning "No accelerated or synthetic interfaces found"
+            _retval=1
+
+        else
+
+            logCheckOk "Azure ring buffers set as recommended (SAP Note ${sapnote:-})"
+            _retval=0
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
