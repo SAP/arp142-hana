@@ -67,10 +67,10 @@
 3110_ip_port_range_parity
 3120_ip_port_hostagent
 3202_mtu_jumbo_amazon
-3309_vmxnet3_interfaces_vmware
 3301_network_accelerated_azure
 3302_ena_interfaces_amazon
 3304_network_interface_gvnic_gcp
+3309_vmxnet3_interfaces_vmware
 3411_network_tuning_azure
 3412_network_ringbuffer_azure
 4110_xfs_nobarrier
