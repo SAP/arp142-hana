@@ -9,6 +9,7 @@ function check_5210_io_nvme_parameter_hyperscaler {
     # MODIFICATION SECTION>>
     local -r sapnote_aws='#1656250'
     local -r sapnote_azure='#2015553'
+    local -r sapnote_gcp='#2456406'
     local -r -i reco_io_timeout=240
     # MODIFICATION SECTION<<
 
@@ -17,6 +18,8 @@ function check_5210_io_nvme_parameter_hyperscaler {
     # 2015553 - SAP on Microsoft Azure: Support prerequisites
     # https://learn.microsoft.com/en-us/azure/virtual-machines/enable-nvme-interface
     # https://learn.microsoft.com/en-us/azure/virtual-machines/nvme-linux
+    # 2456406 - SAP on Google Cloud Platform: Support Prerequisites
+    # https://docs.cloud.google.com/compute/docs/troubleshooting/troubleshooting-disk-nvme
 
     #tweaked by unit-test
     local path_to_nvme_timeout="${path_to_nvme_timeout:-/sys/module/nvme_core/parameters/io_timeout}"
@@ -24,7 +27,7 @@ function check_5210_io_nvme_parameter_hyperscaler {
     local sapnote
 
     # PRECONDITIONS
-    if ! LIB_FUNC_IS_CLOUD_AMAZON && ! LIB_FUNC_IS_CLOUD_MICROSOFT; then
+    if ! LIB_FUNC_IS_CLOUD_AMAZON && ! LIB_FUNC_IS_CLOUD_MICROSOFT && ! LIB_FUNC_IS_CLOUD_GOOGLE; then
 
         logCheckSkipped "Not running on an affected hyperscaler. Skipping" "<${FUNCNAME[0]}>"
         _retval=3
@@ -42,6 +45,8 @@ function check_5210_io_nvme_parameter_hyperscaler {
             sapnote="${sapnote_aws}"
         elif LIB_FUNC_IS_CLOUD_MICROSOFT; then
             sapnote="${sapnote_azure}"
+        elif LIB_FUNC_IS_CLOUD_GOOGLE; then
+            sapnote="${sapnote_gcp}"
         fi
 
         # CHECK

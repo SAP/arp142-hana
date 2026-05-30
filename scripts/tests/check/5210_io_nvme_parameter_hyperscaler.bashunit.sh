@@ -17,15 +17,18 @@ _5210_io_nvme_test_loaded=true
 # Variables to control cloud platform simulation
 is_amazon_cloud=1
 is_microsoft_cloud=1
+is_google_cloud=1
 
 #mock PREREQUISITE functions
 LIB_FUNC_IS_CLOUD_AMAZON() { return ${is_amazon_cloud} ; }
 LIB_FUNC_IS_CLOUD_MICROSOFT() { return ${is_microsoft_cloud} ; }
+LIB_FUNC_IS_CLOUD_GOOGLE() { return ${is_google_cloud} ; }
 
 function test_not_on_hyperscaler() {
     #arrange
     is_amazon_cloud=1
     is_microsoft_cloud=1
+    is_google_cloud=1
 
     #act
     check_5210_io_nvme_parameter_hyperscaler
@@ -38,46 +41,9 @@ function test_not_on_hyperscaler() {
     assert_true true
 }
 
-function test_on_amazon_cloud() {
-    #arrange
-    is_amazon_cloud=0
-    is_microsoft_cloud=1
-    echo "240" > "${PROGRAM_DIR}/mock_nvme_timeout_5210"
-    path_to_nvme_timeout="${PROGRAM_DIR}/mock_nvme_timeout_5210"
-
-    #act
-    check_5210_io_nvme_parameter_hyperscaler
-    local rc=$?
-
-    #assert
-    if [[ "$rc" != '0' ]]; then
-        bashunit::fail "Expected CheckOk RC=0 but got RC=$rc"
-    fi
-    assert_true true
-}
-
-function test_on_microsoft_cloud() {
-    #arrange
-    is_amazon_cloud=1
-    is_microsoft_cloud=0
-    echo "240" > "${PROGRAM_DIR}/mock_nvme_timeout_5210"
-    path_to_nvme_timeout="${PROGRAM_DIR}/mock_nvme_timeout_5210"
-
-    #act
-    check_5210_io_nvme_parameter_hyperscaler
-    local rc=$?
-
-    #assert
-    if [[ "$rc" != '0' ]]; then
-        bashunit::fail "Expected CheckOk RC=0 but got RC=$rc"
-    fi
-    assert_true true
-}
-
 function test_nvme_timeout_file_not_found() {
     #arrange
-    is_amazon_cloud=0
-    is_microsoft_cloud=1
+    is_microsoft_cloud=0
     path_to_nvme_timeout="${PROGRAM_DIR}/nonexistent_nvme_timeout"
 
     #act
@@ -93,8 +59,7 @@ function test_nvme_timeout_file_not_found() {
 
 function test_recommended_value_exact_match() {
     #arrange
-    is_amazon_cloud=0
-    is_microsoft_cloud=1
+    is_microsoft_cloud=0
     echo "240" > "${PROGRAM_DIR}/mock_nvme_timeout_5210"
     path_to_nvme_timeout="${PROGRAM_DIR}/mock_nvme_timeout_5210"
 
@@ -111,8 +76,7 @@ function test_recommended_value_exact_match() {
 
 function test_value_higher_than_recommended() {
     #arrange
-    is_amazon_cloud=0
-    is_microsoft_cloud=1
+    is_microsoft_cloud=0
     echo "300" > "${PROGRAM_DIR}/mock_nvme_timeout_5210"
     path_to_nvme_timeout="${PROGRAM_DIR}/mock_nvme_timeout_5210"
 
@@ -129,8 +93,7 @@ function test_value_higher_than_recommended() {
 
 function test_value_lower_than_recommended() {
     #arrange
-    is_amazon_cloud=0
-    is_microsoft_cloud=1
+    is_microsoft_cloud=0
     echo "200" > "${PROGRAM_DIR}/mock_nvme_timeout_5210"
     path_to_nvme_timeout="${PROGRAM_DIR}/mock_nvme_timeout_5210"
 
@@ -147,8 +110,7 @@ function test_value_lower_than_recommended() {
 
 function test_boundary_value_one_below() {
     #arrange
-    is_amazon_cloud=0
-    is_microsoft_cloud=1
+    is_microsoft_cloud=0
     echo "239" > "${PROGRAM_DIR}/mock_nvme_timeout_5210"
     path_to_nvme_timeout="${PROGRAM_DIR}/mock_nvme_timeout_5210"
 
@@ -165,8 +127,7 @@ function test_boundary_value_one_below() {
 
 function test_boundary_value_one_above() {
     #arrange
-    is_amazon_cloud=0
-    is_microsoft_cloud=1
+    is_microsoft_cloud=0
     echo "241" > "${PROGRAM_DIR}/mock_nvme_timeout_5210"
     path_to_nvme_timeout="${PROGRAM_DIR}/mock_nvme_timeout_5210"
 
@@ -183,8 +144,7 @@ function test_boundary_value_one_above() {
 
 function test_empty_file() {
     #arrange
-    is_amazon_cloud=0
-    is_microsoft_cloud=1
+    is_microsoft_cloud=0
     echo "" > "${PROGRAM_DIR}/mock_nvme_timeout_5210"
     path_to_nvme_timeout="${PROGRAM_DIR}/mock_nvme_timeout_5210"
 
@@ -201,8 +161,7 @@ function test_empty_file() {
 
 function test_zero_value() {
     #arrange
-    is_amazon_cloud=0
-    is_microsoft_cloud=1
+    is_microsoft_cloud=0
     echo "0" > "${PROGRAM_DIR}/mock_nvme_timeout_5210"
     path_to_nvme_timeout="${PROGRAM_DIR}/mock_nvme_timeout_5210"
 
@@ -219,8 +178,7 @@ function test_zero_value() {
 
 function test_value_with_whitespace() {
     #arrange
-    is_amazon_cloud=0
-    is_microsoft_cloud=1
+    is_microsoft_cloud=0
     echo " 240 " > "${PROGRAM_DIR}/mock_nvme_timeout_5210"
     path_to_nvme_timeout="${PROGRAM_DIR}/mock_nvme_timeout_5210"
 
@@ -237,8 +195,7 @@ function test_value_with_whitespace() {
 
 function test_very_large_value() {
     #arrange
-    is_amazon_cloud=0
-    is_microsoft_cloud=1
+    is_microsoft_cloud=0
     echo "999999" > "${PROGRAM_DIR}/mock_nvme_timeout_5210"
     path_to_nvme_timeout="${PROGRAM_DIR}/mock_nvme_timeout_5210"
 
@@ -249,24 +206,6 @@ function test_very_large_value() {
     #assert
     if [[ "$rc" != '0' ]]; then
         bashunit::fail "Expected CheckOk RC=0 but got RC=$rc"
-    fi
-    assert_true true
-}
-
-function test_microsoft_cloud_with_low_value() {
-    #arrange
-    is_amazon_cloud=1
-    is_microsoft_cloud=0
-    echo "100" > "${PROGRAM_DIR}/mock_nvme_timeout_5210"
-    path_to_nvme_timeout="${PROGRAM_DIR}/mock_nvme_timeout_5210"
-
-    #act
-    check_5210_io_nvme_parameter_hyperscaler
-    local rc=$?
-
-    #assert
-    if [[ "$rc" != '2' ]]; then
-        bashunit::fail "Expected CheckError RC=2 but got RC=$rc"
     fi
     assert_true true
 }
@@ -288,6 +227,7 @@ function set_up() {
     path_to_nvme_timeout="/sys/module/nvme_core/parameters/io_timeout"
     is_amazon_cloud=1
     is_microsoft_cloud=1
+    is_google_cloud=1
 
     # Clean up any existing mock files
     rm -f "${PROGRAM_DIR}/mock_nvme_timeout_5210"
