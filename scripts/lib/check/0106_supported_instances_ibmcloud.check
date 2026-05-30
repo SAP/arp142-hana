@@ -53,6 +53,7 @@ function check_0106_supported_instances_ibmcloud {
                         'sh2-8x1900'    'sh2-16x1900'   'sr2-25x1900'   'sh2-33x1900'   \
 
                         #IBM Power10 System E1050 in SMT8 mode
+                        'bh2-35x3900'   \
                         'sr2-35x3000'   'sr2-35x3900'   \
                         'sr2-80x6144'   \
                         'sr2-87x6000'   'sr2-87x7000'   'sr2-87x7600'   \
@@ -82,7 +83,7 @@ function check_0106_supported_instances_ibmcloud {
                         'sr3-76x6144'   \
 
                         #IBM Power11 System E1180 in SMT8 mode
-                        'sr3-229x30500' \
+                        'sr3-80x12288'  'sr3-229x30500' \
 
                         )
 
