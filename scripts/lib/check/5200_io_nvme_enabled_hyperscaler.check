@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+
+function check_5200_io_nvme_enabled_hyperscaler {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote_aws='#1656250'
+    local -r sapnote_azure='#2015553'
+    local -r sapnote_gcp='#2456406'
+    # MODIFICATION SECTION<<
+
+    # 1656250 - SAP on AWS: Support prerequisites
+    # 2015553 - SAP on Microsoft Azure: Support prerequisites
+    # 2456406 - SAP on Google Cloud Platform: Support Prerequisites
+
+    #tweaked by unit-test
+    local path_to_nvme_module="${path_to_nvme_module:-/sys/module/nvme_core}"
+
+    local sapnote
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_CLOUD_AMAZON && ! LIB_FUNC_IS_CLOUD_MICROSOFT && ! LIB_FUNC_IS_CLOUD_GOOGLE; then
+
+        logCheckSkipped "Not running on an affected hyperscaler. Skipping" "<${FUNCNAME[0]}>"
+        _retval=3
+
+    else
+    # CHECK
+
+        # Determine which cloud platform and set appropriate SAP note
+        if LIB_FUNC_IS_CLOUD_AMAZON; then
+            sapnote="${sapnote_aws}"
+
+        elif LIB_FUNC_IS_CLOUD_MICROSOFT; then
+            sapnote="${sapnote_azure}"
+
+        elif LIB_FUNC_IS_CLOUD_GOOGLE; then
+            sapnote="${sapnote_gcp}"
+
+        fi
+
+        if [[ -d "${path_to_nvme_module}" ]]; then
+
+            logCheckOk "nvme is enabled as recommended (SAP Note ${sapnote:-})"
+            _retval=0
+
+        else
+
+            logCheckWarning "nvme is NOT enabled as recommended (SAP Note ${sapnote:-})"
+            _retval=1
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
