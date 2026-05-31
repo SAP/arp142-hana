@@ -28,6 +28,7 @@ function check_0011_os_kernel_knownissue_sles {
         ['SUSE bsc#1237530']='cpuidle driver in virtualized environments'
         ['SUSE TID 000022286']='SAP HANA swap and system hangs with THP on multi-NUMA node systems'
         ['GCP x4,c3,c4']='https://docs.cloud.google.com/sap/docs/certifications-sap-hana#hana-cert-table-oss'
+        ['SUSE TID 000022558']='SAP HANA Backint backups are extremely slow on SLES 15 SP7'
     )
 
     # array 'release' 'lower boundary' 'upper boundary' 'Issue ID'
@@ -52,6 +53,7 @@ function check_0011_os_kernel_knownissue_sles {
                         '15.5' '5.14.21-150500.53.2'        '5.14.21-150500.55.136.0'   'SUSE TID 000022286' \
                         '15.6' '6.4.0-150600.23.33.1'       '6.4.0-150600.23.87.0'      'SUSE TID 000022286' \
                         '15.7' '6.4.0-150700.51.1'          '6.4.0-150700.53.31.0'      'SUSE TID 000022286' \
+                        '15.7' '6.4.0-150700.53.3.1'        '6.4.0-150700.53.52.1'      'SUSE TID 000022558' \
                         )
 
     # local -ar _sles_4sap=(\
