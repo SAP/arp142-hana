@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function check_3301_network_accelerated_azure {
+function check_3301_aan_interfaces_azure {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
@@ -68,10 +68,18 @@ function check_3301_network_accelerated_azure {
 
         done
 
-        if [[ ${_count_AAN} -gt 0 ]] && [[ ${_count_AAN} -eq ${_count_nonAAN} ]]; then
+        if [[ ${_count_AAN} -ge 2 ]] && [[ ${_count_AAN} -eq ${_count_nonAAN} ]]; then
 
             logCheckOk "Azure Accelerated Networking enabled as recommended (SAP Note ${sapnote:-})"
             _retval=0
+
+        elif [[ ${_count_AAN} -eq 1 ]] && [[ ${_count_AAN} -eq ${_count_nonAAN} ]]; then
+
+            logCheckInfo 'In case of HANA Scale-Out or HANA SystemReplication at least 2 AAN adapters should be configured'
+            logCheckInfo '---'
+
+            logCheckWarning "Azure Accelerated Networking NOT enabled as recommended (SAP Note ${sapnote:-})  (is: 1, should be: >=2)"
+            _retval=1
 
         elif [[ ${_count_AAN} -eq 0 ]]; then
 

@@ -34,7 +34,7 @@ function test_0interface_error() {
     if_aan=()
 
     #act
-    check_3301_network_accelerated_azure
+    check_3301_aan_interfaces_azure
 
     #assert
     if [[ $? -ne 2 ]]; then
@@ -43,7 +43,7 @@ function test_0interface_error() {
     assert_true true
 }
 
-function test_1pair_ok() {
+function test_1pair_warning() {
 
     #arrange
     if_aan=()
@@ -51,11 +51,28 @@ function test_1pair_ok() {
     if_aan+=('/sys/class/net/eth1/device/uevent:DRIVER=mana')
 
     #act
-    check_3301_network_accelerated_azure
+    check_3301_aan_interfaces_azure
+    local rc=$?
 
     #assert
-    if [[ $? -ne 0 ]]; then
-        bashunit::fail "Expected RC=0 (ok) for 1 AAN + 1 synthetic pair"
+    if [[ ${rc} -ne 1 ]]; then
+        bashunit::fail "Expected RC=1 (warning) for 1 AAN + 1 synthetic pair"
+    fi
+    assert_true true
+}
+
+function test_single_aan_without_pair_error() {
+
+    #arrange
+    if_aan=()
+    if_aan+=('/sys/class/net/eth0/device/uevent:DRIVER=mana')
+
+    #act
+    check_3301_aan_interfaces_azure
+
+    #assert
+    if [[ $? -ne 2 ]]; then
+        bashunit::fail "Expected RC=2 (error) for single AAN without synthetic pair"
     fi
     assert_true true
 }
@@ -70,7 +87,7 @@ function test_2pairs_ok() {
     if_aan+=('/sys/class/net/eth3/device/uevent:DRIVER=mlx')
 
     #act
-    check_3301_network_accelerated_azure
+    check_3301_aan_interfaces_azure
 
     #assert
     if [[ $? -ne 0 ]]; then
@@ -93,7 +110,7 @@ function test_4pairs_ok() {
     if_aan+=('/sys/class/net/eth7/device/uevent:DRIVER=mana')
 
     #act
-    check_3301_network_accelerated_azure
+    check_3301_aan_interfaces_azure
 
     #assert
     if [[ $? -ne 0 ]]; then
@@ -110,7 +127,7 @@ function test_only_synthetic_error() {
     if_aan+=('/sys/class/net/eth1/device/uevent:DRIVER=hv_netvsc')
 
     #act
-    check_3301_network_accelerated_azure
+    check_3301_aan_interfaces_azure
 
     #assert
     if [[ $? -ne 2 ]]; then
@@ -128,7 +145,7 @@ function test_partial_aan_error() {
     if_aan+=('/sys/class/net/eth2/device/uevent:DRIVER=hv_netvsc')
 
     #act
-    check_3301_network_accelerated_azure
+    check_3301_aan_interfaces_azure
 
     #assert
     if [[ $? -ne 2 ]]; then
@@ -144,7 +161,7 @@ function test_not_azure_skip() {
     LIB_FUNC_IS_CLOUD_MICROSOFT() { return 1 ; }
 
     #act
-    check_3301_network_accelerated_azure
+    check_3301_aan_interfaces_azure
 
     #assert
     if [[ $? -ne 3 ]]; then
@@ -166,8 +183,8 @@ function set_up_before_script() {
     #shellcheck source=../saphana-logger-stubs
     source "${PROGRAM_DIR}/../saphana-logger-stubs"
 
-    #shellcheck source=../../lib/check/3301_network_accelerated_azure.check
-    source "${PROGRAM_DIR}/../../lib/check/3301_network_accelerated_azure.check"
+    #shellcheck source=../../lib/check/3301_aan_interfaces_azure.check
+    source "${PROGRAM_DIR}/../../lib/check/3301_aan_interfaces_azure.check"
 
 }
 
