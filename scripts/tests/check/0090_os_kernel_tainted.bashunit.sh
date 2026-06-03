@@ -13,6 +13,8 @@ fi
 
 # Mock path for kernel tainted
 path_to_kernel_tainted=''
+path_to_module_taint=''
+mock_module_taint_dir=''
 
 
 function test_kernel_tainted_set0_untainted_ok() {
@@ -90,6 +92,45 @@ function test_kernel_tainted_set15_tainted_error() {
     assert_true true
 }
 
+function test_kernel_tainted_set1_lists_tainting_modules() {
+
+    #arrange
+    local captured_error=''
+
+    echo 1 > "${path_to_kernel_tainted}"
+
+    mkdir -p "${mock_module_taint_dir}/hv_netvsc" "${mock_module_taint_dir}/hv_storvsc" "${mock_module_taint_dir}/livepatch_1"
+    echo X > "${mock_module_taint_dir}/hv_netvsc/taint"
+    echo X > "${mock_module_taint_dir}/hv_storvsc/taint"
+    echo OK > "${mock_module_taint_dir}/livepatch_1/taint"
+
+    # shellcheck disable=SC2329
+    logCheckError() {
+        captured_error+="${captured_error:+$'\n'}$*"
+    }
+
+    #act
+    check_0090_os_kernel_tainted
+
+    #assert
+    if [[ $? -ne 2 ]]; then
+        bashunit::fail "Expected RC=2 (error) for tainted kernel (flag 1)"
+    fi
+    if [[ "${captured_error}" != *"hv_netvsc:X"* ]]; then
+        bashunit::fail "Expected tainting module to be listed in output"
+    fi
+    if [[ "${captured_error}" != *"hv_storvsc:X"* ]]; then
+        bashunit::fail "Expected each tainting module to be listed in separate output lines"
+    fi
+    if [[ "${captured_error}" != *"livepatch_1:OK"* ]]; then
+        bashunit::fail "Expected OK module taint flags to be listed in output"
+    fi
+    if [[ "${captured_error}" == *"hv_netvsc:X,hv_storvsc:X"* ]]; then
+        bashunit::fail "Expected modules to be logged separately, not as a combined list"
+    fi
+    assert_true true
+}
+
 
 function set_up_before_script() {
 
@@ -114,6 +155,9 @@ function set_up() {
     path_to_kernel_tainted="${PROGRAM_DIR}/mock_kernel_tainted"
     echo 0 > "${path_to_kernel_tainted}"
 
+    mock_module_taint_dir="${PROGRAM_DIR}/mock_sys_module"
+    path_to_module_taint="${mock_module_taint_dir}/*/taint"
+
 }
 
 function tear_down() {
@@ -121,6 +165,10 @@ function tear_down() {
     # Clean up mock file
     if [[ -f "${path_to_kernel_tainted}" ]]; then
         rm -f "${path_to_kernel_tainted}"
+    fi
+
+    if [[ -d "${mock_module_taint_dir}" ]]; then
+        rm -rf "${mock_module_taint_dir}"
     fi
 
 }

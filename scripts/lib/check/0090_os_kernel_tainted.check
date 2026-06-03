@@ -14,6 +14,7 @@ function check_0090_os_kernel_tainted {
 
     #tweaked by unit-test
     local path_to_kernel_tainted="${path_to_kernel_tainted:-/proc/sys/kernel/tainted}"
+    local path_to_module_taint="${path_to_module_taint:-/sys/module/*/taint}"
 
     # PRECONDITIONS
 
@@ -55,6 +56,25 @@ function check_0090_os_kernel_tainted {
             [[ $((kernel_tainted &  65536)) -ne 0 ]] && _tainted_flag+='X'
             [[ $((kernel_tainted & 131072)) -ne 0 ]] && _tainted_flag+='T'
             : "${_tainted_flag:=-}"
+
+            local _module_taint_line _module_name _module_taint
+            local -a _module_taint_lines
+
+            # shellcheck disable=SC2086
+            mapfile -t _module_taint_lines < <(grep . -rs ${path_to_module_taint})
+            for _module_taint_line in "${_module_taint_lines[@]}"; do
+                _module_name="${_module_taint_line%%/taint:*}"
+                _module_name="${_module_name##*/}"
+                _module_taint="${_module_taint_line##*:}"
+
+                if [[ -n "${_module_taint}" ]]; then
+                    if [[ ${_retval} -eq 2 ]]; then
+                        logCheckError "Kernel tainting module with severe flags (is: ${_module_name}:${_module_taint})"
+                    else
+                        logCheckWarning "Kernel tainting module with non-severe flags (is: ${_module_name}:${_module_taint})"
+                    fi
+                fi
+            done
 
             if [[ ${_retval} -eq 2 ]]; then
                 logCheckError "OS kernel is NOT un-tainted as required - severe flags set (SAP Note ${sapnote:-}) (is: ${kernel_tainted}, Flags:${_tainted_flag})"
