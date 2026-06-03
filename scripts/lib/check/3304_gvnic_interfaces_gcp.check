@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function check_3304_network_interface_gvnic_gcp {
+function check_3304_gvnic_interfaces_gcp {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
@@ -11,6 +11,7 @@ function check_3304_network_interface_gvnic_gcp {
     # MODIFICATION SECTION<<
 
     # 2456406 - SAP on Google Cloud Platform: Support Prerequisites
+    # https://docs.cloud.google.com/sap/docs/sap-hana-planning-guide#network_configuration
     # https://cloud.google.com/compute/docs/networking/using-gvnic
     # https://github.com/GoogleCloudPlatform/compute-virtual-ethernet-linux#manual-configuration
     # https://github.com/GoogleCloudPlatform/compute-virtual-ethernet-linux
@@ -31,15 +32,25 @@ function check_3304_network_interface_gvnic_gcp {
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-        if grep -qs 'DRIVER=gve' /sys/class/net/**/device/uevent; then
+        mapfile -t gvnic_interfaces < <(grep DRIVER=gve -rsH /sys/class/net/**/device/uevent)
 
-            logCheckOk "GCP network interface gvnic enabled as recommended (SAP Note ${sapnote:-})"
+        if [[ ${#gvnic_interfaces[@]} -ge 2 ]]; then
+
+            logCheckOk "GCP network interface gvnic enabled as recommended (SAP Note ${sapnote:-}) (is: ${#gvnic_interfaces[@]})"
             _retval=0
+
+        elif [[ ${#gvnic_interfaces[@]} -eq 1 ]]; then
+
+            logCheckInfo 'In case of HANA Scale-Out or HANA SystemReplication at least 2 gvnic adapters should be configured'
+            logCheckInfo '---'
+
+            logCheckWarning "GCP network interface gvnic NOT as recommended (SAP Note ${sapnote:-}) (is: ${#gvnic_interfaces[@]}, should be: >=2)"
+            _retval=1
 
         else
 
-            logCheckWarning "GCP network interface gvnic NOT enabled (SAP Note ${sapnote:-})"
-            _retval=1
+            logCheckError "GCP network interface gvnic NOT configured (SAP Note ${sapnote:-})"
+            _retval=2
 
         fi
 
