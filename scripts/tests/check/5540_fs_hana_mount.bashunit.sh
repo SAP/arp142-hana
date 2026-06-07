@@ -10,10 +10,6 @@ if [[ -z "${PROGRAM_DIR:-}" ]]; then
     [[ "$PROGRAM_DIR" == "${BASH_SOURCE[0]}" ]] && PROGRAM_DIR="."
 fi
 
-# Guard to avoid reloading
-[[ -n "${_5540_fs_hana_mount_test_loaded:-}" ]] && return 0
-_5540_fs_hana_mount_test_loaded=true
-
 # mock PREREQUISITE functions
 LIB_FUNC_STRINGCONTAIN() { [[ -z "${1##*"$2"*}" ]] && [[ -z "$2" || -n "$1" ]]; }
 
@@ -121,7 +117,8 @@ function test_unsupported_fs() {
 function set_up_before_script() {
     set +eE
 
-    [[ -n "${HANA_HELPER_PROGVERSION:-}" ]] && return 0
+    [[ -n "${_5540_test_loaded:-}" ]] && return 0
+    _5540_test_loaded=true
 
     #shellcheck source=../saphana-logger-stubs
     source "${PROGRAM_DIR}/../saphana-logger-stubs"
