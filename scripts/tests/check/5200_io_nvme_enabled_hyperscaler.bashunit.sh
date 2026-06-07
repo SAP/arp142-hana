@@ -10,10 +10,6 @@ if [[ -z "${PROGRAM_DIR:-}" ]]; then
     [[ "$PROGRAM_DIR" == "${BASH_SOURCE[0]}" ]] && PROGRAM_DIR="."
 fi
 
-# Guard to avoid reloading
-[[ -n "${_5200_io_nvme_module_test_loaded:-}" ]] && return 0
-_5200_io_nvme_module_test_loaded=true
-
 # Variables to control cloud platform simulation
 is_amazon_cloud=1
 is_microsoft_cloud=1
@@ -77,7 +73,8 @@ function test_on_hyperscaler_module_not_loaded() {
 function set_up_before_script() {
     set +eE
 
-    [[ -n "${HANA_HELPER_PROGVERSION:-}" ]] && return 0
+    [[ -n "${_5200_test_loaded:-}" ]] && return 0
+    _5200_test_loaded=true
 
     #shellcheck source=../saphana-logger-stubs
     source "${PROGRAM_DIR}/../saphana-logger-stubs"

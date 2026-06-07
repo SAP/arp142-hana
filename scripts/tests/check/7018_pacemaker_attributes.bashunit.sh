@@ -10,10 +10,6 @@ if [[ -z "${PROGRAM_DIR:-}" ]]; then
     [[ "$PROGRAM_DIR" == "${BASH_SOURCE[0]}" ]] && PROGRAM_DIR="."
 fi
 
-# Guard to avoid reloading
-[[ -n "${_7018_pacemaker_attributes_test_loaded:-}" ]] && return 0
-_7018_pacemaker_attributes_test_loaded=true
-
 #mock PREREQUISITE functions
 LIB_FUNC_IS_SLES() { return 0 ; }
 LIB_FUNC_IS_RHEL() { return 1 ; }
@@ -37,7 +33,8 @@ declare cibadmin_output=''
 function set_up_before_script() {
     set +eE
 
-    [[ -n "${HANA_HELPER_PROGVERSION:-}" ]] && return 0
+    [[ -n "${_7018_test_loaded:-}" ]] && return 0
+    _7018_test_loaded=true
 
     #shellcheck source=../saphana-logger-stubs
     source "${PROGRAM_DIR}/../saphana-logger-stubs"
