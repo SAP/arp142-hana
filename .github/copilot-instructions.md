@@ -54,11 +54,35 @@ function check_NNNN_description {
 - `99`: Internal state (not applicable/unprocessed)
 
 ### Platform Detection Functions
-Use these helper functions for platform-specific logic:
-- `LIB_FUNC_IS_SLES` / `LIB_FUNC_IS_RHEL` - OS detection
-- `LIB_FUNC_IS_INTEL` / `LIB_FUNC_IS_IBMPOWER` - Architecture detection
+Use these helper functions for platform-specific logic (defined across `saphana-helper-funcs` and `lib_*` files):
+
+**OS detection** (in `lib_linux_release`):
+- `LIB_FUNC_IS_SLES` / `LIB_FUNC_IS_RHEL` / `LIB_FUNC_IS_OLS` - OS family
+- `LIB_FUNC_IS_SLES4SAP` / `LIB_FUNC_IS_RHEL4SAP` - SAP-specific variants
+
+**Architecture** (in `saphana-helper-funcs`):
+- `LIB_FUNC_IS_INTEL` / `LIB_FUNC_IS_AMD` / `LIB_FUNC_IS_X64` / `LIB_FUNC_IS_IBMPOWER`
+
+**Virtualization**:
+- `LIB_FUNC_IS_BARE_METAL`
+- `LIB_FUNC_IS_VIRT_VMWARE` / `LIB_FUNC_IS_VIRT_XEN` / `LIB_FUNC_IS_VIRT_KVM` / `LIB_FUNC_IS_VIRT_MICROSOFT`
+- `LIB_FUNC_IS_NUTANIX_AHV`
+
+**Cloud providers**:
+- `LIB_FUNC_IS_CLOUD_AMAZON` / `LIB_FUNC_IS_CLOUD_MICROSOFT` / `LIB_FUNC_IS_CLOUD_GOOGLE`
+- `LIB_FUNC_IS_CLOUD_IBM` / `LIB_FUNC_IS_CLOUD_ALIBABA` / `LIB_FUNC_IS_CLOUD_HUAWEI`
+- `LIB_FUNC_IS_CLOUD_SAPCC`
+
+**Utilities**:
 - `LIB_FUNC_IS_ROOT` - Permission check
-- `LIB_FUNC_COMPARE_VERSIONS` - Version comparison utility
+- `LIB_FUNC_IS_NVM_PMEM` - NVM/PMEM detection
+- `LIB_FUNC_COMPARE_VERSIONS` - Version comparison (returns 0=equal, 1=first higher, 2=second higher)
+- `LIB_FUNC_VALIDATE_OS` - OS validation
+- `LIB_FUNC_NORMALIZE_KERNEL` / `LIB_FUNC_NORMALIZE_KERNELn` - Kernel version normalization
+- `LIB_FUNC_NORMALIZE_RPM` / `LIB_FUNC_NORMALIZE_RPMn` - RPM version normalization
+- `LIB_FUNC_TRIM` / `LIB_FUNC_TRIM_LEFT` / `LIB_FUNC_TRIM_RIGHT` - String trimming
+- `LIB_FUNC_STRINGCONTAIN` - String containment check
+- `LIB_FUNC_CHECK_CHECK_SECURITY` - Check file security validation
 
 ## Development Workflows
 
@@ -82,7 +106,7 @@ bash ./bashunit ./check/*.bashunit.sh      # Only check tests
 ```
 
 ### bashunit Test Pattern for Check Functions
-Tests for check functions use bashunit conventions. **CRITICAL**: Use a test-specific guard variable, NOT `HANA_HELPER_PROGVERSION`:
+Tests for check functions use bashunit conventions. **CRITICAL**: The guard variable goes inside `set_up_before_script()` and uses the format `_NNNN_test_loaded` (abbreviated, NOT the full check name):
 ```bash
 #!/usr/bin/env bash
 set -u
@@ -92,10 +116,6 @@ if [[ -z "${PROGRAM_DIR:-}" ]]; then
     [[ "$PROGRAM_DIR" == "${BASH_SOURCE[0]}" ]] && PROGRAM_DIR="."
 fi
 
-# CRITICAL: Use test-specific guard! Do NOT use HANA_HELPER_PROGVERSION
-[[ -n "${_NNNN_check_name_test_loaded:-}" ]] && return 0
-_NNNN_check_name_test_loaded=true
-
 # Mock variables for testing
 TEST_SOME_VALUE=''
 
@@ -103,24 +123,40 @@ TEST_SOME_VALUE=''
 LIB_FUNC_IS_RHEL() { return 1; }
 LIB_FUNC_IS_SLES() { return 0; }
 
+# Test functions are defined BEFORE set_up_before_script
+function test_example_case() {
+    #arrange
+    TEST_SOME_VALUE='expected'
+
+    #act
+    check_NNNN_check_name
+
+    #assert
+    if [[ $? -ne 0 ]]; then
+        bashunit::fail "Expected RC=0"
+    fi
+    assert_true true
+}
+
 function set_up_before_script() {
     set +eE
+
+    # CRITICAL: Guard inside set_up_before_script! Use _NNNN_test_loaded format
+    # Do NOT use HANA_HELPER_PROGVERSION - it breaks other tests
+    [[ -n "${_NNNN_test_loaded:-}" ]] && return 0
+    _NNNN_test_loaded=true
+
+    #shellcheck source=../saphana-logger-stubs
     source "${PROGRAM_DIR}/../saphana-logger-stubs"
+
+    #shellcheck source=../../lib/check/NNNN_check_name.check
     source "${PROGRAM_DIR}/../../lib/check/NNNN_check_name.check"
 }
 
 function set_up() {
     TEST_SOME_VALUE=''
     LIB_FUNC_IS_RHEL() { return 1; }
-}
-
-function test_example_case() {
-    TEST_SOME_VALUE='expected'
-    check_NNNN_check_name
-    if [[ $? -ne 0 ]]; then
-        bashunit::fail "Expected RC=0"
-    fi
-    assert_true true
+    LIB_FUNC_IS_SLES() { return 0; }
 }
 ```
 
@@ -128,12 +164,38 @@ function test_example_case() {
 
 **Why test-specific guards matter**: bashunit runs all test files in the same session. Using `HANA_HELPER_PROGVERSION` as a guard causes subsequent test files to skip loading their check functions, breaking those tests.
 
+**assert_check_processed helper** (defined in `_TEMPLATE.bashunit.sh.template`): Use this in tests to catch RC=99 (unprocessed) bugs early:
+```bash
+assert_check_processed() {
+    local rc=$1
+    local context="${2:-}"
+    if [[ ${rc} -eq 99 ]]; then
+        bashunit::fail "RC=99 (unprocessed) - check logic did not reach a conclusion${context:+ in }${context}"
+    fi
+}
+```
+
 See `scripts/tests/check/README.md` and `scripts/tests/check/_TEMPLATE.bashunit.sh.template` for detailed guidance.
 
 ### Code Quality Standards
-- **ShellCheck**: Configured via `.shellcheckrc` with specific rules enabled
+- **ShellCheck**: Configured via `.shellcheckrc` (enabled: `avoid-nullary-conditions`, `useless-use-of-cat`, `avoid-negated-conditions`; `external-sources=true`)
 - **Formatting**: Uses shfmt with `--indent 4 -ci -sr -kp`
 - **Style**: bashate validation with exceptions for E006, E043, E010
+
+### CI/CD Pipeline (GitHub Actions)
+- **CI** (`CI.yml`): Runs on all pushes and PRs to `main`. Steps:
+  - ShellCheck on `scripts/bin/saphana-*`, `scripts/bin/lib*`, and all `*.check` files
+  - bashunit tests with JUnit XML reports (uploaded as artifacts)
+  - bashate code format checking
+  - shfmt format checking (non-blocking, uses `|| true`)
+- **CD** (`CD.yml`): Triggered on version tags. Creates RPM, tar.xz, and tar.gz release artifacts with checksums.
+
+### Available Checksets
+Platform-specific check collections in `scripts/lib/checkset/`:
+- `SLESonX64only.checkset` - SLES on Intel/AMD x86_64
+- `RHELonX64only.checkset` - RHEL on Intel/AMD x86_64
+- `SLESonPoweronly.checkset` - SLES on IBM Power
+- `RHELonPoweronly.checkset` - RHEL on IBM Power
 
 ### Execution Modes
 - `./saphana-check.sh` - All checks
