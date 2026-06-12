@@ -29,6 +29,7 @@ function check_0011_os_kernel_knownissue_sles {
         ['SUSE TID 000022286']='SAP HANA swap and system hangs with THP on multi-NUMA node systems'
         ['GCP x4,c3,c4']='https://docs.cloud.google.com/sap/docs/certifications-sap-hana#hana-cert-table-oss'
         ['SUSE TID 000022558']='SAP HANA Backint backups are extremely slow on SLES 15 SP7'
+        ['SUSE TID 000022679']='Network performance issues with the Azure mana network driver'
     )
 
     # array 'release' 'lower boundary' 'upper boundary' 'Issue ID'
@@ -65,11 +66,12 @@ function check_0011_os_kernel_knownissue_sles {
     #                     )
 
     local -ar _sles_azure=(\
-                        '15.6' '6.4.0-150600.21.3'      '6.4.0-150600.23.30.0'      'SUSE bsc#1229891' \
-                        '15.5' '5.14.21-150500.53.2'    '5.14.21-150500.55.88.0'    'SUSE bsc#1229891' \
-                        '15.5' '5.14.21-150500.53.2'    '5.14.21-150500.55.7.0'     'SAP Note #3323613' \
-                        '15.4' '5.14.21-150400.22.1'    '5.14.21-150400.24.60.0'    'SAP Note #3323613' \
-                        '15.4' '5.14.21-150400.22.1'    '5.14.21-150400.24.55.0'    'SAP Note #1928533, M832ixs_v2 only' \
+                        '15.6' '6.4.0-150600.21.3'          '6.4.0-150600.23.30.0'      'SUSE bsc#1229891' \
+                        '15.5' '5.14.21-150500.55.127.1'    '5.14.21-150500.55.130.3'   'SUSE TID 000022679' \
+                        '15.5' '5.14.21-150500.53.2'        '5.14.21-150500.55.88.0'    'SUSE bsc#1229891' \
+                        '15.5' '5.14.21-150500.53.2'        '5.14.21-150500.55.7.0'     'SAP Note #3323613' \
+                        '15.4' '5.14.21-150400.22.1'        '5.14.21-150400.24.60.0'    'SAP Note #3323613' \
+                        '15.4' '5.14.21-150400.22.1'        '5.14.21-150400.24.55.0'    'SAP Note #1928533, M832ixs_v2 only' \
                         )
 
     local -ar _sles_gcp=(\
