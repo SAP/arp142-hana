@@ -13,12 +13,14 @@ function check_0811_uuidd_version {
     local -ar sles125=( '2.33.2-4.30.1' 'SAP Note #1984787' )
     local -ar sles154=( '2.37.2-150400.8.29.1' 'SUSE-RU-2024:0164-1,bsc#1210164' )
     local -ar sles155=( '2.37.4-150500.9.6.1'  'SUSE-RU-2024:0164-1,bsc#1210164' )
+    local -ar sles160=( '2.41.1-160000.2.2' 'SAP Note #3565382' )
     local -ar rhel86=( '2.32.1-39.el8_6' 'RHBA-2023:3054' )
     local -ar rhel88=( '2.32.1-41.el8_8' 'RHBA-2023:3054' )
     # MODIFICATION SECTION<<
 
     #1984787 - SUSE LINUX Enterprise Server 12: Installation notes
     #2578899 - SUSE Linux Enterprise Server 15: Installation Note
+    #3565382 - SUSE Linux Enterprise Server 16: Installation Note
     #1391070 - Linux UUID solutions
 
     #RHBA-2023:3054 - Bug Fix Advisory
@@ -44,6 +46,7 @@ function check_0811_uuidd_version {
 
             15.4)   _goodversion="${sles154[0]}" ; sapnote="${sles154[1]}" ;;
             15.5)   _goodversion="${sles155[0]}" ; sapnote="${sles155[1]}" ;;
+            16.*)   _goodversion="${sles160[0]}" ; sapnote="${sles160[1]}" ;;
 
             *)      logCheckSkipped 'CHECK not applicable for SLES release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"
                     _retval=3

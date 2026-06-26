@@ -11,6 +11,9 @@ function check_0004_os_hana_support_sles_ibmpower {
 
     # array                 'Platform'      'maj'   '01234567' (Minor Release)
     local -ar _sles_matrix_onprem=(\
+                            'POWER11'       '16'    '0------'   \
+                            'POWER10'       '16'    '0------'   \
+                            'POWER9'        '16'    '-------'   \
                             'POWER11'       '15'    '------67'  \
                             'POWER10'       '15'    '---34567'  \
                             'POWER9'        '15'    '-1234567'  \
@@ -20,6 +23,9 @@ function check_0004_os_hana_support_sles_ibmpower {
                         )
 
     local -ar _sles_matrix_ibmcloud=(\
+                            'POWER11'       '16'    '-------'   \
+                            'POWER10'       '16'    '-------'   \
+                            'POWER9'        '16'    '-------'   \
                             'POWER11'       '15'    '------67'  \
                             'POWER10'       '15'    '----4567'  \
                             'POWER9'        '15'    '----456-'  \
