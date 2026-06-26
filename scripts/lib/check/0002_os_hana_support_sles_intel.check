@@ -34,6 +34,16 @@ function check_0002_os_hana_support_sles_intel {
                         ''                      '-1234567'   \          #all others, e.g. TDI, Bare-Metal
                         )
 
+    local -ar _sles_16=(\
+                        'Microsoft Azure'       '------'   \
+                        'Amazon EC2'            '------'   \
+                        'IBM Cloud'             '------'   \
+                        'Google GCP'            '------'   \
+                        'Alibaba Cloud ECS'     '------'   \
+                        'Huawei Cloud'          '------'   \
+                        ''                      '0-----'   \          #all others, e.g. TDI, Bare-Metal
+                        )
+
     local -r sapnote='#2235581'
     # MODIFICATION SECTION<<
 
@@ -57,6 +67,7 @@ function check_0002_os_hana_support_sles_intel {
 
         12.5 )  : ;;
         15.* )  : ;;
+        16.* )  : ;;
 
         *)
             logCheckError "SLES version is NOT supported by SAP HANA (SAP Note ${sapnote:-}) (is: ${OS_VERSION})"
