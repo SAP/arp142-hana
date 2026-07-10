@@ -12,15 +12,16 @@ function check_0010_os_kernel_sles {
     # MODIFICATION SECTION>>
     #       array       'rel' 'goodnormalized_kernel'   'SAP Note'
     local -ar _sles_intel=(\
+                        '16.0' '6.12.0-160000.33.1'         '#3577842'  \
                         '15.7' '6.4.0-150700.53.6.1'        '#2684254,>1year'  \
                         '15.6' '6.4.0-150600.23.50.1'       '#2684254,>1year'  \
                         '15.5' '5.14.21-150500.55.116.1'    '#2684254,>1year'  \
                         '15.4' '5.14.21-150400.24.170.2'    '#2684254,>1year'  \
-
                         '12.5' '4.12.14-122.266.1'          '#2205917,>1year'  \
                         )
 
     local -ar _sles_ibmpower=(\
+                        '16.0' '6.12.0-160000.33.1'         '#3577842'  \
                         '15.7' '6.4.0-150700.53.6.1'        '#2684254,>1year'  \
                         '15.6' '6.4.0-150600.23.50.1'       '#2684254,>1year'  \
                         '15.5' '5.14.21-150500.55.116.1'    '#2684254,>1year'  \
@@ -33,6 +34,7 @@ function check_0010_os_kernel_sles {
 
     #2205917 - SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
     #2684254 - SAP HANA DB: Recommended OS settings for SLES 15 / SLES for SAP Applications 15
+    #3577842 - SAP HANA DB: Recommended OS settings for SLES 16 / SLES for SAP Applications 16
 
     local _platform
 

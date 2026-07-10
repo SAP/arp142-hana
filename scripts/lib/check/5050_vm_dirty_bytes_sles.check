@@ -9,6 +9,7 @@ function check_5050_vm_dirty_bytes_sles {
     # MODIFICATION SECTION>>
     local -r sapnote_sles12='#1984787'  # SUSE LINUX Enterprise Server 12: Installation notes
     local -r sapnote_sles15='#2578899'  # SUSE Linux Enterprise Server 15: Installation Note
+    local -r sapnote_sles16='#3565382'  # SUSE Linux Enterprise Server 16: Installation Note
 
     #                               parameter                       recommended_value
     local -ar _vm_parameter=(\
@@ -32,6 +33,7 @@ function check_5050_vm_dirty_bytes_sles {
         case "${OS_VERSION}" in
 
             15.* )  sapnote="${sapnote_sles15}" ;;
+            16.* )  sapnote="${sapnote_sles16}" ;;
             * )     sapnote="${sapnote_sles12}" ;;
 
         esac
