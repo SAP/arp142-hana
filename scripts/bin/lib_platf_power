@@ -24,20 +24,29 @@ function LIB_FUNC_TRANSFORM_POWER_POWERMODE {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 
-    # P9,P10,?P11
+    # P10,?P11
     # 0x0001: "Maximum Performance"
-    # 0x0002: "None"
-    # 0x0003: "Static"
-    # 0x0004: "Dynamic Performance"
+    # 0x0002: "None" ?
+    # 0x0003: "Power Saving"
     # default: "Unknown"
 
-    if [[ "${LIB_PLATF_POWER_PLATFORM_BASE:-}" =~ POWER(11|10|9) ]]; then
+    if [[ "${LIB_PLATF_POWER_PLATFORM_BASE:-}" =~ POWER(11|10) ]]; then
 
         case "${powermode}" in
             '0001')  : 'Maximum Performance' ;;
+            '0002')  : 'Static' ;;
+            '0003')  : 'Power Saving' ;;
+            *)       : 'Unknown';;
+        esac
+        powermode="$_"
+
+    elif [[ "${LIB_PLATF_POWER_PLATFORM_BASE:-}" == 'POWER9' ]]; then
+
+        # 0x0001: "Maximum Performance" or "Dynamic, Favor Performance" (ambiguous)
+        case "${powermode}" in
+            '0001')  : 'Dynamic, Favor Performance' ;;
             '0002')  : 'None' ;;
             '0003')  : 'Static' ;;
-            '0004')  : 'Dynamic Performance' ;;
             *)       : 'Unknown';;
         esac
         powermode="$_"

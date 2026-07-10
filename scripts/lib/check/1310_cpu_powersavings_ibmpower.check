@@ -8,6 +8,8 @@ function check_1310_cpu_powersavings_ibmpower {
 
     # MODIFICATION SECTION>>
     local -r sapnote='#3684765'
+    local path_to_value_desc="${path_to_value_desc:-/sys/firmware/papr/energy_scale_info/1/value_desc}"
+    local -r expected_value_desc='Maximum Performance'
     # MODIFICATION SECTION<<
 
     #3684765 - IBM Power Systems: Recommended IBM EnergyScale settings
@@ -18,15 +20,42 @@ function check_1310_cpu_powersavings_ibmpower {
         logCheckSkipped 'Not running on IBM Power. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif [[ -z ${LIB_PLATF_POWER_POWERMODE:-} ]]; then
+    fi
 
-        logCheckError "Power Savings Mode NOT known (SAP Note ${sapnote:-}) (is: Unknown, should be: Maximum Performance)"
+    #CHECK - preferred interface: /sys/firmware/papr/energy_scale_info/1/value_desc
+    if [[ ${_retval} -eq 99 ]] && [[ -r "${path_to_value_desc}" ]]; then
+
+        local value_desc=''
+        value_desc=$(< "${path_to_value_desc}")
+        value_desc="$(LIB_FUNC_TRIM "${value_desc}")"
+
+        logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # value_desc file: ${path_to_value_desc}; content: '${value_desc:-}'"
+
+        if [[ "${value_desc}" == "${expected_value_desc}" ]]; then
+
+            logCheckOk "Power Savings Mode set as recommended (SAP Note ${sapnote:-}) (is: ${value_desc})"
+            _retval=0
+
+        else
+
+            logCheckError "Power Savings Mode NOT set as recommended (SAP Note ${sapnote:-}) (is: ${value_desc:-Unknown}, should be: ${expected_value_desc})"
+            _retval=2
+
+        fi
+
+    fi
+
+    #CHECK - fallback: lparcfg-derived LIB_PLATF_POWER_POWERMODE
+    if [[ ${_retval} -eq 99 ]] && [[ -z ${LIB_PLATF_POWER_POWERMODE:-} ]]; then
+
+        logCheckError "Power Savings Mode NOT known (SAP Note ${sapnote:-}) (is: Unknown, should be: ${expected_value_desc})"
         _retval=2
 
     fi
 
-    #CHECK
     if [[ ${_retval} -eq 99 ]]; then
+
+        logCheckWarning 'Legacy check: Power Savings Mode value derived from lparcfg file (power_mode_data)'
 
         # The power mode result is defined as
         # XXXX XXXX XXXX XXXX
@@ -37,11 +66,9 @@ function check_1310_cpu_powersavings_ibmpower {
         #e.g. 0002000000020002
         local pwr_system_mode
         pwr_system_mode="${LIB_PLATF_POWER_POWERMODE:0:4}"
-        local pwr_partition_mode
-        pwr_partition_mode="${LIB_PLATF_POWER_POWERMODE: -4}"
 
-        # P9,P10,P11
-        # 0x0001: "Maximum Performance"
+        # P9
+        # 0x0001: "Maximum Performance" or "Dynamic, Favor Performance" (ambiguous)
 
         local pwr_system_txt
         LIB_FUNC_TRANSFORM_POWER_POWERMODE "${pwr_system_mode}"
@@ -49,21 +76,12 @@ function check_1310_cpu_powersavings_ibmpower {
 
         logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # PowerSystemMode : ${pwr_system_mode:-}; PowerSystemText : ${pwr_system_txt:-}; PowerPartMode : ${pwr_partition_mode:-}}"
 
-
-        if [[ "${pwr_system_mode}" != "${pwr_partition_mode}" ]]; then
-
-            local pwr_partition_txt
-            LIB_FUNC_TRANSFORM_POWER_POWERMODE "${pwr_partition_mode}"
-            pwr_partition_txt="${RETURN_POWER_POWERMODE}"
-
-            logCheckInfo "Power Savings Mode different for System and Partition. (System: ${pwr_system_txt:-}, Partition: ${pwr_partition_txt:-})"
-
-        fi
-
         if [[ "${pwr_system_mode}" == '0001' ]];then
 
-            logCheckOk "Power Savings Mode set as recommended (SAP Note ${sapnote:-}) (is: ${pwr_system_txt})"
-            _retval=0
+            logCheckWarning 'Power Savings Mode value 0001 is ambiguous and can map to "Maximum Performance" or "Dynamic, Favor Performance".'
+            logCheckWarning 'Verify the exact mode manually - either ppc64_cpu or CPU frequency specs can be used to determine the actual mode.'
+            logCheckWarning "Power Savings Mode value requires manual verification (SAP Note ${sapnote:-}) (is: ${pwr_system_txt})"
+            _retval=1
 
         else
 
