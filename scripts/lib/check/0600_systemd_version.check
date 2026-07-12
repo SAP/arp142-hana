@@ -18,8 +18,8 @@ function check_0600_systemd_version {
     local -ar sles156=( '254.13-150600.4.15.1' '#2684254' )
     local -ar sles160=( '257.7-160000.2.2' '#3577842' )
     local -ar rhel7=( '219-78.el7_9.11' '#2292690' )
-    local -ar rhel8=( '239-45.el8_4.15' '#2777782' )
-    local -ar rhel9=( '250-6.el9_0.2' '#3108302' )
+    local -ar rhel8=( '239-74.el8_8.6' '#2777782' )
+    local -ar rhel9=( '252-14.el9_2.9' '#3108302' )
     local -ar rhel10=( '257-9.el10' '#3562919' )
     # MODIFICATION SECTION<<
 

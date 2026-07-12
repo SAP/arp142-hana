@@ -69,14 +69,15 @@ readonly -a SLES_SUPPORTED_VERSIONS=(
 readonly -a RHEL_EOL_VERSIONS=(
     '[0-6].*'       # RHEL 0-6.x - all versions EOL
     '7.[0-8]'       # RHEL 7.0 through 7.8 - EOL
-    '8.[0-5]'       # RHEL 8.0 through 8.5 - EOL
+    '8.[0-7]'       # RHEL 8.0 through 8.7 - EOL
+    '9.[0-1]'       # RHEL 9.0 through 9.1 - EOL
 )
 
 # RHEL supported versions
 readonly -a RHEL_SUPPORTED_VERSIONS=(
     '7.9'           # RHEL 7.9 (minimum supported)
-    '8.[6-9]'       # RHEL 8.6-8.9
+    '8.8'           # RHEL 8.8
     '8.10'          # RHEL 8.10 and above
-    '9.[0-6]'       # RHEL 9.0-9.6
+    '9.[2-6]'       # RHEL 9.2-9.6
     '10.0'          # RHEL 10.0
 )

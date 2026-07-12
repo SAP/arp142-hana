@@ -24,24 +24,21 @@ function check_0007_os_hana_release_rhel {
                         '8.10' '23456'      '2.00.059.12'    '2.00.059.99'   \
                         '8.8' '67'          '2.00.067.01'    '2.00.099.99'   \
                         '8.8' '2345'        '2.00.059.08'    '2.00.059.99'   \
-                        '8.6' '67'          '2.00.063.00'    '2.00.099.99'   \
-                        '8.6' '2345'        '2.00.059.02'    '2.00.059.99'   \
 
                         '7.9' '234567'      '2.00.054.00'    '2.00.059.99'   \
                         )
 
-    local -ar _rhel_intel=(\
-                        '9.0' '67'          '2.00.067.01'    '2.00.099.99'   \
-                        '9.0' '2345'        '2.00.059.08'    '2.00.059.99'   \
-                        )
+    # local -ar _rhel_intel=(\
+    #                     '9.0' '67'          '2.00.067.01'    '2.00.099.99'   \
+    #                     '9.0' '2345'        '2.00.059.08'    '2.00.059.99'   \
+    #                     )
 
-    local -ar _rhel_ibmpower=(\
-                        '9.0' '67'          '2.00.067.01'    '2.00.067.04'   \
-                        '9.0' '2345'        '2.00.059.08'    '2.00.059.99'   \
-                        )
+    # local -ar _rhel_ibmpower=(\
+    #                     '9.0' '67'          '2.00.067.01'    '2.00.067.04'   \
+    #                     '9.0' '2345'        '2.00.059.08'    '2.00.059.99'   \
+    #                     )
 
     local sapnote='2235581'
-    local -r sapnote_rhel90='3318049'
     # MODIFICATION SECTION<<
 
     #2235581 - SAP HANA: Supported Operating Systems
@@ -58,21 +55,18 @@ function check_0007_os_hana_release_rhel {
         logCheckSkipped 'No SAP HANA instance found. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif LIB_FUNC_IS_INTEL; then
+    # elif LIB_FUNC_IS_INTEL; then
 
-        _rhel_all+=("${_rhel_intel[@]}")
+    #     _rhel_all+=("${_rhel_intel[@]}")
 
-    elif LIB_FUNC_IS_IBMPOWER; then
+    # elif LIB_FUNC_IS_IBMPOWER; then
 
-        _rhel_all+=("${_rhel_ibmpower[@]}")
+    #     _rhel_all+=("${_rhel_ibmpower[@]}")
 
     fi
 
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
-
-        #3318049 - Indexserver Crashes When Running on RHEL 9.x
-        [[ "${OS_VERSION}" == '9.0' ]] && sapnote+=",${sapnote_rhel90}"
 
         local _hana_lower
         local _hana_upper

@@ -25,24 +25,24 @@ function check_0003_os_hana_support_rhel_intel {
 
     # array             'Platform'              '0123456789A' (Minor Release)
     local -ar _rhel_8=(\
-                        'Microsoft Azure'       '------6-8-A'   \
-                        'Amazon EC2'            '------6-8-A'   \
-                        'IBM Cloud'             '------6-8-A'   \
-                        'Google GCP'            '------6-8-A'   \
+                        'Microsoft Azure'       '--------8-A'   \
+                        'Amazon EC2'            '--------8-A'   \
+                        'IBM Cloud'             '--------8-A'   \
+                        'Google GCP'            '--------8-A'   \
                         'Alibaba Cloud ECS'     '-----------'   \
                         'Huawei Cloud'          '-----------'   \
-                        ''                      '------6-8-A'   \          #all others, e.g. TDI, Bare-Metal
+                        ''                      '--------8-A'   \          #all others, e.g. TDI, Bare-Metal
                         )
 
     # array             'Platform'              '0123456789A' (Minor Release)
     local -ar _rhel_9=(\
-                        'Microsoft Azure'       '0-2-4-6----'   \
-                        'Amazon EC2'            '0-2-4-6----'   \
-                        'IBM Cloud'             '0-2-4-6----'   \
-                        'Google GCP'            '0-2-4-6----'   \
+                        'Microsoft Azure'       '--2-4-6----'   \
+                        'Amazon EC2'            '--2-4-6----'   \
+                        'IBM Cloud'             '--2-4-6----'   \
+                        'Google GCP'            '--2-4-6----'   \
                         'Alibaba Cloud ECS'     '-----------'   \
                         'Huawei Cloud'          '-----------'   \
-                        ''                      '0-2-4-6----'   \          #all others, e.g. TDI, Bare-Metal
+                        ''                      '--2-4-6----'   \          #all others, e.g. TDI, Bare-Metal
                         )
 
     # array             'Platform'              '0123456789A' (Minor Release)
