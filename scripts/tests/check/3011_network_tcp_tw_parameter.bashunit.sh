@@ -316,12 +316,12 @@ function test_sles_15_1_boundary() {
     assert_true true
 }
 
-function test_rhel_9_0_correct_values() {
+function test_rhel_9_6_correct_values() {
 
     #arrange
     is_sles=1
     is_rhel=0
-    OS_VERSION="9.0"
+    OS_VERSION="9.6"
     mock_tcp_tw_reuse_value=2
     mock_tcp_tw_recycle_value=0
     mock_tcp_tw_recycle_exists=true
@@ -332,7 +332,7 @@ function test_rhel_9_0_correct_values() {
 
     #assert
     if [[ $? -ne 0 ]]; then
-        bashunit::fail "Expected RC=0 (ok) for RHEL 9.0 correct values"
+        bashunit::fail "Expected RC=0 (ok) for RHEL 9.6 correct values"
     fi
     assert_true true
 }

@@ -11,10 +11,8 @@ function check_0450_tunedprofiles-saphana_rhel {
 
     # MODIFICATION SECTION>>
     local -ar rhel79=( '2.11.0-13.el7_9.0'  '#2292690' )
-    local -ar rhel86=( '2.20.0-1.el8_6.3'   '#2777782' )
     local -ar rhel88=( '2.20.0-2.el8_8.2'   '#2777782' )
     local -ar rhel8A=( '2.22.1-6.el8'       '#2777782' )
-    local -ar rhel90=( '2.24.0-1.el9'       '#3108302' )
     local -ar rhel92=( '2.24.0-1.el9'       '#3108302' )
     local -ar rhel94=( '2.24.0-1.el9'       '#3108302' )
     local -ar rhel96=( '2.25.1-2.el9'       '#3108302' )
@@ -41,11 +39,9 @@ function check_0450_tunedprofiles-saphana_rhel {
 
             7.9 )  _goodversion="${rhel79[0]}" ; sapnote="${rhel79[1]}" ;;
 
-            8.6 )  _goodversion="${rhel86[0]}" ; sapnote="${rhel86[1]}" ;;
             8.8 )  _goodversion="${rhel88[0]}" ; sapnote="${rhel88[1]}" ;;
             8.10)  _goodversion="${rhel8A[0]}" ; sapnote="${rhel8A[1]}" ;;
 
-            9.0 )  _goodversion="${rhel90[0]}" ; sapnote="${rhel90[1]}" ;;
             9.2 )  _goodversion="${rhel92[0]}" ; sapnote="${rhel92[1]}" ;;
             9.4 )  _goodversion="${rhel94[0]}" ; sapnote="${rhel94[1]}" ;;
             9.6 )  _goodversion="${rhel96[0]}" ; sapnote="${rhel96[1]}" ;;

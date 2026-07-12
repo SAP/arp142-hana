@@ -14,11 +14,11 @@ function check_0005_os_hana_support_rhel_ibmpower {
                             'POWER11'       '10'   '0------'     \
                             'POWER10'       '10'   '0------'     \
                             'POWER11'       '9'    '------6'     \
-                            'POWER10'       '9'    '0-2-4-6'     \
-                            'POWER9'        '9'    '0-2-4-6'     \
-                            'POWER10'       '8'    '------6-8-A' \
+                            'POWER10'       '9'    '--2-4-6'     \
+                            'POWER9'        '9'    '--2-4-6'     \
+                            'POWER10'       '8'    '--------8-A' \
                             'POWER11'       '8'    '-----------' \
-                            'POWER9'        '8'    '------6-8-A' \
+                            'POWER9'        '8'    '--------8-A' \
                             'POWER9'        '7'    '----------'  \
                             )
     local -ar _rhel_matrix_ibmcloud=(\
@@ -28,8 +28,8 @@ function check_0005_os_hana_support_rhel_ibmpower {
                             'POWER10'       '9'    '--2-4-6'        \
                             'POWER9'        '9'    '--2-4'          \
                             'POWER11'       '8'    '-----------'    \
-                            'POWER10'       '8'    '------6-8-A'    \
-                            'POWER9'        '8'    '------6-8-A'    \
+                            'POWER10'       '8'    '--------8-A'    \
+                            'POWER9'        '8'    '--------8-A'    \
                         )
 
     local -r sapnote='#2235581,#2188482'

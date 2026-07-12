@@ -14,7 +14,6 @@ function check_0811_uuidd_version {
     local -ar sles154=( '2.37.2-150400.8.29.1' 'SUSE-RU-2024:0164-1,bsc#1210164' )
     local -ar sles155=( '2.37.4-150500.9.6.1'  'SUSE-RU-2024:0164-1,bsc#1210164' )
     local -ar sles160=( '2.41.1-160000.2.2' 'SAP Note #3565382' )
-    local -ar rhel86=( '2.32.1-39.el8_6' 'RHBA-2023:3054' )
     local -ar rhel88=( '2.32.1-41.el8_8' 'RHBA-2023:3054' )
     # MODIFICATION SECTION<<
 
@@ -57,7 +56,6 @@ function check_0811_uuidd_version {
 
         case "${OS_VERSION}" in
 
-            8.6)    _goodversion="${rhel86[0]}" ; sapnote="${rhel86[1]}" ;;
             8.8)    _goodversion="${rhel88[0]}" ; sapnote="${rhel88[1]}" ;;
 
             *)      logCheckSkipped 'CHECK not applicable for RHEL release' "(is: ${OS_VERSION}). Skipping <${FUNCNAME[0]}>"

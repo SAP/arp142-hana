@@ -144,7 +144,7 @@ function test_numa_disabled_rhel() {
     LIB_PLATF_CPU_NUMANODES=1
     LIB_PLATF_CPU_SOCKETS=4
     LIB_PLATF_CPU_MODELID=79
-    OS_VERSION='8.6'
+    OS_VERSION='8.10'
 
     #act
     check_1210_cpu_subnuma_intel
@@ -376,7 +376,7 @@ function test_rhel8_note_assignment() {
     LIB_PLATF_CPU_NUMANODES=2
     LIB_PLATF_CPU_SOCKETS=2
     LIB_PLATF_CPU_MODELID=85
-    OS_VERSION='8.6'
+    OS_VERSION='8.10'
 
     #act
     check_1210_cpu_subnuma_intel

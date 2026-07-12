@@ -82,10 +82,10 @@ function test_validate_os_rhel_supported() {
         return
     fi
 
-    OS_VERSION='8.6'
+    OS_VERSION='8.8'
     LIB_FUNC_VALIDATE_OS
     if [[ $? -ne 0 ]]; then
-        bashunit::fail "RHEL 8.6 should be supported"
+        bashunit::fail "RHEL 8.8 should be supported"
         return
     fi
 

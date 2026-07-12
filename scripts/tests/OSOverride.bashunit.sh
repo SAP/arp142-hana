@@ -58,7 +58,7 @@ function test_os_override_rhel_valid() {
 function test_os_override_ols_valid() {
     # Test valid Oracle Linux override
 
-    export SAPHANA_CHECK_OS_OVERRIDE='OLS:8.6'
+    export SAPHANA_CHECK_OS_OVERRIDE='OLS:8.10'
 
     # Test in subshell to avoid affecting global state
     local result
@@ -72,7 +72,7 @@ function test_os_override_ols_valid() {
     local os_version="${result##*|}"
 
     assert_equals 'Linux OLS' "${os_name}"
-    assert_equals '8.6' "${os_version}"
+    assert_equals '8.10' "${os_version}"
 
     unset SAPHANA_CHECK_OS_OVERRIDE
 }
