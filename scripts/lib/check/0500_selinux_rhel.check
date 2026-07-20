@@ -11,41 +11,76 @@ function check_0500_selinux_rhel {
     local -r sapnote_rhel8='#2777782'   # 2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
     local -r sapnote_rhel9='#3108302'   # 3108302 - SAP HANA DB: Recommended OS Settings for RHEL 9
     local -r sapnote_rhel10='#3562919'  # 3562919 - SAP HANA DB: Recommended OS Settings for RHEL 10
+    local -r sapnote_sles16='#3577842'  # 3577842 - SAP HANA DB: Recommended OS settings for SLES 16
+
+    local allowed_modes='Disabled'
+    local allowed_modes_kernel612='Disabled or Permissive'
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS
-    if ! LIB_FUNC_IS_RHEL ; then
+    if ! LIB_FUNC_IS_RHEL && ! LIB_FUNC_IS_SLES ; then
 
-        logCheckSkipped 'Linux distribution is not RHEL. Skipping' "<${FUNCNAME[0]}>"
+        logCheckSkipped 'Linux distribution is not RHEL or SLES. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
     else
         local sapnote
 
-        case "${OS_VERSION}" in
+        if LIB_FUNC_IS_RHEL; then
 
-            7.*)    sapnote="${sapnote_rhel7}" ;;
-            8.*)    sapnote="${sapnote_rhel8}" ;;
-            9.*)    sapnote="${sapnote_rhel9}" ;;
-            10.*)   sapnote="${sapnote_rhel10}" ;;
+            case "${OS_VERSION}" in
 
-            *)
-                    logCheckWarning 'CHECK does not support RHEL release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
-                    _retval=1 ;;
+                7.*)    sapnote="${sapnote_rhel7}" ;;
+                8.*)    sapnote="${sapnote_rhel8}" ;;
+                9.*)    sapnote="${sapnote_rhel9}" ;;
+                10.*)   sapnote="${sapnote_rhel10}" ; allowed_modes="${allowed_modes_kernel612}" ;;
 
-        esac
+                *)
+                        logCheckWarning 'CHECK does not support RHEL release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                        _retval=1 ;;
+
+            esac
+
+        elif LIB_FUNC_IS_SLES; then
+
+            case "${OS_VERSION}" in
+
+                12.*)   allowed_modes='Skip' ;;
+                15.*)   allowed_modes='Skip' ;;
+                16.*)   sapnote="${sapnote_sles16}" ; allowed_modes="${allowed_modes_kernel612}" ;;
+
+                *)
+                        logCheckWarning 'CHECK does not support SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                        _retval=1 ;;
+
+            esac
+
+        fi
+
+        if [[ "${allowed_modes}" == 'Skip' ]]; then
+
+            logCheckSkipped 'Not running on SELinux technology aware system. Skipping' "<${FUNCNAME[0]}>"
+            _retval=3
+
+        fi
 
     fi
 
     # CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-        if ! /usr/sbin/getenforce | grep -q 'Disabled' ; then
-            logCheckError "SELinux is not disabled (SAP Note ${sapnote:-})"
-            _retval=2
-        else
-            logCheckOk "SELinux is disabled (SAP Note ${sapnote:-})"
+        local selinux_mode="${TEST_SELINUX_MODE:-$(/usr/sbin/getenforce)}"
+
+        if LIB_FUNC_STRINGCONTAIN "${allowed_modes}" "${selinux_mode}"; then
+
+            logCheckOk "SELinux mode is ${selinux_mode}. Allowed: ${allowed_modes} (SAP Note ${sapnote:-})"
             _retval=0
+
+        else
+
+            logCheckError "SELinux mode is ${selinux_mode}. Allowed: ${allowed_modes} (SAP Note ${sapnote:-})"
+            _retval=2
+
         fi
 
     fi
