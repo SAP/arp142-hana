@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function check_0500_selinux_rhel {
+function check_0500_selinux {
 
     logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
 

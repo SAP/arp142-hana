@@ -39,7 +39,7 @@ function test_non_rhel_non_sles_skipped() {
     LIB_FUNC_IS_SLES() { return 1 ; }
 
     #act
-    check_0500_selinux_rhel
+    check_0500_selinux
     local rc=$?
 
     #assert
@@ -58,7 +58,7 @@ function test_rhel9_requires_disabled() {
     TEST_SELINUX_MODE='Disabled'
 
     #act
-    check_0500_selinux_rhel
+    check_0500_selinux
     local rc=$?
 
     #assert
@@ -78,7 +78,7 @@ function test_rhel7_requires_disabled() {
     TEST_SELINUX_MODE='Disabled'
 
     #act
-    check_0500_selinux_rhel
+    check_0500_selinux
     local rc=$?
 
     #assert
@@ -98,7 +98,7 @@ function test_rhel8_requires_disabled() {
     TEST_SELINUX_MODE='Disabled'
 
     #act
-    check_0500_selinux_rhel
+    check_0500_selinux
     local rc=$?
 
     #assert
@@ -118,7 +118,7 @@ function test_rhel9_permissive_is_error() {
     TEST_SELINUX_MODE='Permissive'
 
     #act
-    check_0500_selinux_rhel
+    check_0500_selinux
     local rc=$?
 
     #assert
@@ -138,7 +138,7 @@ function test_rhel10_permissive_is_ok() {
     TEST_SELINUX_MODE='Permissive'
 
     #act
-    check_0500_selinux_rhel
+    check_0500_selinux
     local rc=$?
 
     #assert
@@ -158,7 +158,7 @@ function test_rhel10_disabled_is_ok() {
     TEST_SELINUX_MODE='Disabled'
 
     #act
-    check_0500_selinux_rhel
+    check_0500_selinux
     local rc=$?
 
     #assert
@@ -178,7 +178,7 @@ function test_rhel10_enforcing_is_error() {
     TEST_SELINUX_MODE='Enforcing'
 
     #act
-    check_0500_selinux_rhel
+    check_0500_selinux
     local rc=$?
 
     #assert
@@ -198,7 +198,7 @@ function test_rhel9_enforcing_is_error() {
     TEST_SELINUX_MODE='Enforcing'
 
     #act
-    check_0500_selinux_rhel
+    check_0500_selinux
     local rc=$?
 
     #assert
@@ -218,7 +218,7 @@ function test_sles12_skipped() {
     TEST_SELINUX_MODE='Disabled'
 
     #act
-    check_0500_selinux_rhel
+    check_0500_selinux
     local rc=$?
 
     #assert
@@ -237,7 +237,7 @@ function test_sles15_skipped() {
     TEST_SELINUX_MODE='Permissive'
 
     #act
-    check_0500_selinux_rhel
+    check_0500_selinux
     local rc=$?
 
     #assert
@@ -256,7 +256,7 @@ function test_sles16_permissive_is_ok() {
     TEST_SELINUX_MODE='Permissive'
 
     #act
-    check_0500_selinux_rhel
+    check_0500_selinux
     local rc=$?
 
     #assert
@@ -276,7 +276,7 @@ function test_sles16_disabled_is_ok() {
     TEST_SELINUX_MODE='Disabled'
 
     #act
-    check_0500_selinux_rhel
+    check_0500_selinux
     local rc=$?
 
     #assert
@@ -296,7 +296,7 @@ function test_sles16_enforcing_is_error() {
     TEST_SELINUX_MODE='Enforcing'
 
     #act
-    check_0500_selinux_rhel
+    check_0500_selinux
     local rc=$?
 
     #assert
@@ -316,7 +316,7 @@ function test_unsupported_sles_release_warns() {
     TEST_SELINUX_MODE='Disabled'
 
     #act
-    check_0500_selinux_rhel
+    check_0500_selinux
     local rc=$?
 
     #assert
@@ -338,8 +338,8 @@ function set_up_before_script() {
     #shellcheck source=../saphana-logger-stubs
     source "${PROGRAM_DIR}/../saphana-logger-stubs"
 
-    #shellcheck source=../../lib/check/0500_selinux_rhel.check
-    source "${PROGRAM_DIR}/../../lib/check/0500_selinux_rhel.check"
+    #shellcheck source=../../lib/check/0500_selinux.check
+    source "${PROGRAM_DIR}/../../lib/check/0500_selinux.check"
 
 }
 
