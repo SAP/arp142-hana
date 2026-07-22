@@ -15,7 +15,7 @@
 0350_timesync
 0400_glibc_x64
 0450_tunedprofiles-saphana_rhel
-0500_selinux_rhel
+0500_selinux
 0600_systemd_version
 0700_sysstat
 0800_sap_host_agent
