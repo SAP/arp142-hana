@@ -17,11 +17,37 @@ _mock_dir=''
 # Mock variables for kernel version check
 OS_VERSION=''
 OS_LEVEL=''
+_mock_cmp_mode='const'
+_mock_cmp_const=0
+_mock_cmp_first=2
+_mock_cmp_second=0
+_mock_cmp_calls=0
 
 # Mock functions - defaults: not SLES, no kernel normalization/comparison
 LIB_FUNC_IS_SLES() { return 1; }
+LIB_FUNC_IS_RHEL() { return 1; }
 LIB_FUNC_NORMALIZE_KERNELn() { :; }
-LIB_FUNC_COMPARE_VERSIONS() { return 0; }
+LIB_FUNC_COMPARE_VERSIONS() {
+    if [[ "${_mock_cmp_mode}" == 'seq2' ]]; then
+        ((_mock_cmp_calls++))
+        [[ ${_mock_cmp_calls} -eq 1 ]] && return "${_mock_cmp_first}"
+        return "${_mock_cmp_second}"
+    fi
+    return "${_mock_cmp_const}"
+}
+
+function mock_compare_const() {
+    _mock_cmp_mode='const'
+    _mock_cmp_const=$1
+    _mock_cmp_calls=0
+}
+
+function mock_compare_seq2() {
+    _mock_cmp_mode='seq2'
+    _mock_cmp_first=$1
+    _mock_cmp_second=$2
+    _mock_cmp_calls=0
+}
 
 function test_thp_defrag_not_configurable() {
 
@@ -192,8 +218,9 @@ function set_up() {
 
     # Default: not SLES (existing tests don't need kernel version logic)
     LIB_FUNC_IS_SLES() { return 1; }
+    LIB_FUNC_IS_RHEL() { return 1; }
     LIB_FUNC_NORMALIZE_KERNELn() { :; }
-    LIB_FUNC_COMPARE_VERSIONS() { return 0; }
+    mock_compare_const 0
 
     # Override the check function to use mock paths using bash parameter expansion
     local _func_def
@@ -230,8 +257,7 @@ function test_sles15sp5_fixed_kernel_defaults_ok() {
     OS_LEVEL='5.14.21-150500.55.136.1-default'
     LIB_FUNC_NORMALIZE_KERNELn() { :; }
     # 1st call: OS_VERSION 15.5 < 15.8 -> 2, 2nd call: kernel equal -> 0
-    local -i _cmp_call=0
-    LIB_FUNC_COMPARE_VERSIONS() { ((_cmp_call++)); [[ ${_cmp_call} -eq 1 ]] && return 2; return 0; }
+    mock_compare_seq2 2 0
 
     mkdir -p "${_mock_dir}/sys/kernel/mm/transparent_hugepage/khugepaged"
     echo 'always [madvise] never' > "${_mock_dir}/sys/kernel/mm/transparent_hugepage/enabled"
@@ -257,8 +283,7 @@ function test_sles15sp6_fixed_kernel_defaults_ok() {
     OS_LEVEL='6.4.0-150600.23.90.1-default'
     LIB_FUNC_NORMALIZE_KERNELn() { :; }
     # 1st call: OS_VERSION 15.6 < 15.8 -> 2, 2nd call: kernel higher -> 1
-    local -i _cmp_call=0
-    LIB_FUNC_COMPARE_VERSIONS() { ((_cmp_call++)); [[ ${_cmp_call} -eq 1 ]] && return 2; return 1; }
+    mock_compare_seq2 2 1
 
     mkdir -p "${_mock_dir}/sys/kernel/mm/transparent_hugepage/khugepaged"
     echo 'always [madvise] never' > "${_mock_dir}/sys/kernel/mm/transparent_hugepage/enabled"
@@ -284,8 +309,7 @@ function test_sles15sp5_fixed_kernel_wrong_defrag_always() {
     OS_LEVEL='5.14.21-150500.55.136.1-default'
     LIB_FUNC_NORMALIZE_KERNELn() { :; }
     # 1st call: OS_VERSION 15.5 < 15.8 -> 2, 2nd call: kernel equal -> 0
-    local -i _cmp_call=0
-    LIB_FUNC_COMPARE_VERSIONS() { ((_cmp_call++)); [[ ${_cmp_call} -eq 1 ]] && return 2; return 0; }
+    mock_compare_seq2 2 0
 
     mkdir -p "${_mock_dir}/sys/kernel/mm/transparent_hugepage/khugepaged"
     echo 'always [madvise] never' > "${_mock_dir}/sys/kernel/mm/transparent_hugepage/enabled"
@@ -311,8 +335,7 @@ function test_sles15sp5_fixed_kernel_wrong_defrag_never() {
     OS_LEVEL='5.14.21-150500.55.136.1-default'
     LIB_FUNC_NORMALIZE_KERNELn() { :; }
     # 1st call: OS_VERSION 15.5 < 15.8 -> 2, 2nd call: kernel equal -> 0
-    local -i _cmp_call=0
-    LIB_FUNC_COMPARE_VERSIONS() { ((_cmp_call++)); [[ ${_cmp_call} -eq 1 ]] && return 2; return 0; }
+    mock_compare_seq2 2 0
 
     mkdir -p "${_mock_dir}/sys/kernel/mm/transparent_hugepage/khugepaged"
     echo 'always [madvise] never' > "${_mock_dir}/sys/kernel/mm/transparent_hugepage/enabled"
@@ -338,7 +361,7 @@ function test_sles15sp5_old_kernel_checks_defrag() {
     OS_LEVEL='5.14.21-150500.55.100.1-default'
     LIB_FUNC_NORMALIZE_KERNELn() { :; }
     # Both calls return 2: OS_VERSION < 15.8, kernel < fixed
-    LIB_FUNC_COMPARE_VERSIONS() { return 2; }
+    mock_compare_const 2
 
     mkdir -p "${_mock_dir}/sys/kernel/mm/transparent_hugepage/khugepaged"
     echo 'always [madvise] never' > "${_mock_dir}/sys/kernel/mm/transparent_hugepage/enabled"
@@ -364,8 +387,7 @@ function test_sles15sp7_fixed_kernel_defaults_ok() {
     OS_LEVEL='6.4.0-150700.53.31.1-default'
     LIB_FUNC_NORMALIZE_KERNELn() { :; }
     # 1st call: OS_VERSION 15.7 < 15.8 -> 2, 2nd call: kernel equal -> 0
-    local -i _cmp_call=0
-    LIB_FUNC_COMPARE_VERSIONS() { ((_cmp_call++)); [[ ${_cmp_call} -eq 1 ]] && return 2; return 0; }
+    mock_compare_seq2 2 0
 
     mkdir -p "${_mock_dir}/sys/kernel/mm/transparent_hugepage/khugepaged"
     echo 'always [madvise] never' > "${_mock_dir}/sys/kernel/mm/transparent_hugepage/enabled"
@@ -391,7 +413,7 @@ function test_sles_unknown_version_checks_defrag() {
     OS_LEVEL='5.14.21-150400.24.100.1-default'
     LIB_FUNC_NORMALIZE_KERNELn() { :; }
     # OS_VERSION 15.4 < 15.8 -> 2, no matching version in list so no 2nd call
-    LIB_FUNC_COMPARE_VERSIONS() { return 2; }
+    mock_compare_const 2
 
     mkdir -p "${_mock_dir}/sys/kernel/mm/transparent_hugepage/khugepaged"
     echo 'always [madvise] never' > "${_mock_dir}/sys/kernel/mm/transparent_hugepage/enabled"
@@ -417,7 +439,7 @@ function test_sles15sp5_old_kernel_defrag_ok() {
     OS_LEVEL='5.14.21-150500.55.100.1-default'
     LIB_FUNC_NORMALIZE_KERNELn() { :; }
     # Both calls return 2: OS_VERSION < 15.8, kernel < fixed
-    LIB_FUNC_COMPARE_VERSIONS() { return 2; }
+    mock_compare_const 2
 
     mkdir -p "${_mock_dir}/sys/kernel/mm/transparent_hugepage/khugepaged"
     echo 'always [madvise] never' > "${_mock_dir}/sys/kernel/mm/transparent_hugepage/enabled"
@@ -447,7 +469,7 @@ function test_sles15sp8_always_fixed_defaults_ok() {
     OS_LEVEL='6.4.0-150800.10.1.1-default'
     LIB_FUNC_NORMALIZE_KERNELn() { :; }
     # OS_VERSION 15.8 == 15.8 -> 0 (equal, not less), no kernel check
-    LIB_FUNC_COMPARE_VERSIONS() { return 0; }
+    mock_compare_const 0
 
     mkdir -p "${_mock_dir}/sys/kernel/mm/transparent_hugepage/khugepaged"
     echo 'always [madvise] never' > "${_mock_dir}/sys/kernel/mm/transparent_hugepage/enabled"
@@ -473,7 +495,7 @@ function test_sles16_always_fixed_defaults_ok() {
     OS_LEVEL='6.6.0-160000.1.1-default'
     LIB_FUNC_NORMALIZE_KERNELn() { :; }
     # OS_VERSION 16.0 > 15.8 -> 1 (first higher, not less), no kernel check
-    LIB_FUNC_COMPARE_VERSIONS() { return 1; }
+    mock_compare_const 1
 
     mkdir -p "${_mock_dir}/sys/kernel/mm/transparent_hugepage/khugepaged"
     echo 'always [madvise] never' > "${_mock_dir}/sys/kernel/mm/transparent_hugepage/enabled"
@@ -499,7 +521,7 @@ function test_sles15sp8_wrong_defrag_always() {
     OS_LEVEL='6.4.0-150800.10.1.1-default'
     LIB_FUNC_NORMALIZE_KERNELn() { :; }
     # OS_VERSION 15.8 == 15.8 -> 0
-    LIB_FUNC_COMPARE_VERSIONS() { return 0; }
+    mock_compare_const 0
 
     mkdir -p "${_mock_dir}/sys/kernel/mm/transparent_hugepage/khugepaged"
     echo 'always [madvise] never' > "${_mock_dir}/sys/kernel/mm/transparent_hugepage/enabled"
@@ -513,6 +535,166 @@ function test_sles15sp8_wrong_defrag_always() {
     #assert - should fail because defrag=always is wrong even on fixed SLES 15.8
     if [[ ${rc} -ne 2 ]]; then
         bashunit::fail "Expected RC=2 (error) when SLES 15.8 has defrag=always, got RC=${rc}"
+    fi
+    assert_true true
+}
+
+#------------------------------------------------------------------
+# Tests for RHEL fixed support levels - 9.8+ and 10.3+
+#------------------------------------------------------------------
+
+function test_rhel97_old_recommendation_never_0_ok() {
+
+    #arrange - RHEL 9.7 is before the fix support level
+    LIB_FUNC_IS_RHEL() { return 0; }
+    OS_VERSION='9.7'
+    OS_LEVEL='5.14.0-570.40.1.el9_7'
+    LIB_FUNC_NORMALIZE_KERNELn() { :; }
+    # Compare calls for fixed-from checks: 9.7 < 9.8 -> 2
+    mock_compare_const 2
+
+    mkdir -p "${_mock_dir}/sys/kernel/mm/transparent_hugepage/khugepaged"
+    echo 'always [madvise] never' > "${_mock_dir}/sys/kernel/mm/transparent_hugepage/enabled"
+    echo 'always defer defer+madvise madvise [never]' > "${_mock_dir}/sys/kernel/mm/transparent_hugepage/defrag"
+    echo '0' > "${_mock_dir}/sys/kernel/mm/transparent_hugepage/khugepaged/defrag"
+
+    #act
+    check_2010_transparent_hugepages_defrag
+    local rc=$?
+
+    #assert - should pass with old recommendation never/0
+    if [[ ${rc} -ne 0 ]]; then
+        bashunit::fail "Expected RC=0 (ok) for RHEL 9.7 with never/0, got RC=${rc}"
+    fi
+    assert_true true
+}
+
+function test_rhel96_fixed_kernel_uses_madvise_1() {
+
+    #arrange - RHEL 9.6 before fixed-from stream, but at explicit fixed kernel level
+    LIB_FUNC_IS_RHEL() { return 0; }
+    OS_VERSION='9.6'
+    OS_LEVEL='5.14.0-570.127.1.el9_6'
+    LIB_FUNC_NORMALIZE_KERNELn() { :; }
+    # 1st compare: 9.6 < 9.8 -> 2, 2nd compare: kernel == fixed kernel -> 0
+    mock_compare_seq2 2 0
+
+    mkdir -p "${_mock_dir}/sys/kernel/mm/transparent_hugepage/khugepaged"
+    echo 'always [madvise] never' > "${_mock_dir}/sys/kernel/mm/transparent_hugepage/enabled"
+    echo 'always defer defer+madvise [madvise] never' > "${_mock_dir}/sys/kernel/mm/transparent_hugepage/defrag"
+    echo '1' > "${_mock_dir}/sys/kernel/mm/transparent_hugepage/khugepaged/defrag"
+
+    #act
+    check_2010_transparent_hugepages_defrag
+    local rc=$?
+
+    #assert - should pass because explicit 9.6 fixed kernel flips recommendation to madvise/1
+    if [[ ${rc} -ne 0 ]]; then
+        bashunit::fail "Expected RC=0 (ok) for RHEL 9.6 fixed kernel with madvise/1, got RC=${rc}"
+    fi
+    assert_true true
+}
+
+function test_rhel96_old_kernel_keeps_never_0() {
+
+    #arrange - RHEL 9.6 with older-than-fixed kernel
+    LIB_FUNC_IS_RHEL() { return 0; }
+    OS_VERSION='9.6'
+    OS_LEVEL='5.14.0-570.120.1.el9_6'
+    LIB_FUNC_NORMALIZE_KERNELn() { :; }
+    # 1st compare: 9.6 < 9.8 -> 2, 2nd compare: kernel < fixed kernel -> 2
+    mock_compare_const 2
+
+    mkdir -p "${_mock_dir}/sys/kernel/mm/transparent_hugepage/khugepaged"
+    echo 'always [madvise] never' > "${_mock_dir}/sys/kernel/mm/transparent_hugepage/enabled"
+    echo 'always defer defer+madvise madvise [never]' > "${_mock_dir}/sys/kernel/mm/transparent_hugepage/defrag"
+    echo '0' > "${_mock_dir}/sys/kernel/mm/transparent_hugepage/khugepaged/defrag"
+
+    #act
+    check_2010_transparent_hugepages_defrag
+    local rc=$?
+
+    #assert - should pass with old recommendation never/0
+    if [[ ${rc} -ne 0 ]]; then
+        bashunit::fail "Expected RC=0 (ok) for RHEL 9.6 old kernel with never/0, got RC=${rc}"
+    fi
+    assert_true true
+}
+
+function test_rhel98_fixed_recommendation_madvise_1_ok() {
+
+    #arrange - RHEL 9.8 has fix support level
+    LIB_FUNC_IS_RHEL() { return 0; }
+    OS_VERSION='9.8'
+    OS_LEVEL='5.14.0-687.13.1.el9_8'
+    LIB_FUNC_NORMALIZE_KERNELn() { :; }
+    # Compare call for fixed-from check: 9.8 == 9.8 -> 0
+    mock_compare_const 0
+
+    mkdir -p "${_mock_dir}/sys/kernel/mm/transparent_hugepage/khugepaged"
+    echo 'always [madvise] never' > "${_mock_dir}/sys/kernel/mm/transparent_hugepage/enabled"
+    echo 'always defer defer+madvise [madvise] never' > "${_mock_dir}/sys/kernel/mm/transparent_hugepage/defrag"
+    echo '1' > "${_mock_dir}/sys/kernel/mm/transparent_hugepage/khugepaged/defrag"
+
+    #act
+    check_2010_transparent_hugepages_defrag
+    local rc=$?
+
+    #assert - should pass with new recommendation madvise/1
+    if [[ ${rc} -ne 0 ]]; then
+        bashunit::fail "Expected RC=0 (ok) for RHEL 9.8 with madvise/1, got RC=${rc}"
+    fi
+    assert_true true
+}
+
+function test_rhel102_old_recommendation_never_0_ok() {
+
+    #arrange - RHEL 10.2 is before the fix support level (10.3)
+    LIB_FUNC_IS_RHEL() { return 0; }
+    OS_VERSION='10.2'
+    OS_LEVEL='6.12.0-55.5.1.el10_2'
+    LIB_FUNC_NORMALIZE_KERNELn() { :; }
+    # Compare call for fixed-from check: 10.2 < 10.3 -> 2
+    mock_compare_const 2
+
+    mkdir -p "${_mock_dir}/sys/kernel/mm/transparent_hugepage/khugepaged"
+    echo 'always [madvise] never' > "${_mock_dir}/sys/kernel/mm/transparent_hugepage/enabled"
+    echo 'always defer defer+madvise madvise [never]' > "${_mock_dir}/sys/kernel/mm/transparent_hugepage/defrag"
+    echo '0' > "${_mock_dir}/sys/kernel/mm/transparent_hugepage/khugepaged/defrag"
+
+    #act
+    check_2010_transparent_hugepages_defrag
+    local rc=$?
+
+    #assert - should pass with old recommendation never/0
+    if [[ ${rc} -ne 0 ]]; then
+        bashunit::fail "Expected RC=0 (ok) for RHEL 10.2 with never/0, got RC=${rc}"
+    fi
+    assert_true true
+}
+
+function test_rhel103_fixed_recommendation_madvise_1_ok() {
+
+    #arrange - RHEL 10.3 has fix support level
+    LIB_FUNC_IS_RHEL() { return 0; }
+    OS_VERSION='10.3'
+    OS_LEVEL='6.12.0-55.9.1.el10_3'
+    LIB_FUNC_NORMALIZE_KERNELn() { :; }
+    # Compare call for fixed-from check: 10.3 == 10.3 -> 0
+    mock_compare_const 0
+
+    mkdir -p "${_mock_dir}/sys/kernel/mm/transparent_hugepage/khugepaged"
+    echo 'always [madvise] never' > "${_mock_dir}/sys/kernel/mm/transparent_hugepage/enabled"
+    echo 'always defer defer+madvise [madvise] never' > "${_mock_dir}/sys/kernel/mm/transparent_hugepage/defrag"
+    echo '1' > "${_mock_dir}/sys/kernel/mm/transparent_hugepage/khugepaged/defrag"
+
+    #act
+    check_2010_transparent_hugepages_defrag
+    local rc=$?
+
+    #assert - should pass with new recommendation madvise/1
+    if [[ ${rc} -ne 0 ]]; then
+        bashunit::fail "Expected RC=0 (ok) for RHEL 10.3 with madvise/1, got RC=${rc}"
     fi
     assert_true true
 }
