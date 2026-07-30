@@ -50,6 +50,21 @@ function test_sapconf_not_installed() {
     assert_true true
 }
 
+function test_not_sles_skip() {
+
+    #arrange
+    LIB_FUNC_IS_SLES() { return 1 ; }
+
+    #act
+    check_0440_sapconf_sles
+
+    #assert
+    if [[ $? -ne 3 ]]; then
+        bashunit::fail "Expected RC=3 (skipped) when distribution is not SLES"
+    fi
+    assert_true true
+}
+
 function test_sapconf_ok() {
 
     #arrange
@@ -62,6 +77,22 @@ function test_sapconf_ok() {
     #assert
     if [[ $? -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok) for sapconf ok"
+    fi
+    assert_true true
+}
+
+function test_sapconf_equal_version_ok() {
+
+    #arrange
+    rpm_rc=0
+    compare_version_rc=0
+
+    #act
+    check_0440_sapconf_sles
+
+    #assert
+    if [[ $? -ne 0 ]]; then
+        bashunit::fail "Expected RC=0 (ok) for sapconf equal version"
     fi
     assert_true true
 }
@@ -100,6 +131,22 @@ function test_sapconf_old_and_used() {
     assert_true true
 }
 
+function test_unsupported_sles_release_warning() {
+
+    #arrange
+    OS_VERSION='11.4'
+    rpm_rc=0
+
+    #act
+    check_0440_sapconf_sles
+
+    #assert
+    if [[ $? -ne 1 ]]; then
+        bashunit::fail "Expected RC=1 (warning) for unsupported SLES release"
+    fi
+    assert_true true
+}
+
 
 function set_up_before_script() {
 
@@ -125,5 +172,8 @@ function set_up() {
     compare_version_rc=0
     rpm_rc=0
     isused_rc=0
+
+    # Reset mock functions possibly overridden in tests
+    LIB_FUNC_IS_SLES() { return 0 ; }
 
 }
