@@ -18,12 +18,21 @@ function check_2010_transparent_hugepages_defrag {
     # SLES kernel versions with THP defrag fix - defrag defaults (madvise/1) are recommended
     # Versions >= _sles_fixed_from contain the fix from the start (no kernel check needed)
     # Older versions require at least the listed kernel version
-    local -r  _sles_fixed_from='15.8'
+    local -r  _sles_fixed_from='16.0'
     #                              OS_VERSION   fixed_kernel_version
     local -ar _sles_fixed_kernels=(\
                                     '15.5'      '5.14.21-150500.55.136.1'   \
                                     '15.6'      '6.4.0-150600.23.87.1'      \
                                     '15.7'      '6.4.0-150700.53.31.1'      \
+    )
+
+    # RHEL stream versions from which the THP defrag fix is expected
+    local -r _rhel9_fixed_from='9.8'
+    local -r _rhel10_fixed_from='10.3'
+    #                              OS_VERSION   fixed_kernel_version
+    local -ar _rhel_fixed_kernels=(\
+                                    '9.6'       '5.14.0-570.127.1.el9_6'    \
+                                    '9.8'       '5.14.0-687.13.1.el9_8'     \
     )
     # MODIFICATION SECTION<<
 
@@ -55,16 +64,40 @@ function check_2010_transparent_hugepages_defrag {
 
     fi
 
-    # Check if running on SLES with a fixed kernel - defaults (madvise/1) are recommended
+    # Check if running on SLES/RHEL with a fixed kernel - defaults (madvise/1) are recommended
     local -i _kernel_fixed=0
-    if [[ ${_retval} -eq 99 ]] && LIB_FUNC_IS_SLES ; then
+    if [[ ${_retval} -eq 99 ]] && ( LIB_FUNC_IS_SLES || LIB_FUNC_IS_RHEL ) ; then
 
-        # SLES versions >= _sles_fixed_from contain the fix from the start
-        LIB_FUNC_COMPARE_VERSIONS "${OS_VERSION}" "${_sles_fixed_from}"
-        if [[ $? -ne 2 ]]; then
-            _kernel_fixed=1
-            logCheckInfo "SLES ${OS_VERSION} includes THP defrag fix (SAP Note ${sapnote:-})"
-        else
+        local _os_family=''
+        local _os_fixed_from=''
+        local -a _os_fixed_kernels=()
+
+        if LIB_FUNC_IS_SLES; then
+            _os_family='SLES'
+            _os_fixed_from="${_sles_fixed_from}"
+            _os_fixed_kernels=("${_sles_fixed_kernels[@]}")
+        elif LIB_FUNC_IS_RHEL; then
+            _os_family='RHEL'
+            case "${OS_VERSION}" in
+                9.* )
+                    _os_fixed_from="${_rhel9_fixed_from}" ;;
+                10.* )
+                    _os_fixed_from="${_rhel10_fixed_from}" ;;
+            esac
+            _os_fixed_kernels=("${_rhel_fixed_kernels[@]}")
+        fi
+
+        # OS versions >= fixed_from contain the fix from the start
+        if [[ -n "${_os_fixed_from}" ]]; then
+            LIB_FUNC_COMPARE_VERSIONS "${OS_VERSION}" "${_os_fixed_from}"
+            if [[ $? -ne 2 ]]; then
+                _kernel_fixed=1
+                logCheckInfo "${_os_family} ${OS_VERSION} includes THP defrag fix (SAP Note ${sapnote:-})"
+            fi
+        fi
+
+        # For explicit releases, honor minimum fixed kernel versions
+        if [[ ${_kernel_fixed} -eq 0 ]]; then
 
             local _kernel_curr
             local _kernel_fixed_ver
@@ -74,19 +107,19 @@ function check_2010_transparent_hugepages_defrag {
             LIB_FUNC_NORMALIZE_KERNELn _kernel_curr
 
             # i+=2 --> every 2nd item
-            for ((i=0; i < ${#_sles_fixed_kernels[@]}; i+=2)); do
+            for ((i=0; i < ${#_os_fixed_kernels[@]}; i+=2)); do
 
-                _release="${_sles_fixed_kernels[$i]}"
+                _release="${_os_fixed_kernels[$i]}"
                 [[ "${OS_VERSION}" != "${_release}"* ]] && continue
 
-                _kernel_fixed_ver="${_sles_fixed_kernels[$i+1]}"
+                _kernel_fixed_ver="${_os_fixed_kernels[$i+1]}"
                 LIB_FUNC_NORMALIZE_KERNELn _kernel_fixed_ver
 
                 # returns 0 if equal, 1 if first is higher, 2 if second is higher
                 LIB_FUNC_COMPARE_VERSIONS "${_kernel_curr}" "${_kernel_fixed_ver}"
                 if [[ $? -ne 2 ]]; then
                     _kernel_fixed=1
-                    logCheckInfo "Kernel includes THP defrag fix (SAP Note ${sapnote:-}) (is: ${OS_LEVEL}, fixed: >=${_sles_fixed_kernels[$i+1]})"
+                    logCheckInfo "Kernel includes THP defrag fix (SAP Note ${sapnote:-}) (is: ${OS_LEVEL}, fixed: >=${_os_fixed_kernels[$i+1]})"
                 fi
                 break
 
