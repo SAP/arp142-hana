@@ -33,9 +33,10 @@ function check_8050_hana_revision_infra_issues {
         ['3687338']='Huge Block Allocator (HBA) Lock Contention During Asynchronous Garbage Collection (GC)'
         ['3689045']='Configured File I/O Throughput Limit Not Enforced'
         ['3693972']='Unexpected Nameserver Stop and Restart After Takeover due to Topology Timestamp Difference'
-        ['3716078']='Long Running Savepoints Due To Small Page Writes With HEX_DISK Spilling'
+        ['3716078']='Long Running Savepoints Due To Small Page Writes'
         ['3723107']='landscapeHostConfiguration.py Reports "Unknown" Status During SAP HANA Startup Causing Unintended Cluster Fencing'
         ['3723698']='CPU Peaks due to Long Running LSS Calls to the External Key Management System DCKMS'
+        ['3782493']='SQL Connections Cause High CPU Utilization During a Blocking Savepoint Phase'
     )
 
     # array             'SPSP'  'lower bound'    'upper bound'  'SAP Note'
@@ -90,8 +91,8 @@ function check_8050_hana_revision_infra_issues {
                         '8'     '2.00.080.00'    '2.00.089.99'  '3669696'   \
 
                         '5'     '2.00.050.00'    '2.00.059.99'  '3680406'   \
-                        '7'     '2.00.070.00'    '2.00.079.09'  '3680406'   \
-                        '8'     '2.00.080.00'    '2.00.087.00'  '3680406'   \
+                        '7'     '2.00.070.00'    '2.00.079.08'  '3680406'   \
+                        '8'     '2.00.080.00'    '2.00.089.01'  '3680406'   \
 
                         '7'     '2.00.070.00'    '2.00.079.03'  '3687338'   \
                         '8'     '2.00.080.00'    '2.00.084.00'  '3687338'   \
@@ -115,6 +116,9 @@ function check_8050_hana_revision_infra_issues {
 
                         '7'     '2.00.079.03'    '2.00.079.08'  '3723698'   \
                         '8'     '2.00.083.00'    '2.00.089.01'  '3723698'   \
+
+                        '7'     '2.00.070.00'    '2.00.079.10'  '3782493'   \
+                        '8'     '2.00.080.00'    '2.00.089.03'  '3782493'   \
                         )
 
     local -ar _hana_intel=(\
