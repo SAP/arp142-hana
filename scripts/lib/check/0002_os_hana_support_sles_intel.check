@@ -35,7 +35,7 @@ function check_0002_os_hana_support_sles_intel {
                         )
 
     local -ar _sles_16=(\
-                        'Microsoft Azure'       '------'   \
+                        'Microsoft Azure'       '0-----'   \
                         'Amazon EC2'            '------'   \
                         'IBM Cloud'             '------'   \
                         'Google GCP'            '0-----'   \
