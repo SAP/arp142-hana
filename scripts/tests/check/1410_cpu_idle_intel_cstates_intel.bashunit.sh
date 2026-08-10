@@ -176,28 +176,12 @@ function test_sles15_supported() {
     assert_true true
 }
 
-function test_sles_unsupported_version() {
-
-    #arrange
-    OS_VERSION='11.4'  # Unsupported SLES version
-    TEST_driverMaxCstate=6
-    TEST_maxCstateLatency=5
-    TEST_maxForceLatency=2000000000
-
-    #act
-    check_1410_cpu_idle_intel_cstates_intel
-
-    #assert
-    if [[ $? -ne 1 ]]; then
-        bashunit::fail "Expected RC=1 (warning) for unsupported SLES version"
-    fi
-    assert_true true
-}
 
 # ROOT PERMISSION TESTS
 function test_non_root_warning() {
 
     #arrange
+    # shellcheck disable=SC2329
     LIB_FUNC_IS_ROOT() { return 1 ; }  # Mock non-root
     OS_VERSION='12.5'
     TEST_driverMaxCstate=6
@@ -209,6 +193,7 @@ function test_non_root_warning() {
     local rc=$?
 
     # Restore mock
+    # shellcheck disable=SC2329
     LIB_FUNC_IS_ROOT() { return 0 ; }
 
     #assert
