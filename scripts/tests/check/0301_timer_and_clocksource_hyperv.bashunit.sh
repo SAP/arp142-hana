@@ -18,7 +18,7 @@ TEST_CURRENT_CLOCKSOURCE=''
 LIB_FUNC_IS_VIRT_MICROSOFT() { return 0 ; }
 
 
-function test_reco_clock() {
+function test_hyperv_clocksource_warning() {
 
     #arrange
     TEST_CURRENT_CLOCKSOURCE='hyperv_clocksource_tsc_page'
@@ -27,8 +27,39 @@ function test_reco_clock() {
     check_0301_timer_and_clocksource_hyperv
 
     #assert
+    if [[ $? -ne 1 ]]; then
+        bashunit::fail "Expected RC=1 (warning) for supported but non-preferred Hyper-V clocksource"
+    fi
+    assert_true true
+}
+
+function test_tsc_clocksource_ok() {
+
+    #arrange
+    TEST_CURRENT_CLOCKSOURCE='tsc'
+
+    #act
+    check_0301_timer_and_clocksource_hyperv
+
+    #assert
     if [[ $? -ne 0 ]]; then
-        bashunit::fail "Expected RC=0 (ok) for recommended clocksource"
+        bashunit::fail "Expected RC=0 (ok) for tsc clocksource"
+    fi
+    assert_true true
+}
+
+function test_not_hyperv_skipped() {
+
+    #arrange
+    LIB_FUNC_IS_VIRT_MICROSOFT() { return 1 ; }
+    TEST_CURRENT_CLOCKSOURCE='acpi_pm'
+
+    #act
+    check_0301_timer_and_clocksource_hyperv
+
+    #assert
+    if [[ $? -ne 3 ]]; then
+        bashunit::fail "Expected RC=3 (skipped) for non-Hyper-V"
     fi
     assert_true true
 }
@@ -70,5 +101,8 @@ function set_up() {
 
     # Reset mock variables
     TEST_CURRENT_CLOCKSOURCE=''
+
+    # Reset mock functions to defaults
+    LIB_FUNC_IS_VIRT_MICROSOFT() { return 0 ; }
 
 }
