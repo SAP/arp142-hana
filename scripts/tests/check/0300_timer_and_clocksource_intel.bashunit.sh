@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2329
+
 #------------------------------------------------------------------
 # bashunit migration notes:
 # 1. PROGRAM_DIR not readonly - bashunit runs all tests in same session
@@ -179,11 +181,182 @@ function set_up_before_script() {
 
 }
 
+function test_not_intel_skipped() {
+
+    #arrange
+    LIB_FUNC_IS_INTEL() { return 1 ; }
+    TEST_CURRENT_CLOCKSOURCE='tsc'
+    TEST_AVAILABLE_CLOCKSOURCE='tsc'
+
+    #act
+    check_0300_timer_and_clocksource_intel
+
+    #assert
+    if [[ $? -ne 3 ]]; then
+        bashunit::fail "Expected RC=3 (skipped) for non-Intel"
+    fi
+    assert_true true
+}
+
+function test_hyperv_skipped() {
+
+    #arrange
+    LIB_FUNC_IS_VIRT_MICROSOFT() { return 0 ; }
+    TEST_CURRENT_CLOCKSOURCE='tsc'
+    TEST_AVAILABLE_CLOCKSOURCE='tsc'
+
+    #act
+    check_0300_timer_and_clocksource_intel
+
+    #assert
+    if [[ $? -ne 3 ]]; then
+        bashunit::fail "Expected RC=3 (skipped) for Hyper-V"
+    fi
+    assert_true true
+}
+
+function test_gcp_kvm_kvm_clock_ok() {
+
+    #arrange
+    LIB_FUNC_IS_CLOUD_GOOGLE() { return 0 ; }
+    LIB_FUNC_IS_VIRT_KVM() { return 0 ; }
+    TEST_CURRENT_CLOCKSOURCE='kvm-clock'
+    TEST_AVAILABLE_CLOCKSOURCE='kvm-clock tsc'
+
+    #act
+    check_0300_timer_and_clocksource_intel
+
+    #assert
+    # reco='tsc|kvm-clock' - kvm-clock is accepted on GCP KVM
+    if [[ $? -ne 0 ]]; then
+        bashunit::fail "Expected RC=0 (ok) for GCP KVM with kvm-clock"
+    fi
+    assert_true true
+}
+
+function test_gcp_kvm_tsc_ok() {
+
+    #arrange
+    LIB_FUNC_IS_CLOUD_GOOGLE() { return 0 ; }
+    LIB_FUNC_IS_VIRT_KVM() { return 0 ; }
+    cpu_flags=('constant_tsc' 'nonstop_tsc' 'rdtscp')
+    TEST_CURRENT_CLOCKSOURCE='tsc'
+    TEST_AVAILABLE_CLOCKSOURCE='kvm-clock tsc'
+
+    #act
+    check_0300_timer_and_clocksource_intel
+
+    #assert
+    # reco='tsc|kvm-clock' - tsc is also accepted on GCP KVM
+    if [[ $? -ne 0 ]]; then
+        bashunit::fail "Expected RC=0 (ok) for GCP KVM with tsc (also accepted)"
+    fi
+    assert_true true
+}
+
+function test_gcp_kvm_wrong_clocksource() {
+
+    #arrange
+    LIB_FUNC_IS_CLOUD_GOOGLE() { return 0 ; }
+    LIB_FUNC_IS_VIRT_KVM() { return 0 ; }
+    TEST_CURRENT_CLOCKSOURCE='acpi_pm'
+    TEST_AVAILABLE_CLOCKSOURCE='kvm-clock tsc acpi_pm'
+
+    #act
+    check_0300_timer_and_clocksource_intel
+
+    #assert
+    if [[ $? -ne 2 ]]; then
+        bashunit::fail "Expected RC=2 (error) for GCP KVM with wrong clocksource"
+    fi
+    assert_true true
+}
+
+function test_kvm_nongcp_kvm_clock_ok() {
+
+    #arrange
+    LIB_FUNC_IS_VIRT_KVM() { return 0 ; }
+    TEST_CURRENT_CLOCKSOURCE='kvm-clock'
+    TEST_AVAILABLE_CLOCKSOURCE='kvm-clock tsc'
+
+    #act
+    check_0300_timer_and_clocksource_intel
+
+    #assert
+    if [[ $? -ne 0 ]]; then
+        bashunit::fail "Expected RC=0 (ok) for non-GCP KVM with kvm-clock"
+    fi
+    assert_true true
+}
+
+function test_kvm_nongcp_tsc_error() {
+
+    #arrange
+    LIB_FUNC_IS_VIRT_KVM() { return 0 ; }
+    cpu_flags=('constant_tsc' 'nonstop_tsc' 'rdtscp')
+    TEST_CURRENT_CLOCKSOURCE='tsc'
+    TEST_AVAILABLE_CLOCKSOURCE='kvm-clock tsc'
+
+    #act
+    check_0300_timer_and_clocksource_intel
+
+    #assert
+    # reco='kvm-clock' - tsc is NOT accepted on non-GCP KVM
+    if [[ $? -ne 2 ]]; then
+        bashunit::fail "Expected RC=2 (error) for non-GCP KVM with tsc (should be kvm-clock)"
+    fi
+    assert_true true
+}
+
+function test_amazon_tsc_ok() {
+
+    #arrange
+    LIB_FUNC_IS_CLOUD_AMAZON() { return 0 ; }
+    cpu_flags=('constant_tsc' 'nonstop_tsc' 'rdtscp')
+    TEST_CURRENT_CLOCKSOURCE='tsc'
+    TEST_AVAILABLE_CLOCKSOURCE='tsc'
+
+    #act
+    check_0300_timer_and_clocksource_intel
+
+    #assert
+    if [[ $? -ne 0 ]]; then
+        bashunit::fail "Expected RC=0 (ok) for Amazon with tsc"
+    fi
+    assert_true true
+}
+
+function test_all_flags_ok_but_tsc_not_in_available() {
+
+    #arrange
+    cpu_flags=('constant_tsc' 'nonstop_tsc' 'rdtscp')
+    TEST_CURRENT_CLOCKSOURCE='tsc'
+    TEST_AVAILABLE_CLOCKSOURCE='acpi_pm hpet'
+
+    #act
+    check_0300_timer_and_clocksource_intel
+
+    #assert
+    # tsc active but not listed as available - unintended fallback risk
+    if [[ $? -ne 1 ]]; then
+        bashunit::fail "Expected RC=1 (warning) for tsc not in available_clocksource"
+    fi
+    assert_true true
+}
+
+
 function set_up() {
 
     # Reset mock variables
     cpu_flags=()
     TEST_CURRENT_CLOCKSOURCE=''
     TEST_AVAILABLE_CLOCKSOURCE=''
+
+    # Reset mock functions to defaults
+    LIB_FUNC_IS_INTEL() { return 0 ; }
+    LIB_FUNC_IS_VIRT_MICROSOFT() { return 1 ; }
+    LIB_FUNC_IS_CLOUD_GOOGLE() { return 1 ; }
+    LIB_FUNC_IS_CLOUD_AMAZON() { return 1 ; }
+    LIB_FUNC_IS_VIRT_KVM() { return 1 ; }
 
 }
