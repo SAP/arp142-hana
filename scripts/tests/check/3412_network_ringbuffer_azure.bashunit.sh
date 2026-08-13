@@ -52,8 +52,8 @@ Pre-set maximums:
 RX:		4096
 TX:		4096
 Current hardware settings:
-RX:		1024
-TX:		1024'
+RX:		4096
+TX:		4096'
     TEST_INTERFACES=()
     TEST_INTERFACES+=('/sys/class/net/eth0/device/uevent:DRIVER=hv_netvsc')
     TEST_INTERFACES+=('/sys/class/net/eth1/device/uevent:DRIVER=mana')
@@ -70,6 +70,71 @@ function test_all_ok() {
     #assert
     if [[ ${rc} -ne 0 ]]; then
         bashunit::fail "Expected RC=0 (ok), got RC=${rc}"
+    fi
+    assert_true true
+}
+
+function test_hv_netvsc_uses_1024_recommendation() {
+
+    #arrange
+    TEST_INTERFACES=()
+    TEST_INTERFACES+=('/sys/class/net/eth0/device/uevent:DRIVER=hv_netvsc')
+
+    #act
+    check_3412_network_ringbuffer_azure
+    local rc=$?
+
+    #assert
+    if [[ ${rc} -ne 0 ]]; then
+        bashunit::fail "Expected RC=0 (ok) for hv_netvsc ring buffers at 1024, got RC=${rc}"
+    fi
+    assert_true true
+}
+
+function test_mana_requires_4096_recommendation() {
+
+    #arrange
+    TEST_INTERFACES=()
+    TEST_INTERFACES+=('/sys/class/net/eth0/device/uevent:DRIVER=mana')
+    TEST_ETHTOOL_OUTPUT='Ring parameters for eth0:
+Pre-set maximums:
+RX:		4096
+TX:		4096
+Current hardware settings:
+RX:		1024
+TX:		1024'
+
+    #act
+    check_3412_network_ringbuffer_azure
+    local rc=$?
+
+    #assert
+    if [[ ${rc} -ne 1 ]]; then
+        bashunit::fail "Expected RC=1 (warning) for mana ring buffers at 1024, got RC=${rc}"
+    fi
+    assert_true true
+}
+
+function test_mlx5_core_requires_4096_recommendation() {
+
+    #arrange
+    TEST_INTERFACES=()
+    TEST_INTERFACES+=('/sys/class/net/eth0/device/uevent:DRIVER=mlx5_core')
+    TEST_ETHTOOL_OUTPUT='Ring parameters for eth0:
+Pre-set maximums:
+RX:		4096
+TX:		4096
+Current hardware settings:
+RX:		1024
+TX:		1024'
+
+    #act
+    check_3412_network_ringbuffer_azure
+    local rc=$?
+
+    #assert
+    if [[ ${rc} -ne 1 ]]; then
+        bashunit::fail "Expected RC=1 (warning) for mlx5_core ring buffers at 1024, got RC=${rc}"
     fi
     assert_true true
 }
