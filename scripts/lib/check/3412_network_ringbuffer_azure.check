@@ -9,13 +9,21 @@ function check_3412_network_ringbuffer_azure {
     # MODIFICATION SECTION>>
     local -r sapnote='#2015553'
 
-    local -ir reco_ring_rx=1024
-    local -ir reco_ring_tx=1024
+    local -ir reco_ring_hv_netvsc_rx=1024
+    local -ir reco_ring_hv_netvsc_tx=1024
+    local -ir reco_ring_hv_pci_rx=4096
+    local -ir reco_ring_hv_pci_tx=4096
     # MODIFICATION SECTION<<
 
     # 2015553 - SAP on Microsoft Azure: Support prerequisites
-    # https://learn.microsoft.com/en-us/azure/virtual-network/virtual-network-optimize-network-bandwidth
+    # https://learn.microsoft.com/en-us/azure/virtual-network/virtual-network-optimize-network-bandwidth#udev-rule-for-nic-ring-buffers-txrx
+    ##    hv_pci (mlx5 |mana) rx 4096 tx 4096 && hv_netvsc rx 1024 tx 1024
+
     # https://github.com/mabicca/azure-linux-tuning/tree/main/azure-nic-setup/bash
+    ##    hv_pci (mlx5 |mana) rx 4096 tx 4096 && hv_netvsc rx 1024 tx 1024
+
+    # https://support.scc.suse.com/s/kb/Intermittent-Network-Connection-Timeouts-rc-110-on-Azure-Due-to-Accelerated-Networking-Ring-Buffer-Saturation?language=en_US
+    ##    mlx5_core rx 8192 tx 4096 && hv_netvsc driver tx 2560
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_CLOUD_MICROSOFT; then
@@ -29,7 +37,7 @@ function check_3412_network_ringbuffer_azure {
     if [[ ${_retval} -eq 99 ]]; then
 
         # Get all accelerated and synthetic interfaces
-        mapfile -t _all_interfaces < <(grep -soHE -m1 'DRIVER=(hv_netvsc|mana|mlx)' /sys/class/net/**/device/uevent)
+        mapfile -t _all_interfaces < <(grep -soHE -m1 'DRIVER=(hv_netvsc|mana|mlx5)' /sys/class/net/**/device/uevent)
 
         local _rx_intf='net/(.+)/device.*DRIVER=(.*)$'
         local -i _ring_issues=0
@@ -40,6 +48,22 @@ function check_3412_network_ringbuffer_azure {
 
                 local _intf_name="${BASH_REMATCH[1]}"
                 local _intf_driver="${BASH_REMATCH[2]}"
+                local -i _reco_ring_rx=0
+                local -i _reco_ring_tx=0
+
+                case "${_intf_driver}" in
+
+                    hv_netvsc)
+                        _reco_ring_rx=${reco_ring_hv_netvsc_rx}
+                        _reco_ring_tx=${reco_ring_hv_netvsc_tx}
+                        ;;
+
+                    mana|mlx5*)
+                        _reco_ring_rx=${reco_ring_hv_pci_rx}
+                        _reco_ring_tx=${reco_ring_hv_pci_tx}
+                        ;;
+
+                esac
 
                 # Get current ring buffer settings via ethtool
                 local _ethtool_output
@@ -67,13 +91,13 @@ function check_3412_network_ringbuffer_azure {
 
                 done <<< "${_ethtool_output}"
 
-                if [[ ${_curr_rx} -ge ${reco_ring_rx} ]] && [[ ${_curr_tx} -ge ${reco_ring_tx} ]]; then
+                if [[ ${_curr_rx} -ge ${_reco_ring_rx} ]] && [[ ${_curr_tx} -ge ${_reco_ring_tx} ]]; then
 
                     logCheckOk "Ring buffer for ${_intf_name} (${_intf_driver}) set as recommended (RX: ${_curr_rx}, TX: ${_curr_tx})"
 
                 else
 
-                    logCheckWarning "Ring buffer for ${_intf_name} (${_intf_driver}) NOT set as recommended (RX: ${_curr_rx}/${reco_ring_rx}, TX: ${_curr_tx}/${reco_ring_tx})"
+                    logCheckWarning "Ring buffer for ${_intf_name} (${_intf_driver}) NOT set as recommended (curr/reco - RX: ${_curr_rx}/${_reco_ring_rx}, TX: ${_curr_tx}/${_reco_ring_tx})"
                     _ring_issues+=1
 
                 fi
@@ -84,7 +108,7 @@ function check_3412_network_ringbuffer_azure {
 
         if [[ ${_ring_issues} -gt 0 ]]; then
 
-            logCheckWarning "NOT all Azure ring buffers set as recommended (SAP Note ${sapnote:-})"
+            logCheckWarning "NOT all Azure NIC ring buffers set as recommended (SAP Note ${sapnote:-})"
             _retval=1
 
         elif [[ ${#_all_interfaces[@]} -eq 0 ]]; then
@@ -94,7 +118,7 @@ function check_3412_network_ringbuffer_azure {
 
         else
 
-            logCheckOk "Azure ring buffers set as recommended (SAP Note ${sapnote:-})"
+            logCheckOk "Azure NIC ring buffers set as recommended (SAP Note ${sapnote:-})"
             _retval=0
 
         fi
