@@ -19,22 +19,23 @@ bash ../check-coverage-report.sh --untested-only  # Only list untested checks
 
 ## Critical Rules
 
-### 0. End Every Test with `assert_true true`
+### 0. Register a Real Assertion in Every Test
 
 bashunit 0.34.1+ flags tests as **"risky"** when no assertion is registered during a test run.
-Since `bashunit::fail` only increments the assertion counter when it fires (i.e., on failure),
-tests that pass without hitting `bashunit::fail` have zero assertions and get flagged as risky.
+`bashunit::fail` only increments the assertion counter when it fires (i.e., on failure), so it
+does not count on the happy path. Prefer a native assertion, which always registers a result.
 
-**Fix:** Add `assert_true true` at the end of every `test_*` function:
+**Return codes:** Capture the check return code and assert it directly:
 ```bash
 function test_example() {
     check_NNNN_check_name
-    if [[ $? -ne 0 ]]; then
-        bashunit::fail "Expected RC=0 (ok) for example scenario"
-    fi
-    assert_true true  # Registers a passing assertion to prevent risky flag
+    local rc=$?
+
+    assert_exit_code 0 '' "${rc}"
 }
 ```
+
+Use `assert_true true` only when no meaningful native assertion applies.
 
 ### 1. ALWAYS Test for RC=99 (Unprocessed Check)
 
@@ -49,9 +50,7 @@ returning the default RC=99 instead of properly executing the check.
 assert_check_processed() {
     local rc=$1
     local context="${2:-}"
-    if [[ ${rc} -eq 99 ]]; then
-        bashunit::fail "RC=99 (unprocessed) - check logic did not reach a conclusion${context:+ in }${context}"
-    fi
+    assert_not_equals 99 "${rc}" "Check must be processed${context:+ in }${context}"
 }
 
 # Usage in tests
@@ -62,7 +61,7 @@ function test_rhel_check_executes() {
     
     # CRITICAL: Always check this first!
     assert_check_processed ${rc} "RHEL"
-    assert_true true
+    assert_exit_code 0 '' "${rc}"
 }
 ```
 
@@ -178,10 +177,7 @@ function test_something() {
     
     # assert - ALWAYS check RC != 99 first!
     assert_check_processed ${rc}
-    if [[ ${rc} -ne 0 ]]; then
-        bashunit::fail "Expected RC=0"
-    fi
-    assert_true true
+    assert_exit_code 0 '' "${rc}"
 }
 ```
 
@@ -200,7 +196,7 @@ function test_sles_check_executes() {
     
     assert_check_processed ${rc} "SLES"
     # Additional assertions...
-    assert_true true
+    assert_exit_code 0 '' "${rc}"
 }
 
 function test_rhel_check_executes() {
@@ -213,7 +209,7 @@ function test_rhel_check_executes() {
     
     assert_check_processed ${rc} "RHEL"
     # Additional assertions...
-    assert_true true
+    assert_exit_code 0 '' "${rc}"
 }
 ```
 

@@ -36,9 +36,7 @@ LIB_FUNC_IS_SLES() { return 0; }
 assert_check_processed() {
     local rc=$1
     local context="${2:-}"
-    if [[ ${rc} -eq 99 ]]; then
-        bashunit::fail "RC=99 (unprocessed) - check logic did not reach a conclusion${context:+ in }${context}"
-    fi
+    assert_not_equals 99 "${rc}" "Check must be processed${context:+ in }${context}"
 }
 
 function set_up_before_script() {
@@ -80,8 +78,8 @@ function test_sles_check_executes() {
 
     #assert - CRITICAL: Verify check was actually processed
     assert_check_processed ${rc} "SLES"
-    # Add specific RC assertion based on expected behavior
-    assert_true true
+    # Add a specific native RC assertion based on expected behavior.
+    # Example: assert_exit_code 0 '' "${rc}"
 }
 
 #------------------------------------------------------------------
@@ -100,8 +98,8 @@ function test_rhel_check_executes() {
 
     #assert - CRITICAL: Verify check was actually processed
     assert_check_processed ${rc} "RHEL"
-    # Add specific RC assertion based on expected behavior
-    assert_true true
+    # Add a specific native RC assertion based on expected behavior.
+    # Example: assert_exit_code 0 '' "${rc}"
 }
 
 # Example test: check skipped when precondition not met
@@ -114,10 +112,7 @@ function test_precondition_not_met() {
     local rc=$?
 
     #assert
-    if [[ ${rc} -ne 3 ]]; then
-        bashunit::fail "Expected RC=3 (skipped) when precondition not met, got RC=${rc}"
-    fi
-    assert_true true
+    assert_exit_code 3 '' "${rc}"
 }
 
 # Example test: check passes with correct values
@@ -131,10 +126,7 @@ function test_correct_values() {
 
     #assert - Always check RC != 99 first!
     assert_check_processed ${rc} "correct values"
-    if [[ ${rc} -ne 0 ]]; then
-        bashunit::fail "Expected RC=0 (ok) for correct values, got RC=${rc}"
-    fi
-    assert_true true
+    assert_exit_code 0 '' "${rc}"
 }
 
 # Example test: check fails with incorrect values
@@ -148,10 +140,7 @@ function test_incorrect_values() {
 
     #assert - Always check RC != 99 first!
     assert_check_processed ${rc} "incorrect values"
-    if [[ ${rc} -ne 2 ]]; then
-        bashunit::fail "Expected RC=2 (error) for incorrect values, got RC=${rc}"
-    fi
-    assert_true true
+    assert_exit_code 2 '' "${rc}"
 }
 
 # Example test: RHEL-specific behavior with correct value
@@ -167,8 +156,5 @@ function test_rhel_correct_value() {
 
     #assert - Always check RC != 99 first!
     assert_check_processed ${rc} "RHEL correct value"
-    if [[ ${rc} -ne 0 ]]; then
-        bashunit::fail "Expected RC=0 (ok) for RHEL with correct value, got RC=${rc}"
-    fi
-    assert_true true
+    assert_exit_code 0 '' "${rc}"
 }

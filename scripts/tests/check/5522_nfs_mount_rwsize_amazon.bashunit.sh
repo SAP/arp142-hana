@@ -35,10 +35,7 @@ function test_nfs_not_mounted() {
     local rc=$?
 
     #assert
-    if [[ "$rc" != '3' ]]; then
-        bashunit::fail "Expected CheckSkipped RC=3 but got RC=$rc"
-    fi
-    assert_true true
+    assert_exit_code 3 '' "${rc}"
 }
 
 function test_nfs_ok() {
@@ -53,10 +50,7 @@ function test_nfs_ok() {
     local rc=$?
 
     #assert
-    if [[ "$rc" != '0' ]]; then
-        bashunit::fail "Expected CheckOk RC=0 but got RC=$rc"
-    fi
-    assert_true true
+    assert_exit_code 0 '' "${rc}"
 }
 
 function test_nfs_rsize_wrong() {
@@ -69,10 +63,7 @@ function test_nfs_rsize_wrong() {
     local rc=$?
 
     #assert
-    if [[ "$rc" != '1' ]]; then
-        bashunit::fail "Expected CheckWarn RC=1 but got RC=$rc"
-    fi
-    assert_true true
+    assert_exit_code 1 '' "${rc}"
 }
 
 function test_nfs_wsize_wrong() {
@@ -85,10 +76,7 @@ function test_nfs_wsize_wrong() {
     local rc=$?
 
     #assert
-    if [[ "$rc" != '1' ]]; then
-        bashunit::fail "Expected CheckWarn RC=1 but got RC=$rc"
-    fi
-    assert_true true
+    assert_exit_code 1 '' "${rc}"
 }
 
 function test_nfs_wrong_all() {
@@ -103,10 +91,7 @@ function test_nfs_wrong_all() {
     local rc=$?
 
     #assert
-    if [[ "$rc" != '1' ]]; then
-        bashunit::fail "Expected CheckWarn RC=1 but got RC=$rc"
-    fi
-    assert_true true
+    assert_exit_code 1 '' "${rc}"
 }
 
 function set_up_before_script() {
