@@ -7998,7 +7998,7 @@ function bashunit::helper::_annotations_is_count() {
   return 0
 }
 
-function bashunit::helper::annotations_validate_or_exit() {
+function bashunit::helper::annotations_validate() {
   local script=$1
   local i=0
   local total=${#_BASHUNIT_ANNOT_MAP_FNS[@]}
@@ -8010,21 +8010,28 @@ function bashunit::helper::annotations_validate_or_exit() {
     value="${_BASHUNIT_ANNOT_MAP_TIMEOUTS[i]}"
     if [ -n "$value" ] && ! bashunit::helper::_annotations_is_count "$value"; then
       bashunit::helper::_annotations_reject "$script" "$fn" "timeout" "$value"
+      return 1
     fi
 
     value="${_BASHUNIT_ANNOT_MAP_RETRIES[i]}"
     if [ -n "$value" ] && ! bashunit::helper::_annotations_is_count "$value"; then
       bashunit::helper::_annotations_reject "$script" "$fn" "retry" "$value"
+      return 1
     fi
 
     i=$((i + 1))
   done
 }
 
+_BASHUNIT_ANNOT_REJECT_FN_OUT=""
+_BASHUNIT_ANNOT_REJECT_MSG_OUT=""
+
 function bashunit::helper::_annotations_reject() {
-  printf "%sError: @%s '%s' above %s in %s is not a non-negative integer.%s\n" \
-    "${_BASHUNIT_COLOR_FAILED}" "$3" "$4" "$2" "$1" "${_BASHUNIT_COLOR_DEFAULT}" >&2
-  exit 1
+  _BASHUNIT_ANNOT_REJECT_FN_OUT=$2
+  _BASHUNIT_ANNOT_REJECT_MSG_OUT="@$3 '$4' above $2 in $1 is not a non-negative integer."
+  printf "%sError: %s%s\n" \
+    "${_BASHUNIT_COLOR_FAILED}" "$_BASHUNIT_ANNOT_REJECT_MSG_OUT" \
+    "${_BASHUNIT_COLOR_DEFAULT}" >&2
 }
 
 # src/helper/provider.sh
@@ -16942,6 +16949,37 @@ function bashunit::runner::clear_mocks() {
   done
 }
 
+_BASHUNIT_FILE_TEARDOWN_PENDING=""
+
+function bashunit::runner::mark_file_teardown_pending() {
+  if declare -F tear_down_after_script >/dev/null 2>&1; then
+    _BASHUNIT_FILE_TEARDOWN_PENDING="$1"
+  fi
+}
+
+function bashunit::runner::run_pending_file_teardown() {
+  local test_file="$_BASHUNIT_FILE_TEARDOWN_PENDING"
+  [ -n "$test_file" ] || return 0
+
+  _BASHUNIT_FILE_TEARDOWN_PENDING=""
+  bashunit::runner::run_tear_down_after_script "$test_file"
+}
+
+_BASHUNIT_WORKER_TEST_PIDS=""
+
+function bashunit::runner::cleanup_worker_on_signal() {
+
+  trap - TERM
+
+  local test_pid
+  for test_pid in $_BASHUNIT_WORKER_TEST_PIDS; do
+    kill -TERM -"$test_pid" 2>/dev/null
+  done
+
+  bashunit::runner::run_pending_file_teardown || true
+  exit 143
+}
+
 function bashunit::runner::run_tear_down_after_script() {
   local test_file="$1"
   bashunit::internal_log "run_tear_down_after_script"
@@ -17053,6 +17091,40 @@ function bashunit::runner::parse_result_parallel() {
   bashunit::runner::parse_result_sync "$fn_name" "$execution_result"
 
   echo "$execution_result" >"$unique_test_result_file"
+}
+
+function bashunit::runner::publish_file_hook_failure() {
+  local status=$1
+  local test_file=$2
+
+  local slot=${3:-tear_down_after_script}
+
+  [ "$status" -ne 0 ] || return 0
+  bashunit::parallel::is_enabled || return 0
+
+  bashunit::runner::parallel_suite_dir_to_slot "$test_file"
+  local test_suite_dir=$_BASHUNIT_RUNNER_SUITE_DIR_OUT
+  [ -d "$test_suite_dir" ] || mkdir -p "$test_suite_dir"
+
+  local payload="\
+##ASSERTIONS_FAILED=0\
+##ASSERTIONS_PASSED=0\
+##ASSERTIONS_SKIPPED=0\
+##ASSERTIONS_INCOMPLETE=0\
+##ASSERTIONS_SNAPSHOT=0\
+##TEST_EXIT_CODE=$status##"
+  printf '%s\n' "$payload" >"$test_suite_dir/$slot.result"
+}
+
+function bashunit::runner::report_annotation_abort() {
+  local test_file=$1
+
+  local normalized_fn
+  normalized_fn="$(bashunit::helper::normalize_test_function_name \
+    "$_BASHUNIT_ANNOT_REJECT_FN_OUT")"
+  bashunit::reports::add_test_failed \
+    "$test_file" "$normalized_fn" 0 0 "$_BASHUNIT_ANNOT_REJECT_MSG_OUT"
+  bashunit::runner::publish_file_hook_failure 1 "$test_file" "annotation_abort"
 }
 
 function bashunit::runner::parse_result_sync() {
@@ -17402,12 +17474,18 @@ function bashunit::runner::call_test_functions() {
 
   bashunit::helper::build_provider_map "$script"
 
-  bashunit::helper::annotations_validate_or_exit "$script"
+  if ! bashunit::helper::annotations_validate "$script"; then
+
+    bashunit::runner::report_annotation_abort "$script"
+    return 1
+  fi
 
   local allow_test_parallel=true
   if [ "$_BASHUNIT_PROVIDER_MAP_NO_PARALLEL" = true ]; then
     allow_test_parallel=false
   fi
+
+  _BASHUNIT_WORKER_TEST_PIDS=""
 
   if bashunit::parallel::is_enabled && [ "$allow_test_parallel" = true ]; then
     bashunit::runner::parallel_suite_dir_to_slot "$script"
@@ -17426,6 +17504,7 @@ function bashunit::runner::call_test_functions() {
         _test_ordinal=$((_test_ordinal + 1))
         _BASHUNIT_RUNNER_RESULT_ORDINAL=$_test_ordinal
         bashunit::runner::run_test "$script" "$fn_name" &
+        _BASHUNIT_WORKER_TEST_PIDS="$_BASHUNIT_WORKER_TEST_PIDS $!"
       else
         bashunit::runner::run_test "$script" "$fn_name"
       fi
@@ -17467,6 +17546,7 @@ function bashunit::runner::call_test_functions() {
         _test_ordinal=$((_test_ordinal + 1))
         _BASHUNIT_RUNNER_RESULT_ORDINAL=$_test_ordinal
         bashunit::runner::run_test "$script" "$fn_name" ${parsed_data+"${parsed_data[@]}"} &
+        _BASHUNIT_WORKER_TEST_PIDS="$_BASHUNIT_WORKER_TEST_PIDS $!"
       else
         bashunit::runner::run_test "$script" "$fn_name" ${parsed_data+"${parsed_data[@]}"}
       fi
@@ -17495,6 +17575,8 @@ function bashunit::runner::execute_test_body() {
   _BASHUNIT_RUNNER_EXIT_FILE=$test_file
 
   trap 'exit_code=$?; bashunit::runner::cleanup_on_exit "$_BASHUNIT_RUNNER_EXIT_FILE" "$exit_code"' EXIT
+
+  trap 'exit 143' TERM
   bashunit::state::initialize_assertions_count
 
   if bashunit::env::is_login_shell_enabled; then
@@ -18127,6 +18209,8 @@ function bashunit::runner::load_test_files() {
       bashunit::runner::record_file_hook_failure \
         "source" "$test_file" "$message" 1 true
       bashunit::runner::clean_set_up_and_tear_down_after_script
+
+      bashunit::cleanup_script_temp_files
       bashunit::runner::restore_workdir
       continue
     fi
@@ -18189,6 +18273,8 @@ function bashunit::runner::load_test_files() {
         done
       fi
 
+      bashunit::runner::run_tear_down_after_script "$test_file"
+
       bashunit::runner::clean_script_test_functions "$_script_fns_to_clean"
       bashunit::runner::clean_set_up_and_tear_down_after_script
       if ! bashunit::parallel::is_enabled; then
@@ -18197,9 +18283,13 @@ function bashunit::runner::load_test_files() {
       bashunit::runner::restore_workdir
       continue
     fi
+
+    bashunit::runner::mark_file_teardown_pending "$test_file"
     local _cached_fns="$functions_for_script"
 
     bashunit::helper::check_duplicate_functions "$test_file" || true
+
+    local file_status=0
     if bashunit::parallel::is_enabled; then
       bashunit::runner::wait_for_job_slot
 
@@ -18207,11 +18297,28 @@ function bashunit::runner::load_test_files() {
       worker_stderr_paths[worker_stderr_count]="$_worker_stderr"
       worker_stderr_owners[worker_stderr_count]="$test_file"
       worker_stderr_count=$((worker_stderr_count + 1))
-      bashunit::runner::call_test_functions "$test_file" "$_cached_fns" 2>"$_worker_stderr" &
+
+      {
+
+        trap 'bashunit::runner::cleanup_worker_on_signal' TERM
+
+        set -m
+
+        bashunit::runner::call_test_functions "$test_file" "$_cached_fns"
+
+        _BASHUNIT_FILE_TEARDOWN_PENDING=""
+        bashunit::runner::run_tear_down_after_script "$test_file"
+
+        bashunit::runner::publish_file_hook_failure "$?" "$test_file"
+      } 2>"$_worker_stderr" &
     else
+
       bashunit::runner::call_test_functions "$test_file" "$_cached_fns"
+      file_status=$?
+      bashunit::runner::run_tear_down_after_script "$test_file"
     fi
-    bashunit::runner::run_tear_down_after_script "$test_file"
+
+    _BASHUNIT_FILE_TEARDOWN_PENDING=""
     bashunit::runner::clean_script_test_functions "$_script_fns_to_clean"
     bashunit::runner::clean_set_up_and_tear_down_after_script
     if ! bashunit::parallel::is_enabled; then
@@ -18219,6 +18326,10 @@ function bashunit::runner::load_test_files() {
     fi
     bashunit::internal_log "Finished file" "$test_file"
     bashunit::runner::restore_workdir
+
+    if [ "$file_status" -ne 0 ]; then
+      exit "$file_status"
+    fi
   done
 
   if bashunit::parallel::is_enabled && ! bashunit::env::is_list_enabled; then
@@ -18359,16 +18470,23 @@ function bashunit::runner::load_bench_files() {
           bashunit::state::add_tests_failed
         done
       fi
+
+      bashunit::runner::run_tear_down_after_script "$bench_file"
       bashunit::runner::clean_set_up_and_tear_down_after_script
       bashunit::cleanup_script_temp_files
       bashunit::runner::restore_workdir
       continue
     fi
     bashunit::runner::call_bench_functions "$bench_file" "$filter"
+    local bench_status=$?
     bashunit::runner::run_tear_down_after_script "$bench_file"
     bashunit::runner::clean_set_up_and_tear_down_after_script
     bashunit::cleanup_script_temp_files
     bashunit::runner::restore_workdir
+
+    if [ "$bench_status" -ne 0 ]; then
+      exit "$bench_status"
+    fi
   done
 }
 
@@ -18402,7 +18520,7 @@ function bashunit::runner::call_bench_functions() {
   for fn_name in "${functions_to_run[@]+"${functions_to_run[@]}"}"; do
 
     local parsed_annotations
-    parsed_annotations=$(bashunit::benchmark::parse_annotations "$fn_name" "$script") || exit 1
+    parsed_annotations=$(bashunit::benchmark::parse_annotations "$fn_name" "$script") || return 1
     read -r revs its max_ms <<<"$parsed_annotations"
     bashunit::benchmark::run_function "$fn_name" "$revs" "$its" "$max_ms" "$script"
     unset -v fn_name
@@ -19603,10 +19721,14 @@ function bashunit::main::exec_benchmarks() {
 }
 
 function bashunit::main::cleanup() {
+
+  trap - INT
   printf "%sCaught Ctrl-C, killing all child processes...%s\n" \
     "${_BASHUNIT_COLOR_SKIPPED}" "${_BASHUNIT_COLOR_DEFAULT}"
 
   pkill -P $$
+
+  bashunit::runner::run_pending_file_teardown || true
   bashunit::cleanup_script_temp_files
   if bashunit::parallel::is_enabled; then
     bashunit::parallel::cleanup
@@ -19616,6 +19738,8 @@ function bashunit::main::cleanup() {
 }
 
 function bashunit::main::handle_stop_on_failure_sync() {
+
+  bashunit::runner::run_pending_file_teardown || true
   printf "\n%sStop on failure enabled...%s\n" "${_BASHUNIT_COLOR_SKIPPED}" "${_BASHUNIT_COLOR_DEFAULT}"
   bashunit::console_results::print_failing_tests_and_reset
   bashunit::console_results::print_risky_tests_and_reset
@@ -20868,7 +20992,7 @@ function _check_bash_version() {
 
 _check_bash_version
 
-declare -r BASHUNIT_VERSION="0.50.0"
+declare -r BASHUNIT_VERSION="0.50.1"
 
 _bashunit_root="${BASH_SOURCE[0]%/*}"
 
