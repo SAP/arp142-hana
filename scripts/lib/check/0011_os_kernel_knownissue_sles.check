@@ -30,6 +30,7 @@ function check_0011_os_kernel_knownissue_sles {
         ['GCP x4,c3,c4']='https://docs.cloud.google.com/sap/docs/certifications-sap-hana#hana-cert-table-oss'
         ['SUSE TID 000022558']='SAP HANA Backint backups are extremely slow on SLES 15 SP7'
         ['SUSE TID 000022679']='Network performance issues with the Azure mana network driver'
+        ['SUSE TID 000022819']='SR-IOV Update Causes Network Adapter Unavailability on Linux LPAR'
     )
 
     # array 'release' 'lower boundary' 'upper boundary' 'Issue ID'
@@ -54,7 +55,7 @@ function check_0011_os_kernel_knownissue_sles {
                         '15.5' '5.14.21-150500.53.2'        '5.14.21-150500.55.136.0'   'SUSE TID 000022286' \
                         '15.6' '6.4.0-150600.23.33.1'       '6.4.0-150600.23.87.0'      'SUSE TID 000022286' \
                         '15.7' '6.4.0-150700.51.1'          '6.4.0-150700.53.31.0'      'SUSE TID 000022286' \
-                        '15.7' '6.4.0-150700.53.3.1'        '6.4.0-150700.53.52.1'      'SUSE TID 000022558' \
+                        '15.7' '6.4.0-150700.53.3.1'        '6.4.0-150700.53.55.0'      'SUSE TID 000022558' \
                         )
 
     # local -ar _sles_4sap=(\
@@ -82,6 +83,7 @@ function check_0011_os_kernel_knownissue_sles {
                         )
 
     local -ar _sles_ibmpower=(\
+                        '15.7' '6.4.0-150700.51.1'      '6.4.0-150700.53.55.0'       'SUSE TID 000022819' \
                         '15.4' '5.14.21-150400.22.1'    '5.14.21-150400.24.11.0'    'SAP Note #3415906' \
                         )
 
