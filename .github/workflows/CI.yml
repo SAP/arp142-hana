@@ -58,8 +58,8 @@ jobs:
       # Run bashunit tests
       - name: Run unit tests (bashunit)
         run: |
-          bash ./bashunit --log-junit test-results-global.xml ./*.bashunit.sh
-          bash ./bashunit --log-junit test-results-checks.xml ./check/*.bashunit.sh
+          bash ./bashunit test --fail-on-risky --log-junit test-results-global.xml ./*.bashunit.sh
+          bash ./bashunit test --fail-on-risky --log-junit test-results-checks.xml ./check/*.bashunit.sh
         working-directory: ./scripts/tests
 
       - name: Upload JUnit XML results
