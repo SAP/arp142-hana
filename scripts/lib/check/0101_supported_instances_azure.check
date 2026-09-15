@@ -31,7 +31,8 @@ function check_0101_supported_instances_azure {
                         'E32s_v6'   'E32ds_v6'  'E48s_v6'   'E48ds_v6'  'E64s_v6'   'E64ds_v6'      \
                         'E96s_v6'   'E96ds_v6'  'E128s_v6'  'E128ds_v6' 'E192is_v6' 'E192ids_v6'    \
 
-                        'M32ls'     'M32ts'     \
+                        'M16s_v3'        \
+                        'M32ls'     'M32ts'     'M32ts_v3'     \
                         'M32ms_v2'  'M32dms_v2' \
                         'M48ds_1_v3'    'M48s_1_v3'     \
                         'M64ls'     'M64ms'     'M64s'  \
