@@ -26,6 +26,7 @@ function check_0011_os_kernel_knownissue_sles {
         ['SAP Note #1928533, M832ixs_v2 only']='SAP Applications on Microsoft Azure: Supported Products and Azure VM types - M832ixs_v2'
         ['SAP Note #3415906']='Could Not Query From SYS.M_SERVICE_MEMORY_ (clock_gettime @ IBM Power - hanging HANA callstacks)'
         ['SUSE bsc#1237530']='cpuidle driver in virtualized environments'
+        ['SUSE TID 000022171']='High system CPU during HANA table load in SLES 15 SP5 and earlier'
         ['SUSE TID 000022286']='SAP HANA swap and system hangs with THP on multi-NUMA node systems'
         ['GCP x4,c3,c4']='https://docs.cloud.google.com/sap/docs/certifications-sap-hana#hana-cert-table-oss'
         ['SUSE TID 000022558']='SAP HANA Backint backups are extremely slow on SLES 15 SP7'
@@ -41,8 +42,10 @@ function check_0011_os_kernel_knownissue_sles {
                         '12.5' '4.12.14-122.144.1'          '4.12.14-122.147.1'         'SUSE TID 000021035' \
                         '12.5' '4.12.14-120.1'              '4.12.14-122.186.0'         'SUSE bsc#1203496-PMEM' \
                         '12.5' '4.12.14-122.212.1'          '4.12.14-122.212.1'         'SUSE TID 000021453, retracted' \
+                        '12.5' '4.12.14-120.1'              '4.12.14-999'               'SUSE TID 000022171' \
                         '15.4' '5.14.21-150400.24.21.1'     '5.14.21-150400.24.28.0'    'SUSE TID 000020826' \
                         '15.4' '5.14.21-150400.24.33.2'     '5.14.21-150400.24.41.0'    'SUSE TID 000021035' \
+                        '15.4' '5.14.21-150400.22.1'        '5.14.21-150400.999'        'SUSE TID 000022171' \
                         '15.4' '5.14.21-150400.24.49.3'     '5.14.21-150400.24.49.3'    'retracted' \
                         '15.4' '5.14.21-150400.24.84.1 '    '5.14.21-150400.24.84.1 '   'retracted' \
                         '15.4' '5.14.21-150400.24.88.1 '    '5.14.21-150400.24.108.0'   'SUSE bsc#1215885' \
@@ -52,6 +55,7 @@ function check_0011_os_kernel_knownissue_sles {
                         '15.5' '5.14.21-150500.53.2'        '5.14.21-150500.55.94.0'    'SAP Note #3577518' \
                         '15.5' '5.14.21-150500.55.19.1'     '5.14.21-150500.55.88.0'    'SUSE bsc#1231923' \
                         '15.5' '5.14.21-150500.53.2'        '5.14.21-150500.55.97.0'    'SUSE bsc#1236289' \
+                        '15.5' '5.14.21-150500.53.2'        '5.14.21-150500.999'        'SUSE TID 000022171' \
                         '15.5' '5.14.21-150500.53.2'        '5.14.21-150500.55.136.0'   'SUSE TID 000022286' \
                         '15.6' '6.4.0-150600.23.33.1'       '6.4.0-150600.23.87.0'      'SUSE TID 000022286' \
                         '15.7' '6.4.0-150700.51.1'          '6.4.0-150700.53.31.0'      'SUSE TID 000022286' \
