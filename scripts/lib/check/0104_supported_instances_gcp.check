@@ -10,34 +10,40 @@ function check_0104_supported_instances_gcp {
 
     # MODIFICATION SECTION>>
     # array             'Instance Type'
-    local -ar _google_vm=(\
-                        'c3-standard-44'    'c3-highmem-44'     'c3-highmem-88'     'c3-highmem-176'    \
-                        'c4-highmem-32'     'c4-highmem-48'     'c4-highmem-96'     'c4-highmem-144'    \
-                        'c4-highmem-192'    'c4-highmem-288'    \
-                        'n1-highmem-32'     'n1-highmem-64'     'n1-highmem-96'     \
-                        'n2-highmem-32'     'n2-highmem-48'     'n2-highmem-64'     'n2-highmem-80'     \
-                        'n2-highmem-96'     'n2-highmem-128'     \
-                        'm1-megamem-96'     'm1-ultramem-40'    'm1-ultramem-80'    'm1-ultramem-160'   \
-                        'm2-megamem-416'    'm2-ultramem-208'   'm2-ultramem-416'   \
-                        'm2-hypermem-416'   \
-                        'm3-ultramem-32'    'm3-ultramem-64'    'm3-ultramem-128'   \
-                        'm3-megamem-64'     'm3-megamem-128'    \
+    local -ar _google_vm=(
+                        'c3-standard-44'    'c3-highmem-44'     'c3-highmem-88'     'c3-highmem-176'
+                        'c4-highmem-32'     'c4-highmem-48'     'c4-highmem-96'     'c4-highmem-144'
+                        'c4-highmem-192'    'c4-highmem-288'
+                        'n1-highmem-32'     'n1-highmem-64'     'n1-highmem-96'
+                        'n2-highmem-32'     'n2-highmem-48'     'n2-highmem-64'     'n2-highmem-80'
+                        'n2-highmem-96'     'n2-highmem-128'
+                        'm1-megamem-96'     'm1-ultramem-40'    'm1-ultramem-80'    'm1-ultramem-160'
+                        'm2-megamem-416'    'm2-ultramem-208'   'm2-ultramem-416'
+                        'm2-hypermem-416'
+                        'm3-ultramem-32'    'm3-ultramem-64'    'm3-ultramem-128'
+                        'm3-megamem-64'     'm3-megamem-128'
 
-                        'm4-megamem-28'     'm4-megamem-56'     'm4-megamem-112'    'm4-megamem-224'    \
-                        'm4-hypermem-16'    'm4-hypermem-32'    'm4-hypermem-64'    \
-                        'm4-ultramem-56'    'm4-ultramem-112'   'm4-ultramem-224'   \
+                        'm4-megamem-28'     'm4-megamem-56'     'm4-megamem-112'    'm4-megamem-224'
+                        'm4-hypermem-16'    'm4-hypermem-32'    'm4-hypermem-64'
+                        'm4-ultramem-56'    'm4-ultramem-112'   'm4-ultramem-224'
 
-                        'm4n-megamem-28'     'm4n-megamem-56'     'm4n-megamem-112'    'm4n-megamem-224'    \
-                        'm4n-hypermem-16'    'm4n-hypermem-32'    'm4n-hypermem-64'    \
-                        'm4n-ultramem-56'    'm4n-ultramem-112'   'm4n-ultramem-224'   \
+                        'm4n-megamem-28'     'm4n-megamem-56'     'm4n-megamem-112'    'm4n-megamem-224'
+                        'm4n-hypermem-16'    'm4n-hypermem-32'    'm4n-hypermem-64'
+                        'm4n-ultramem-56'    'm4n-ultramem-112'   'm4n-ultramem-224'
                         )
 
     # array             'Instance Type'
-    local -ar _google_bm=(\
-                        'o2-ultramem-672-metal' 'o2-ultramem-896-metal' \
-                        'x4-960-16t-metal'      'x4-1440-24t-metal'     'x4-1920-32t-metal' \
-                        'x4-480-6t-metal'       'x4-480-8t-metal'       'x4-960-12t-metal' \
-                        'c3-highmem-192-metal'  'c4-highmem-288-metal'  \
+    local -ar _google_bm=(
+                        'o2-ultramem-672-metal' 'o2-ultramem-896-metal'
+
+                        'x5-688-12T-metal'      'x5-688-16T-metal'
+                        'x5-1376-24T-metal'     'x5-1376-32T-metal'
+                        'x5-2064-48T-metal'
+
+                        'x4-960-16t-metal'      'x4-1440-24t-metal'     'x4-1920-32t-metal'
+                        'x4-480-6t-metal'       'x4-480-8t-metal'       'x4-960-12t-metal'
+
+                        'c3-highmem-192-metal'  'c4-highmem-288-metal'
                         )
 
     local -r sapnote='#2456406'
