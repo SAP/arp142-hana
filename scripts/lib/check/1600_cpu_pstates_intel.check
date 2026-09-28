@@ -10,8 +10,7 @@ function check_1600_cpu_pstates_intel {
     # https://www.kernel.org/doc/html/latest/admin-guide/pm/intel_pstate.html
 
     # MODIFICATION SECTION>>
-    local -r sapnote='n/a'
-
+    local -r sapnote='#383075'                     # Requirements on Intel CPU frequency scaling for SAP HANA
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS
@@ -25,33 +24,20 @@ function check_1600_cpu_pstates_intel {
         logCheckSkipped 'Running virtualized. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    else
-
-        #intel_pstate only for IvyBridge onwards
-        #INTEL_FAM6_IVYBRIDGE   0x3A --> DEC 58
-        if [[ ${LIB_PLATF_CPU_MODELID} -ge 58 ]]; then
-            logCheckInfo "Running on intel_pstate supported Intel CPU (>=IvyBridge - ModelID: ${LIB_PLATF_CPU_MODELID})"
-        else
-            logCheckSkipped 'Not running on intel_pstate supported Intel CPU (>=IvyBridge). Skipping' "<${FUNCNAME[0]}>"
-            _retval=3
-        fi
-
     fi
 
     #CHECK
     if [[ ${_retval} -eq 99 ]]; then
 
-        local sd_path='/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver'
-
-        local scaling_driver
-        [[ -f ${sd_path} ]] && scaling_driver=$(<${sd_path})
+        local scaling_driver="${TEST_scaling_driver:-$(</sys/devices/system/cpu/cpu0/cpufreq/scaling_driver)}"
 
         case ${scaling_driver:-} in
 
             'intel_pstate')
                         local hwp_enabled
 
-                        if grep -qse '^flags.*hwp' -m1 /proc/cpuinfo ; then
+                        if [[ -v TEST_hwp_enabled && ${TEST_hwp_enabled} == true ]] || \
+                            [[ ! -v TEST_hwp_enabled ]] && grep -qse '^flags.*hwp' -m1 /proc/cpuinfo ; then
                             logCheckInfo 'CPU hardware-managed P-states (HWP) available'
                             hwp_enabled='with HWP'
                         else

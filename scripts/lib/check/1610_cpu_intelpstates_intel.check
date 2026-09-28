@@ -7,31 +7,15 @@ function check_1610_cpu_intelpstates_intel {
     local -i _retval=99
 
     # MODIFICATION SECTION>>
-    local -r sapnote_12='#2205917,#1275776'
-    local -r sapnote_15='#2684254,#1275776'
-    local -r sapnote_16='#3577842,#1275776'
-    local -r sapnote_rhel7='#2292690,#1275776'
-    local -r sapnote_rhel8='#2777782,#1275776'
-    local -r sapnote_rhel9='#3108302,#1275776'
-    local -r sapnote_rhel10='#3562919,#1275776'
 
-    local -ar _intel_pstate_parameter=(\
-                                    'no_turbo'            0 \
-                                    'max_perf_pct'      100 \
-    )
-    # MODIFICATION SECTION<<
+    local -r sapnote='#383075'                     # Requirements on Intel CPU frequency scaling for SAP HANA
 
     #set by sapconf/saptune
-    #1275776 - Linux: Preparing SLES for SAP environments
-    #2205917 - SAP HANA DB: Recommended OS settings for SLES 12 / SLES for SAP Applications 12
-    #2684254 - SAP HANA DB: Recommended OS settings for SLES 15 / SLES for SAP Applications 15
-    #3577842 - SAP HANA DB: Recommended OS settings for SLES 16 / SLES for SAP Applications 16
-    #2292690 - SAP HANA DB: Recommended OS settings for RHEL 7
-    #2777782 - SAP HANA DB: Recommended OS Settings for RHEL 8
-    #3108302 - SAP HANA DB: Recommended OS Settings for RHEL 9
-    #3562919 - SAP HANA DB: Recommended OS Settings for RHEL 10
-
-    local sapnote
+    local -ar _intel_pstate_parameter=(
+                                    'no_turbo'            0
+                                    'max_perf_pct'      100
+    )
+    # MODIFICATION SECTION<<
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_INTEL ; then
@@ -44,44 +28,18 @@ function check_1610_cpu_intelpstates_intel {
         logCheckSkipped 'Running virtualized. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif [[ ! -f '/sys/devices/system/cpu/intel_pstate/status' ]]; then
+    elif [[ -v TEST_intel_pstate_status ]]; then
+
+        if [[ ${TEST_intel_pstate_status} != 'active' ]]; then
+            logCheckSkipped 'CPU scaling driver <intel_pstate> NOT active. Skipping' "<${FUNCNAME[0]}>"
+            _retval=3
+        fi
+
+    elif [[ ! -f '/sys/devices/system/cpu/intel_pstate/status' ]] || \
+        ! grep 'active' -q '/sys/devices/system/cpu/intel_pstate/status'; then
 
         logCheckSkipped 'CPU scaling driver <intel_pstate> NOT active. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
-
-    elif ! grep 'active' -q '/sys/devices/system/cpu/intel_pstate/status'; then
-
-        logCheckSkipped 'CPU scaling driver <intel_pstate> NOT active. Skipping' "<${FUNCNAME[0]}>"
-        _retval=3
-
-    elif LIB_FUNC_IS_SLES ; then
-
-        case "${OS_VERSION}" in
-
-            12.* )  : "${sapnote_12}" ;;
-            15.* )  : "${sapnote_15}" ;;
-            16.* )  : "${sapnote_16}" ;;
-            *)
-                    logCheckWarning 'CHECK does NOT support SLES release' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
-                    _retval=1
-                ;;
-        esac
-        sapnote="$_"
-
-    elif LIB_FUNC_IS_RHEL ; then
-
-        case "${OS_VERSION}" in
-
-            7.* ) : "${sapnote_rhel7}" ;;
-            8.* ) : "${sapnote_rhel8}" ;;
-            9.* ) : "${sapnote_rhel9}" ;;
-            10.* ) : "${sapnote_rhel10}" ;;
-            *)
-                    logCheckWarning 'CHECK does NOT support RHEL release' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
-                    _retval=1
-                ;;
-        esac
-        sapnote="$_"
 
     fi
 
@@ -100,7 +58,14 @@ function check_1610_cpu_intelpstates_intel {
             _parameter=${_intel_pstate_parameter[$i]}
             _reco_value=${_intel_pstate_parameter[$i+1]}
 
-            _curr_value=$(</sys/devices/system/cpu/intel_pstate/"${_parameter}")
+                case ${_parameter} in
+                'no_turbo')
+                        _curr_value=${TEST_intel_pstate_no_turbo:-$(</sys/devices/system/cpu/intel_pstate/no_turbo)}
+                    ;;
+                'max_perf_pct')
+                        _curr_value=${TEST_intel_pstate_max_perf_pct:-$(</sys/devices/system/cpu/intel_pstate/max_perf_pct)}
+                    ;;
+                esac
 
             if [[ ${_curr_value} -ne ${_reco_value} ]]; then
 
