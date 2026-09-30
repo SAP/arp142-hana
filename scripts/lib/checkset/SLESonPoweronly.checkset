@@ -68,6 +68,7 @@
 5510_nfsv3_rpc_slots_netapp
 5530_nfs_mount_nconnect
 5540_fs_hana_mount
+5600_fstrim_service
 7010_corosync_version
 7015_pacemaker_version
 7018_pacemaker_attributes

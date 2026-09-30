@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+function check_5600_fstrim_service {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r suse_kb='000019447'
+    # MODIFICATION SECTION<<
+
+    # Risk of a system hang when running xfs_scrub as it potentially calls TRIM
+    # Reference: https://access.redhat.com/solutions/7048882
+    # Fstrim running on a Ceph backed storage can lead to hung task panics
+    # Reference: https://access.redhat.com/solutions/7032523
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        if systemctl is-enabled 'fstrim.timer' --quiet; then
+
+            logCheckError "fstrim.timer is NOT disabled. (SUSE KB ${suse_kb}) (is: enabled)"
+            _retval=2
+
+        else
+
+            logCheckOk "fstrim.timer is disabled (SUSE KB ${suse_kb})"
+            _retval=0
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
