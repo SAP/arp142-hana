@@ -89,6 +89,7 @@
 5510_nfsv3_rpc_slots_netapp
 5521_nfs_mount_rwsize_azure
 5522_nfs_mount_rwsize_amazon
+5524_nfs_mount_rwsize_gcp
 5530_nfs_mount_nconnect
 5540_fs_hana_mount
 5550_io_writeaccelerator_azure

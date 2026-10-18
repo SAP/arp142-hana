@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+
+function check_5524_nfs_mount_rwsize_gcp {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2456406'
+
+    local -r _reco_rsize_wsize='rsize=262144,wsize=262144'
+
+    local _rxNFSmounts='\snfs4?\s'
+    # MODIFICATION SECTION<<
+
+    # 2456406 - SAP on Google Cloud Platform: Support Prerequisites
+    # https://docs.cloud.google.com/sap/docs/filers-for-sap
+    # https://docs.cloud.google.com/sap/docs/sap-hana-with-gcnv
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_CLOUD_GOOGLE; then
+
+        logCheckSkipped 'Not running on Google Cloud Platform. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif ! grep -qsE "${_rxNFSmounts}" /proc/mounts; then
+
+        logCheckSkipped "No NFS filesystem mounted (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+        _retval=3
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        logCheckInfo 'Only applicable for SAP Persistence stored on Google Cloud file sharing solutions!'
+        logCheckInfo 'https://docs.cloud.google.com/sap/docs/filers-for-sap#hana_netapp_deploy'
+        logCheckInfo '---'
+
+        while read -r nfs_mount ; do
+
+            logTrace "<${FUNCNAME[0]}> # <${nfs_mount}>"
+
+            if ! LIB_FUNC_STRINGCONTAIN "${nfs_mount}" "${_reco_rsize_wsize}" ; then
+
+                logCheckWarning "GCP filer mount option rsize/wsize NOT set correctly for <${nfs_mount// */}>"
+                _retval=1
+
+            fi
+
+        done <<< "$(grep -sE "${_rxNFSmounts}" /proc/mounts)"
+
+
+        if [[ ${_retval} -eq 99 ]]; then
+
+            logCheckOk "All GCP filer filesystems have mount options rsize/wsize set as recommended (SAP Note ${sapnote:-})"
+            _retval=0
+
+        else
+
+            logCheckWarning "NOT all GCP filer filesystems have mount options rsize/wsize set as recommended (SAP Note ${sapnote:-})"
+            _retval=1
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
