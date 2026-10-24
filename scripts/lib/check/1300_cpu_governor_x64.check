@@ -8,7 +8,7 @@ function check_1300_cpu_governor_x64 {
 
     # MODIFICATION SECTION>>
 
-    local -r sapnote='#383075'                     # Requirements on Intel CPU frequency scaling for SAP HANA
+    local -r sapnote='#3830757'                     # Requirements on Intel CPU frequency scaling for SAP HANA
     local -r expected_governor='performance'
     # MODIFICATION SECTION<<
 

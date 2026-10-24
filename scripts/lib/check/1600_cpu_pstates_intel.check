@@ -10,7 +10,7 @@ function check_1600_cpu_pstates_intel {
     # https://www.kernel.org/doc/html/latest/admin-guide/pm/intel_pstate.html
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#383075'                     # Requirements on Intel CPU frequency scaling for SAP HANA
+    local -r sapnote='#3830757'                     # Requirements on Intel CPU frequency scaling for SAP HANA
     # MODIFICATION SECTION<<
 
     # PRECONDITIONS
