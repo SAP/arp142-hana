@@ -17,6 +17,7 @@ function check_0450_tunedprofiles-saphana_rhel {
     local -ar rhel94=( '2.99.99-99.el9'       '#3108302' )
     local -ar rhel96=( '2.99.99-99.el9'       '#3108302' )
     local -ar rhel100=( '2.99.99-99.el10'     '#3562919' )
+    local -ar rhel102=( '2.27.0-2.el10_2'     '#3562919' )
     # MODIFICATION SECTION<<
 
     # 2292690 - SAP HANA DB: Recommended OS settings for RHEL 7
@@ -47,6 +48,7 @@ function check_0450_tunedprofiles-saphana_rhel {
             9.6 )  _goodversion="${rhel96[0]}" ; sapnote="${rhel96[1]}" ;;
 
             10.0 )  _goodversion="${rhel100[0]}" ; sapnote="${rhel100[1]}" ;;
+            10.2 )  _goodversion="${rhel102[0]}" ; sapnote="${rhel102[1]}" ;;
 
             *)
                     logCheckWarning 'CHECK does not support RHEL release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"

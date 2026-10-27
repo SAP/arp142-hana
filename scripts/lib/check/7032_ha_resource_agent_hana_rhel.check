@@ -10,10 +10,11 @@ function check_7032_ha_resource_agent_hana_rhel {
     local sapnote='#1552925'
     local -r _rpm_package='sap-hana-ha'
 
-    local -ar _rpm_versions=(\
-                            '10.0'  '1.2.12-1' \
-                            '9.6'   '1.2.12-1' \
-                            '9.4'   '1.2.12-1' \
+    local -ar _rpm_versions=(
+                            '10.2'  '1.2.12-1'
+                            '10.0'  '1.2.12-1'
+                            '9.6'   '1.2.12-1'
+                            '9.4'   '1.2.12-1'
                             )
     # MODIFICATION SECTION<<
 
