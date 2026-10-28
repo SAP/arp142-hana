@@ -12,17 +12,11 @@ function check_5560_xfs_mount_stripe_size_azure {
     local -r _data_stripe_expected=256   # KiB - SAP recommended stripe size for /hana/data
     local -r _log_stripe_expected=64     # KiB - SAP recommended stripe size for /hana/log
 
-    local -r _rxHANAmounts='(?<= )/hana/(data|log).*'
+    local -r _rxHANAmounts='(?<= )/hana/(data|log)(/[^ ]*)?(?= )'
+    local -r _sysfs_dev_block_root="${TEST_SYSFS_DEV_BLOCK_ROOT:-/sys/dev/block}"
+    local _hana_mountinfo
 
     # MODIFICATION SECTION<<
-
-    # Reads minimum_io_size (stripe unit, bytes) from sysfs; declare -f guard allows test mocks to take precedence.
-    declare -f _sysfs_min_io &>/dev/null || \
-        _sysfs_min_io() { local _v=0; [[ -r "/sys/dev/block/${1}/queue/minimum_io_size" ]] && read -r _v < "/sys/dev/block/${1}/queue/minimum_io_size"; echo "${_v}"; }
-
-    # Reads optimal_io_size (stripe width, bytes) from sysfs; 0 = not striped; declare -f guard allows test mocks to take precedence.
-    declare -f _sysfs_opt_io &>/dev/null || \
-        _sysfs_opt_io() { local _v=0; [[ -r "/sys/dev/block/${1}/queue/optimal_io_size" ]] && read -r _v < "/sys/dev/block/${1}/queue/optimal_io_size"; echo "${_v}"; }
 
     # https://learn.microsoft.com/en-us/azure/sap/workloads/hana-vm-operations-storage
     # 2015553 - SAP on Microsoft Azure: Support prerequisites
@@ -33,12 +27,8 @@ function check_5560_xfs_mount_stripe_size_azure {
         logCheckSkipped 'Not running on Microsoft Azure. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif ! grep -qsP "${_rxHANAmounts}" /proc/self/mountinfo; then
-        logCheckSkipped "No HANA filesystem mounted (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
-        _retval=3
-
-    elif ! grep -qsP "${_rxHANAmounts}.*- xfs " /proc/self/mountinfo; then
-        logCheckSkipped "No HANA filesystem is XFS - check NOT applicable (SAP Note ${sapnote:-})" "<${FUNCNAME[0]}>"
+    elif ! _hana_mountinfo=$(grep -sP "${_rxHANAmounts}.*- xfs " /proc/self/mountinfo); then
+        logCheckSkipped "No HANA XFS filesystem mounted (SAP Note ${sapnote:-}) - check NOT applicable" "<${FUNCNAME[0]}>"
         _retval=3
     fi
 
@@ -49,30 +39,29 @@ function check_5560_xfs_mount_stripe_size_azure {
         local -i counter_error=0
         local -i counter_skipped=0
 
-        local _line _majmin _mount _rest _fstype _expected
+        local _line _majmin _mount _expected _min_io_path _opt_io_path
         local -i _min_io _opt_io _stripe_count _stripe_kib
 
         while IFS= read -r _line; do
 
             # /proc/self/mountinfo fields: mountid parentid major:minor root mountpoint mountopts [optfields] - fstype source superopts
-            read -r _ _ _majmin _ _mount _rest <<< "${_line}"
+            read -r _ _ _majmin _ _mount _ <<< "${_line}"
 
             case "${_mount}" in
-                /hana/data*) _expected="${_data_stripe_expected}" ;;
-                /hana/log*)  _expected="${_log_stripe_expected}"  ;;
-                *)           continue ;;
+                /hana/data|/hana/data/*) _expected="${_data_stripe_expected}" ;;
+                /hana/log|/hana/log/*)  _expected="${_log_stripe_expected}"  ;;
+                *)                      continue ;;
             esac
-
-            # Extract fstype from after the ' - ' separator (handles optional fields)
-            _fstype="${_rest##* - }"
-            _fstype="${_fstype%% *}"
-            [[ "${_fstype}" == 'xfs' ]] || continue
 
             logTrace "<${FUNCNAME[0]}> # mount=<${_mount}> majmin=<${_majmin}>"
 
             # minimum_io_size = stripe unit (bytes); optimal_io_size = stripe width (bytes); 0 = not striped
-            _min_io=$(_sysfs_min_io "${_majmin}")
-            _opt_io=$(_sysfs_opt_io "${_majmin}")
+            _min_io_path="${_sysfs_dev_block_root}/${_majmin}/queue/minimum_io_size"
+            _opt_io_path="${_sysfs_dev_block_root}/${_majmin}/queue/optimal_io_size"
+            _min_io=0
+            _opt_io=0
+            [[ -r "${_min_io_path}" ]] && _min_io=$(<"${_min_io_path}")
+            [[ -r "${_opt_io_path}" ]] && _opt_io=$(<"${_opt_io_path}")
 
             if [[ "${_min_io}" -eq 0 || "${_opt_io}" -eq 0 ]]; then
                 logCheckSkipped "Mount ${_mount} is not striped (optimal_io_size=0) - check NOT applicable"
@@ -97,7 +86,7 @@ function check_5560_xfs_mount_stripe_size_azure {
                 ((counter_error++))
             fi
 
-        done <<< "$(grep -sP "${_rxHANAmounts}" /proc/self/mountinfo)"
+        done <<< "${_hana_mountinfo}"
 
         # Summary: error takes priority; distinguish all-ok from at-least-one-ok; otherwise not applicable
         if [[ ${counter_error} -gt 0 ]]; then
