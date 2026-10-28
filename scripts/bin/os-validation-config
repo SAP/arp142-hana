@@ -55,6 +55,7 @@ readonly -a SLES_SUPPORTED_VERSIONS=(
 # '9.1'  'no support '          'by SAP HANA'
 # '9.3'  'no support '          'by SAP HANA'
 
+# '10.2'  '30 Nov 2026'   '31 May 2032'
 # '10.0'  '30 Nov 2025'   '31 May 2029'
 # '9.6'   '30 Nov 2025'   '31 May 2029'
 # '9.4'   '30 Nov 2024'   '30 Apr 2028'
@@ -80,4 +81,5 @@ readonly -a RHEL_SUPPORTED_VERSIONS=(
     '8.10'          # RHEL 8.10 and above
     '9.[2-6]'       # RHEL 9.2-9.6
     '10.0'          # RHEL 10.0
+    '10.2'          # RHEL 10.2
 )

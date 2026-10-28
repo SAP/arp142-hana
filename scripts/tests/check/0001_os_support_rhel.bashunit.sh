@@ -1,9 +1,4 @@
 #!/usr/bin/env bash
-#------------------------------------------------------------------
-# bashunit migration notes:
-# 1. PROGRAM_DIR not readonly - bashunit runs all tests in same session
-# 2. Guard check skips if already loaded to avoid readonly variable conflicts
-#------------------------------------------------------------------
 set -u  # treat unset variables as an error
 
 if [[ -z "${PROGRAM_DIR:-}" ]]; then
@@ -18,6 +13,11 @@ OS_VERSION=''
 LIB_FUNC_IS_RHEL() { return 0 ; }
 LIB_FUNC_IS_RHEL4SAP() { return 0 ; }
 
+assert_check_processed() {
+    local rc=$1
+    local context="${2:-}"
+    assert_not_equals 99 "${rc}" "Check must be processed${context:+ in }${context}"
+}
 
 function test_rhel_out_of_lifetime() {
 
@@ -26,12 +26,11 @@ function test_rhel_out_of_lifetime() {
 
     #act
     check_0001_os_support_rhel
+    local rc=$?
 
     #assert
-    if [[ $? -ne 2 ]]; then
-        bashunit::fail "Expected RC=2 (error) for RHEL out of lifetime"
-    fi
-    assert_true true
+    assert_check_processed "${rc}" 'RHEL out of lifetime'
+    assert_exit_code 2 'Expected RC=2 (error) for RHEL out of lifetime' "${rc}"
 }
 
 function test_rhel_not_supported() {
@@ -41,12 +40,11 @@ function test_rhel_not_supported() {
 
     #act
     check_0001_os_support_rhel
+    local rc=$?
 
     #assert
-    if [[ $? -ne 2 ]]; then
-        bashunit::fail "Expected RC=2 (error) for RHEL not supported"
-    fi
-    assert_true true
+    assert_check_processed "${rc}" 'RHEL not supported'
+    assert_exit_code 2 'Expected RC=2 (error) for RHEL not supported' "${rc}"
 }
 
 function test_rhel_supported() {
@@ -56,12 +54,11 @@ function test_rhel_supported() {
 
     #act
     check_0001_os_support_rhel
+    local rc=$?
 
     #assert
-    if [[ $? -ne 0 ]]; then
-        bashunit::fail "Expected RC=0 (ok) for RHEL supported"
-    fi
-    assert_true true
+    assert_check_processed "${rc}" 'RHEL supported'
+    assert_exit_code 0 'Expected RC=0 (ok) for RHEL supported' "${rc}"
 }
 
 function test_rhel_not_handled() {
@@ -71,12 +68,11 @@ function test_rhel_not_handled() {
 
     #act
     check_0001_os_support_rhel
+    local rc=$?
 
     #assert
-    if [[ $? -ne 2 ]]; then
-        bashunit::fail "Expected RC=2 (error) for RHEL not handled"
-    fi
-    assert_true true
+    assert_check_processed "${rc}" 'RHEL not handled'
+    assert_exit_code 2 'Expected RC=2 (error) for RHEL not handled' "${rc}"
 }
 
 function test_rhel10_supported() {
@@ -85,13 +81,26 @@ function test_rhel10_supported() {
     OS_VERSION='10.0'
 
     #act
-    check_0001_os_support_rhel
+    local rc=0
+    check_0001_os_support_rhel || rc=$?
 
     #assert
-    if [[ $? -ne 0 ]]; then
-        bashunit::fail "Expected RC=0 (ok) for RHEL 10.0 supported"
-    fi
-    assert_true true
+    assert_check_processed "${rc}" 'RHEL 10.0 supported'
+    assert_exit_code 0 'Expected RC=0 (ok) for RHEL 10.0 supported' "${rc}"
+}
+
+function test_rhel102_supported() {
+
+    #arrange
+    OS_VERSION='10.2'
+
+    #act
+    local rc=0
+    check_0001_os_support_rhel || rc=$?
+
+    #assert
+    assert_check_processed "${rc}" 'RHEL 10.2 supported'
+    assert_exit_code 0 'Expected RC=0 (ok) for RHEL 10.2 supported' "${rc}"
 }
 
 
@@ -117,5 +126,7 @@ function set_up() {
     # Reset mock variables
     # shellcheck disable=SC2034
     OS_VERSION=
+    LIB_FUNC_IS_RHEL() { return 0 ; }
+    LIB_FUNC_IS_RHEL4SAP() { return 0 ; }
 
 }

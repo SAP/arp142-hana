@@ -12,7 +12,8 @@ function check_0020_os_kernel_rhel {
 
     # MODIFICATION SECTION>>
         #       array       'rel' 'goodnormalized_kernel'   'SAP Note'
-    local -ar _rhel_intel=(\
+    local -ar _rhel_intel=(
+                        '10.2'  '6.12.0-211.63.1.el10'  '#3562919'
                         '10.0'  '6.12.0-55.48.1.el10'   '#3562919,>1year'
 
                         '9.6'   '5.14.0-570.71.1.el9'   '#3108302,>1year'
@@ -25,7 +26,8 @@ function check_0020_os_kernel_rhel {
                         '7.9'   '3.10.0-1160.143.1.el7' '#1880960,>1year'
                         )
 
-    local -ar _rhel_ibmpower=(\
+    local -ar _rhel_ibmpower=(
+                        '10.2'  '6.12.0-211.63.1.el10'  '#3562919'
                         '10.0'  '6.12.0-55.48.1.el10'   '#3562919,>1year'
 
                         '9.6'   '5.14.0-570.71.1.el9'   '#3108302,>1year'
