@@ -22,21 +22,25 @@ LIB_FUNC_IS_VIRT_MICROSOFT() {
     return "${TEST_LIB_FUNC_IS_VIRT_MICROSOFT}"
 }
 
+assert_check_processed() {
+    local rc=$1
+    local context="${2:-}"
+    assert_not_equals 99 "${rc}" "Check must be processed${context:+ in }${context}"
+}
 
 function test_VM_not_supported() {
 
     #arrange
-    LIB_PLATF_NAME='Standard_M64s_xx'
+    LIB_PLATF_NAME='Standard_E64s_v3'
     TEST_LIB_FUNC_IS_VIRT_MICROSOFT=0
 
     #act
-    check_0101_supported_instances_azure
+    local rc=0
+    check_0101_supported_instances_azure || rc=$?
 
     #assert
-    if [[ $? -ne 2 ]]; then
-        bashunit::fail "Expected RC=2 (error) for unsupported VM"
-    fi
-    assert_true true
+    assert_check_processed "${rc}" 'unsupported Broadwell VM'
+    assert_exit_code 2 'Expected RC=2 (error) for unsupported Broadwell VM' "${rc}"
 }
 
 function test_VM_supported() {
@@ -46,13 +50,12 @@ function test_VM_supported() {
     TEST_LIB_FUNC_IS_VIRT_MICROSOFT=0
 
     #act
-    check_0101_supported_instances_azure
+    local rc=0
+    check_0101_supported_instances_azure || rc=$?
 
     #assert
-    if [[ $? -ne 0 ]]; then
-        bashunit::fail "Expected RC=0 (ok) for supported VM"
-    fi
-    assert_true true
+    assert_check_processed "${rc}" 'supported VM'
+    assert_exit_code 0 'Expected RC=0 (ok) for supported VM' "${rc}"
 }
 
 function test_VM_supported_uppercase() {
@@ -62,45 +65,42 @@ function test_VM_supported_uppercase() {
     TEST_LIB_FUNC_IS_VIRT_MICROSOFT=0
 
     #act
-    check_0101_supported_instances_azure
+    local rc=0
+    check_0101_supported_instances_azure || rc=$?
 
     #assert
-    if [[ $? -ne 0 ]]; then
-        bashunit::fail "Expected RC=0 (ok) for supported VM (uppercase)"
-    fi
-    assert_true true
+    assert_check_processed "${rc}" 'uppercase supported VM'
+    assert_exit_code 0 'Expected RC=0 (ok) for supported VM (uppercase)' "${rc}"
 }
 
 function test_BareMetal_not_supported() {
 
     #arrange
-    LIB_PLATF_NAME='Standard_S384xX'
+    LIB_PLATF_NAME='Standard_S384'
     TEST_LIB_FUNC_IS_VIRT_MICROSOFT=1
 
     #act
-    check_0101_supported_instances_azure
+    local rc=0
+    check_0101_supported_instances_azure || rc=$?
 
     #assert
-    if [[ $? -ne 2 ]]; then
-        bashunit::fail "Expected RC=2 (error) for unsupported BareMetal"
-    fi
-    assert_true true
+    assert_check_processed "${rc}" 'unsupported Broadwell bare metal'
+    assert_exit_code 2 'Expected RC=2 (error) for unsupported Broadwell bare metal' "${rc}"
 }
 
 function test_BareMetal_supported() {
 
     #arrange
-    LIB_PLATF_NAME='Standard_S384xm'
+    LIB_PLATF_NAME='Standard_S448ma'
     TEST_LIB_FUNC_IS_VIRT_MICROSOFT=1
 
     #act
-    check_0101_supported_instances_azure
+    local rc=0
+    check_0101_supported_instances_azure || rc=$?
 
     #assert
-    if [[ $? -ne 0 ]]; then
-        bashunit::fail "Expected RC=0 (ok) for supported BareMetal"
-    fi
-    assert_true true
+    assert_check_processed "${rc}" 'supported bare metal'
+    assert_exit_code 0 'Expected RC=0 (ok) for supported BareMetal' "${rc}"
 }
 
 
