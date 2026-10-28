@@ -8,12 +8,13 @@ function check_4150_pmem_xfs_mountoption_dax {
 
     # MODIFICATION SECTION>>
     local -r sapnote='#2700084'
+    local _pmem_xfs_mounts
     # MODIFICATION SECTION<<
 
     # 2700084 - FAQ: SAP HANA Persistent Memory
 
     # PRECONDITIONS
-    if ! grep -qs '^/dev/pmem.*xfs' '/proc/mounts'; then
+    if ! _pmem_xfs_mounts=$(grep -s '^/dev/pmem.*xfs' '/proc/mounts'); then
 
         logCheckSkipped "No PMEM device with xfs filesystem mounted. Skipping" "<${FUNCNAME[0]}>"
         _retval=3
@@ -46,7 +47,7 @@ function check_4150_pmem_xfs_mountoption_dax {
 
             fi
 
-        done <<< "$(grep -s '^/dev/pmem.*xfs' /proc/mounts)"
+        done <<< "${_pmem_xfs_mounts}"
 
 
 

@@ -15,12 +15,14 @@ function check_5540_fs_hana_mount {
     local _rxHANAmounts
     _rxHANAmounts='(?<= )/hana/(data|log).*'  # require a leading space but don't include it in the match (PCRE)
 
+    local _hana_mounts
+
     # MODIFICATION SECTION<<
 
     # SAP Note 2972496 - SAP HANA Filesystem Types
 
     # PRECONDITIONS
-    if ! grep -qsP "${_rxHANAmounts}" /proc/mounts; then
+    if ! _hana_mounts=$(grep -soP "${_rxHANAmounts}" /proc/mounts); then
 
         logCheckSkipped "No HANA filesystem mounted (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
         _retval=3
@@ -63,7 +65,7 @@ function check_5540_fs_hana_mount {
                     ;;
             esac
 
-        done <<< "$(grep -soP "${_rxHANAmounts}" /proc/mounts)"
+        done <<< "${_hana_mounts}"
 
 
         if $is_supported && ! $is_not_supported && ! $is_expired_cert; then
