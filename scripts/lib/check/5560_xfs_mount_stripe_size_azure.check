@@ -1,0 +1,122 @@
+#!/usr/bin/env bash
+
+function check_5560_xfs_mount_stripe_size_azure {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2015553'
+
+    local -r _data_stripe_expected=256   # KiB - SAP recommended stripe size for /hana/data
+    local -r _log_stripe_expected=64     # KiB - SAP recommended stripe size for /hana/log
+
+    local -r _rxHANAmounts='(?<= )/hana/(data|log).*'
+
+    # MODIFICATION SECTION<<
+
+    # Reads minimum_io_size (stripe unit, bytes) from sysfs; declare -f guard allows test mocks to take precedence.
+    declare -f _sysfs_min_io &>/dev/null || \
+        _sysfs_min_io() { local _v=0; [[ -r "/sys/dev/block/${1}/queue/minimum_io_size" ]] && read -r _v < "/sys/dev/block/${1}/queue/minimum_io_size"; echo "${_v}"; }
+
+    # Reads optimal_io_size (stripe width, bytes) from sysfs; 0 = not striped; declare -f guard allows test mocks to take precedence.
+    declare -f _sysfs_opt_io &>/dev/null || \
+        _sysfs_opt_io() { local _v=0; [[ -r "/sys/dev/block/${1}/queue/optimal_io_size" ]] && read -r _v < "/sys/dev/block/${1}/queue/optimal_io_size"; echo "${_v}"; }
+
+    # https://learn.microsoft.com/en-us/azure/sap/workloads/hana-vm-operations-storage
+    # 2015553 - SAP on Microsoft Azure: Support prerequisites
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_CLOUD_MICROSOFT; then
+
+        logCheckSkipped 'Not running on Microsoft Azure. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif ! grep -qsP "${_rxHANAmounts}" /proc/self/mountinfo; then
+        logCheckSkipped "No HANA filesystem mounted (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
+        _retval=3
+
+    elif ! grep -qsP "${_rxHANAmounts}.*- xfs " /proc/self/mountinfo; then
+        logCheckSkipped "No HANA filesystem is XFS - check NOT applicable (SAP Note ${sapnote:-})" "<${FUNCNAME[0]}>"
+        _retval=3
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        local -i counter_ok=0
+        local -i counter_error=0
+        local -i counter_skipped=0
+
+        local _line _majmin _mount _rest _fstype _expected
+        local -i _min_io _opt_io _stripe_count _stripe_kib
+
+        while IFS= read -r _line; do
+
+            # /proc/self/mountinfo fields: mountid parentid major:minor root mountpoint mountopts [optfields] - fstype source superopts
+            read -r _ _ _majmin _ _mount _rest <<< "${_line}"
+
+            case "${_mount}" in
+                /hana/data*) _expected="${_data_stripe_expected}" ;;
+                /hana/log*)  _expected="${_log_stripe_expected}"  ;;
+                *)           continue ;;
+            esac
+
+            # Extract fstype from after the ' - ' separator (handles optional fields)
+            _fstype="${_rest##* - }"
+            _fstype="${_fstype%% *}"
+            [[ "${_fstype}" == 'xfs' ]] || continue
+
+            logTrace "<${FUNCNAME[0]}> # mount=<${_mount}> majmin=<${_majmin}>"
+
+            # minimum_io_size = stripe unit (bytes); optimal_io_size = stripe width (bytes); 0 = not striped
+            _min_io=$(_sysfs_min_io "${_majmin}")
+            _opt_io=$(_sysfs_opt_io "${_majmin}")
+
+            if [[ "${_min_io}" -eq 0 || "${_opt_io}" -eq 0 ]]; then
+                logCheckSkipped "Mount ${_mount} is not striped (optimal_io_size=0) - check NOT applicable"
+                ((counter_skipped++))
+                continue
+            fi
+
+            _stripe_count=$(( _opt_io / _min_io ))
+            if [[ ${_stripe_count} -le 1 ]]; then
+                logCheckSkipped "Mount ${_mount} is not striped (stripes=${_stripe_count}) - check NOT applicable"
+                ((counter_skipped++))
+                continue
+            fi
+
+            _stripe_kib=$(( _min_io / 1024 ))
+
+            if [[ "${_stripe_kib}" -eq "${_expected}" ]]; then
+                logCheckOk "Mount ${_mount} stripe size set as recommended (is: ${_stripe_kib} KiB) (SAP Note ${sapnote:-})"
+                ((counter_ok++))
+            else
+                logCheckError "Mount ${_mount} stripe size NOT set as recommended (is: ${_stripe_kib} KiB, should be: ${_expected} KiB) (SAP Note ${sapnote:-})"
+                ((counter_error++))
+            fi
+
+        done <<< "$(grep -sP "${_rxHANAmounts}" /proc/self/mountinfo)"
+
+        # Summary: error takes priority; distinguish all-ok from at-least-one-ok; otherwise not applicable
+        if [[ ${counter_error} -gt 0 ]]; then
+            logCheckError "At least one HANA XFS LV stripe size NOT set as recommended (SAP Note ${sapnote:-})"
+            _retval=2
+        elif [[ ${counter_ok} -gt 0 && ${counter_skipped} -eq 0 ]]; then
+            logCheckOk "All HANA XFS striped LV stripe sizes are correct (SAP Note ${sapnote:-})"
+            _retval=0
+        elif [[ ${counter_ok} -gt 0 ]]; then
+            logCheckOk "At least one HANA XFS LV stripe size is correct (SAP Note ${sapnote:-})"
+            _retval=0
+        else
+            logCheckSkipped "No striped HANA XFS LVs found - check NOT applicable (SAP Note ${sapnote:-})"
+            _retval=3
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
