@@ -10,72 +10,65 @@ function check_0101_supported_instances_azure {
 
     # MODIFICATION SECTION>>
     # array             'Instance Type'
-    local -ar _azure_vm=(\
-                        'M416s_6_v3'        'M416s_8_v3'        \
-                        'M624s_12_v3'       'M832s_12_v3'       \
+    local -ar _azure_vm=(
+                        'M416s_6_v3'        'M416s_8_v3'
+                        'M624s_12_v3'       'M832s_12_v3'
 
-                        'M416ds_6_v3'       'M416ds_8_v3'       \
-                        'M624ds_12_v3'      'M832ds_12_v3'      \
-                        'M832ids_16_v3'     'M832is_16_v3'      \
-                        'M896ixds_24_v3'    'M896ixds_32_v3'    \
-                        'M1792ixds_32_v3'   \
+                        'M416ds_6_v3'       'M416ds_8_v3'
+                        'M624ds_12_v3'      'M832ds_12_v3'
+                        'M832ids_16_v3'     'M832is_16_v3'
+                        'M896ixds_24_v3'    'M896ixds_32_v3'
+                        'M1792ixds_32_v3'
 
-                        'D64s_v6'   'D64ds_v6'  'D96s_v6'   'D96ds_v6'  'D128s_v6' 'D128ds_v6'  \
+                        'D64s_v6'   'D64ds_v6'  'D96s_v6'   'D96ds_v6'  'D128s_v6' 'D128ds_v6'
 
-                        'E20ds_v4'  'E32ds_v4'  'E48ds_v4'  'E64ds_v4'  \
-                        'E8ds_v5'   'E16ds_v5'  \
-                        'E20ds_v5'  'E32ds_v5'  'E48ds_v5'  'E64ds_v5'  'E96ds_v5' \
-                        'E64s_v3'   \
-                        'E20s_v5'   'E32s_v5'   'E48s_v5'   'E64s_v5'   'E96s_v5'  \
+                        'E20ds_v4'  'E32ds_v4'  'E48ds_v4'  'E64ds_v4'
+                        'E8ds_v5'   'E16ds_v5'
+                        'E20ds_v5'  'E32ds_v5'  'E48ds_v5'  'E64ds_v5'  'E96ds_v5'
+                        'E20s_v5'   'E32s_v5'   'E48s_v5'   'E64s_v5'   'E96s_v5'
 
-                        'E32s_v6'   'E32ds_v6'  'E48s_v6'   'E48ds_v6'  'E64s_v6'   'E64ds_v6'      \
-                        'E96s_v6'   'E96ds_v6'  'E128s_v6'  'E128ds_v6' 'E192is_v6' 'E192ids_v6'    \
+                        'E32s_v6'   'E32ds_v6'  'E48s_v6'   'E48ds_v6'  'E64s_v6'   'E64ds_v6'
+                        'E96s_v6'   'E96ds_v6'  'E128s_v6'  'E128ds_v6' 'E192is_v6' 'E192ids_v6'
 
-                        'M16s_v3'        \
-                        'M32ls'     'M32ts'     'M32ts_v3'     \
-                        'M32ms_v2'  'M32dms_v2' \
-                        'M48ds_1_v3'    'M48s_1_v3'     \
-                        'M64ls'     'M64ms'     'M64s'  \
-                        'M64ms_v2'  'M64s_v2'   'M64dms_v2' 'M64ds_v2'  \
-                        'M96ds_1_v3' 'M96s_1_v3'    'M96ds_2_v3' 'M96s_2_v3'    \
+                        'M16s_v3'
+                        'M32ls'     'M32ts'     'M32ts_v3'
+                        'M32ms_v2'  'M32dms_v2'
+                        'M48ds_1_v3'    'M48s_1_v3'
+                        'M64ls'     'M64ms'     'M64s'
+                        'M64ms_v2'  'M64s_v2'   'M64dms_v2' 'M64ds_v2'
+                        'M96ds_1_v3' 'M96s_1_v3'    'M96ds_2_v3' 'M96s_2_v3'
 
-                        'M32bs_v3'  'M32bds_v3' 'M48ds_v3'  'M48bds_v3' \
-                        'M64bs_v3'  'M64bds_v3' 'M64bds_1_v3'   \
-                        'M96bs_v3'  'M96bds_v3' 'M96bds_2_v3'   \
-                        'M128bs_v3' 'M128bds_v3' 'M128bds_3_v3' \
-                        'M176bs_v3' 'M176bds_v3'    'M176bs_3_v3'   'M176bds_3_v3'  'M176bds_4_v3'  \
+                        'M32bs_v3'  'M32bds_v3' 'M48ds_v3'  'M48bds_v3'
+                        'M64bs_v3'  'M64bds_v3' 'M64bds_1_v3'
+                        'M96bs_v3'  'M96bds_v3' 'M96bds_2_v3'
+                        'M128bs_v3' 'M128bds_v3' 'M128bds_3_v3'
+                        'M176bs_v3' 'M176bds_v3'    'M176bs_3_v3'   'M176bds_3_v3'  'M176bds_4_v3'
 
-                        'M128ms'    'M128s'     \
-                        'M128ms_v2' 'M128s_v2'      'M128dms_v2' 'M128ds_v2'    \
-                        'M176s_2_v3'    \
-                        'M176ds_3_v3'   'M176s_3_v3'    'M176ds_4_v3'   'M176s_4_v3'   \
-                        'M192is_v2' 'M192ims_v2'    'M192ids_v2' 'M192idms_v2'  \
-                        'M208ms_v2' 'M208s_v2'  \
-                        'M416ms_v2' 'M416s_v2'  'M416s_8_v2'    \
+                        'M128ms'    'M128s'
+                        'M128ms_v2' 'M128s_v2'      'M128dms_v2' 'M128ds_v2'
+                        'M176s_2_v3'
+                        'M176ds_3_v3'   'M176s_3_v3'    'M176ds_4_v3'   'M176s_4_v3'
+                        'M192is_v2' 'M192ims_v2'    'M192ids_v2' 'M192idms_v2'
+                        'M208ms_v2' 'M208s_v2'
+                        'M416ms_v2' 'M416s_v2'  'M416s_8_v2'
 
-                        'M420ixs_v2'    \
-                        'M832ixs'   'M832ixs_v2'            \
+                        'M832ixs'   'M832ixs_v2'
                         )
 
     # array             'Instance Type'
-    local -ar _azure_bm=(\
-                        'S224'     'S224m'    'S224om'  'S224oo'    'S224ooo'   'S224oom' \
-                        'S384'     'S384m'    'S384xm'   \
-                        'S448'     'S448m'    'S448om'  'S448a'    'S448ma'\
-                        'S576m'        \
-                        'S672'     'S672m'    'S672om'  \
-                        'S768m'        \
-                        'S896'     'S896m'    'S896om'\
-                        'S96'          \
-                        'S960m'        \
+    local -ar _azure_bm=(
+                        'S224'     'S224m'    'S224om'  'S224oo'    'S224ooo'   'S224oom'
+                        'S448'     'S448m'    'S448om'  'S448a'    'S448ma'
+                        'S672'     'S672m'    'S672om'
+                        'S896'     'S896m'    'S896om'
                         )
 
     local -r sapnote='#1928533,2316233'
     # MODIFICATION SECTION<<
 
-    #1928533 - SAP Applications on Azure: Supported Products and Azure VM types
-    #2316233 - SAP HANA on Microsoft Azure (Large Instances)
-    #https://www.sap.com/dmc/exp/2014-09-02-hana-hardware/enEN/#/solutions?filters=iaas;ve:24
+    # 1928533 - SAP Applications on Azure: Supported Products and Azure VM types
+    # 2316233 - SAP HANA on Microsoft Azure (Large Instances)
+    # https://www.sap.com/dmc/exp/2014-09-02-hana-hardware/enEN/#/solutions?filters=iaas;ve:24
 
     local -a _azure_cert_instances
 
