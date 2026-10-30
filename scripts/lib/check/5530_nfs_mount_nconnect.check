@@ -15,18 +15,20 @@ function check_5530_nfs_mount_nconnect {
     local _rx_reco_nconnect_shared='nconnect=[2-4]'
 
     local _rxHANAmounts='(/hana/(data|log|shared)|/usr/sap).*\snfs4?\s.*'
+    local _nfs_mounts
     # MODIFICATION SECTION<<
 
     local nconnect_supported=true
 
     # 3024346 - Linux Kernel Settings for NetApp NFS
     # NFS in NetApp ONTAP Best practice and implementation guide https://www.netapp.com/media/10720-tr-4067.pdf
-    # https://docs.aws.amazon.com/sap/latest/sap-hana/fsx-host-scaleup.html#linux-setup-scaleup
+    # https://docs.aws.amazon.com/sap/latest/sap-hana/host-setup-fsx-sap-hana.html —> only NFSv4.1
     # https://learn.microsoft.com/en-us/azure/azure-netapp-files/performance-linux-mount-options#nconnect
+    # https://docs.cloud.google.com/sap/docs/filers-for-sap#nfs_protocol_support —> only for NFS v3
 
 
     # PRECONDITIONS
-    if ! grep -qsE "${_rxHANAmounts}" /proc/mounts; then
+    if ! _nfs_mounts=$(grep -soE "${_rxHANAmounts}" /proc/mounts); then
 
         logCheckSkipped "No HANA NFS filesystem mounted (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
         _retval=3
@@ -95,7 +97,7 @@ function check_5530_nfs_mount_nconnect {
 
             fi
 
-        done <<< "$(grep -soE "${_rxHANAmounts}" /proc/mounts)"
+        done <<< "${_nfs_mounts}"
 
 
         if [[ ${_retval} -eq 99 ]]; then

@@ -23,6 +23,7 @@ grep() {
         '-qs ^/dev/pmem'*)  [[ ${#pmem_xfs_mounts[@]} -ge 1 ]] && return 0 ;;
 
         '-s ^/dev/pmem'*)   #fake $(grep -s '^/dev/pmem.*xfs' /proc/mounts)
+                            [[ ${#pmem_xfs_mounts[@]} -ge 1 ]] || return 1
                             printf "%s\n" "${pmem_xfs_mounts[@]:-}" ;;
 
         *)                  command grep "$@" ;; # bashunit requires grep

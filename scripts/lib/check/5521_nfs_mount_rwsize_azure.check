@@ -14,6 +14,7 @@ function check_5521_nfs_mount_rwsize_azure {
     local -r _reco_rsize_wsize='rsize=262144,wsize=262144'
 
     local _rxNFSmounts='\snfs4?\s'
+    local _nfs_mounts
     # MODIFICATION SECTION<<
 
     # https://docs.microsoft.com/en-us/azure/azure-netapp-files/performance-linux-mount-options#rsize-and-wsize
@@ -25,7 +26,7 @@ function check_5521_nfs_mount_rwsize_azure {
         logCheckSkipped 'Not running on Microsoft Azure. Skipping' "<${FUNCNAME[0]}>"
         _retval=3
 
-    elif ! grep -qsE "${_rxNFSmounts}" /proc/mounts; then
+    elif ! _nfs_mounts=$(grep -sE "${_rxNFSmounts}" /proc/mounts); then
 
         logCheckSkipped "No NFS filesystem mounted (SAP Note ${sapnote:-}). Skipping" "<${FUNCNAME[0]}>"
         _retval=3
@@ -50,7 +51,7 @@ function check_5521_nfs_mount_rwsize_azure {
 
             fi
 
-        done <<< "$(grep -sE "${_rxNFSmounts}" /proc/mounts)"
+        done <<< "${_nfs_mounts}"
 
 
         if [[ ${_retval} -eq 99 ]]; then
