@@ -10,13 +10,13 @@ function check_7021_ha_resource_agent_angi_sles {
     # https://scc.suse.com/packages?name=SUSE%20Linux%20Enterprise%20Server%20for%20SAP%20applications&version=16.0&arch=x86_64&query=SAPHanaSR-angi
 
     # MODIFICATION SECTION>>
-    local -r sapnote='#1552925'
+    local -r sapnote='#3288971'
 
-    local -r sles15x='1.3.4'
-    local -r sles16x='1.3.4'
+    local -r sles15x='1.3.5'
+    local -r sles16x='1.3.5'
     # MODIFICATION SECTION<<
 
-    # 1552925 - Linux: High Availability Cluster Solutions
+    # 3288971 - FAQ: SUSE HAE/RedHat HAA Pacemaker Cluster Resource Manager in SAP HANA System Replication Environments
     # https://github.com/SUSE/SAPHanaSR
 
     # PRECONDITIONS
