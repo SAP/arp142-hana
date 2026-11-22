@@ -12,6 +12,7 @@ function check_0210_kernel_pid_max_sles {
     # MODIFICATION SECTION<<
 
     # 2578899 - SUSE Linux Enterprise Server 15: Installation Note
+    # SLES16 systemd already defaults to exactly this value
 
     # PRECONDITIONS
     if ! LIB_FUNC_IS_SLES ; then
@@ -23,10 +24,10 @@ function check_0210_kernel_pid_max_sles {
 
         case "${OS_VERSION}" in
 
-            11.* | 12.*)    logCheckSkipped 'CHECK not applicable for SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
-                            _retval=3 ;;
+            15.*)   : ;;
 
-            *) : ;;
+            *)      logCheckSkipped 'CHECK not applicable for SLES release.' "(is: ${OS_VERSION}) - <${FUNCNAME[0]}>"
+                    _retval=3 ;;
 
         esac
 
