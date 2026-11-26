@@ -28,7 +28,7 @@ function check_0011_os_kernel_knownissue_sles {
         ['SUSE bsc#1237530']='cpuidle driver in virtualized environments'
         ['SUSE TID 000022171']='High system CPU during HANA table load in SLES 15 SP5 and earlier'
         ['SUSE TID 000022286']='SAP HANA swap and system hangs with THP on multi-NUMA node systems'
-        ['GCP x4,c3,c4']='https://docs.cloud.google.com/sap/docs/certifications-sap-hana#hana-cert-table-oss'
+        ['GCP x5,x4,c3,c4']='https://docs.cloud.google.com/sap/docs/sap-hana-planning-guide#hana-cert-table-oss'
         ['SUSE TID 000022558']='SAP HANA Backint backups are extremely slow on SLES 15 SP7'
         ['SUSE TID 000022679']='Network performance issues with the Azure mana network driver'
         ['SUSE TID 000022819']='SR-IOV Update Causes Network Adapter Unavailability on Linux LPAR'
@@ -79,11 +79,12 @@ function check_0011_os_kernel_knownissue_sles {
                         '15.4' '5.14.21-150400.22.1'        '5.14.21-150400.24.55.0'    'SAP Note #1928533, M832ixs_v2 only'
                         )
 
-    local -ar _sles_gcp=(\
-                        '15.7' '6.4.0-150700.51.1'      '6.4.0-150700.53.3.0'       'GCP x4,c3,c4' \
-                        '15.6' '6.4.0-150600.21.3'      '6.4.0-150600.23.38.0'      'GCP x4,c3,c4' \
-                        '15.5' '5.14.21-150500.53.2'    '5.14.21-150500.55.94.0'    'GCP x4,c3,c4' \
-                        '15.4' '5.14.21-150400.22.1'    '5.14.21-150400.24.161.0'   'GCP x4,c3,c4' \
+    local -ar _sles_gcp=(
+                        '16.0' '6.12.0-160000.33.1'     '6.12.0-160000.35.0'        'GCP x5,x4,c3,c4'
+                        '15.7' '6.4.0-150700.51.1'      '6.4.0-150700.53.3.0'       'GCP x5,x4,c3,c4'
+                        '15.6' '6.4.0-150600.21.3'      '6.4.0-150600.23.38.0'      'GCP x5,x4,c3,c4'
+                        '15.5' '5.14.21-150500.53.2'    '5.14.21-150500.55.94.0'    'GCP x5,x4,c3,c4'
+                        '15.4' '5.14.21-150400.22.1'    '5.14.21-150400.24.161.0'   'GCP x5,x4,c3,c4'
                         )
 
     local -ar _sles_ibmpower=(
