@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+function check_3306_vnic_interfaces_ibmpower {
+
+    logTrace "<${BASH_SOURCE[0]}:${FUNCNAME[*]}>"
+
+    local -i _retval=99
+
+    # MODIFICATION SECTION>>
+    local -r sapnote='#2055470'
+    # MODIFICATION SECTION<<
+
+    # 2055470 - HANA on IBM Power Planning and Installation Specifics
+
+    # PRECONDITIONS
+    if ! LIB_FUNC_IS_IBMPOWER ; then
+
+        logCheckSkipped 'Not running on IBM Power. Skipping' "<${FUNCNAME[0]}>"
+        _retval=3
+
+    fi
+
+    # CHECK
+    if [[ ${_retval} -eq 99 ]]; then
+
+        mapfile -t vnic_interfaces < <(grep DRIVER=ibmvnic -rsH /sys/class/net/**/device/uevent)
+
+        if [[ ${#vnic_interfaces[@]} -ge 2 ]]; then
+
+            logCheckOk "IBM Power network interface ibmvnic enabled as recommended (SAP Note ${sapnote:-}) (is: ${#vnic_interfaces[@]})"
+            _retval=0
+
+        elif [[ ${#vnic_interfaces[@]} -eq 1 ]]; then
+
+            logCheckInfo 'In case of HANA Scale-Out or HANA SystemReplication at least 2 ibmvnic adapters should be configured'
+            logCheckInfo '---'
+
+            logCheckWarning "IBM Power network interface ibmvnic NOT as recommended (SAP Note ${sapnote:-}) (is: ${#vnic_interfaces[@]}, should be: >=2)"
+            _retval=1
+
+        else
+
+            logCheckError "IBM Power network interface ibmvnic NOT configured (SAP Note ${sapnote:-})"
+            _retval=2
+
+        fi
+
+    fi
+
+    logDebug "<${BASH_SOURCE[0]}:${FUNCNAME[0]}> # RC=${_retval}"
+    return ${_retval}
+
+}
